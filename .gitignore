@@ -1,0 +1,47 @@
+# Ignore build outputs
+**/bin/
+**/obj/
+
+# Visual Studio / VS Code
+.vs/
+.vscode/
+
+# User-specific files
+*.user
+*.suo
+*.userosscache
+*.userprefs
+
+# Rider
+.idea/
+
+# NuGet
+# Packages
+**/packages/
+*.nupkg
+.nuget/
+
+# Dotnet tools
+.dotnet/tools/
+
+# Publish
+publish/
+*.publishsettings
+
+# Test results
+TestResults/
+
+# Logs
+*.log
+
+# OS files
+Thumbs.db
+.DS_Store
+
+# Resharper
+_ReSharper*/
+*.DotSettings.user
+
+# Temporary files
+*.tmp
+*.temp
