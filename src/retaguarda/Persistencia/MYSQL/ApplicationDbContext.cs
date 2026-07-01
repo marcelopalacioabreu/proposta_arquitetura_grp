@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Retaguarda.Dominio.Entidades;
 
-namespace Retaguarda.Persistencia
+namespace Retaguarda.Persistencia.MYSQL
 {
     public class ApplicationDbContext : DbContext
     {

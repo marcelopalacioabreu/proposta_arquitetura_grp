@@ -1,12 +1,13 @@
-﻿using System;
+using System;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace Retaguarda.Persistencia.Migracoes
+namespace Retaguarda.Persistencia.MYSQL.Migracoes
 {
     /// <inheritdoc />
+    [Migration("000001_InitialCreate")]
     public partial class InitialCreate : Migration
     {
         /// <inheritdoc />
@@ -39,6 +40,7 @@ namespace Retaguarda.Persistencia.Migracoes
                     Id = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     OrganizacaoId = table.Column<long>(type: "bigint", nullable: false),
+                    OrganizacaoSetorId = table.Column<long>(type: "bigint", nullable: true),
                     Nome = table.Column<string>(type: "varchar(200)", maxLength: 200, nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     DataInsercao = table.Column<DateTime>(type: "datetime(6)", nullable: false),
@@ -63,6 +65,7 @@ namespace Retaguarda.Persistencia.Migracoes
                     Id = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     OrganizacaoId = table.Column<long>(type: "bigint", nullable: false),
+                    OrganizacaoSetorId = table.Column<long>(type: "bigint", nullable: true),
                     Nome = table.Column<string>(type: "varchar(200)", maxLength: 200, nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     DataInsercao = table.Column<DateTime>(type: "datetime(6)", nullable: false),
@@ -87,6 +90,7 @@ namespace Retaguarda.Persistencia.Migracoes
                     Id = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     OrganizacaoId = table.Column<long>(type: "bigint", nullable: false),
+                    OrganizacaoSetorId = table.Column<long>(type: "bigint", nullable: true),
                     Nome = table.Column<string>(type: "varchar(200)", maxLength: 200, nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     DataInsercao = table.Column<DateTime>(type: "datetime(6)", nullable: false),
@@ -111,6 +115,7 @@ namespace Retaguarda.Persistencia.Migracoes
                     Id = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     OrganizacaoId = table.Column<long>(type: "bigint", nullable: false),
+                    OrganizacaoSetorId = table.Column<long>(type: "bigint", nullable: true),
                     Nome = table.Column<string>(type: "varchar(200)", maxLength: 200, nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     DataInsercao = table.Column<DateTime>(type: "datetime(6)", nullable: false),
@@ -135,6 +140,7 @@ namespace Retaguarda.Persistencia.Migracoes
                     Id = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     OrganizacaoId = table.Column<long>(type: "bigint", nullable: false),
+                    OrganizacaoSetorId = table.Column<long>(type: "bigint", nullable: true),
                     PerfilId = table.Column<long>(type: "bigint", nullable: false),
                     Nome = table.Column<string>(type: "varchar(200)", maxLength: 200, nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),

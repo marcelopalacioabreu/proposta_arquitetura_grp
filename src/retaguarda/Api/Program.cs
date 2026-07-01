@@ -1,5 +1,5 @@
 using Microsoft.EntityFrameworkCore;
-using Retaguarda.Persistencia;
+using Retaguarda.Persistencia.MYSQL;
 
 var builder = WebApplication.CreateBuilder(args);
 

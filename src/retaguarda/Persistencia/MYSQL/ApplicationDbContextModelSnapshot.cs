@@ -2,20 +2,17 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Retaguarda.Persistencia;
 
 #nullable disable
 
-namespace Retaguarda.Persistencia.Migracoes
+namespace Retaguarda.Persistencia.MYSQL
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20260701180550_InitialCreate")]
-    partial class InitialCreate
+    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
     {
-        /// <inheritdoc />
-        protected override void BuildTargetModel(ModelBuilder modelBuilder)
+        protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -40,6 +37,8 @@ namespace Retaguarda.Persistencia.Migracoes
                         .HasColumnType("varchar(200)");
 
                     b.Property<long>("OrganizacaoId")
+                        .HasColumnType("bigint");
+                    b.Property<long?>("OrganizacaoSetorId")
                         .HasColumnType("bigint");
 
                     b.HasKey("Id");
@@ -90,6 +89,8 @@ namespace Retaguarda.Persistencia.Migracoes
 
                     b.Property<long>("OrganizacaoId")
                         .HasColumnType("bigint");
+                    b.Property<long?>("OrganizacaoSetorId")
+                        .HasColumnType("bigint");
 
                     b.HasKey("Id");
 
@@ -117,6 +118,8 @@ namespace Retaguarda.Persistencia.Migracoes
 
                     b.Property<long>("OrganizacaoId")
                         .HasColumnType("bigint");
+                    b.Property<long?>("OrganizacaoSetorId")
+                        .HasColumnType("bigint");
 
                     b.HasKey("Id");
 
@@ -143,6 +146,8 @@ namespace Retaguarda.Persistencia.Migracoes
                         .HasColumnType("varchar(200)");
 
                     b.Property<long>("OrganizacaoId")
+                        .HasColumnType("bigint");
+                    b.Property<long?>("OrganizacaoSetorId")
                         .HasColumnType("bigint");
 
                     b.Property<long>("PerfilId")
@@ -175,6 +180,8 @@ namespace Retaguarda.Persistencia.Migracoes
                         .HasColumnType("varchar(200)");
 
                     b.Property<long>("OrganizacaoId")
+                        .HasColumnType("bigint");
+                    b.Property<long?>("OrganizacaoSetorId")
                         .HasColumnType("bigint");
 
                     b.HasKey("Id");

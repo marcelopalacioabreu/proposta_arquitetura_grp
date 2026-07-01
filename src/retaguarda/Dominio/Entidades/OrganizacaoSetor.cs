@@ -2,9 +2,8 @@ using Retaguarda.Dominio.Entidades.Base;
 
 namespace Retaguarda.Dominio.Entidades
 {
-    public class OrganizacaoSetor : AuditableEntity
+    public class OrganizacaoSetor : MultilocatarioEntidade
     {
-        public long OrganizacaoId { get; set; }
         public string Nome { get; set; } = string.Empty;
 
         public Organizacao? Organizacao { get; set; }
