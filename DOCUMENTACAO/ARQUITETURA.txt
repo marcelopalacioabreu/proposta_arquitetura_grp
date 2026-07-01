@@ -1,0 +1,33 @@
+1 - Introdução
+
+A estratégia da EMTEC é desenvolver o GRP na forma de um conjunto de módulos interdependentes. Porém a experiência com sistemas herdados como SIFAN, demonstram que o software utilizado na PJF tem ciclo de vida de décadas. Portanto é necessário estabelecer uma arquitetura compatível com essa característica. Promovendo facilidade de desenvolvimento e manutenção em equipes de tamanho variável[1], baixo acoplamento, independência da tecnologia de banco de dados e da interface gráfica.
+
+[1] Desenvolver só não pode ser um problema. Assim como desenvolver em um ou múltiplos esquadrões também não. Deve ser possível fazer alterações concentradas sem regredir outras partes da aplicação por impactos arquiteturais ou débito técnico. Por exemplo, quando as regras de negócio estão distribuídas nos controladores de API, então quando se altera a lógica em uma rota é necessário buscar manualmente os impactos. Portanto é impossível fazer uma alteração e garantir que a próxima versão esteja pronta para uso. Essa situação piora mais quando o número de módulos aumenta.
+
+
+2 - A arquitetura
+
+2.1 - Persistência
+
+A persistência deve ser desacoplada de todo o restante do software e cumprir função única: Permitir o controle das informações na base de dados. Porém existem inúmeros SGBDs e inúmeras tecnologias de persistência. Portanto, a aplicação deve dispor de uma camada de aplicação, preferencialmente intermediada for bibliotecas especialistas em persistência e apoiadas sobre uma arquitetura que permita substituir toda a implementação conforme a necessidade. O fluxo a seguir demonstra o funcionamento de um pacote de persistência que torna a aplicação independente da tecnologia utilizada, onde a implementação o contrato do repositório de dados expõe os métodos necessários a toda a aplicação, possibilitando mudar a tecnologia de persistência sobrescrevendo a implementação.
+
+
+BANCO_DE_DADOS ---> BIBLIOTECA_DE_PERSISTÊNCIA ---> IMPLEMENTACAO_DA_PERSISTENCIA ---> CONTRATO_DA_PERSISTÊNCIA ---> OPERAÇÔES DISPONÍVEIS
+
+2.2 - Regras de negócio
+
+As regras de negócio, em geral devem ser fortemente hierarquizadas[2], independentes de tecnologia e desacopladas. Isso garante que a análise dependa apenas da interpretação de código básico, facilitando uma futura sobrescrita evita a contaminação com tipos de outras camadas e impede problemas básicos de projeto.
+
+[2] A hierarquização permite definir tantos graus de responsabilidade quanto o modelo demande. Por exemplo: Serviços de domínio  queles que definem operações atômicas e básicas sobre uma determinada classe. Serviços de orquestração, os que orquestram fluxos inteiros, demandando alto controle sobre transações e garantias de estado. Como acontece na operação hipotética de transferência de saldo: verifica a fonte, subtrai da fonte soma no destino confirma a operação, serviços vinculados, são uma exceção a regra, aqueles que inevitavelmente tocam a implementação técnica, nesse caso, o ideal é manter apenas a interface e delegar a implementação para a aplicação que consumir o pacote.
+
+2.3 - Interface de comunicação e de usuário
+
+Aplicações verdadeiramente resilientes, desacopladas e ... arquitetadas dispõe de metadados para definição de suas extremidades, interfaces e fluxos, permitindo inclusive a alteração do invólucro e de toda a camada de interface através da simples substituição. Por exemplo, ao desenvolver uma aplicação foram definidas todas as rotas, controles, ações e permissões em uma especificação própria, portanto, é possível interpretar essas informações e gerar a estrutura do involucro que executará a retaguarda.
+
+Da mesma forma, as telas utilizadas para interação e os fluxos foram definidos em arquivos de metadados intermediários, então para criar suporte a uma nova plataforma, ou até mesmo atualizar a tecnologia de exibição de acordo com os padrões mais recentes.
+
+
+3 - Conclusão
+
+Desta forma, espera-se desenvolver uma aplicação que suporte a constante evolução da tecnologia, possibilitando a evolução independente e em última instância, a substituição indolor, adaptação ou compatibilização das peças desenvolvidas.
+
