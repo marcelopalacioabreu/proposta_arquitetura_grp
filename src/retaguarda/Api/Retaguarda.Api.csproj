@@ -6,8 +6,11 @@
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\Persistencia\Retaguarda.Persistencia.csproj" />
+    <ProjectReference Include="..\Repositorios\Retaguarda.Repositorios.csproj" />
+    <ProjectReference Include="..\Servicos\Retaguarda.Servicos.csproj" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.0" />
   </ItemGroup>
 </Project>

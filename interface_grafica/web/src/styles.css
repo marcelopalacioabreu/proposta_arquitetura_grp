@@ -1,0 +1,6 @@
+body{ font-family: Arial, sans-serif; margin:0; padding:0; }
+.header{ padding:12px; background:#0b5; color:#fff }
+.container{ padding:16px }
+.menu{ width:200px; background:#eee; padding:8px }
+.content{ padding:8px; flex:1 }
+.layout{ display:flex; min-height:100vh }
