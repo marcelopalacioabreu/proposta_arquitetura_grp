@@ -1,0 +1,8 @@
+{
+  "schemaVersion": "1.0",
+  "components": [
+    { "name": "TabelaOrganizacoes", "type": "TabelaPaginavel", "parameters": { "endpoint": "/api/organizacoes", "pageSize": 20 }, "module": "painel" },
+    { "name": "FiltroOrganizacao", "type": "Filtro", "parameters": { "fields": ["nome"] }, "module": "painel" },
+    { "name": "TelaCadastroOrganizacao", "type": "TelaCadastro", "parameters": {}, "module": "painel" }
+  ]
+}
