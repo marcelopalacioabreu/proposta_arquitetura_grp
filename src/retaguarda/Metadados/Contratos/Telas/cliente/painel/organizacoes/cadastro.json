@@ -1,0 +1,10 @@
+{
+  "organizacaoCadastro": {
+    "titulo": "Cadastro de Organização",
+    "campos": [
+      { "campo": "codigo", "label": "Código", "tipo": "text", "col": 6 },
+      { "campo": "nome", "label": "Nome da organização", "tipo": "text", "col": 6 },
+      { "campo": "descricao", "label": "Descrição", "tipo": "text", "col": 6 }
+    ]
+  }
+}
