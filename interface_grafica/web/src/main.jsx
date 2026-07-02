@@ -5,8 +5,6 @@ import Home from './pages/Home'
 import Login from './pages/Login'
 import CadastroUsuario from './pages/CadastroUsuario'
 import PrivateLayout from './components/PrivateLayout'
-import Organizacao from './pages/painel/Organizacao'
-import OrganizacaoCadastro from './pages/painel/OrganizacaoCadastro'
 import TelaPesquisa from './components/TelaPesquisa'
 import TelaCadastro from './components/TelaCadastro'
 import './styles.css'
@@ -23,8 +21,8 @@ function App(){
         <Route path='/login' element={<Login/>} />
         <Route path='/cadastro' element={<CadastroUsuario/>} />
         <Route path='/painel/*' element={<PrivateLayout/>}>
-          <Route path='organizacoes' element={<Organizacao/>} />
-          <Route path='organizacoes/editar/:id' element={<OrganizacaoCadastro/>} />
+          <Route path='organizacoes' element={<TelaPesquisa screenKey={'organizacaoPesquisa'} />} />
+          <Route path='organizacoes/editar/:id' element={<TelaCadastro screenKey={'organizacaoCadastro'} />} />
           <Route path='organizacoes/setores' element={<TelaPesquisa screenKey={'setorPesquisa'} />} />
           <Route path='organizacoes/setores/editar/:id' element={<TelaCadastro screenKey={'setorCadastro'} />} />
           <Route index element={<div className="container mt-3">Escolha uma opção no menu.</div>} />
