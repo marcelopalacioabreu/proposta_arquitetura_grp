@@ -1,4 +1,5 @@
 using System.Text;
+using System.Security.Cryptography;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -26,6 +27,12 @@ builder.Services.AddScoped<Retaguarda.Servicos.RequisicaoUsuario>();
 var jwtKey = builder.Configuration["Jwt:Key"] ?? "change_this_secret_for_prod";
 var jwtIssuer = builder.Configuration["Jwt:Issuer"] ?? "Retaguarda";
 var keyBytes = Encoding.UTF8.GetBytes(jwtKey);
+// Ensure key is at least 256 bits (32 bytes) for HS256. If shorter, use SHA256 of the provided key.
+if (keyBytes.Length < 32)
+{
+    using var sha = SHA256.Create();
+    keyBytes = sha.ComputeHash(Encoding.UTF8.GetBytes(jwtKey));
+}
 
 builder.Services.AddAuthentication(options =>
 {

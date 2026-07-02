@@ -2,6 +2,7 @@ using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using System.Security.Cryptography;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 
@@ -29,7 +30,13 @@ namespace Retaguarda.Api.Controllers
 
             var jwtKey = _config["Jwt:Key"] ?? "change_this_secret_for_prod";
             var jwtIssuer = _config["Jwt:Issuer"] ?? "Retaguarda";
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey));
+            var keyBytes = Encoding.UTF8.GetBytes(jwtKey);
+            if (keyBytes.Length < 32)
+            {
+                using var sha = SHA256.Create();
+                keyBytes = sha.ComputeHash(Encoding.UTF8.GetBytes(jwtKey));
+            }
+            var key = new SymmetricSecurityKey(keyBytes);
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
             var claims = new[]
