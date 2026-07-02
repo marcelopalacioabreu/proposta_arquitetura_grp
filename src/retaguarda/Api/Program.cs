@@ -70,20 +70,7 @@ app.UseMiddleware<Retaguarda.Api.Middleware.UsuarioMiddleware>();
 app.UseAuthorization();
 
 // Seed default admin user if missing (development convenience)
-using (var scope = app.Services.CreateScope())
-{
-    var sp = scope.ServiceProvider;
-    var repo = sp.GetService<Retaguarda.Repositorios.Interfaces.IUsuarioRepositorio>();
-    var svc = sp.GetService<Retaguarda.Servicos.Interfaces.IUsuarioServico>();
-    if (repo != null && svc != null)
-    {
-        var exists = repo.ObterPorUsernameAsync("admin").GetAwaiter().GetResult();
-        if (exists == null)
-        {
-            svc.CriarUsuarioAsync("admin", "admin", "Administrador", "admin@local").GetAwaiter().GetResult();
-        }
-    }
-}
+Retaguarda.Api.Data.SeedData.EnsureSeed(app.Services);
 
 app.MapControllers();
 
