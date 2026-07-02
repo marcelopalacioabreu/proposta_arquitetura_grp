@@ -1,9 +1,0 @@
-{
-  "schemaVersion": "1.0",
-  "routes": [
-    { "id": "home.index", "path": "/", "verb": "GET", "controller": "HomeController", "action": "Index", "permission": null, "module": "core" },
-    { "id": "auth.login", "path": "/autorizacao/login", "verb": "GET", "controller": "AuthController", "action": "Login", "permission": null, "module": "auth" },
-    { "id": "painel.organizacoes.index", "path": "/painel/organizacoes", "verb": "GET", "controller": "OrganizacaoController", "action": "Index", "permission": "organizacao.ler", "module": "painel" },
-    { "id": "painel.organizacao.show", "path": "/painel/organizacao/{id}", "verb": "GET", "controller": "OrganizacaoController", "action": "Show", "permission": "organizacao.ler", "module": "painel" }
-  ]
-}

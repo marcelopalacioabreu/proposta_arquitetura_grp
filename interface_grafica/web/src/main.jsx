@@ -4,8 +4,14 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import Home from './pages/Home'
 import Login from './pages/Login'
 import CadastroUsuario from './pages/CadastroUsuario'
-import Painel from './pages/Painel'
+import PrivateLayout from './components/PrivateLayout'
+import Organizacao from './pages/painel/Organizacao'
+import OrganizacaoCadastro from './pages/painel/OrganizacaoCadastro'
 import './styles.css'
+import 'bootstrap/dist/css/bootstrap.min.css'
+import axios from 'axios'
+
+axios.defaults.withCredentials = true
 
 function App(){
   return (
@@ -14,7 +20,11 @@ function App(){
         <Route path='/' element={<Home/>} />
         <Route path='/login' element={<Login/>} />
         <Route path='/cadastro' element={<CadastroUsuario/>} />
-        <Route path='/painel/*' element={<Painel/>} />
+        <Route path='/painel/*' element={<PrivateLayout/>}>
+          <Route path='organizacoes' element={<Organizacao/>} />
+          <Route path='organizacoes/editar/:id' element={<OrganizacaoCadastro/>} />
+          <Route index element={<div className="container mt-3">Escolha uma opção no menu.</div>} />
+        </Route>
         <Route path='*' element={<Navigate to='/' replace />} />
       </Routes>
     </BrowserRouter>

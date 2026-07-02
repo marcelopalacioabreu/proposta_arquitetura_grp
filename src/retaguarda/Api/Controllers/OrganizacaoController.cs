@@ -17,10 +17,10 @@ namespace Retaguarda.Api.Controllers
         }
 
         [HttpGet]
-        public IActionResult GetAll()
+        public IActionResult GetAll([FromQuery] string? nome, [FromQuery] int page = 1, [FromQuery] int pageSize = 10, [FromQuery] string? sortField = null, [FromQuery] string? sortDir = null)
         {
-            // For now return an empty list (placeholder - implement listing in service)
-            return Ok(new object[] { });
+            var (items, total) = _servico.ListarAsync(nome, page, pageSize, sortField, sortDir).Result;
+            return Ok(new { items, total, page, pageSize });
         }
 
         [HttpGet("{id}")]
@@ -35,14 +35,34 @@ namespace Retaguarda.Api.Controllers
         [Authorize]
         public IActionResult Create([FromBody] OrganizacaoDto dto)
         {
-            var o = new Organizacao { Nome = dto.Nome };
-            // Direct DB access for simplicity
-            // TODO: use service to create
-            return CreatedAtAction(nameof(Get), new { id = 0 }, o);
+            if (!ModelState.IsValid) return BadRequest(ModelState);
+            var o = _servico.CriarAsync(dto.Nome).Result;
+            return CreatedAtAction(nameof(Get), new { id = o.Id }, o);
+        }
+
+        [HttpDelete("{id}")]
+        [Authorize]
+        public IActionResult Delete(long id)
+        {
+            _servico.DeleteAsync(id).GetAwaiter().GetResult();
+            return NoContent();
+        }
+
+        [HttpPut("{id}")]
+        [Authorize]
+        public IActionResult Update(long id, [FromBody] OrganizacaoDto dto)
+        {
+            if (!ModelState.IsValid) return BadRequest(ModelState);
+            var existing = _servico.ObterPorIdAsync(id).Result;
+            if (existing == null) return NotFound();
+            existing.Nome = dto.Nome;
+            _servico.UpdateAsync(existing).GetAwaiter().GetResult();
+            return NoContent();
         }
 
         public class OrganizacaoDto
         {
+            [System.ComponentModel.DataAnnotations.Required]
             public string Nome { get; set; } = string.Empty;
         }
     }

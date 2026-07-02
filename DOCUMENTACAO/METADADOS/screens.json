@@ -1,7 +1,0 @@
-{
-  "schemaVersion": "1.0",
-  "screens": [
-    { "routeId": "painel.organizacoes.index", "title": "Organizações", "components": ["FiltroOrganizacao", "TabelaOrganizacoes"], "module": "painel" },
-    { "routeId": "painel.organizacao.show", "title": "Organização - Detalhe", "components": ["TelaCadastroOrganizacao"], "module": "painel" }
-  ]
-}

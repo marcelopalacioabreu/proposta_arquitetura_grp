@@ -1,0 +1,10 @@
+{
+  "modulos": [
+    {
+      "group": "Administração",
+      "items": [
+        { "key": "organizacoes", "label": "Organizações", "icon": "business", "url": "/painel/organizacoes" }
+      ]
+    }
+  ]
+}
