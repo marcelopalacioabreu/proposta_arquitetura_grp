@@ -13,7 +13,7 @@ npm -v >nul 2>&1 || (echo npm não encontrado. Instale npm e tente novamente & p
 
 echo 2) Aplicando migrations (EF Core)
 dotnet tool restore
-n:: Atualize o caminho do projeto se necessário
+REM Atualize o caminho do projeto se necessário
 dotnet ef database update --project src\retaguarda\Persistencia\Retaguarda.Persistencia.csproj --startup-project src\retaguarda\Api\Retaguarda.Api.csproj --context ApplicationDbContext
 if errorlevel 1 (
   echo Falha ao aplicar migrations. Verifique a string de conexão e o servidor MySQL.
@@ -22,10 +22,10 @@ if errorlevel 1 (
 )
 
 echo 3) Iniciando backend (nova janela)
-start "Backend" cmd /k "cd %~dp0\src\retaguarda\Api && dotnet run --project Retaguarda.Api.csproj"
+start "Backend" cmd /k "cd /d ^"%~dp0src\retaguarda\Api^" && dotnet run --project Retaguarda.Api.csproj"
 
 echo 4) Iniciando frontend (nova janela). Pode demorar no primeiro start (npm install)
-start "Frontend" cmd /k "cd %~dp0\interface_grafica\web && if exist node_modules (npm run dev) else (npm install && npm run dev)"
+start "Frontend" cmd /k "cd /d ^"%~dp0interface_grafica\web^" && if exist node_modules (npm run dev) else (npm install && npm run dev)"
 
 echo Tudo iniciado. Verifique as janelas "Backend" e "Frontend".
 ENDLOCAL
