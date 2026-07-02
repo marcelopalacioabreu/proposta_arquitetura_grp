@@ -18,6 +18,33 @@ namespace Retaguarda.Persistencia.Inicializadores
 
             try
             {
+                // Ensure a default organization exists
+                var org = db.Organizacoes.FirstOrDefault(o => o.Nome == "Organização padrão");
+                if (org == null)
+                {
+                    org = new Organizacao
+                    {
+                        Nome = "Organização padrão",
+                        DataInsercao = DateTime.UtcNow
+                    };
+                    db.Organizacoes.Add(org);
+                    db.SaveChanges();
+                }
+
+                // Ensure a default setor exists for the organization
+                var setor = db.OrganizacaoSetores.FirstOrDefault(s => s.Nome == "Setor padrão" && s.OrganizacaoId == org.Id);
+                if (setor == null)
+                {
+                    setor = new OrganizacaoSetor
+                    {
+                        Nome = "Setor padrão",
+                        OrganizacaoId = org.Id,
+                        DataInsercao = DateTime.UtcNow
+                    };
+                    db.OrganizacaoSetores.Add(setor);
+                    db.SaveChanges();
+                }
+
                 var exists = db.Usuarios.FirstOrDefault(u => u.Username == "admin");
                 if (exists == null)
                 {
@@ -27,7 +54,9 @@ namespace Retaguarda.Persistencia.Inicializadores
                         Username = "admin",
                         Email = "admin@local",
                         DataInsercao = DateTime.UtcNow,
-                        SenhaHash = HashPassword("admin")
+                        SenhaHash = HashPassword("admin"),
+                        OrganizacaoId = org.Id,
+                        OrganizacaoSetorId = setor.Id
                     };
 
                     db.Usuarios.Add(user);
