@@ -1,0 +1,25 @@
+{
+  "setorPesquisa": {
+    "titulo": "Setores",
+    "filtro": [
+      { "campo": "codigo", "descricao": "Código", "tipo": "string", "col": 3 },
+      { "campo": "nome", "descricao": "Nome", "tipo": "string", "col": 3 },
+      { "campo": "descricao", "descricao": "Descrição", "tipo": "string", "col": 3 },
+      { "campo": "created_at", "descricao": "Criado em", "tipo": "date", "col": 3 }
+    ],
+    "tabela": {
+      "colunas": [
+        { "campo": "codigo", "titulo": "Código" },
+        { "campo": "nome", "titulo": "Nome" },
+        { "campo": "descricao", "titulo": "Descrição" },
+        { "campo": "created_at", "titulo": "Criado em" }
+      ],
+      "campos": ["codigo", "nome", "descricao", "created_at"],
+      "acoes": [
+        { "tipo": "navegacao", "destino": "/painel/organizacoes/setores/editar/{id}", "campo_id": "id", "icone": "pencil" },
+        { "tipo": "confirmacao_delete_ajax", "destino": "/api/setores/{id}", "campo_id": "id", "icone": "trash" }
+      ]
+    },
+    "pagination": { "pageSize": 10 }
+  }
+}
