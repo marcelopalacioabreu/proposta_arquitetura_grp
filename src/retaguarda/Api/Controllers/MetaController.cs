@@ -58,10 +58,36 @@ namespace Retaguarda.Api.Controllers
         [HttpGet("screens")]
         public IActionResult Screens()
         {
-            var p = FindFile("screens.json") ?? FindFile("Telas", "telas.json");
-            if (p == null) return NotFound();
-            var json = System.IO.File.ReadAllText(p);
-            return Content(json, "application/json");
+            // Aggregate all JSON files under Metadados/Contratos/Telas recursively
+            var screensDirProject = Path.Combine(_projectMetaPath, "Telas");
+            var screensDirDoc = Path.Combine(_docMetaPath, "Telas");
+
+            var aggregated = new System.Collections.Generic.Dictionary<string, object>();
+
+            void loadFromDir(string dir)
+            {
+                if (!Directory.Exists(dir)) return;
+                var files = Directory.GetFiles(dir, "*.json", SearchOption.AllDirectories);
+                foreach (var f in files)
+                {
+                    try
+                    {
+                        var txt = System.IO.File.ReadAllText(f);
+                        var doc = System.Text.Json.JsonDocument.Parse(txt);
+                        foreach (var prop in doc.RootElement.EnumerateObject())
+                        {
+                            aggregated[prop.Name] = System.Text.Json.JsonSerializer.Deserialize<object>(prop.Value.GetRawText());
+                        }
+                    }
+                    catch { /* ignore malformed */ }
+                }
+            }
+
+            // Load doc fallback first, then project to allow overrides
+            loadFromDir(screensDirDoc);
+            loadFromDir(screensDirProject);
+
+            return Ok(aggregated);
         }
 
         [HttpGet("all")]
