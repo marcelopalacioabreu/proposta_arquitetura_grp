@@ -27,7 +27,8 @@ export default function TelaPesquisa({ screenKey }){
     if (!meta) return
     // determine API endpoint from metadata
     let endpoint = null
-    if (meta.tabela && meta.tabela.endpoint) endpoint = meta.tabela.endpoint
+    if (meta.endpoint) endpoint = meta.endpoint
+    else if (meta.tabela && meta.tabela.endpoint) endpoint = meta.tabela.endpoint
     // try to derive from delete/navigation actions if not provided
     if (!endpoint && meta.tabela && Array.isArray(meta.tabela.acoes)){
       for (const a of meta.tabela.acoes){

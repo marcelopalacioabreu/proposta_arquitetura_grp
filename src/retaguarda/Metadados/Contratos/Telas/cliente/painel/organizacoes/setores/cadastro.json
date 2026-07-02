@@ -2,6 +2,7 @@
   "setorCadastro": {
     "tipo": "TELA_CADASTRO",
     "titulo": "Cadastro de Setor",
+    "endpoint": "/api/setores",
     "campos": [
       { "campo": "codigo", "label": "Código", "tipo": "text", "col": 6 },
       { "campo": "nome", "label": "Nome do setor", "tipo": "text", "col": 6 },

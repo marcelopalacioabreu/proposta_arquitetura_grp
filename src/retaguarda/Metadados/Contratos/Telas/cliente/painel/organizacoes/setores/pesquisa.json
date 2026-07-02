@@ -2,6 +2,7 @@
   "setorPesquisa": {
     "tipo": "TELA_PESQUISA",
     "titulo": "Setores",
+    "endpoint": "/api/setores",
     "filtro": [
       { "campo": "codigo", "descricao": "Código", "tipo": "string", "col": 3 },
       { "campo": "nome", "descricao": "Nome", "tipo": "string", "col": 3 },

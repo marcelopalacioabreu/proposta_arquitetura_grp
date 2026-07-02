@@ -17,7 +17,8 @@ export default function TelaCadastro({ screenKey }){
       axios.get('/meta/screens').then(r=>{
         const m = r.data[screenKey]
         let endpoint = null
-        if (m && m.tabela && m.tabela.endpoint) endpoint = m.tabela.endpoint
+        if (m && m.endpoint) endpoint = m.endpoint
+        else if (m && m.tabela && m.tabela.endpoint) endpoint = m.tabela.endpoint
         if (!endpoint && m && m.tabela && Array.isArray(m.tabela.acoes)){
           for (const a of m.tabela.acoes){
             if (a.destino && a.destino.startsWith('/api/')){
@@ -46,7 +47,8 @@ export default function TelaCadastro({ screenKey }){
       // derive endpoint from meta
       const m = meta
       let endpoint = null
-      if (m && m.tabela && m.tabela.endpoint) endpoint = m.tabela.endpoint
+      if (m && m.endpoint) endpoint = m.endpoint
+      else if (m && m.tabela && m.tabela.endpoint) endpoint = m.tabela.endpoint
       if (!endpoint && m && m.tabela && Array.isArray(m.tabela.acoes)){
         for (const a of m.tabela.acoes){
           if (a.destino && a.destino.startsWith('/api/')){

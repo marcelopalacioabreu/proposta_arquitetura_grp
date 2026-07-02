@@ -2,6 +2,7 @@
   "organizacaoCadastro": {
     "tipo": "TELA_CADASTRO",
     "titulo": "Cadastro de Organização",
+    "endpoint": "/api/organizacoes",
     "campos": [
       { "campo": "codigo", "label": "Código", "tipo": "text", "col": 6 },
       { "campo": "nome", "label": "Nome da organização", "tipo": "text", "col": 6 },
