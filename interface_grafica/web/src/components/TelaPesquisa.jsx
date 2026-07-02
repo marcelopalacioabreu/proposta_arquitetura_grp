@@ -25,6 +25,22 @@ export default function TelaPesquisa({ screenKey }){
 
   useEffect(()=>{
     if (!meta) return
+    // determine API endpoint from metadata
+    let endpoint = null
+    if (meta.tabela && meta.tabela.endpoint) endpoint = meta.tabela.endpoint
+    // try to derive from delete/navigation actions if not provided
+    if (!endpoint && meta.tabela && Array.isArray(meta.tabela.acoes)){
+      for (const a of meta.tabela.acoes){
+        if (a.destino && a.destino.startsWith('/api/')){
+          // strip trailing /{id} if present
+          endpoint = a.destino.replace(/\/{?\{id\}}?$/, '')
+          // also remove any placeholder like /{id}
+          endpoint = endpoint.replace(/\/\{id\}$/, '')
+          break
+        }
+      }
+    }
+    if (!endpoint) endpoint = '/api/organizacoes'
     // build query from filters
     const params = {}
     if (meta.filtro){
@@ -39,7 +55,7 @@ export default function TelaPesquisa({ screenKey }){
     const sortField = query.get('sortField') || null
     const sortDir = query.get('sortDir') || null
 
-    axios.get('/api/organizacoes', { params: { ...params, page, pageSize, sortField, sortDir } }).then(r=>{
+    axios.get(endpoint, { params: { ...params, page, pageSize, sortField, sortDir } }).then(r=>{
       // API returns { items, total, page, pageSize }
       if (r.data.items) { setItems(r.data.items); setTotal(r.data.total || r.data.items.length) }
       else setItems(r.data)

@@ -13,7 +13,23 @@ export default function TelaCadastro({ screenKey }){
   useEffect(()=>{
     axios.get('/meta/screens').then(r=> setMeta(r.data[screenKey]))
     if (params.id && params.id !== 'new'){
-      axios.get(`/api/organizacoes/${params.id}`).then(r=> setModel(r.data)).catch(()=>{})
+      // determine API endpoint from metadata
+      axios.get('/meta/screens').then(r=>{
+        const m = r.data[screenKey]
+        let endpoint = null
+        if (m && m.tabela && m.tabela.endpoint) endpoint = m.tabela.endpoint
+        if (!endpoint && m && m.tabela && Array.isArray(m.tabela.acoes)){
+          for (const a of m.tabela.acoes){
+            if (a.destino && a.destino.startsWith('/api/')){
+              endpoint = a.destino.replace(/\/{?\{id\}}?$/, '')
+              endpoint = endpoint.replace(/\/\{id\}$/, '')
+              break
+            }
+          }
+        }
+        if (!endpoint) endpoint = '/api/organizacoes'
+        axios.get(`${endpoint}/${params.id}`).then(r=> setModel(r.data)).catch(()=>{})
+      })
     }
   },[screenKey, params.id])
 
@@ -27,10 +43,25 @@ export default function TelaCadastro({ screenKey }){
     const obj = {}
     for (const [k,v] of fd.entries()) obj[k]=v
     try{
+      // derive endpoint from meta
+      const m = meta
+      let endpoint = null
+      if (m && m.tabela && m.tabela.endpoint) endpoint = m.tabela.endpoint
+      if (!endpoint && m && m.tabela && Array.isArray(m.tabela.acoes)){
+        for (const a of m.tabela.acoes){
+          if (a.destino && a.destino.startsWith('/api/')){
+            endpoint = a.destino.replace(/\/{?\{id\}}?$/, '')
+            endpoint = endpoint.replace(/\/\{id\}$/, '')
+            break
+          }
+        }
+      }
+      if (!endpoint) endpoint = '/api/organizacoes'
+
       if (params.id === 'new'){
-        await axios.post('/api/organizacoes', obj)
+        await axios.post(endpoint, obj)
       } else {
-        await axios.put(`/api/organizacoes/${params.id}`, obj)
+        await axios.put(`${endpoint}/${params.id}`, obj)
       }
       navigate('/painel/organizacoes')
     }catch(err){
