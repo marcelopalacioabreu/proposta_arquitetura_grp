@@ -1,5 +1,6 @@
 {
   "organizacaoPesquisa": {
+    "tipo": "TELA_PESQUISA",
     "titulo": "Organizações",
     "filtro": [
       { "campo": "codigo", "descricao": "Código", "tipo": "string", "col": 3 },

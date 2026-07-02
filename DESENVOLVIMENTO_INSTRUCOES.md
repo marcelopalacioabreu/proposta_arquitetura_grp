@@ -74,3 +74,7 @@ npm run dev
 - Erro de porta já em uso: ajuste `ASPNETCORE_URLS` ou a porta do DevServer do Vite.
 
 ---
+
+Observação adicional:
+- As migrations devem seguir o padrão `000001_nome`, `000002_nome`, ... para manter agrupamento por banco. Arquivos já existentes em `src/retaguarda/Persistencia/MYSQL/Migracoes` foram renomeados para obedecer esse padrão.
+- O seeder de desenvolvimento foi movido para `src/retaguarda/Persistencia/Inicializadores/SeedData.cs` e é executado automaticamente na inicialização do backend em modo desenvolvimento.

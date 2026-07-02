@@ -70,7 +70,7 @@ app.UseMiddleware<Retaguarda.Api.Middleware.UsuarioMiddleware>();
 app.UseAuthorization();
 
 // Seed default admin user if missing (development convenience)
-Retaguarda.Api.Data.SeedData.EnsureSeed(app.Services);
+Retaguarda.Persistencia.Inicializadores.SeedData.EnsureSeed(app.Services);
 
 app.MapControllers();
 

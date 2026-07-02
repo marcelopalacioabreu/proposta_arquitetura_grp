@@ -1,5 +1,6 @@
 {
   "setorCadastro": {
+    "tipo": "TELA_CADASTRO",
     "titulo": "Cadastro de Setor",
     "campos": [
       { "campo": "codigo", "label": "Código", "tipo": "text", "col": 6 },
