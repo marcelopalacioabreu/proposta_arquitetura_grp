@@ -2,10 +2,8 @@
   "organizacaoPesquisa": {
     "tipo": "TELA_PESQUISA",
     "tabela": {
-      "colunas": [
-        { "campo": "id", "titulo": "Id" },
-        { "campo": "nome", "titulo": "Nome" }
-      ],
+      "colunas": ["Id","Nome"],
+      "campos": ["id","nome"],
       "sortable": ["id","nome"],
       "acoes": [
         { "tipo": "navegacao", "destino": "/painel/organizacoes/editar/{id}", "campo_id": "id", "icone": "edit" },
