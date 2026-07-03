@@ -1,6 +1,7 @@
 using System.Text;
 using System.Security.Cryptography;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using System.Text.Json.Serialization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Retaguarda.Persistencia.MYSQL;
@@ -69,7 +70,12 @@ builder.Services.AddAuthentication(options =>
 
 builder.Services.AddAuthorization();
 
-builder.Services.AddControllers();
+builder.Services.AddControllers().AddJsonOptions(opts =>
+{
+    // Avoid errors when EF Core creates object graphs with back-references
+    opts.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+    // keep default max depth (32) unless explicit needs arise
+});
 var app = builder.Build();
 
 app.UseAuthentication();
