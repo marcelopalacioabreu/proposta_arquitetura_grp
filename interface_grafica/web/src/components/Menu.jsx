@@ -6,6 +6,7 @@ export default function Menu(){
   const [modulos, setModulos] = useState([])
   const [overlayOpen, setOverlayOpen] = useState(false)
   const [query, setQuery] = useState('')
+  const [compact, setCompact] = useState(true)
   const location = useLocation()
 
   useEffect(()=>{
@@ -24,16 +25,23 @@ export default function Menu(){
   return (
     <>
       {/* Floating collapsed bar (icons only) */}
-      <div className="floating-bar" aria-hidden={overlayOpen}>
+      <div className={`floating-bar ${compact ? 'compact' : ''}`} aria-hidden={overlayOpen}>
         <div className="floating-buttons d-flex flex-column align-items-center">
-          <button className="btn btn-dark btn-sm mb-2" onClick={()=> setOverlayOpen(true)} title="Abrir menu"><i className="bi bi-list"/></button>
-          {modulos.map((g,gi)=> (
-            (g.items||[]).map((it,ii)=> (
-              <Link key={`${gi}-${ii}`} to={it.url} className="btn btn-light btn-sm mb-2 icon-btn" title={it.label}>
-                {it.icon ? <i className={`bi bi-${it.icon}`}/> : <i className="bi bi-dot"/>}
-              </Link>
-            ))
-          ))}
+          <button className="main-square btn btn-light mb-2" onClick={()=> setOverlayOpen(true)} title="Abrir menu">
+            <i className="bi bi-list"/>
+          </button>
+          <div className="icon-list">
+            {modulos.map((g,gi)=> (
+              (g.items||[]).map((it,ii)=> (
+                <Link key={`${gi}-${ii}`} to={it.url} className="btn btn-light btn-sm mb-2 icon-btn" title={it.label}>
+                  {it.icon ? <i className={`bi bi-${it.icon}`}/> : <i className="bi bi-dot"/>}
+                </Link>
+              ))
+            ))}
+          </div>
+          <button className="btn btn-outline-secondary btn-sm mt-auto toggle-compact" onClick={()=> setCompact(c=>!c)} title={compact ? 'Expandir barra' : 'Compactar barra'}>
+            <i className={`bi bi-${compact ? 'chevron-bar-right' : 'chevron-bar-left'}`}></i>
+          </button>
         </div>
       </div>
 
