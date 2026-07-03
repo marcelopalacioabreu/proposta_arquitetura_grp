@@ -21,7 +21,15 @@ export default function Navbar({ brand = 'Painel' }){
   },[])
 
   async function handleLogout(){
-    try{ await axios.post('/auth/logout'); setUser(null); navigate('/login') }catch{ navigate('/login') }
+    try{
+      await axios.post('/auth/logout');
+      setUser(null);
+      navigate('/login');
+      // reload to ensure cookie is cleared and authenticated UI resets
+      window.location.reload();
+    }catch{
+      navigate('/login')
+    }
   }
 
   return (
