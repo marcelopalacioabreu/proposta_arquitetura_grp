@@ -28,11 +28,7 @@ export default function PrivateLayout(){
           </div>
 
           <div className="flex-fill p-3">
-            <div className="page-wrapper">
-              <div className="page-card w-100">
                 <Outlet />
-              </div>
-            </div>
           </div>
         </div>
       </div>
