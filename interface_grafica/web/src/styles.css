@@ -45,11 +45,12 @@ body{ font-family: Arial, sans-serif; margin:0; padding:0; background:#f5f7fa }
 .sidebar-collapsed{ width:64px }
 .sidebar-collapsed-not{ width:220px }
 
+/* Sidebar column used in layout: fixed narrow column that doesn't push content when overlay opens */
+.sidebar-column{ width:64px; min-width:64px; transition:width .18s ease; position:relative }
+.sidebar-column .sidebar-collapsed-not{ width:220px }
+
 /* Expanded overlay (desktop) */
 .sidebar-expanded-overlay .sidebar-overlay-backdrop{ position:fixed; inset:0; background:rgba(0,0,0,0.35); z-index:1040 }
 .sidebar-expanded-overlay .sidebar-overlay{ position:fixed; left:0; top:0; bottom:0; width:280px; background:#fff; box-shadow: 2px 0 12px rgba(0,0,0,0.12); z-index:1050; overflow:auto }
-
-/* Ensure the sidebar area inside column keeps small width so content doesn't shift */
-.col-sidebar-placeholder{ width:64px; min-width:64px }
 
 
