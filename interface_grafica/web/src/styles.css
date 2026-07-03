@@ -28,3 +28,11 @@ body{ font-family: Arial, sans-serif; margin:0; padding:0; background:#f5f7fa }
 /* Make tables responsive inside cards */
 .page-card .table{ margin-bottom:0 }
 
+/* Home button positioning to avoid overlapping sidebar */
+.navbar{ position:relative }
+.home-left{ position:absolute; left:56px; top:50%; transform:translateY(-50%); z-index:50 }
+@media(min-width:768px){
+	/* On desktop, offset home button to the right of the visible sidebar (220px) + small gap */
+	.home-left{ left:236px }
+}
+

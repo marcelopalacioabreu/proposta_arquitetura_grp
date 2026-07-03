@@ -37,6 +37,10 @@ export default function Navbar({ brand = 'Painel' }){
 
       <nav className="navbar navbar-expand-md navbar-light bg-white border-bottom">
         <div className="container-fluid">
+          {/* Home icon placed absolutely to avoid invading sidebar width */}
+          <a className="btn btn-outline-secondary btn-sm home-left d-flex align-items-center" href="/" title="Home">
+            <i className="bi bi-house" style={{fontSize:'1.1rem'}} />
+          </a>
           <a className="navbar-brand d-flex align-items-center" href="/painel">{brand}</a>
           <div className="ms-auto d-flex align-items-center">
             {/* Home icon */}
