@@ -70,5 +70,15 @@ namespace Retaguarda.Api.Controllers
             public string Password { get; set; } = string.Empty;
             public bool AsCookie { get; set; } = true;
         }
+
+        [HttpGet("me")]
+        public IActionResult Me()
+        {
+            var reqUsuario = HttpContext.RequestServices.GetService(typeof(Retaguarda.Servicos.RequisicaoUsuario)) as Retaguarda.Servicos.RequisicaoUsuario;
+            var u = reqUsuario?.Usuario;
+            if (u == null) return Unauthorized();
+
+            return Ok(new { id = u.Id, nome = u.Nome, username = u.Username, email = u.Email });
+        }
     }
 }
