@@ -93,17 +93,38 @@ export default function TelaPesquisa({ screenKey }){
       <div className="d-flex justify-content-between align-items-center mb-2">
         <h3>{meta.titulo || 'Pesquisa'}</h3>
         <div>
-          <button className="btn btn-primary" onClick={()=> navigate((meta.tabela?.acoes?.find(a=>a.tipo==='navegacao')?.destino || '/painel/organizacoes/editar/new').replace('{id}','new'))}>Novo</button>
+          <button
+            className="btn btn-primary"
+            onClick={()=> navigate((meta.tabela?.acoes?.find(a=>a.tipo==='navegacao')?.destino || '/painel/organizacoes/editar/new').replace('{id}','new'))}
+            title="Novo"
+            aria-label="Novo"
+          >
+            <i className="bi bi-plus" />
+          </button>
         </div>
       </div>
 
       {/* Tabs for Ativos / Inativos */}
       <ul className="nav nav-tabs mb-3">
         <li className="nav-item">
-          <button className={`nav-link ${!query.get('inativo') || query.get('inativo') === '0' ? 'active' : ''}`} onClick={()=>{ const cur = new URLSearchParams(location.search); cur.delete('inativo'); navigate({ search: cur.toString() })}}>Ativos</button>
+          <button
+            className={`nav-link ${!query.get('inativo') || query.get('inativo') === '0' ? 'active' : ''}`}
+            onClick={()=>{ const cur = new URLSearchParams(location.search); cur.delete('inativo'); navigate({ search: cur.toString() })}}
+            title="Ativos"
+            aria-label="Ativos"
+          >
+            <i className="bi bi-check-circle" />
+          </button>
         </li>
         <li className="nav-item">
-          <button className={`nav-link ${query.get('inativo') === '1' ? 'active' : ''}`} onClick={()=>{ const cur = new URLSearchParams(location.search); cur.set('inativo','1'); navigate({ search: cur.toString() })}}>Inativos</button>
+          <button
+            className={`nav-link ${query.get('inativo') === '1' ? 'active' : ''}`}
+            onClick={()=>{ const cur = new URLSearchParams(location.search); cur.set('inativo','1'); navigate({ search: cur.toString() })}}
+            title="Inativos"
+            aria-label="Inativos"
+          >
+            <i className="bi bi-x-circle" />
+          </button>
         </li>
       </ul>
 
@@ -138,7 +159,7 @@ export default function TelaPesquisa({ screenKey }){
             {/* reserved for hidden inativo input if needed */}
           </div>
           <div className="col-12">
-            <button className="btn btn-secondary">Filtrar</button>
+            <button className="btn btn-secondary" title="Filtrar" aria-label="Filtrar"><i className="bi bi-funnel" /></button>
           </div>
         </form>
       </div>
@@ -155,7 +176,8 @@ export default function TelaPesquisa({ screenKey }){
               const icon = isActive ? (curDir === 'asc' ? 'arrow-up' : 'arrow-down') : 'dash'
               return (
                 <th key={idx}>
-                  <button className="btn btn-link p-0" onClick={()=>{
+                  {title}{' '}
+                  <button className="btn btn-link p-0" title={`Ordenar por ${title}`} aria-label={`Ordenar por ${title}`} onClick={()=>{
                     const cur = new URLSearchParams(location.search)
                     if (cur.get('sortField') === field){
                       cur.set('sortDir', cur.get('sortDir') === 'asc' ? 'desc' : 'asc')
@@ -165,7 +187,7 @@ export default function TelaPesquisa({ screenKey }){
                     }
                     cur.set('page', '1')
                     navigate({ search: cur.toString() })
-                  }}>{title} <i className={`bi bi-${icon}`}></i></button>
+                  }}><i className={`bi bi-${icon}`}></i></button>
                 </th>
               )
             })}
@@ -195,9 +217,9 @@ export default function TelaPesquisa({ screenKey }){
       {meta.pagination && (
         <div className="d-flex justify-content-between align-items-center">
           <div>Mostrando {items.length} de {total}</div>
-          <div>
-            <button className="btn btn-sm btn-secondary me-2" onClick={()=>{ const cur = new URLSearchParams(useLocation().search); const p = Math.max(1, parseInt(cur.get('page')||1)-1); cur.set('page', p); navigate({ search: cur.toString() }) }}>Anterior</button>
-            <button className="btn btn-sm btn-secondary" onClick={()=>{ const cur = new URLSearchParams(useLocation().search); const p = Math.max(1, parseInt(cur.get('page')||1)+1); cur.set('page', p); navigate({ search: cur.toString() }) }}>Próxima</button>
+            <div>
+            <button className="btn btn-sm btn-secondary me-2" title="Anterior" aria-label="Anterior" onClick={()=>{ const cur = new URLSearchParams(useLocation().search); const p = Math.max(1, parseInt(cur.get('page')||1)-1); cur.set('page', p); navigate({ search: cur.toString() }) }}><i className="bi bi-chevron-left" /></button>
+            <button className="btn btn-sm btn-secondary" title="Próxima" aria-label="Próxima" onClick={()=>{ const cur = new URLSearchParams(useLocation().search); const p = Math.max(1, parseInt(cur.get('page')||1)+1); cur.set('page', p); navigate({ search: cur.toString() }) }}><i className="bi bi-chevron-right" /></button>
           </div>
         </div>
       )}
