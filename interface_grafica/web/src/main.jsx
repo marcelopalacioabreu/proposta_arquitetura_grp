@@ -7,6 +7,7 @@ import CadastroUsuario from './pages/CadastroUsuario'
 import PrivateLayout from './components/PrivateLayout'
 import TelaPesquisa from './components/TelaPesquisa'
 import TelaCadastro from './components/TelaCadastro'
+import InicioPainel from './pages/painel/InicioPainel'
 import './styles.css'
 import 'bootstrap/dist/css/bootstrap.min.css'
 import axios from 'axios'
@@ -25,7 +26,7 @@ function App(){
           <Route path='organizacoes/editar/:id' element={<TelaCadastro screenKey={'organizacaoCadastro'} />} />
           <Route path='organizacoes/setores' element={<TelaPesquisa screenKey={'setorPesquisa'} />} />
           <Route path='organizacoes/setores/editar/:id' element={<TelaCadastro screenKey={'setorCadastro'} />} />
-          <Route index element={<div className="container mt-3">Escolha uma opção no menu.</div>} />
+          <Route index element={<InicioPainel/>} />
         </Route>
         <Route path='*' element={<Navigate to='/' replace />} />
       </Routes>

@@ -9,7 +9,7 @@ body{ font-family: Arial, sans-serif; margin:0; padding:0; background:#f5f7fa }
 
 /* Centered page card used for login, cadastro, and centered forms */
 .page-wrapper{ display:flex; align-items:center; justify-content:center; padding:24px }
-.page-card{ width:100%; max-width:920px; margin:24px; background:#fff; border-radius:8px; box-shadow:0 6px 18px rgba(23,38,59,0.08); padding:24px }
+.page-card{ width:100%; max-width:1200px; margin:24px; background:#fff; border-radius:8px; box-shadow:0 6px 18px rgba(23,38,59,0.08); padding:24px }
 
 /* Compact sidebar: show icons only and hide labels */
 .menu .list-group-item{ display:flex; align-items:center }
