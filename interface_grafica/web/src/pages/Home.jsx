@@ -1,12 +1,15 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
+import Navbar from '../components/Navbar'
 export default function Home(){
   return (
     <div>
-      <div className="header">Retaguarda - Home</div>
-      <div className="container">
-        <h2>Bem-vindo</h2>
-        <p><Link to="/login">Entrar</Link> | <Link to="/cadastro">Criar conta</Link></p>
+      <Navbar brand="Retaguarda" />
+      <div className="page-wrapper">
+        <div className="page-card">
+          <h2>Bem-vindo</h2>
+          <p><Link to="/login">Entrar</Link> | <Link to="/cadastro">Criar conta</Link></p>
+        </div>
       </div>
     </div>
   )
