@@ -46,35 +46,30 @@ export default function Menu(){
 
   return (
     <>
-      {/* Floating collapsed bar (icons only) */}
+      {/* Floating collapsed bar (icons only -> use same markup for both states) */}
       <div className={`floating-bar ${compact ? 'compact' : 'expanded'}`}>
         <div className="floating-buttons d-flex flex-column">
-          <div className="d-flex justify-content-center">
-            <button className="main-square btn btn-light mb-2" onClick={()=> setCompact(c=>!c)} title={compact ? 'Expandir menu' : 'Fechar menu'}>
-              <i className="bi bi-list"/>
-            </button>
-          </div>
-
-          {!compact && (
-            <div className="menu-panel">
-              <div className="p-2">
+          <div className="menu-panel">
+            <div className={`p-2 ${compact ? 'compact-body' : ''}`}>
+              {!compact && (
                 <input className="form-control form-control-sm mb-2" placeholder="Pesquisar menu..." value={query} onChange={e=> setQuery(e.target.value)} />
-                {filtered.map((g, gi) => (
-                  <div key={gi} className="mb-2">
-                    <div className="small text-muted mb-1 px-1">{g.group}</div>
-                    <div className="list-group">
-                      {g.items && g.items.map((it, ii) => (
-                        <Link key={ii} to={it.url} className="list-group-item list-group-item-action d-flex align-items-center" onClick={()=>{}}
-                        >
-                          {it.icon && <i className={`bi bi-${it.icon} me-2`} />}<span>{it.label}</span>
-                        </Link>
-                      ))}
-                    </div>
+              )}
+              {filtered.map((g, gi) => (
+                <div key={gi} className="mb-2">
+                  <div className="small text-muted mb-1 px-1">{g.group}</div>
+                  <div className="list-group">
+                    {g.items && g.items.map((it, ii) => (
+                      <Link key={ii} to={it.url} className={`list-group-item list-group-item-action d-flex align-items-center ${location.pathname === it.url ? 'active' : ''}`} onClick={()=>{}}
+                      >
+                        {it.icon && <i className={`bi bi-${it.icon} me-2`} />}
+                        <span className="item-label">{it.label}</span>
+                      </Link>
+                    ))}
                   </div>
-                ))}
-              </div>
+                </div>
+              ))}
             </div>
-          )}
+          </div>
 
           <div className="mt-auto d-flex justify-content-center w-100">
             <button className="btn btn-outline-secondary btn-sm toggle-compact" onClick={()=> setCompact(c=>!c)} title={compact ? 'Expandir barra' : 'Compactar barra'}>
