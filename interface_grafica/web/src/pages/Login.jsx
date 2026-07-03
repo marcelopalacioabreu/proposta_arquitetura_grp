@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import axios from 'axios'
 import { useNavigate } from 'react-router-dom'
 import Navbar from '../components/Navbar'
+import Footer from '../components/Footer'
 
 export default function Login(){
   const [user,setUser] = useState('')
@@ -19,9 +20,9 @@ export default function Login(){
   }
 
   return (
-    <div>
+    <div className="d-flex flex-column min-vh-100">
       <Navbar brand="Retaguarda" />
-      <div className="page-wrapper vh-100">
+      <div className="page-wrapper flex-fill d-flex align-items-center justify-content-center">
         <div className="page-card" style={{maxWidth:420}}>
           <h3 className="mb-3">Entrar</h3>
           <form onSubmit={submit}>
@@ -39,6 +40,7 @@ export default function Login(){
           </form>
         </div>
       </div>
+      <Footer />
     </div>
   )
 }

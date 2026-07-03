@@ -2,19 +2,19 @@ import React from 'react'
 import { Outlet } from 'react-router-dom'
 import Menu from './Menu'
 import Navbar from './Navbar'
+import Footer from './Footer'
 
 export default function PrivateLayout(){
   return (
-    <div>
+    <div className="d-flex vh-100 w-100 page-root flex-column">
       <Navbar brand="Painel" />
 
-      <div className="container-fluid">
-        <div className="d-flex">
-          <div className="d-none d-md-block sidebar-column p-2">
-            <Menu />
-          </div>
+      <div className="container-fluid flex-fill position-relative">
+        {/* Floating Menu overlays the content; no reserved sidebar width */}
+        <Menu />
 
-          {/* Mobile offcanvas sidebar */}
+        <div className="d-flex">
+          {/* Mobile offcanvas retained for small screens */}
           <div className="d-md-none">
             <div className="offcanvas offcanvas-start" tabIndex={-1} id="sidebar" aria-labelledby="sidebarLabel">
               <div className="offcanvas-header">
@@ -36,6 +36,8 @@ export default function PrivateLayout(){
           </div>
         </div>
       </div>
+
+      <Footer />
     </div>
   )
 }

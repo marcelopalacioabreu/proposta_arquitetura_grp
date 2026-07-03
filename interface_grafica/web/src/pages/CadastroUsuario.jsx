@@ -1,11 +1,12 @@
 import React from 'react'
 import Navbar from '../components/Navbar'
+import Footer from '../components/Footer'
 
 export default function CadastroUsuario(){
   return (
-    <div>
+    <div className="d-flex flex-column min-vh-100">
       <Navbar brand="Retaguarda" />
-      <div className="page-wrapper vh-100">
+      <div className="page-wrapper flex-fill d-flex align-items-center justify-content-center">
         <div className="page-card" style={{maxWidth:720}}>
           <h3 className="mb-3">Criar Conta</h3>
           <form>
@@ -33,6 +34,7 @@ export default function CadastroUsuario(){
           </form>
         </div>
       </div>
+      <Footer />
     </div>
   )
 }
