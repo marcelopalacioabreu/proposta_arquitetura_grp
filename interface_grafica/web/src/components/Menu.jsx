@@ -62,6 +62,9 @@ export default function Menu(){
               ))
             ))}
           </div>
+          <button className="btn btn-outline-secondary btn-sm mt-auto toggle-compact" onClick={()=> setCompact(c=>!c)} title={compact ? 'Expandir barra' : 'Compactar barra'}>
+            <i className={`bi bi-${compact ? 'chevron-bar-right' : 'chevron-bar-left'}`}></i>
+          </button>
         </div>
       </div>
 

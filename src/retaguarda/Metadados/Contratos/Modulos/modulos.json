@@ -3,7 +3,7 @@
     {
       "group": "Administração",
       "items": [
-        { "key": "organizacoes", "label": "Organizações", "icon": "business", "url": "/painel/organizacoes", "permissoes": [
+        { "key": "organizacoes", "label": "Organizações", "icon": "building", "url": "/painel/organizacoes", "permissoes": [
                     { "id": "organizacoes.visualizar", "label": "Visualizar" },
                     { "id": "organizacoes.editar", "label": "Criar/Editar" },
                     { "id": "organizacoes.excluir", "label": "Excluir" }
