@@ -39,6 +39,10 @@ export default function Navbar({ brand = 'Painel' }){
         <div className="container-fluid">
           <a className="navbar-brand d-flex align-items-center" href="/painel">{brand}</a>
           <div className="ms-auto d-flex align-items-center">
+            {/* Home icon */}
+            <a className="btn btn-outline-secondary btn-sm me-2 d-flex align-items-center" href="/" title="Home">
+              <i className="bi bi-house" style={{fontSize:'1.1rem'}} />
+            </a>
             <div className="me-2 d-none d-md-block small text-muted">{user ? `Olá, ${user.nome || user.username}` : ''}</div>
             <div className="position-relative" ref={userMenuRef}>
               <button className="btn btn-outline-secondary btn-sm d-flex align-items-center" onClick={()=> setUserMenuOpen(s=>!s)}>
@@ -50,6 +54,7 @@ export default function Navbar({ brand = 'Painel' }){
                   {user ? (
                     <>
                       <div className="dropdown-item-text">{user.nome || user.username}</div>
+                      <a className="dropdown-item d-flex align-items-center" href="/painel"><i className="bi bi-speedometer2 me-2" />Painel</a>
                       <div className="dropdown-divider" />
                       <button className="dropdown-item" onClick={handleLogout}>Sair</button>
                     </>
