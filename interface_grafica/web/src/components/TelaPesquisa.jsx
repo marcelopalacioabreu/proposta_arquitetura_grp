@@ -94,7 +94,7 @@ export default function TelaPesquisa({ screenKey }){
         <h3>{meta.titulo || 'Pesquisa'}</h3>
         <div>
           <button
-            className="btn btn-primary"
+            className="btn btn-primary btn-icon"
             onClick={()=> navigate((meta.tabela?.acoes?.find(a=>a.tipo==='navegacao')?.destino || '/painel/organizacoes/editar/new').replace('{id}','new'))}
             title="Novo"
             aria-label="Novo"
@@ -108,7 +108,7 @@ export default function TelaPesquisa({ screenKey }){
       <ul className="nav nav-tabs mb-3">
         <li className="nav-item">
           <button
-            className={`nav-link ${!query.get('inativo') || query.get('inativo') === '0' ? 'active' : ''}`}
+            className={`nav-link btn-icon ${!query.get('inativo') || query.get('inativo') === '0' ? 'active' : ''}`}
             onClick={()=>{ const cur = new URLSearchParams(location.search); cur.delete('inativo'); navigate({ search: cur.toString() })}}
             title="Ativos"
             aria-label="Ativos"
@@ -118,7 +118,7 @@ export default function TelaPesquisa({ screenKey }){
         </li>
         <li className="nav-item">
           <button
-            className={`nav-link ${query.get('inativo') === '1' ? 'active' : ''}`}
+            className={`nav-link btn-icon ${query.get('inativo') === '1' ? 'active' : ''}`}
             onClick={()=>{ const cur = new URLSearchParams(location.search); cur.set('inativo','1'); navigate({ search: cur.toString() })}}
             title="Inativos"
             aria-label="Inativos"
@@ -155,11 +155,8 @@ export default function TelaPesquisa({ screenKey }){
               <input name="valor" value={formState.valor} onChange={e=> setFormState(s=> ({ ...s, valor: e.target.value }))} placeholder="Valor" className="form-control" />
             </div>
           )}
-          <div className="col-md-2 d-none" id="campo-hidden-inativo">
-            {/* reserved for hidden inativo input if needed */}
-          </div>
-          <div className="col-12">
-            <button className="btn btn-secondary" title="Filtrar" aria-label="Filtrar"><i className="bi bi-funnel" /></button>
+          <div className="col-md-2 d-flex align-items-end" id="campo-hidden-inativo">
+            <button className="btn btn-secondary btn-icon" title="Filtrar" aria-label="Filtrar"><i className="bi bi-funnel" /></button>
           </div>
         </form>
       </div>
@@ -177,7 +174,7 @@ export default function TelaPesquisa({ screenKey }){
               return (
                 <th key={idx}>
                   {title}{' '}
-                  <button className="btn btn-link p-0" title={`Ordenar por ${title}`} aria-label={`Ordenar por ${title}`} onClick={()=>{
+                  <button className="btn btn-link p-0 btn-icon" title={`Ordenar por ${title}`} aria-label={`Ordenar por ${title}`} onClick={()=>{
                     const cur = new URLSearchParams(location.search)
                     if (cur.get('sortField') === field){
                       cur.set('sortDir', cur.get('sortDir') === 'asc' ? 'desc' : 'asc')
@@ -204,8 +201,8 @@ export default function TelaPesquisa({ screenKey }){
               <td>
                     {meta.tabela.acoes.map((a, ai) => (
                       <React.Fragment key={ai}>
-                        {a.tipo === 'navegacao' && <button className="btn btn-sm btn-link" onClick={()=> navigate(a.destino.replace('{id}', it[a.campo_id]))}><i className={`bi bi-${a.icone}`}></i></button>}
-                        {a.tipo === 'confirmacao_delete_ajax' && <button className="btn btn-sm btn-link text-danger" onClick={()=> setConfirmState({ show: true, title: 'Excluir', message: 'Confirma exclusão?', onConfirm: async ()=>{ await axios.delete(a.destino.replace('{id}', it[a.campo_id])); setItems(items.filter(x=> x.id !== it.id)); setConfirmState(s=> ({...s, show: false})) } }) }><i className={`bi bi-${a.icone}`}></i></button>}
+                        {a.tipo === 'navegacao' && <button className="btn btn-sm btn-link btn-icon" onClick={()=> navigate(a.destino.replace('{id}', it[a.campo_id]))}><i className={`bi bi-${a.icone}`}></i></button>}
+                        {a.tipo === 'confirmacao_delete_ajax' && <button className="btn btn-sm btn-link text-danger btn-icon" onClick={()=> setConfirmState({ show: true, title: 'Excluir', message: 'Confirma exclusão?', onConfirm: async ()=>{ await axios.delete(a.destino.replace('{id}', it[a.campo_id])); setItems(items.filter(x=> x.id !== it.id)); setConfirmState(s=> ({...s, show: false})) } }) }><i className={`bi bi-${a.icone}`}></i></button>}
                       </React.Fragment>
                     ))}
               </td>
@@ -218,8 +215,8 @@ export default function TelaPesquisa({ screenKey }){
         <div className="d-flex justify-content-between align-items-center">
           <div>Mostrando {items.length} de {total}</div>
             <div>
-            <button className="btn btn-sm btn-secondary me-2" title="Anterior" aria-label="Anterior" onClick={()=>{ const cur = new URLSearchParams(useLocation().search); const p = Math.max(1, parseInt(cur.get('page')||1)-1); cur.set('page', p); navigate({ search: cur.toString() }) }}><i className="bi bi-chevron-left" /></button>
-            <button className="btn btn-sm btn-secondary" title="Próxima" aria-label="Próxima" onClick={()=>{ const cur = new URLSearchParams(useLocation().search); const p = Math.max(1, parseInt(cur.get('page')||1)+1); cur.set('page', p); navigate({ search: cur.toString() }) }}><i className="bi bi-chevron-right" /></button>
+            <button className="btn btn-sm btn-secondary btn-icon me-2" title="Anterior" aria-label="Anterior" onClick={()=>{ const cur = new URLSearchParams(useLocation().search); const p = Math.max(1, parseInt(cur.get('page')||1)-1); cur.set('page', p); navigate({ search: cur.toString() }) }}><i className="bi bi-chevron-left" /></button>
+            <button className="btn btn-sm btn-secondary btn-icon" title="Próxima" aria-label="Próxima" onClick={()=>{ const cur = new URLSearchParams(useLocation().search); const p = Math.max(1, parseInt(cur.get('page')||1)+1); cur.set('page', p); navigate({ search: cur.toString() }) }}><i className="bi bi-chevron-right" /></button>
           </div>
         </div>
       )}
