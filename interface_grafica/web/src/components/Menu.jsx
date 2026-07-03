@@ -44,14 +44,14 @@ export default function Menu(){
     return modulos.map(g => ({ ...g, items: (g.items || []).filter(i => (i.label||'').toLowerCase().includes(q)) })).filter(g => (g.items || []).length > 0)
   },[modulos, query])
 
-  function renderCompactIcon(name){
-    // small inline SVG fallbacks for critical icons to guarantee visibility
+  function renderCompactIcon(name, active){
     if (!name) return <i className="bi bi-square" />
+    const defaultColor = active ? '#fff' : '#495057'
     switch(name){
       case 'building':
         return (
-          <svg width="20" height="20" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg" aria-hidden>
-            <path d="M14.5 13.5V2a1 1 0 0 0-1-1H2.5a1 1 0 0 0-1 1v11.5H.5a.5.5 0 0 0 0 1h15a.5.5 0 0 0 0-1h-1zM3 3h9v3H3V3zm0 4h2v2H3V7zm3 0h6v2H6V7zM3 10h2v2H3v-2z" />
+          <svg width="20" height="20" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" aria-hidden>
+            <path fill={defaultColor} d="M14.5 13.5V2a1 1 0 0 0-1-1H2.5a1 1 0 0 0-1 1v11.5H.5a.5.5 0 0 0 0 1h15a.5.5 0 0 0 0-1h-1zM3 3h9v3H3V3zm0 4h2v2H3V7zm3 0h6v2H6V7zM3 10h2v2H3v-2z" />
           </svg>
         )
       default:
@@ -86,11 +86,14 @@ export default function Menu(){
                 </>
               ) : (
                 <div className="compact-icons d-flex flex-column align-items-center">
-                  {filtered.flatMap(g => g.items || []).map((it, idx) => (
-                    <Link key={idx} to={it.url} className={`compact-icon mb-2 ${location.pathname === it.url ? 'active' : ''}`} title={it.label}>
-                      {it.icon ? (renderCompactIcon(it.icon)) : <i className="bi bi-square"/>}
-                    </Link>
-                  ))}
+                  {filtered.flatMap(g => g.items || []).map((it, idx) => {
+                    const isActive = location.pathname === it.url
+                    return (
+                      <Link key={idx} to={it.url} className={`compact-icon mb-2 ${isActive ? 'active' : ''}`} title={it.label}>
+                        {it.icon ? (renderCompactIcon(it.icon, isActive)) : <i className="bi bi-square"/>}
+                      </Link>
+                    )
+                  })}
                 </div>
               )}
             </div>
