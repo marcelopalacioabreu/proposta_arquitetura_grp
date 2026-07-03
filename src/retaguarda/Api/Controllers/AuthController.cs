@@ -80,5 +80,16 @@ namespace Retaguarda.Api.Controllers
 
             return Ok(new { id = u.Id, nome = u.Nome, username = u.Username, email = u.Email });
         }
+
+        [HttpPost("logout")]
+        public IActionResult Logout()
+        {
+            // Remove authentication cookie if present
+            if (Request.Cookies.ContainsKey("access_token"))
+            {
+                Response.Cookies.Delete("access_token");
+            }
+            return Ok(new { ok = true });
+        }
     }
 }
