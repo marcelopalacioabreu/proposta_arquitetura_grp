@@ -7,7 +7,8 @@
       { "campo": "codigo", "descricao": "Código", "tipo": "string", "col": 3 },
       { "campo": "nome", "descricao": "Nome", "tipo": "string", "col": 3 },
       { "campo": "descricao", "descricao": "Descrição", "tipo": "string", "col": 3 },
-      { "campo": "created_at", "descricao": "Criado em", "tipo": "date", "col": 3 }
+      { "campo": "created_at", "descricao": "Criado em", "tipo": "date", "col": 3 },
+      { "campo": "ativo", "descricao": "Ativo", "tipo": "boolean", "col": 3 }
     ],
     "tabela": {
       "colunas": [

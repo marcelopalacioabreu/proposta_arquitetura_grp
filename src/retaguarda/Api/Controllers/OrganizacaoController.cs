@@ -17,9 +17,10 @@ namespace Retaguarda.Api.Controllers
         }
 
         [HttpGet]
-        public IActionResult GetAll([FromQuery] string? nome, [FromQuery] int page = 1, [FromQuery] int pageSize = 10, [FromQuery] string? sortField = null, [FromQuery] string? sortDir = null)
+        public IActionResult GetAll([FromQuery] string? nome, [FromQuery] int page = 1, [FromQuery] int pageSize = 10, [FromQuery] string? sortField = null, [FromQuery] string? sortDir = null,
+            [FromQuery] string? campo = null, [FromQuery] string? operador = null, [FromQuery] string? valor = null, [FromQuery(Name = "valor_de")] string? valorDe = null, [FromQuery(Name = "valor_ate")] string? valorAte = null, [FromQuery] int? inativo = null)
         {
-            var (items, total) = _servico.ListarAsync(nome, page, pageSize, sortField, sortDir).Result;
+            var (items, total) = _servico.ListarAsync(nome, page, pageSize, sortField, sortDir, campo, operador, valor, valorDe, valorAte, inativo).Result;
             return Ok(new { items, total, page, pageSize });
         }
 

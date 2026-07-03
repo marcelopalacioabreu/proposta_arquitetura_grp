@@ -25,7 +25,8 @@ namespace Retaguarda.Persistencia.Inicializadores
                     org = new Organizacao
                     {
                         Nome = "Organização padrão",
-                        DataInsercao = DateTime.UtcNow
+                        DataInsercao = DateTime.UtcNow,
+                        Ativo = true
                     };
                     db.Organizacoes.Add(org);
                     db.SaveChanges();
@@ -39,7 +40,8 @@ namespace Retaguarda.Persistencia.Inicializadores
                     {
                         Nome = "Setor padrão",
                         OrganizacaoId = org.Id,
-                        DataInsercao = DateTime.UtcNow
+                        DataInsercao = DateTime.UtcNow,
+                        Ativo = true
                     };
                     db.OrganizacaoSetores.Add(setor);
                     db.SaveChanges();
@@ -57,6 +59,7 @@ namespace Retaguarda.Persistencia.Inicializadores
                         SenhaHash = HashPassword("admin"),
                         OrganizacaoId = org.Id,
                         OrganizacaoSetorId = setor.Id
+                        ,Ativo = true
                     };
 
                     db.Usuarios.Add(user);

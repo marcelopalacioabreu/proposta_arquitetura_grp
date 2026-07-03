@@ -3,10 +3,23 @@
     "tipo": "TELA_CADASTRO",
     "titulo": "Cadastro de Organização",
     "endpoint": "/api/organizacoes",
-    "campos": [
-      { "campo": "codigo", "label": "Código", "tipo": "text", "col": 6 },
-      { "campo": "nome", "label": "Nome da organização", "tipo": "text", "col": 6 },
-      { "campo": "descricao", "label": "Descrição", "tipo": "text", "col": 6 }
+    "fieldsets": [
+      {
+        "titulo": "Identificação",
+        "columns": 12,
+        "campos": [
+          { "campo": "codigo", "label": "Código", "tipo": "text", "col": 4 },
+          { "campo": "nome", "label": "Nome da organização", "tipo": "text", "col": 8 }
+        ]
+      },
+      {
+        "titulo": "Detalhes",
+        "columns": 12,
+        "campos": [
+          { "campo": "descricao", "label": "Descrição", "tipo": "text", "col": 12 },
+          { "campo": "ativo", "label": "Ativo", "tipo": "checkbox", "col": 12 }
+        ]
+      }
     ]
   }
 }

@@ -11,5 +11,7 @@ namespace Retaguarda.Dominio.Entidades.Base
         // Multi-tenant / multi-sector identifiers
         public long? OrganizacaoId { get; set; }
         public long? OrganizacaoSetorId { get; set; }
+        // Active flag (ativo / inativo)
+        public bool Ativo { get; set; } = true;
     }
 }

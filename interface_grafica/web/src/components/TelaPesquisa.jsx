@@ -11,6 +11,8 @@ export default function TelaPesquisa({ screenKey }){
   const [meta, setMeta] = useState(null)
   const [items, setItems] = useState([])
   const [total, setTotal] = useState(0)
+  const [formState, setFormState] = useState({ campo: null, operador: null, valor: '', valor_de: '', valor_ate: '' })
+  const [operadores, setOperadores] = useState([])
   const query = useQuery()
   const navigate = useNavigate()
   const location = useLocation()
@@ -22,6 +24,20 @@ export default function TelaPesquisa({ screenKey }){
       setMeta(s)
     })
   },[screenKey])
+
+  useEffect(()=>{
+    if (!meta) return
+    const initialCampo = query.get('campo') || meta.filtro?.[0]?.campo
+    const tipo = meta.filtro?.find(f=> f.campo === initialCampo)?.tipo || 'string'
+    const operadoresPorTipo = {
+      string: ['iniciando_com','contendo','terminando_com','igual'],
+      number: ['igual','maior_que','menor_que','entre'],
+      date: ['igual','antes','depois','entre']
+    }
+    const ops = operadoresPorTipo[tipo] || operadoresPorTipo.string
+    setOperadores(ops)
+    setFormState(s => ({ ...s, campo: initialCampo, operador: query.get('operador') || ops[0], valor: query.get('valor') || '', valor_de: query.get('valor_de') || '', valor_ate: query.get('valor_ate') || '' }))
+  },[meta])
 
   useEffect(()=>{
     if (!meta) return
@@ -42,14 +58,20 @@ export default function TelaPesquisa({ screenKey }){
       }
     }
     if (!endpoint) endpoint = '/api/organizacoes'
-    // build query from filters
+    // build query from filters (single dynamic filter)
     const params = {}
-    if (meta.filtro){
-      meta.filtro.forEach(f => {
-        const v = query.get(f.campo)
-        if (v) params[f.campo] = v
-      })
-    }
+    const campo = query.get('campo')
+    const operador = query.get('operador')
+    const valor = query.get('valor')
+    const valorDe = query.get('valor_de')
+    const valorAte = query.get('valor_ate')
+    const inativo = query.get('inativo')
+    if (campo) params['campo'] = campo
+    if (operador) params['operador'] = operador
+    if (valor) params['valor'] = valor
+    if (valorDe) params['valor_de'] = valorDe
+    if (valorAte) params['valor_ate'] = valorAte
+    if (inativo) params['inativo'] = inativo
     // pagination and sorting from querystring
     const page = query.get('page') || 1
     const pageSize = query.get('pageSize') || (meta.pagination?.pageSize || 10)
@@ -68,20 +90,52 @@ export default function TelaPesquisa({ screenKey }){
   return (
     <div>
       <div className="d-flex justify-content-between align-items-center mb-2">
-        <h3>Pesquisa</h3>
+        <h3>{meta.titulo || 'Pesquisa'}</h3>
         <div>
-          <button className="btn btn-primary" onClick={()=> navigate('/painel/organizacoes/editar/new')}>Novo</button>
+          <button className="btn btn-primary" onClick={()=> navigate((meta.tabela?.acoes?.find(a=>a.tipo==='navegacao')?.destino || '/painel/organizacoes/editar/new').replace('{id}','new'))}>Novo</button>
         </div>
       </div>
 
+      {/* Tabs for Ativos / Inativos */}
+      <ul className="nav nav-tabs mb-3">
+        <li className="nav-item">
+          <button className={`nav-link ${!query.get('inativo') || query.get('inativo') === '0' ? 'active' : ''}`} onClick={()=>{ const cur = new URLSearchParams(location.search); cur.delete('inativo'); navigate({ search: cur.toString() })}}>Ativos</button>
+        </li>
+        <li className="nav-item">
+          <button className={`nav-link ${query.get('inativo') === '1' ? 'active' : ''}`} onClick={()=>{ const cur = new URLSearchParams(location.search); cur.set('inativo','1'); navigate({ search: cur.toString() })}}>Inativos</button>
+        </li>
+      </ul>
+
       <div className="mb-3">
-        <form className="row g-2" onSubmit={e=>{ e.preventDefault(); const form = new FormData(e.target); const qp = []; for (const [k,v] of form.entries()) if (v) qp.push(`${encodeURIComponent(k)}=${encodeURIComponent(v)}`); navigate({ search: qp.join('&') }) }}>
-          {meta.filtro.map((f, idx) => (
-            <div key={idx} className={`col-12 col-md-${f.col || 4}`}>
-              <label className="form-label">{f.descricao}</label>
-              <input name={f.campo} defaultValue={new URLSearchParams(useLocation().search).get(f.campo) || ''} className="form-control" />
+        <form className="row g-2" onSubmit={e=>{ e.preventDefault(); const qp = []; const s = formState; if (s.campo) qp.push(`campo=${encodeURIComponent(s.campo)}`); if (s.operador) qp.push(`operador=${encodeURIComponent(s.operador)}`); if (s.valor) qp.push(`valor=${encodeURIComponent(s.valor)}`); if (s.valor_de) qp.push(`valor_de=${encodeURIComponent(s.valor_de)}`); if (s.valor_ate) qp.push(`valor_ate=${encodeURIComponent(s.valor_ate)}`); const cur = new URLSearchParams(location.search); if (cur.get('inativo')) qp.push(`inativo=${encodeURIComponent(cur.get('inativo'))}`); navigate({ search: qp.join('&') }) }}>
+          {/* Single dynamic filter like filtro-dinamico */}
+          <div className="col-md-3">
+            <label className="form-label">Campo</label>
+            <select id="campo" name="campo" className="form-select" value={formState.campo || ''} onChange={e=>{ const newCampo = e.target.value; const tipo = meta.filtro?.find(f=> f.campo === newCampo)?.tipo || 'string'; const operadoresPorTipo = { string: ['iniciando_com','contendo','terminando_com','igual'], number: ['igual','maior_que','menor_que','entre'], date: ['igual','antes','depois','entre'] }; const ops = operadoresPorTipo[tipo] || operadoresPorTipo.string; setOperadores(ops); setFormState(s=>({ ...s, campo: newCampo, operador: ops[0], valor: '', valor_de: '', valor_ate: '' })) }}>
+              {meta.filtro.map((f, idx) => (<option key={idx} value={f.campo} data-tipo={f.tipo}>{f.descricao}</option>))}
+            </select>
+          </div>
+          <div className="col-md-3">
+            <label className="form-label">Operador</label>
+            <select id="operador" name="operador" className="form-select" value={formState.operador || ''} onChange={e=> setFormState(s=> ({ ...s, operador: e.target.value }))}>
+              {operadores.map((op, idx) => (<option key={idx} value={op}>{op.replace(/_/g,' ').replace(/\b\w/g,c=>c.toUpperCase())}</option>))}
+            </select>
+          </div>
+          {formState.operador === 'entre' ? (
+            <div className="col-md-4">
+              <label className="form-label">Entre</label>
+              <input type="text" name="valor_de" value={formState.valor_de} onChange={e=> setFormState(s=> ({ ...s, valor_de: e.target.value }))} className="form-control" placeholder="De" style={{width:'45%', display:'inline-block', marginRight:'4%'}} />
+              <input type="text" name="valor_ate" value={formState.valor_ate} onChange={e=> setFormState(s=> ({ ...s, valor_ate: e.target.value }))} className="form-control" placeholder="Até" style={{width:'45%', display:'inline-block'}} />
             </div>
-          ))}
+          ) : (
+            <div className="col-md-4">
+              <label className="form-label d-block">Valor</label>
+              <input name="valor" value={formState.valor} onChange={e=> setFormState(s=> ({ ...s, valor: e.target.value }))} placeholder="Valor" className="form-control" />
+            </div>
+          )}
+          <div className="col-md-2 d-none" id="campo-hidden-inativo">
+            {/* reserved for hidden inativo input if needed */}
+          </div>
           <div className="col-12">
             <button className="btn btn-secondary">Filtrar</button>
           </div>

@@ -14,7 +14,9 @@ export default function Menu(){
         <div key={gi} className="mb-3">
           <div className="small text-muted">{g.group}</div>
           {g.items && g.items.map((it, ii) => (
-            <Link key={ii} className="list-group-item list-group-item-action" to={it.url}>{it.label}</Link>
+            <Link key={ii} className="list-group-item list-group-item-action d-flex align-items-center" to={it.url}>
+              {it.icon && <i className={`bi bi-${it.icon} me-2`} />}<span>{it.label}</span>
+            </Link>
           ))}
         </div>
       ))}

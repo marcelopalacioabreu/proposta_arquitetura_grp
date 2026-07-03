@@ -22,10 +22,48 @@ namespace Retaguarda.Repositorios
             return await _db.Organizacoes.FindAsync(id);
         }
 
-        public async Task<(List<Organizacao> Items, int Total)> ListarAsync(string? nomeFilter, int page, int pageSize, string? sortField, string? sortDir)
+        public async Task<(List<Organizacao> Items, int Total)> ListarAsync(string? nomeFilter, int page, int pageSize, string? sortField, string? sortDir, string? campo = null, string? operador = null, string? valor = null, string? valorDe = null, string? valorAte = null, int? inativo = null)
         {
             var q = _db.Organizacoes.AsQueryable();
+
+            // ativo / inativo handling (default: show ativos)
+            if (inativo.HasValue && inativo.Value == 1)
+                q = q.Where(o => !o.Ativo);
+            else
+                q = q.Where(o => o.Ativo);
+
+            // basic name filter
             if (!string.IsNullOrWhiteSpace(nomeFilter)) q = q.Where(o => o.Nome.Contains(nomeFilter));
+
+            // advanced single-field filter (campo/operator/value)
+            if (!string.IsNullOrWhiteSpace(campo) && !string.IsNullOrWhiteSpace(operador) && !string.IsNullOrWhiteSpace(valor))
+            {
+                var v = valor;
+                if (campo == "nome")
+                {
+                    if (operador == "iniciando_com") q = q.Where(o => o.Nome.StartsWith(v));
+                    else if (operador == "contendo") q = q.Where(o => o.Nome.Contains(v));
+                    else if (operador == "terminando_com") q = q.Where(o => o.Nome.EndsWith(v));
+                    else if (operador == "igual") q = q.Where(o => o.Nome == v);
+                }
+                // other fields can be added here when present in the entity
+                else if (campo == "created_at")
+                {
+                    if (DateTime.TryParse(v, out var dt))
+                    {
+                        if (operador == "igual") q = q.Where(o => o.DataInsercao.Date == dt.Date);
+                        else if (operador == "antes") q = q.Where(o => o.DataInsercao.Date < dt.Date);
+                        else if (operador == "depois") q = q.Where(o => o.DataInsercao.Date > dt.Date);
+                    }
+                }
+            }
+            else if (!string.IsNullOrWhiteSpace(campo) && operador == "entre" && !string.IsNullOrWhiteSpace(valorDe) && !string.IsNullOrWhiteSpace(valorAte))
+            {
+                if (campo == "created_at" && DateTime.TryParse(valorDe, out var dtDe) && DateTime.TryParse(valorAte, out var dtAte))
+                {
+                    q = q.Where(o => o.DataInsercao.Date >= dtDe.Date && o.DataInsercao.Date <= dtAte.Date);
+                }
+            }
 
             // sorting
             if (!string.IsNullOrWhiteSpace(sortField))

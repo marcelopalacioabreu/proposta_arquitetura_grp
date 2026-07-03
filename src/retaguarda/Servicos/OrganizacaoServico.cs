@@ -19,9 +19,9 @@ namespace Retaguarda.Servicos
             return await _repositorio.ObterPorIdAsync(id);
         }
 
-        public async Task<(List<Organizacao> Items, int Total)> ListarAsync(string? nomeFilter, int page, int pageSize, string? sortField, string? sortDir)
+        public async Task<(List<Organizacao> Items, int Total)> ListarAsync(string? nomeFilter, int page, int pageSize, string? sortField, string? sortDir, string? campo = null, string? operador = null, string? valor = null, string? valorDe = null, string? valorAte = null, int? inativo = null)
         {
-            return await _repositorio.ListarAsync(nomeFilter, page, pageSize, sortField, sortDir);
+            return await _repositorio.ListarAsync(nomeFilter, page, pageSize, sortField, sortDir, campo, operador, valor, valorDe, valorAte, inativo);
         }
 
         public async Task<Organizacao> CriarAsync(string nome)

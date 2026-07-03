@@ -18,10 +18,27 @@ namespace Retaguarda.Api.Controllers
         }
 
         [HttpGet]
-        public IActionResult GetAll([FromQuery] string? nome, [FromQuery] int page = 1, [FromQuery] int pageSize = 10, [FromQuery] string? sortField = null, [FromQuery] string? sortDir = null)
+        public IActionResult GetAll([FromQuery] string? nome, [FromQuery] int page = 1, [FromQuery] int pageSize = 10, [FromQuery] string? sortField = null, [FromQuery] string? sortDir = null,
+            [FromQuery] string? campo = null, [FromQuery] string? operador = null, [FromQuery] string? valor = null, [FromQuery(Name = "valor_de")] string? valorDe = null, [FromQuery(Name = "valor_ate")] string? valorAte = null, [FromQuery] int? inativo = null)
         {
             var q = _db.OrganizacaoSetores.AsQueryable();
+            // ativo / inativo default: ativos
+            if (inativo.HasValue && inativo.Value == 1) q = q.Where(x => !x.Ativo);
+            else q = q.Where(x => x.Ativo);
             if (!string.IsNullOrEmpty(nome)) q = q.Where(x => x.Nome.Contains(nome));
+
+            // simple campo/operator handling for nome
+            if (!string.IsNullOrWhiteSpace(campo) && !string.IsNullOrWhiteSpace(operador) && !string.IsNullOrWhiteSpace(valor))
+            {
+                var v = valor;
+                if (campo == "nome")
+                {
+                    if (operador == "iniciando_com") q = q.Where(o => o.Nome.StartsWith(v));
+                    else if (operador == "contendo") q = q.Where(o => o.Nome.Contains(v));
+                    else if (operador == "terminando_com") q = q.Where(o => o.Nome.EndsWith(v));
+                    else if (operador == "igual") q = q.Where(o => o.Nome == v);
+                }
+            }
             var total = q.Count();
             if (!string.IsNullOrEmpty(sortField))
             {
