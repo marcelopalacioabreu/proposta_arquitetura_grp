@@ -88,7 +88,8 @@ export default function TelaPesquisa({ screenKey }){
   if (!meta) return <div>Carregando...</div>
 
   return (
-    <div>
+    <div className="page-wrapper">
+      <div className="page-card w-100">
       <div className="d-flex justify-content-between align-items-center mb-2">
         <h3>{meta.titulo || 'Pesquisa'}</h3>
         <div>
@@ -202,6 +203,7 @@ export default function TelaPesquisa({ screenKey }){
       )}
 
       <ConfirmModal show={confirmState.show} title={confirmState.title} message={confirmState.message} onConfirm={confirmState.onConfirm} onCancel={()=> setConfirmState(s=> ({...s, show:false}))} />
+      </div>
     </div>
   )
 }

@@ -9,15 +9,17 @@ export default function Menu(){
   },[])
 
   return (
-    <div className="list-group">
+    <div className="menu">
       {modulos.map((g, gi) => (
         <div key={gi} className="mb-3">
-          <div className="small text-muted">{g.group}</div>
-          {g.items && g.items.map((it, ii) => (
-            <Link key={ii} className="list-group-item list-group-item-action d-flex align-items-center" to={it.url}>
-              {it.icon && <i className={`bi bi-${it.icon} me-2`} />}<span>{it.label}</span>
-            </Link>
-          ))}
+          <div className="small text-muted px-2">{g.group}</div>
+          <div className="list-group">
+            {g.items && g.items.map((it, ii) => (
+              <Link key={ii} title={it.label} className="list-group-item list-group-item-action d-flex align-items-center" to={it.url}>
+                {it.icon && <i className={`bi bi-${it.icon}`} />}<span className="item-label">{it.label}</span>
+              </Link>
+            ))}
+          </div>
         </div>
       ))}
     </div>

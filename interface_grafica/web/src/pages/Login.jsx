@@ -18,13 +18,21 @@ export default function Login(){
   }
 
   return (
-    <div>
-      <div className="header">Login</div>
-      <div className="container">
+    <div className="page-wrapper vh-100">
+      <div className="page-card" style={{maxWidth:420}}>
+        <h3 className="mb-3">Entrar</h3>
         <form onSubmit={submit}>
-          <div><label>Usuário</label><br/><input value={user} onChange={e=>setUser(e.target.value)} /></div>
-          <div><label>Senha</label><br/><input type="password" value={pass} onChange={e=>setPass(e.target.value)} /></div>
-          <div><button type="submit">Entrar</button></div>
+          <div className="mb-3">
+            <label className="form-label">Usuário</label>
+            <input className="form-control" value={user} onChange={e=>setUser(e.target.value)} />
+          </div>
+          <div className="mb-3">
+            <label className="form-label">Senha</label>
+            <input className="form-control" type="password" value={pass} onChange={e=>setPass(e.target.value)} />
+          </div>
+          <div className="d-flex justify-content-end">
+            <button className="btn btn-primary" type="submit">Entrar</button>
+          </div>
         </form>
       </div>
     </div>

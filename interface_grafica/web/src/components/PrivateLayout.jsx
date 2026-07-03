@@ -31,7 +31,11 @@ export default function PrivateLayout(){
             </div>
           </div>
           <div className="col-12 col-md-9 col-lg-10 p-3">
-            <Outlet />
+            <div className="page-wrapper">
+              <div className="page-card w-100">
+                <Outlet />
+              </div>
+            </div>
           </div>
         </div>
       </div>

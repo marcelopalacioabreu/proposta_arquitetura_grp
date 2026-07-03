@@ -85,9 +85,10 @@ export default function TelaCadastro({ screenKey }){
   }
 
   return (
-    <div>
-      <h3>{meta.titulo || 'Cadastro'}</h3>
-      <form onSubmit={handleSubmit} className="row g-3">
+    <div className="page-wrapper">
+      <div className="page-card w-100">
+        <h3>{meta.titulo || 'Cadastro'}</h3>
+        <form onSubmit={handleSubmit} className="row g-3">
         {meta.fieldsets ? (
           meta.fieldsets.map((fs, fsi) => (
             <fieldset key={fsi} className="border p-3 mb-3 w-100">
@@ -124,7 +125,8 @@ export default function TelaCadastro({ screenKey }){
         <div className="col-12">
           <button className="btn btn-primary" disabled={submitting}>{submitting ? 'Salvando...' : 'Salvar'}</button>
         </div>
-      </form>
+        </form>
+      </div>
     </div>
   )
 }
