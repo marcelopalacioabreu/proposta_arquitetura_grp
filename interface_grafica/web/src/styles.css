@@ -74,10 +74,33 @@ body{ font-family: Arial, sans-serif; margin:0; padding:0; background:#f5f7fa }
 .floating-bar .menu-panel .list-group{ border:0 }
 .floating-bar.compact .menu-panel .small{ display:none }
 .floating-bar.compact .menu-panel .item-label{ display:none }
-.floating-bar.compact .menu-panel .list-group-item{ justify-content:center; padding-left:6px; padding-right:6px }
-.floating-bar.compact .menu-panel .list-group-item i{ margin-right:0; font-size:1.2rem }
+.floating-bar.compact .menu-panel .list-group{ display:flex; flex-direction:column; align-items:center; padding-top:6px }
+.floating-bar.compact .menu-panel .list-group-item{ justify-content:center !important; padding-left:6px !important; padding-right:6px !important; width:auto !important; display:flex !important; min-width:0 }
+.floating-bar.compact .menu-panel .list-group-item i{ margin-right:0 !important; font-size:1.4rem !important; display:inline-block !important }
+.floating-bar.compact .menu-panel .list-group-item .me-2{ margin-right:0 !important }
 .floating-bar .menu-panel .list-group-item i{ width:28px; text-align:center }
 .floating-bar .menu-panel .compact-body{ padding:6px }
+
+/* Ensure icons are visible (in case list-group has full-width styles) */
+.floating-bar.compact .menu-panel .list-group-item{ background:transparent !important; border:0 !important }
+.floating-bar.compact .menu-panel .list-group-item .bi{ color:var(--menu-icon-color,#333) !important }
+
+/* If icons are still hidden due to parent overflow, make them visible and centered */
+.floating-bar.compact .menu-panel{ overflow:visible }
+
+/* Compact icons block (simplified, avoids list-group styles) */
+.compact-icons{ gap:8px }
+.compact-icon{ width:44px; height:44px; border-radius:8px; display:flex; align-items:center; justify-content:center; color:var(--menu-icon-color,#333) !important; text-decoration:none; background: rgba(255,255,255,0.02); border:1px solid rgba(0,0,0,0.04) }
+.compact-icon i{ font-size:1.35rem }
+.compact-icon.active{ background:#0d6efd !important; color:#fff !important; border-color: #0d6efd !important }
+.compact-icon svg{ width:20px; height:20px; display:block; fill:currentColor !important }
+.compact-icon svg path{ fill: currentColor !important }
+.compact-icon svg *{ fill: currentColor !important }
+.compact-icon.active{ background:#0d6efd !important; color:#fff !important; border-color: #0d6efd !important }
+
+/* Ensure non-active state has visible icon color even if Bootstrap btn styles interfere */
+.floating-bar.compact .compact-icon{ background:transparent !important }
+.floating-bar.compact .compact-icon:not(.active){ color:var(--menu-icon-color,#333) !important }
 .floating-bar .toggle-compact{ border-radius:6px }
 
 /* center the main square vertically when compact */
@@ -91,7 +114,7 @@ body{ font-family: Arial, sans-serif; margin:0; padding:0; background:#f5f7fa }
 .floating-bar.expanded{ width:320px }
 .floating-bar.expanded .floating-buttons{ align-items:flex-start }
 .floating-bar.expanded .floating-buttons .menu-panel{ display:block; flex:1; width:100%; overflow:auto }
-.floating-bar .menu-panel{ display:none }
+.floating-bar .menu-panel{ display:block }
 .floating-bar.expanded .main-square{ margin-left:8px }
 
 /* Overlay menu that floats and does not push content */

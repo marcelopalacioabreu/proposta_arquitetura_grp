@@ -44,6 +44,21 @@ export default function Menu(){
     return modulos.map(g => ({ ...g, items: (g.items || []).filter(i => (i.label||'').toLowerCase().includes(q)) })).filter(g => (g.items || []).length > 0)
   },[modulos, query])
 
+  function renderCompactIcon(name){
+    // small inline SVG fallbacks for critical icons to guarantee visibility
+    if (!name) return <i className="bi bi-square" />
+    switch(name){
+      case 'building':
+        return (
+          <svg width="20" height="20" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg" aria-hidden>
+            <path d="M14.5 13.5V2a1 1 0 0 0-1-1H2.5a1 1 0 0 0-1 1v11.5H.5a.5.5 0 0 0 0 1h15a.5.5 0 0 0 0-1h-1zM3 3h9v3H3V3zm0 4h2v2H3V7zm3 0h6v2H6V7zM3 10h2v2H3v-2z" />
+          </svg>
+        )
+      default:
+        return <i className={`bi bi-${name}`} />
+    }
+  }
+
   return (
     <>
       {/* Floating collapsed bar (icons only -> use same markup for both states) */}
@@ -51,23 +66,33 @@ export default function Menu(){
         <div className="floating-buttons d-flex flex-column">
           <div className="menu-panel">
             <div className={`p-2 ${compact ? 'compact-body' : ''}`}>
-              {!compact && (
-                <input className="form-control form-control-sm mb-2" placeholder="Pesquisar menu..." value={query} onChange={e=> setQuery(e.target.value)} />
-              )}
-              {filtered.map((g, gi) => (
-                <div key={gi} className="mb-2">
-                  <div className="small text-muted mb-1 px-1">{g.group}</div>
-                  <div className="list-group">
-                    {g.items && g.items.map((it, ii) => (
-                      <Link key={ii} to={it.url} className={`list-group-item list-group-item-action d-flex align-items-center ${location.pathname === it.url ? 'active' : ''}`} onClick={()=>{}}
-                      >
-                        {it.icon && <i className={`bi bi-${it.icon} me-2`} />}
-                        <span className="item-label">{it.label}</span>
-                      </Link>
-                    ))}
-                  </div>
+              {!compact ? (
+                <>
+                  <input className="form-control form-control-sm mb-2" placeholder="Pesquisar menu..." value={query} onChange={e=> setQuery(e.target.value)} />
+                  {filtered.map((g, gi) => (
+                    <div key={gi} className="mb-2">
+                      <div className="small text-muted mb-1 px-1">{g.group}</div>
+                      <div className="list-group">
+                        {g.items && g.items.map((it, ii) => (
+                          <Link key={ii} to={it.url} className={`list-group-item list-group-item-action d-flex align-items-center ${location.pathname === it.url ? 'active' : ''}`} onClick={()=>{}}
+                          >
+                            {it.icon && <i className={`bi bi-${it.icon} me-2`} />}
+                            <span className="item-label">{it.label}</span>
+                          </Link>
+                        ))}
+                      </div>
+                    </div>
+                  ))}
+                </>
+              ) : (
+                <div className="compact-icons d-flex flex-column align-items-center">
+                  {filtered.flatMap(g => g.items || []).map((it, idx) => (
+                    <Link key={idx} to={it.url} className={`compact-icon mb-2 ${location.pathname === it.url ? 'active' : ''}`} title={it.label}>
+                      {it.icon ? (renderCompactIcon(it.icon)) : <i className="bi bi-square"/>}
+                    </Link>
+                  ))}
                 </div>
-              ))}
+              )}
             </div>
           </div>
 
