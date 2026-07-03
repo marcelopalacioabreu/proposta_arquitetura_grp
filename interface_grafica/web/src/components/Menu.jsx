@@ -13,6 +13,29 @@ export default function Menu(){
     axios.get('/meta/modulos').then(r=> setModulos(r.data.modulos || [] )).catch(()=>setModulos([]))
   },[])
 
+  // compute menu top/bottom to fit exactly between navbar and footer
+  useEffect(()=>{
+    function updateVars(){
+      const navs = Array.from(document.querySelectorAll('.navbar'))
+      let nav = navs.find(n => n.getBoundingClientRect().height > 0)
+      if (!nav) nav = navs[0]
+      const footer = document.querySelector('.app-footer')
+      const top = nav ? Math.round(nav.getBoundingClientRect().bottom) : 56
+      let bottom = 60
+      if (footer){
+        const rect = footer.getBoundingClientRect()
+        bottom = Math.round(window.innerHeight - rect.top)
+      }
+      document.documentElement.style.setProperty('--menu-top', `${top}px`)
+      document.documentElement.style.setProperty('--menu-bottom', `${bottom}px`)
+    }
+    updateVars()
+    window.addEventListener('resize', updateVars)
+    const mo = new MutationObserver(updateVars)
+    mo.observe(document.body, { childList: true, subtree: true })
+    return ()=>{ window.removeEventListener('resize', updateVars); mo.disconnect() }
+  },[])
+
   // close overlay when navigating
   useEffect(()=>{ setOverlayOpen(false); setQuery('') },[location.pathname])
 
@@ -39,9 +62,6 @@ export default function Menu(){
               ))
             ))}
           </div>
-          <button className="btn btn-outline-secondary btn-sm mt-auto toggle-compact" onClick={()=> setCompact(c=>!c)} title={compact ? 'Expandir barra' : 'Compactar barra'}>
-            <i className={`bi bi-${compact ? 'chevron-bar-right' : 'chevron-bar-left'}`}></i>
-          </button>
         </div>
       </div>
 
