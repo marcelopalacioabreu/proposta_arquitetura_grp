@@ -76,7 +76,13 @@ namespace Retaguarda.Api.Controllers
         {
             var reqUsuario = HttpContext.RequestServices.GetService(typeof(Retaguarda.Servicos.RequisicaoUsuario)) as Retaguarda.Servicos.RequisicaoUsuario;
             var u = reqUsuario?.Usuario;
-            if (u == null) return UnauthorizedError("Não autenticado");
+            if (u == null)
+            {
+                // Allow anonymous callers to probe /auth/me without triggering 401.
+                // This avoids noisy global error handling for UI components (e.g., navbar) that
+                // always call this endpoint. Do NOT include any user details when unauthenticated.
+                return OkData(null);
+            }
 
             return OkData(new { id = u.Id, nome = u.Nome, username = u.Username, email = u.Email });
         }
