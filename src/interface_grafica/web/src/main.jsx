@@ -10,9 +10,7 @@ import TelaCadastro from './components/TelaCadastro'
 import InicioPainel from './pages/painel/InicioPainel'
 import './styles.css'
 import 'bootstrap/dist/css/bootstrap.min.css'
-import axios from 'axios'
-
-axios.defaults.withCredentials = true
+import './services/api'
 
 function App(){
   return (
@@ -34,4 +32,10 @@ function App(){
   )
 }
 
-createRoot(document.getElementById('root')).render(<App />)
+import ModalProvider from './components/ModalProvider'
+
+createRoot(document.getElementById('root')).render(
+  <ModalProvider>
+    <App />
+  </ModalProvider>
+)

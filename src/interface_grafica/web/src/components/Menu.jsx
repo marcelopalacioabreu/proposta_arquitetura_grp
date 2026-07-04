@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useMemo } from 'react'
 import { Link, useLocation } from 'react-router-dom'
-import axios from 'axios'
+import api from '../services/api'
 
 export default function Menu(){
   const [modulos, setModulos] = useState([])
@@ -9,7 +9,7 @@ export default function Menu(){
   const location = useLocation()
 
   useEffect(()=>{
-    axios.get('/meta/modulos').then(r=> setModulos(r.data.modulos || [] )).catch(()=>setModulos([]))
+    api.get('/meta/modulos').then(r=> setModulos(r.data.modulos || [] )).catch(()=>setModulos([]))
   },[])
 
   // compute menu top/bottom to fit exactly between navbar and footer

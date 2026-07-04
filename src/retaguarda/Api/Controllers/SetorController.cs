@@ -3,12 +3,13 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Retaguarda.Persistencia.MYSQL;
 using Retaguarda.Dominio.Entidades;
+using Retaguarda.Api.Models;
 
 namespace Retaguarda.Api.Controllers
 {
     [ApiController]
     [Route("api/setores")]
-    public class SetorController : ControllerBase
+    public class SetorController : BaseController
     {
         private readonly ApplicationDbContext _db;
 
@@ -46,15 +47,15 @@ namespace Retaguarda.Api.Controllers
             }
             q = q.Skip((page - 1) * pageSize).Take(pageSize);
             var items = q.Select(x => new { x.Id, x.Nome, x.OrganizacaoId, x.DataInsercao }).ToList();
-            return Ok(new { items, total, page, pageSize });
+            return OkList(items, total, page, pageSize);
         }
 
         [HttpGet("{id}")]
         public IActionResult Get(long id)
         {
             var e = _db.OrganizacaoSetores.Find(id);
-            if (e == null) return NotFound();
-            return Ok(e);
+            if (e == null) return NotFoundError("Registro não encontrado");
+            return OkData(e);
         }
 
         [HttpPost]
@@ -64,7 +65,7 @@ namespace Retaguarda.Api.Controllers
             var s = new OrganizacaoSetor { Nome = dto.Nome ?? string.Empty, OrganizacaoId = dto.OrganizacaoId };
             _db.OrganizacaoSetores.Add(s);
             _db.SaveChanges();
-            return CreatedAtAction(nameof(Get), new { id = s.Id }, s);
+            return CreatedDataAtAction(nameof(Get), new { id = s.Id }, s, "Criado com sucesso");
         }
 
         [HttpPut("{id}")]
@@ -72,11 +73,11 @@ namespace Retaguarda.Api.Controllers
         public IActionResult Update(long id, [FromBody] SetorDto dto)
         {
             var existing = _db.OrganizacaoSetores.Find(id);
-            if (existing == null) return NotFound();
+            if (existing == null) return NotFoundError("Registro não encontrado");
             existing.Nome = dto.Nome ?? existing.Nome;
             existing.OrganizacaoId = dto.OrganizacaoId;
             _db.SaveChanges();
-            return NoContent();
+            return OkMessage("Atualizado");
         }
 
         [HttpDelete("{id}")]
@@ -84,10 +85,10 @@ namespace Retaguarda.Api.Controllers
         public IActionResult Delete(long id)
         {
             var e = _db.OrganizacaoSetores.Find(id);
-            if (e == null) return NotFound();
+            if (e == null) return NotFoundError("Registro não encontrado");
             _db.OrganizacaoSetores.Remove(e);
             _db.SaveChanges();
-            return NoContent();
+            return OkMessage("Excluído");
         }
 
         public class SetorDto

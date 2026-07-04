@@ -6,7 +6,7 @@ namespace Retaguarda.Api.Controllers
 {
     [ApiController]
     [Route("meta")]
-    public class MetaController : ControllerBase
+    public class MetaController : BaseController
     {
         private readonly string _projectMetaPath;
         private readonly string _docMetaPath;
@@ -32,27 +32,30 @@ namespace Retaguarda.Api.Controllers
         public IActionResult Routes()
         {
             var p = FindFile("routes.json") ?? FindFile("Rotas", "api.json");
-            if (p == null) return NotFound();
+            if (p == null) return NotFoundError("Arquivo não encontrado");
             var json = System.IO.File.ReadAllText(p);
-            return Content(json, "application/json");
+            var parsed = System.Text.Json.JsonDocument.Parse(json).RootElement;
+            return OkData(parsed);
         }
 
         [HttpGet("components")]
         public IActionResult Components()
         {
             var p = FindFile("components.json") ?? FindFile("Componentes", "components.json");
-            if (p == null) return NotFound();
+            if (p == null) return NotFoundError("Arquivo não encontrado");
             var json = System.IO.File.ReadAllText(p);
-            return Content(json, "application/json");
+            var parsed = System.Text.Json.JsonDocument.Parse(json).RootElement;
+            return OkData(parsed);
         }
 
         [HttpGet("modulos")]
         public IActionResult Modulos()
         {
             var p = FindFile("modulos.json") ?? FindFile("Modulos", "modulos.json");
-            if (p == null) return NotFound();
+            if (p == null) return NotFoundError("Arquivo não encontrado");
             var json = System.IO.File.ReadAllText(p);
-            return Content(json, "application/json");
+            var parsed = System.Text.Json.JsonDocument.Parse(json).RootElement;
+            return OkData(parsed);
         }
 
         [HttpGet("screens")]
@@ -87,7 +90,7 @@ namespace Retaguarda.Api.Controllers
             loadFromDir(screensDirDoc);
             loadFromDir(screensDirProject);
 
-            return Ok(aggregated);
+            return OkData(aggregated);
         }
 
         [HttpGet("all")]
@@ -101,7 +104,7 @@ namespace Retaguarda.Api.Controllers
             var comps = compsPath != null ? System.IO.File.ReadAllText(compsPath) : "{}";
             var screens = screensPath != null ? System.IO.File.ReadAllText(screensPath) : "{}";
 
-            return Ok(new { routes = System.Text.Json.JsonDocument.Parse(routes).RootElement, components = System.Text.Json.JsonDocument.Parse(comps).RootElement, screens = System.Text.Json.JsonDocument.Parse(screens).RootElement });
+            return OkData(new { routes = System.Text.Json.JsonDocument.Parse(routes).RootElement, components = System.Text.Json.JsonDocument.Parse(comps).RootElement, screens = System.Text.Json.JsonDocument.Parse(screens).RootElement });
         }
     }
 }

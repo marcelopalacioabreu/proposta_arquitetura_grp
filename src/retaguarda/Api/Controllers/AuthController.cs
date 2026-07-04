@@ -10,7 +10,7 @@ namespace Retaguarda.Api.Controllers
 {
     [ApiController]
     [Route("auth")]
-    public class AuthController : ControllerBase
+    public class AuthController : BaseController
     {
         private readonly IConfiguration _config;
         private readonly Retaguarda.Servicos.Interfaces.IUsuarioServico _usuarioServico;
@@ -26,7 +26,7 @@ namespace Retaguarda.Api.Controllers
         {
             // Validate against user store
             var u = await _usuarioServico.AutenticarAsync(req.Username, req.Password);
-            if (u == null) return Unauthorized();
+            if (u == null) return UnauthorizedError("Credenciais inválidas");
 
             var jwtKey = _config["Jwt:Key"] ?? "change_this_secret_for_prod";
             var jwtIssuer = _config["Jwt:Issuer"] ?? "Retaguarda";
@@ -58,10 +58,10 @@ namespace Retaguarda.Api.Controllers
             if (req.AsCookie)
             {
                 Response.Cookies.Append("access_token", tokenString, new CookieOptions { HttpOnly = true, SameSite = SameSiteMode.Lax });
-                return Ok(new { ok = true });
+                return OkMessage("Autenticado");
             }
 
-            return Ok(new { token = tokenString });
+            return OkData(new { token = tokenString });
         }
 
         public class LoginRequest
@@ -76,9 +76,9 @@ namespace Retaguarda.Api.Controllers
         {
             var reqUsuario = HttpContext.RequestServices.GetService(typeof(Retaguarda.Servicos.RequisicaoUsuario)) as Retaguarda.Servicos.RequisicaoUsuario;
             var u = reqUsuario?.Usuario;
-            if (u == null) return Unauthorized();
+            if (u == null) return UnauthorizedError("Não autenticado");
 
-            return Ok(new { id = u.Id, nome = u.Nome, username = u.Username, email = u.Email });
+            return OkData(new { id = u.Id, nome = u.Nome, username = u.Username, email = u.Email });
         }
 
         [HttpPost("logout")]
@@ -89,7 +89,7 @@ namespace Retaguarda.Api.Controllers
             {
                 Response.Cookies.Delete("access_token");
             }
-            return Ok(new { ok = true });
+            return OkMessage("Desconectado");
         }
     }
 }

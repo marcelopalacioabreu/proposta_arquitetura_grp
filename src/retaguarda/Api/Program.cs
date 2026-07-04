@@ -9,6 +9,7 @@ using Retaguarda.Repositorios.Interfaces;
 using Retaguarda.Repositorios;
 using Retaguarda.Servicos.Interfaces;
 using Retaguarda.Servicos;
+using Retaguarda.Api.Filters;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -70,7 +71,11 @@ builder.Services.AddAuthentication(options =>
 
 builder.Services.AddAuthorization();
 
-builder.Services.AddControllers().AddJsonOptions(opts =>
+builder.Services.AddControllers(options =>
+{
+    // Register a global action filter that wraps results into EnvelopeResult
+    options.Filters.Add<EnvelopeActionFilter>();
+}).AddJsonOptions(opts =>
 {
     // Avoid errors when EF Core creates object graphs with back-references
     opts.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;

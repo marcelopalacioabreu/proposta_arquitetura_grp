@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import axios from 'axios'
+import api from '../services/api'
 import { useLocation, useNavigate } from 'react-router-dom'
 import ConfirmModal from './ConfirmModal'
 
@@ -19,7 +19,7 @@ export default function TelaPesquisa({ screenKey }){
   const [confirmState, setConfirmState] = useState({ show: false, title: null, message: null, onConfirm: null })
 
   useEffect(()=>{
-    axios.get('/meta/screens').then(r=>{
+    api.get('/meta/screens', { block: true }).then(r=>{
       const s = r.data[screenKey]
       setMeta(s)
     })
@@ -78,14 +78,27 @@ export default function TelaPesquisa({ screenKey }){
     const sortField = query.get('sortField') || null
     const sortDir = query.get('sortDir') || null
 
-    axios.get(endpoint, { params: { ...params, page, pageSize, sortField, sortDir } }).then(r=>{
-      // API returns { items, total, page, pageSize }
-      if (r.data.items) { setItems(r.data.items); setTotal(r.data.total || r.data.items.length) }
-      else setItems(r.data)
-    }).catch(()=>setItems([]))
+    api.get(endpoint, { params: { ...params, page, pageSize, sortField, sortDir }, block: true }).then(r=>{
+      // api.js unwraps envelope into resp.data and keeps the full envelope at resp.envelope
+      const env = r.envelope || {}
+      if (env.items) {
+        setItems(env.items)
+        setTotal(env.total || (Array.isArray(env.items) ? env.items.length : 0))
+      } else if (Array.isArray(r.data)) {
+        setItems(r.data)
+        setTotal(env.total || r.data.length)
+      } else if (r.data) {
+        // single object returned
+        setItems([r.data])
+        setTotal(env.total || 1)
+      } else {
+        setItems([])
+        setTotal(0)
+      }
+    }).catch(()=>{ setItems([]); setTotal(0) })
   },[meta, useLocation().search])
 
-  if (!meta) return <div>Carregando...</div>
+  if (!meta) return null
 
   return (
     <div className="page-wrapper">
@@ -202,7 +215,7 @@ export default function TelaPesquisa({ screenKey }){
                     {meta.tabela.acoes.map((a, ai) => (
                       <React.Fragment key={ai}>
                         {a.tipo === 'navegacao' && <button className="btn btn-sm btn-link btn-icon" onClick={()=> navigate(a.destino.replace('{id}', it[a.campo_id]))}><i className={`bi bi-${a.icone}`}></i></button>}
-                        {a.tipo === 'confirmacao_delete_ajax' && <button className="btn btn-sm btn-link text-danger btn-icon" onClick={()=> setConfirmState({ show: true, title: 'Excluir', message: 'Confirma exclusão?', onConfirm: async ()=>{ await axios.delete(a.destino.replace('{id}', it[a.campo_id])); setItems(items.filter(x=> x.id !== it.id)); setConfirmState(s=> ({...s, show: false})) } }) }><i className={`bi bi-${a.icone}`}></i></button>}
+                        {a.tipo === 'confirmacao_delete_ajax' && <button className="btn btn-sm btn-link text-danger btn-icon" onClick={()=> setConfirmState({ show: true, title: 'Excluir', message: 'Confirma exclusão?', onConfirm: async ()=>{ await api.delete(a.destino.replace('{id}', it[a.campo_id]), { block: true }); setItems(items.filter(x=> x.id !== it.id)); setConfirmState(s=> ({...s, show: false})) } }) }><i className={`bi bi-${a.icone}`}></i></button>}
                       </React.Fragment>
                     ))}
               </td>

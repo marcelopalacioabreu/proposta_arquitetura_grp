@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
-import axios from 'axios'
+import api from '../services/api'
 
 export default function Navbar({ brand = 'Painel' }){
   const [user, setUser] = useState(null)
@@ -10,7 +10,7 @@ export default function Navbar({ brand = 'Painel' }){
 
   useEffect(()=>{
     let mounted = true
-    axios.get('/auth/me').then(r=>{ if (mounted) setUser(r.data) }).catch(()=>{ if (mounted) setUser(null) })
+    api.get('/auth/me').then(r=>{ if (mounted) setUser(r.data) }).catch(()=>{ if (mounted) setUser(null) })
     return ()=> { mounted = false }
   },[])
 
@@ -22,7 +22,7 @@ export default function Navbar({ brand = 'Painel' }){
 
   async function handleLogout(){
     try{
-      await axios.post('/auth/logout');
+      await api.post('/auth/logout', null, { block: true });
       setUser(null);
       navigate('/login');
       // reload to ensure cookie is cleared and authenticated UI resets

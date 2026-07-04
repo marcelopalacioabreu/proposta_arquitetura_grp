@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
-import axios from 'axios'
+import api from '../services/api'
+import modalService from '../utils/modalService'
 import { useNavigate } from 'react-router-dom'
 import Navbar from '../components/Navbar'
 import Footer from '../components/Footer'
@@ -12,10 +13,10 @@ export default function Login(){
   async function submit(e){
     e.preventDefault()
     try{
-      const res = await axios.post('/auth/login',{ username: user, password: pass }, { withCredentials: true })
+      const res = await api.post('/auth/login',{ username: user, password: pass }, { block: true })
       nav('/painel')
     }catch(err){
-      alert('Erro ao autenticar')
+      modalService.alertModal('Erro ao autenticar')
     }
   }
 

@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react'
-import axios from 'axios'
+import api from '../services/api'
 import { useParams, useNavigate } from 'react-router-dom'
 
-export default function TelaCadastro({ screenKey }){
+export default function TelaCadastro({ screenKey, closeModal }){
   const [meta, setMeta] = useState(null)
   const [model, setModel] = useState({})
   const [errors, setErrors] = useState({})
@@ -11,10 +11,10 @@ export default function TelaCadastro({ screenKey }){
   const [submitting, setSubmitting] = useState(false)
 
   useEffect(()=>{
-    axios.get('/meta/screens').then(r=> setMeta(r.data[screenKey]))
+    api.get('/meta/screens', { block: true }).then(r=> setMeta(r.data[screenKey]))
     if (params.id && params.id !== 'new'){
       // determine API endpoint from metadata
-      axios.get('/meta/screens').then(r=>{
+      api.get('/meta/screens').then(r=>{
         const m = r.data[screenKey]
         let endpoint = null
         if (m && m.endpoint) endpoint = m.endpoint
@@ -29,12 +29,12 @@ export default function TelaCadastro({ screenKey }){
           }
         }
         if (!endpoint) endpoint = '/api/organizacoes'
-        axios.get(`${endpoint}/${params.id}`).then(r=> setModel(r.data)).catch(()=>{})
+        api.get(`${endpoint}/${params.id}`, { block: true }).then(r=> setModel(r.data)).catch(()=>{})
       })
     }
   },[screenKey, params.id])
 
-  if (!meta) return <div>Carregando...</div>
+  if (!meta) return null
 
   const handleSubmit = async (e) =>{
     e.preventDefault()
@@ -61,11 +61,12 @@ export default function TelaCadastro({ screenKey }){
       if (!endpoint) endpoint = '/api/organizacoes'
 
       if (params.id === 'new'){
-        await axios.post(endpoint, obj)
+        await api.post(endpoint, obj, { block: true })
       } else {
-        await axios.put(`${endpoint}/${params.id}`, obj)
+        await api.put(`${endpoint}/${params.id}`, obj, { block: true })
       }
-      navigate('/painel/organizacoes')
+      if (typeof closeModal === 'function') closeModal()
+      else navigate('/painel/organizacoes')
     }catch(err){
       if (err.response && err.response.status === 400){
         const data = err.response.data
