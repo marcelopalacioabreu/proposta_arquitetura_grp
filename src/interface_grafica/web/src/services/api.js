@@ -24,8 +24,13 @@ api.interceptors.response.use(resp => {
     } else {
       if (d.mensagem) modalService.alertModal(d.mensagem)
       if (d.redirecionarPara) window.location.href = d.redirecionarPara
-      // unwrap inner payload for convenience: prefer data, then items, else original object
-      const inner = d.data ?? d.items ?? d
+      // unwrap inner payload for convenience:
+      // - if the envelope explicitly contains a `data` property (even if null), use it
+      // - else if it contains `items`, use that
+      // - otherwise keep the original envelope object
+      const hasData = Object.prototype.hasOwnProperty.call(d, 'data')
+      const hasItems = Object.prototype.hasOwnProperty.call(d, 'items')
+      const inner = hasData ? d.data : (hasItems ? d.items : d)
       resp.data = inner
       resp.envelope = d
     }
