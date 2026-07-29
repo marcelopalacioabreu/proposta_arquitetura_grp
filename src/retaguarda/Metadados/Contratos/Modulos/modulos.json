@@ -1,13 +1,17 @@
 {
   "modulos": [
     {
-      "group": "Administração",
-      "items": [
-        { "key": "organizacoes", "label": "Organizações", "icon": "building", "url": "/painel/organizacoes", "permissoes": [
-                    { "id": "organizacoes.visualizar", "label": "Visualizar" },
-                    { "id": "organizacoes.editar", "label": "Criar/Editar" },
-                    { "id": "organizacoes.excluir", "label": "Excluir" }
-                ] }
+      "grupo": "Administração",
+      "itens": [
+        {
+          "chave": "organizacoes", "texto": "Organizações", "icone": "building", "url": "/painel/organizacoes", 
+          "permissoes": [
+                    { "id": "organizacoes.visualizar", "texto": "Visualizar" },
+                    { "id": "organizacoes.editar", "texto": "Criar/Editar" },
+                    { "id": "organizacoes.excluir", "texto": "Excluir" }
+                ], 
+          "conflitosCom": [""] 
+        }
       ]
     }
   ]
