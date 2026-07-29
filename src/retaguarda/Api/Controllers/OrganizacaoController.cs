@@ -18,6 +18,7 @@ namespace Retaguarda.Api.Controllers
         }
 
         [HttpGet]
+        [Authorize(Policy = "organizacoes.visualizar")]
         public IActionResult GetAll([FromQuery] string? nome, [FromQuery] int page = 1, [FromQuery] int pageSize = 10, [FromQuery] string? sortField = null, [FromQuery] string? sortDir = null,
             [FromQuery] string? campo = null, [FromQuery] string? operador = null, [FromQuery] string? valor = null, [FromQuery(Name = "valor_de")] string? valorDe = null, [FromQuery(Name = "valor_ate")] string? valorAte = null, [FromQuery] int? inativo = null)
         {
@@ -26,6 +27,7 @@ namespace Retaguarda.Api.Controllers
         }
 
         [HttpGet("{id}")]
+        [Authorize(Policy = "organizacoes.visualizar")]
         public IActionResult Get(long id)
         {
             var e = _servico.ObterPorIdAsync(id).Result;
@@ -34,7 +36,7 @@ namespace Retaguarda.Api.Controllers
         }
 
         [HttpPost]
-        [Authorize]
+        [Authorize(Policy = "organizacoes.editar")]
         public IActionResult Create([FromBody] OrganizacaoDto dto)
         {
             if (!ModelState.IsValid) return BadRequestModelState();
@@ -43,7 +45,7 @@ namespace Retaguarda.Api.Controllers
         }
 
         [HttpDelete("{id}")]
-        [Authorize]
+        [Authorize(Policy = "organizacoes.excluir")]
         public IActionResult Delete(long id)
         {
             _servico.DeleteAsync(id).GetAwaiter().GetResult();
@@ -51,7 +53,7 @@ namespace Retaguarda.Api.Controllers
         }
 
         [HttpPut("{id}")]
-        [Authorize]
+        [Authorize(Policy = "organizacoes.editar")]
         public IActionResult Update(long id, [FromBody] OrganizacaoDto dto)
         {
             if (!ModelState.IsValid) return BadRequestModelState();
