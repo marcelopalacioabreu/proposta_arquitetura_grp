@@ -3,6 +3,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using System.Security.Cryptography;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 
@@ -84,7 +85,22 @@ namespace Retaguarda.Api.Controllers
                 return OkData(null);
             }
 
-            return OkData(new { id = u.Id, nome = u.Nome, username = u.Username, email = u.Email });
+            // Include permissions summary for the UI
+            var db = HttpContext.RequestServices.GetService(typeof(Retaguarda.Persistencia.MYSQL.ApplicationDbContext)) as Retaguarda.Persistencia.MYSQL.ApplicationDbContext;
+            var permissoes = new System.Collections.Generic.List<string>();
+            var isAdmin = false;
+            if (db != null)
+            {
+                var pu = db.PerfilUsuarios.Where(x => x.UsuarioId == u.Id).Select(x => x.PerfilId).ToList();
+                if (pu.Any())
+                {
+                    var perfis = db.Perfis.Where(p => pu.Contains(p.Id)).Include(p => p.Permissoes).ToList();
+                    isAdmin = perfis.Any(p => p.AdministradorDoSistema);
+                    permissoes = perfis.SelectMany(p => p.Permissoes.Select(pp => pp.Nome)).Distinct().ToList();
+                }
+            }
+
+            return OkData(new { id = u.Id, nome = u.Nome, username = u.Username, email = u.Email, administrador = isAdmin, permissoes });
         }
 
         [HttpPost("logout")]

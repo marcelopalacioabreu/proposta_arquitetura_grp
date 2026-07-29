@@ -64,6 +64,22 @@ namespace Retaguarda.Persistencia.Inicializadores
 
                     db.Usuarios.Add(user);
                     db.SaveChanges();
+
+                    // Ensure an administrator profile exists and associate the admin user to it
+                    var adminPerfil = db.Perfis.FirstOrDefault(p => p.Nome == "Administrador");
+                    if (adminPerfil == null)
+                    {
+                        adminPerfil = new Perfil { Nome = "Administrador", AdministradorDoSistema = true, OrganizacaoId = org.Id, DataInsercao = DateTime.UtcNow, Ativo = true };
+                        db.Perfis.Add(adminPerfil);
+                        db.SaveChanges();
+                    }
+
+                    var existsAssoc = db.PerfilUsuarios.FirstOrDefault(pu => pu.UsuarioId == user.Id && pu.PerfilId == adminPerfil.Id);
+                    if (existsAssoc == null)
+                    {
+                        db.PerfilUsuarios.Add(new PerfilUsuario { UsuarioId = user.Id, PerfilId = adminPerfil.Id, OrganizacaoId = org.Id, DataInsercao = DateTime.UtcNow, Ativo = true });
+                        db.SaveChanges();
+                    }
                 }
             }
             catch

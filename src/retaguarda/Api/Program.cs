@@ -10,6 +10,7 @@ using Retaguarda.Repositorios;
 using Retaguarda.Servicos.Interfaces;
 using Retaguarda.Servicos;
 using Retaguarda.Api.Filters;
+using Retaguarda.Api.Authorization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -69,7 +70,58 @@ builder.Services.AddAuthentication(options =>
         };
     });
 
-builder.Services.AddAuthorization();
+// Register authorization policies for permissions declared in metadata (modulos.json)
+builder.Services.AddAuthorization(options =>
+{
+    try
+    {
+        // Look for modulos.json in project metadata or documentation fallback
+        var projectMeta = Path.GetFullPath(Path.Combine(builder.Environment.ContentRootPath, "..", "Metadados", "Contratos", "Modulos", "modulos.json"));
+        var docMeta = Path.GetFullPath(Path.Combine(builder.Environment.ContentRootPath, "..", "..", "..", "..", "DOCUMENTACAO", "METADADOS", "Modulos", "modulos.json"));
+        string? metaPath = null;
+        if (System.IO.File.Exists(projectMeta)) metaPath = projectMeta;
+        else if (System.IO.File.Exists(docMeta)) metaPath = docMeta;
+
+        if (!string.IsNullOrEmpty(metaPath))
+        {
+            var txt = System.IO.File.ReadAllText(metaPath);
+            using var doc = System.Text.Json.JsonDocument.Parse(txt);
+            if (doc.RootElement.TryGetProperty("modulos", out var mods) && mods.ValueKind == System.Text.Json.JsonValueKind.Array)
+            {
+                foreach (var g in mods.EnumerateArray())
+                {
+                    if (!g.TryGetProperty("itens", out var items) || items.ValueKind != System.Text.Json.JsonValueKind.Array) continue;
+                    foreach (var it in items.EnumerateArray())
+                    {
+                        if (!it.TryGetProperty("permissoes", out var perms) || perms.ValueKind != System.Text.Json.JsonValueKind.Array) continue;
+                        foreach (var p in perms.EnumerateArray())
+                        {
+                            if (p.ValueKind != System.Text.Json.JsonValueKind.Object) continue;
+                            if (p.TryGetProperty("id", out var idProp) && idProp.ValueKind == System.Text.Json.JsonValueKind.String)
+                            {
+                                var pid = idProp.GetString();
+                                if (!string.IsNullOrEmpty(pid))
+                                {
+                                    // Add policy that uses PermissionRequirement (checked via DB in handler)
+                                    options.AddPolicy(pid, policy => policy.Requirements.Add(new PermissionRequirement(pid)));
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    catch
+    {
+        // ignore errors during policy registration to avoid breaking startup
+    }
+});
+
+// Register authorization handler that checks permissions in database
+builder.Services.AddScoped<Microsoft.AspNetCore.Authorization.IAuthorizationHandler, Retaguarda.Api.Authorization.PermissionAuthorizationHandler>();
+// Permission service
+builder.Services.AddScoped<Retaguarda.Servicos.Interfaces.IPermissionService, Retaguarda.Servicos.PermissionService>();
 
 builder.Services.AddControllers(options =>
 {

@@ -4,12 +4,17 @@ import api from '../services/api'
 
 export default function Menu(){
   const [modulos, setModulos] = useState([])
+  const [userPerms, setUserPerms] = useState([])
   const [query, setQuery] = useState('')
   const [compact, setCompact] = useState(true)
   const location = useLocation()
 
   useEffect(()=>{
     api.get('/meta/modulos').then(r=> setModulos(r.data.modulos || [] )).catch(()=>setModulos([]))
+    api.get('/auth/me').then(r => {
+      const data = r.data || null;
+      if (data && data.permissoes) setUserPerms(data.permissoes || [])
+    }).catch(()=> setUserPerms([]))
   },[])
 
   // compute menu top/bottom to fit exactly between navbar and footer
@@ -41,7 +46,16 @@ export default function Menu(){
   const filtered = useMemo(()=>{
     if (!query) return modulos
     const q = query.toLowerCase()
-    return modulos.map(g => ({ ...g, items: (g.items || []).filter(i => (i.label||'').toLowerCase().includes(q)) })).filter(g => (g.items || []).length > 0)
+    return modulos.map(g => ({ ...g, items: (g.items || []).filter(i => {
+      // search text
+      if (!((i.texto||'').toLowerCase().includes(q))) return false
+      // permissions: if item has permisssoes, require that user has any of them
+      if (i.permissoes && Array.isArray(i.permissoes) && i.permissoes.length > 0){
+        const ids = i.permissoes.map(p => (p.id||p).toString())
+        return ids.some(id => userPerms.includes(id))
+      }
+      return true
+    }) })).filter(g => (g.items || []).length > 0)
   },[modulos, query])
 
   function renderCompactIcon(name, active){
@@ -76,8 +90,8 @@ export default function Menu(){
                         {g.items && g.items.map((it, ii) => (
                           <Link key={ii} to={it.url} className={`list-group-item list-group-item-action d-flex align-items-center ${location.pathname === it.url ? 'active' : ''}`} onClick={()=>{}}
                           >
-                            {it.icon && <i className={`bi bi-${it.icon} me-2`} />}
-                            <span className="item-label">{it.label}</span>
+                            {it.icone && <i className={`bi bi-${it.icone} me-2`} />}
+                            <span className="item-label">{it.texto}</span>
                           </Link>
                         ))}
                       </div>
@@ -89,8 +103,8 @@ export default function Menu(){
                   {filtered.flatMap(g => g.items || []).map((it, idx) => {
                     const isActive = location.pathname === it.url
                     return (
-                      <Link key={idx} to={it.url} className={`compact-icon mb-2 ${isActive ? 'active' : ''}`} title={it.label}>
-                        {it.icon ? (renderCompactIcon(it.icon, isActive)) : <i className="bi bi-square"/>}
+                      <Link key={idx} to={it.url} className={`compact-icon mb-2 ${isActive ? 'active' : ''}`} title={it.texto}>
+                        {it.icone ? (renderCompactIcon(it.icone, isActive)) : <i className="bi bi-square"/>}
                       </Link>
                     )
                   })}
