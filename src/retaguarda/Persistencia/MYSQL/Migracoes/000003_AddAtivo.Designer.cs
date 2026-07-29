@@ -45,8 +45,7 @@ namespace Retaguarda.Persistencia.Migracoes.MYSQL
                     b.Property<long?>("OrganizacaoId")
                         .HasColumnType("bigint");
 
-                    b.Property<long?>("OrganizacaoSetorId")
-                        .HasColumnType("bigint");
+                    
 
                     b.HasKey("Id");
 
@@ -78,8 +77,7 @@ namespace Retaguarda.Persistencia.Migracoes.MYSQL
                     b.Property<long?>("OrganizacaoId")
                         .HasColumnType("bigint");
 
-                    b.Property<long?>("OrganizacaoSetorId")
-                        .HasColumnType("bigint");
+                    
 
                     b.HasKey("Id");
 
@@ -109,8 +107,7 @@ namespace Retaguarda.Persistencia.Migracoes.MYSQL
                     b.Property<long?>("OrganizacaoId")
                         .HasColumnType("bigint");
 
-                    b.Property<long?>("OrganizacaoSetorId")
-                        .HasColumnType("bigint");
+                    
 
                     b.HasKey("Id");
 
@@ -142,8 +139,7 @@ namespace Retaguarda.Persistencia.Migracoes.MYSQL
                     b.Property<long?>("OrganizacaoId")
                         .HasColumnType("bigint");
 
-                    b.Property<long?>("OrganizacaoSetorId")
-                        .HasColumnType("bigint");
+                    
 
                     b.HasKey("Id");
 
@@ -175,8 +171,7 @@ namespace Retaguarda.Persistencia.Migracoes.MYSQL
                     b.Property<long?>("OrganizacaoId")
                         .HasColumnType("bigint");
 
-                    b.Property<long?>("OrganizacaoSetorId")
-                        .HasColumnType("bigint");
+                    
 
                     b.Property<long>("PerfilId")
                         .HasColumnType("bigint");
@@ -216,8 +211,7 @@ namespace Retaguarda.Persistencia.Migracoes.MYSQL
                     b.Property<long?>("OrganizacaoId")
                         .HasColumnType("bigint");
 
-                    b.Property<long?>("OrganizacaoSetorId")
-                        .HasColumnType("bigint");
+                    
 
                     b.Property<string>("SenhaHash")
                         .IsRequired()

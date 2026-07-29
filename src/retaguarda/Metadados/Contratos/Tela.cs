@@ -2,7 +2,7 @@ using System.Collections.Generic;
 
 namespace Retaguarda.Metadados.Contracts
 {
-    public class ScreenDefinition
+    public class Tela
     {
         public string RouteId { get; set; } = null!; // associates screen to a route
         public string Title { get; set; } = null!;

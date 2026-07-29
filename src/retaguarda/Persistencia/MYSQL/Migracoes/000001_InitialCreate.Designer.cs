@@ -40,8 +40,7 @@ namespace Retaguarda.Persistencia.MYSQL.Migracoes
 
                     b.Property<long>("OrganizacaoId")
                         .HasColumnType("bigint");
-                    b.Property<long?>("OrganizacaoSetorId")
-                        .HasColumnType("bigint");
+                    
 
                     b.HasKey("Id");
 
@@ -91,8 +90,7 @@ namespace Retaguarda.Persistencia.MYSQL.Migracoes
 
                     b.Property<long>("OrganizacaoId")
                         .HasColumnType("bigint");
-                    b.Property<long?>("OrganizacaoSetorId")
-                        .HasColumnType("bigint");
+                    
 
                     b.HasKey("Id");
 
@@ -120,8 +118,7 @@ namespace Retaguarda.Persistencia.MYSQL.Migracoes
 
                     b.Property<long>("OrganizacaoId")
                         .HasColumnType("bigint");
-                    b.Property<long?>("OrganizacaoSetorId")
-                        .HasColumnType("bigint");
+                    
 
                     b.HasKey("Id");
 
@@ -149,8 +146,7 @@ namespace Retaguarda.Persistencia.MYSQL.Migracoes
 
                     b.Property<long>("OrganizacaoId")
                         .HasColumnType("bigint");
-                    b.Property<long?>("OrganizacaoSetorId")
-                        .HasColumnType("bigint");
+                    
 
                     b.Property<long>("PerfilId")
                         .HasColumnType("bigint");
@@ -183,8 +179,7 @@ namespace Retaguarda.Persistencia.MYSQL.Migracoes
 
                     b.Property<long>("OrganizacaoId")
                         .HasColumnType("bigint");
-                    b.Property<long?>("OrganizacaoSetorId")
-                        .HasColumnType("bigint");
+                    
 
                     b.HasKey("Id");
 

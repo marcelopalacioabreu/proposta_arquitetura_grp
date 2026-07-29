@@ -58,7 +58,7 @@ namespace Retaguarda.Persistencia.Inicializadores
                         DataInsercao = DateTime.UtcNow,
                         SenhaHash = HashPassword("admin"),
                         OrganizacaoId = org.Id,
-                        OrganizacaoSetorId = setor.Id
+                        SetorId = setor.Id
                         ,Ativo = true
                     };
 

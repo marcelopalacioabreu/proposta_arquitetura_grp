@@ -104,7 +104,7 @@ namespace Retaguarda.Persistencia.MYSQL.Migracoes
                     OrganizacaoId = table.Column<long>(type: "bigint", nullable: true),
                     OrganizacaoUnidadeId = table.Column<long>(type: "bigint", nullable: true),
                     SetorId = table.Column<long>(type: "bigint", nullable: true),
-                    OrganizacaoSetorId = table.Column<long>(type: "bigint", nullable: true),
+                    
                     Ativo = table.Column<bool>(type: "tinyint(1)", nullable: false)
                 },
                 constraints: table =>
@@ -134,7 +134,7 @@ namespace Retaguarda.Persistencia.MYSQL.Migracoes
                     OrganizacaoId = table.Column<long>(type: "bigint", nullable: true),
                     OrganizacaoUnidadeId = table.Column<long>(type: "bigint", nullable: true),
                     SetorId = table.Column<long>(type: "bigint", nullable: true),
-                    OrganizacaoSetorId = table.Column<long>(type: "bigint", nullable: true),
+                    
                     Ativo = table.Column<bool>(type: "tinyint(1)", nullable: false)
                 },
                 constraints: table =>
@@ -156,7 +156,7 @@ namespace Retaguarda.Persistencia.MYSQL.Migracoes
                     OrganizacaoId = table.Column<long>(type: "bigint", nullable: true),
                     OrganizacaoUnidadeId = table.Column<long>(type: "bigint", nullable: true),
                     SetorId = table.Column<long>(type: "bigint", nullable: true),
-                    OrganizacaoSetorId = table.Column<long>(type: "bigint", nullable: true),
+                    
                     Ativo = table.Column<bool>(type: "tinyint(1)", nullable: false)
                 },
                 constraints: table =>
@@ -190,7 +190,7 @@ namespace Retaguarda.Persistencia.MYSQL.Migracoes
                     DataAlteracao = table.Column<DateTime>(type: "datetime(6)", nullable: true),
                     OrganizacaoId = table.Column<long>(type: "bigint", nullable: true),
                     OrganizacaoUnidadeId = table.Column<long>(type: "bigint", nullable: true),
-                    OrganizacaoSetorId = table.Column<long>(type: "bigint", nullable: true),
+                    
                     Ativo = table.Column<bool>(type: "tinyint(1)", nullable: false)
                 },
                 constraints: table =>
@@ -224,7 +224,7 @@ namespace Retaguarda.Persistencia.MYSQL.Migracoes
                     OrganizacaoId = table.Column<long>(type: "bigint", nullable: true),
                     OrganizacaoUnidadeId = table.Column<long>(type: "bigint", nullable: true),
                     SetorId = table.Column<long>(type: "bigint", nullable: true),
-                    OrganizacaoSetorId = table.Column<long>(type: "bigint", nullable: true),
+                    
                     Ativo = table.Column<bool>(type: "tinyint(1)", nullable: false)
                 },
                 constraints: table =>
@@ -255,7 +255,7 @@ namespace Retaguarda.Persistencia.MYSQL.Migracoes
                     OrganizacaoId = table.Column<long>(type: "bigint", nullable: true),
                     OrganizacaoUnidadeId = table.Column<long>(type: "bigint", nullable: true),
                     SetorId = table.Column<long>(type: "bigint", nullable: true),
-                    OrganizacaoSetorId = table.Column<long>(type: "bigint", nullable: true),
+                    
                     Ativo = table.Column<bool>(type: "tinyint(1)", nullable: false)
                 },
                 constraints: table =>
@@ -284,7 +284,7 @@ namespace Retaguarda.Persistencia.MYSQL.Migracoes
                     OrganizacaoId = table.Column<long>(type: "bigint", nullable: true),
                     OrganizacaoUnidadeId = table.Column<long>(type: "bigint", nullable: true),
                     SetorId = table.Column<long>(type: "bigint", nullable: true),
-                    OrganizacaoSetorId = table.Column<long>(type: "bigint", nullable: true),
+                    
                     Ativo = table.Column<bool>(type: "tinyint(1)", nullable: false)
                 },
                 constraints: table =>
@@ -313,7 +313,7 @@ namespace Retaguarda.Persistencia.MYSQL.Migracoes
                     OrganizacaoId = table.Column<long>(type: "bigint", nullable: true),
                     OrganizacaoUnidadeId = table.Column<long>(type: "bigint", nullable: true),
                     SetorId = table.Column<long>(type: "bigint", nullable: true),
-                    OrganizacaoSetorId = table.Column<long>(type: "bigint", nullable: true),
+                    
                     Ativo = table.Column<bool>(type: "tinyint(1)", nullable: false)
                 },
                 constraints: table =>
@@ -344,7 +344,7 @@ namespace Retaguarda.Persistencia.MYSQL.Migracoes
                     OrganizacaoId = table.Column<long>(type: "bigint", nullable: true),
                     OrganizacaoUnidadeId = table.Column<long>(type: "bigint", nullable: true),
                     SetorId = table.Column<long>(type: "bigint", nullable: true),
-                    OrganizacaoSetorId = table.Column<long>(type: "bigint", nullable: true),
+                    
                     Ativo = table.Column<bool>(type: "tinyint(1)", nullable: false)
                 },
                 constraints: table =>
@@ -373,7 +373,7 @@ namespace Retaguarda.Persistencia.MYSQL.Migracoes
                     OrganizacaoId = table.Column<long>(type: "bigint", nullable: true),
                     OrganizacaoUnidadeId = table.Column<long>(type: "bigint", nullable: true),
                     SetorId = table.Column<long>(type: "bigint", nullable: true),
-                    OrganizacaoSetorId = table.Column<long>(type: "bigint", nullable: true),
+                    
                     Ativo = table.Column<bool>(type: "tinyint(1)", nullable: false)
                 },
                 constraints: table =>
@@ -402,7 +402,7 @@ namespace Retaguarda.Persistencia.MYSQL.Migracoes
                     OrganizacaoId = table.Column<long>(type: "bigint", nullable: true),
                     OrganizacaoUnidadeId = table.Column<long>(type: "bigint", nullable: true),
                     SetorId = table.Column<long>(type: "bigint", nullable: true),
-                    OrganizacaoSetorId = table.Column<long>(type: "bigint", nullable: true),
+                    
                     Ativo = table.Column<bool>(type: "tinyint(1)", nullable: false)
                 },
                 constraints: table =>
@@ -432,7 +432,7 @@ namespace Retaguarda.Persistencia.MYSQL.Migracoes
                     OrganizacaoId = table.Column<long>(type: "bigint", nullable: true),
                     OrganizacaoUnidadeId = table.Column<long>(type: "bigint", nullable: true),
                     SetorId = table.Column<long>(type: "bigint", nullable: true),
-                    OrganizacaoSetorId = table.Column<long>(type: "bigint", nullable: true),
+                    
                     Ativo = table.Column<bool>(type: "tinyint(1)", nullable: false)
                 },
                 constraints: table =>

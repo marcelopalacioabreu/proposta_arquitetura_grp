@@ -45,8 +45,7 @@ namespace Retaguarda.Persistencia.MYSQL
                     b.Property<long?>("OrganizacaoId")
                         .HasColumnType("bigint");
 
-                    b.Property<long?>("OrganizacaoSetorId")
-                        .HasColumnType("bigint");
+                    
 
                     b.Property<long?>("OrganizacaoUnidadeId")
                         .HasColumnType("bigint");
@@ -87,8 +86,7 @@ namespace Retaguarda.Persistencia.MYSQL
                     b.Property<long?>("OrganizacaoId")
                         .HasColumnType("bigint");
 
-                    b.Property<long?>("OrganizacaoSetorId")
-                        .HasColumnType("bigint");
+                    
 
                     b.Property<long?>("OrganizacaoUnidadeId")
                         .HasColumnType("bigint");
@@ -129,8 +127,7 @@ namespace Retaguarda.Persistencia.MYSQL
                     b.Property<long?>("OrganizacaoId")
                         .HasColumnType("bigint");
 
-                    b.Property<long?>("OrganizacaoSetorId")
-                        .HasColumnType("bigint");
+                    
 
                     b.Property<long?>("OrganizacaoUnidadeId")
                         .HasColumnType("bigint");
@@ -173,8 +170,7 @@ namespace Retaguarda.Persistencia.MYSQL
                     b.Property<long?>("OrganizacaoId")
                         .HasColumnType("bigint");
 
-                    b.Property<long?>("OrganizacaoSetorId")
-                        .HasColumnType("bigint");
+                    
 
                     b.Property<long?>("OrganizacaoUnidadeId")
                         .HasColumnType("bigint");
@@ -215,8 +211,7 @@ namespace Retaguarda.Persistencia.MYSQL
                     b.Property<long?>("OrganizacaoId")
                         .HasColumnType("bigint");
 
-                    b.Property<long?>("OrganizacaoSetorId")
-                        .HasColumnType("bigint");
+                    
 
                     b.Property<long?>("OrganizacaoUnidadeId")
                         .HasColumnType("bigint");
@@ -257,8 +252,7 @@ namespace Retaguarda.Persistencia.MYSQL
                     b.Property<long?>("OrganizacaoId")
                         .HasColumnType("bigint");
 
-                    b.Property<long?>("OrganizacaoSetorId")
-                        .HasColumnType("bigint");
+                    
 
                     b.Property<long?>("OrganizacaoUnidadeId")
                         .HasColumnType("bigint");
@@ -300,8 +294,7 @@ namespace Retaguarda.Persistencia.MYSQL
                     b.Property<long?>("OrganizacaoId")
                         .HasColumnType("bigint");
 
-                    b.Property<long?>("OrganizacaoSetorId")
-                        .HasColumnType("bigint");
+                    
 
                     b.Property<long?>("OrganizacaoUnidadeId")
                         .HasColumnType("bigint");
@@ -342,8 +335,7 @@ namespace Retaguarda.Persistencia.MYSQL
                     b.Property<long?>("OrganizacaoId")
                         .HasColumnType("bigint");
 
-                    b.Property<long?>("OrganizacaoSetorId")
-                        .HasColumnType("bigint");
+                    
 
                     b.Property<long?>("OrganizacaoUnidadeId")
                         .HasColumnType("bigint");
@@ -379,8 +371,7 @@ namespace Retaguarda.Persistencia.MYSQL
                     b.Property<long?>("OrganizacaoId")
                         .HasColumnType("bigint");
 
-                    b.Property<long?>("OrganizacaoSetorId")
-                        .HasColumnType("bigint");
+                    
 
                     b.Property<long?>("OrganizacaoUnidadeId")
                         .HasColumnType("bigint");
@@ -418,8 +409,7 @@ namespace Retaguarda.Persistencia.MYSQL
                     b.Property<long?>("OrganizacaoId")
                         .HasColumnType("bigint");
 
-                    b.Property<long?>("OrganizacaoSetorId")
-                        .HasColumnType("bigint");
+                    
 
                     b.Property<long?>("OrganizacaoUnidadeId")
                         .HasColumnType("bigint");
@@ -457,8 +447,7 @@ namespace Retaguarda.Persistencia.MYSQL
                     b.Property<long?>("OrganizacaoId")
                         .HasColumnType("bigint");
 
-                    b.Property<long?>("OrganizacaoSetorId")
-                        .HasColumnType("bigint");
+                    
 
                     b.Property<long?>("OrganizacaoUnidadeId")
                         .HasColumnType("bigint");
@@ -500,8 +489,7 @@ namespace Retaguarda.Persistencia.MYSQL
                     b.Property<long?>("OrganizacaoId")
                         .HasColumnType("bigint");
 
-                    b.Property<long?>("OrganizacaoSetorId")
-                        .HasColumnType("bigint");
+                    
 
                     b.Property<long?>("OrganizacaoUnidadeId")
                         .HasColumnType("bigint");
@@ -540,8 +528,7 @@ namespace Retaguarda.Persistencia.MYSQL
                     b.Property<long?>("OrganizacaoId")
                         .HasColumnType("bigint");
 
-                    b.Property<long?>("OrganizacaoSetorId")
-                        .HasColumnType("bigint");
+                    
 
                     b.Property<long?>("OrganizacaoUnidadeId")
                         .HasColumnType("bigint");
@@ -579,8 +566,7 @@ namespace Retaguarda.Persistencia.MYSQL
                     b.Property<long?>("OrganizacaoId")
                         .HasColumnType("bigint");
 
-                    b.Property<long?>("OrganizacaoSetorId")
-                        .HasColumnType("bigint");
+                    
 
                     b.Property<long?>("OrganizacaoUnidadeId")
                         .HasColumnType("bigint");
@@ -618,8 +604,7 @@ namespace Retaguarda.Persistencia.MYSQL
                     b.Property<long?>("OrganizacaoId")
                         .HasColumnType("bigint");
 
-                    b.Property<long?>("OrganizacaoSetorId")
-                        .HasColumnType("bigint");
+                    
 
                     b.Property<long?>("OrganizacaoUnidadeId")
                         .HasColumnType("bigint");
@@ -663,8 +648,7 @@ namespace Retaguarda.Persistencia.MYSQL
                     b.Property<long?>("OrganizacaoId")
                         .HasColumnType("bigint");
 
-                    b.Property<long?>("OrganizacaoSetorId")
-                        .HasColumnType("bigint");
+                    
 
                     b.Property<long?>("OrganizacaoUnidadeId")
                         .HasColumnType("bigint");
@@ -707,8 +691,7 @@ namespace Retaguarda.Persistencia.MYSQL
                     b.Property<long?>("OrganizacaoId")
                         .HasColumnType("bigint");
 
-                    b.Property<long?>("OrganizacaoSetorId")
-                        .HasColumnType("bigint");
+                    
 
                     b.Property<long?>("OrganizacaoUnidadeId")
                         .HasColumnType("bigint");
@@ -757,8 +740,7 @@ namespace Retaguarda.Persistencia.MYSQL
                     b.Property<long?>("OrganizacaoId")
                         .HasColumnType("bigint");
 
-                    b.Property<long?>("OrganizacaoSetorId")
-                        .HasColumnType("bigint");
+                    
 
                     b.Property<long?>("OrganizacaoUnidadeId")
                         .HasColumnType("bigint");

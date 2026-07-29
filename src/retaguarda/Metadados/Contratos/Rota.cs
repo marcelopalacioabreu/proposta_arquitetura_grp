@@ -2,7 +2,7 @@ using System.Collections.Generic;
 
 namespace Retaguarda.Metadados.Contracts
 {
-    public class RouteDefinition
+    public class Rota
     {
         public string Id { get; set; } = null!;
         public string Path { get; set; } = null!;

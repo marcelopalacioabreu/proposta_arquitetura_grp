@@ -2,7 +2,7 @@ using System.Collections.Generic;
 
 namespace Retaguarda.Metadados.Contracts
 {
-    public class ComponentDefinition
+    public class Componente
     {
         public string Name { get; set; } = null!;
         public string Type { get; set; } = null!; // e.g., TabelaPaginavel, Filtro

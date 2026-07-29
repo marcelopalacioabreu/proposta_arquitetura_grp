@@ -61,11 +61,6 @@ namespace Retaguarda.Persistencia.Migracoes.MYSQL
                 type: "bigint",
                 nullable: true);
 
-            migrationBuilder.AddColumn<long>(
-                name: "OrganizacaoSetorId",
-                table: "Organizacoes",
-                type: "bigint",
-                nullable: true);
 
             migrationBuilder.AlterColumn<long>(
                 name: "OrganizacaoId",
@@ -103,9 +98,6 @@ namespace Retaguarda.Persistencia.Migracoes.MYSQL
                 name: "OrganizacaoId",
                 table: "Organizacoes");
 
-            migrationBuilder.DropColumn(
-                name: "OrganizacaoSetorId",
-                table: "Organizacoes");
 
             migrationBuilder.AlterColumn<long>(
                 name: "OrganizacaoId",
