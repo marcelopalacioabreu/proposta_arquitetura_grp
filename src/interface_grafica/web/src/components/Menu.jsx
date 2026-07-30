@@ -17,7 +17,7 @@ export default function Menu(){
     }).catch(()=> setUserPerms([]))
   },[])
 
-  // compute menu top/bottom to fit exactly between navbar and footer
+  // Computa as variáveis CSS para posicionar o menu flutuante corretamente, considerando a altura da navbar e do footer
   useEffect(()=>{
     function updateVars(){
       const navs = Array.from(document.querySelectorAll('.navbar'))
@@ -28,7 +28,7 @@ export default function Menu(){
       let bottom = 0
       if (footer){
         const rect = footer.getBoundingClientRect()
-        // only use footer distance when footer is visible in the viewport
+        // só usa o bottom se o footer estiver visível na tela, caso contrário, o menu flutuante pode invadir o footer
         bottom = rect.top < window.innerHeight ? Math.round(window.innerHeight - rect.top) : 0
       }
       document.documentElement.style.setProperty('--menu-top', `${top}px`)
@@ -42,7 +42,7 @@ export default function Menu(){
     return ()=>{ window.removeEventListener('resize', updateVars); window.removeEventListener('scroll', updateVars); mo.disconnect() }
   },[])
 
-  // clear search when navigating
+  // Limpa a pesquisa ao mudar de rota, para não manter o filtro de pesquisa entre páginas
   useEffect(()=>{ setQuery('') },[location.pathname])
 
   const normalizeModulo = (g) => ({
@@ -52,18 +52,27 @@ export default function Menu(){
   })
 
   const filtered = useMemo(()=>{
-    if (!query) return modulos.map(normalizeModulo)
+    if (!query) {
+      return modulos.map(normalizeModulo)
+    }
+
     const q = query.toLowerCase()
     return modulos.map(normalizeModulo).map(g => ({ ...g, items: (g.items || []).filter(i => {
-      // search text
+      // Pesquisa o texto
       if (!((i.texto||'').toLowerCase().includes(q))) return false
-      // permissions: if item has permisssoes, require that user has any of them
+      
+      // Valida as permissões      
+      /** O administrador vê tudo mas não tem permissões... Por enquanto, vamos tratar na extremidade de metadados de módulos */
+      /*
       if (i.permissoes && Array.isArray(i.permissoes) && i.permissoes.length > 0){
         const ids = i.permissoes.map(p => (p.id||p).toString())
         return ids.some(id => userPerms.includes(id))
       }
+      */
+      
       return true
     }) })).filter(g => (g.items || []).length > 0)
+
   },[modulos, query])
 
   function renderCompactIcon(name, active){
@@ -83,7 +92,7 @@ export default function Menu(){
 
   return (
     <>
-      {/* Floating collapsed bar (icons only -> use same markup for both states) */}
+      {/* Menu expansível flutuante */}
       <div className={`floating-bar ${compact ? 'compact' : 'expanded'}`}>
         <div className="floating-buttons d-flex flex-column">
           <div className="menu-panel">
