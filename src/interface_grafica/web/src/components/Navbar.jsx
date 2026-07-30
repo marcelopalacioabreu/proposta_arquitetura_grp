@@ -34,22 +34,13 @@ export default function Navbar({ brand = 'Painel' }){
 
   return (
     <>
-      <nav className="navbar navbar-light bg-light d-flex d-md-none">
-        <div className="container-fluid">
-          <button className="btn btn-outline-secondary" type="button" data-bs-toggle="offcanvas" data-bs-target="#sidebar" aria-controls="sidebar">
-            <i className="bi bi-list" />
-          </button>
-          <span className="navbar-brand ms-2">{brand}</span>
-        </div>
-      </nav>
-
       <nav className="navbar navbar-expand-md navbar-light bg-white border-bottom">
         <div className="container-fluid">
           {/* Home icon placed absolutely to avoid invading sidebar width */}
+          <a className="navbar-brand d-flex align-items-center" href="/painel">{brand}</a>
           <a className="btn btn-outline-secondary btn-sm home-left d-flex align-items-center" href="/" title="Home">
             <i className="bi bi-house" style={{fontSize:'1.1rem'}} />
           </a>
-          <a className="navbar-brand d-flex align-items-center" href="/painel">{brand}</a>
           <div className="ms-auto d-flex align-items-center">
             <div className="me-2 d-none d-md-block small text-muted">{user ? `Olá, ${user.nome || user.username}` : ''}</div>
             <div className="position-relative" ref={userMenuRef}>
