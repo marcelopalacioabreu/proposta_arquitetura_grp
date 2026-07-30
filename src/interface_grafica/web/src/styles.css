@@ -1,5 +1,5 @@
 .root-vars {}
-:root{ --menu-top:56px; --menu-bottom:60px }
+:root{ --menu-top:56px; --menu-bottom:0px }
 body{ font-family: Arial, sans-serif; margin:0; padding:0; background:#f5f7fa }
 .header{ padding:12px; background:#0b5; color:#fff }
 .container{ padding:16px }

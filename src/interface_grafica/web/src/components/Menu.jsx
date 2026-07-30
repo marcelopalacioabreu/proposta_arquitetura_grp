@@ -25,11 +25,11 @@ export default function Menu(){
       if (!nav) nav = navs[0]
       const footer = document.querySelector('.app-footer')
       const top = nav ? Math.round(nav.getBoundingClientRect().bottom) : 56
-      let bottom = 60
+      let bottom = 0
       if (footer){
         const rect = footer.getBoundingClientRect()
-          // only use footer distance when footer is visible in the viewport
-          bottom = rect.top < window.innerHeight ? Math.round(window.innerHeight - rect.top) : 60
+        // only use footer distance when footer is visible in the viewport
+        bottom = rect.top < window.innerHeight ? Math.round(window.innerHeight - rect.top) : 0
       }
       document.documentElement.style.setProperty('--menu-top', `${top}px`)
         document.documentElement.style.setProperty('--menu-bottom', `${Math.max(0, bottom)}px`)
