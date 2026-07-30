@@ -188,7 +188,7 @@ export default function TelaPesquisa({ screenKey }){
           <tr>
             {(() => {
               const allCols = (meta.tabela.colunas && meta.tabela.colunas.length) ? meta.tabela.colunas : []
-              const cols = isMobile ? allCols.filter(col => (col.mobileVisible !== false)) : allCols
+              const cols = isMobile ? allCols.filter(col => (col.visivelTelaPequena !== false)) : allCols
               return cols.map((c, idx) => {
                 const field = typeof c === 'string' ? c : c.campo
                 const title = typeof c === 'string' ? c : c.titulo
@@ -223,7 +223,7 @@ export default function TelaPesquisa({ screenKey }){
             <tr key={it.id}>
               {(() => {
                 const allCols = (meta.tabela.colunas && meta.tabela.colunas.length) ? meta.tabela.colunas : []
-                const cols = isMobile ? allCols.filter(col => (col.mobileVisible !== false)) : allCols
+                const cols = isMobile ? allCols.filter(col => (col.visivelTelaPequena !== false)) : allCols
                 return cols.map((c, idx) => {
                   const field = typeof c === 'string' ? c : c.campo
                   return (<td key={idx}>{it[field]}</td>)

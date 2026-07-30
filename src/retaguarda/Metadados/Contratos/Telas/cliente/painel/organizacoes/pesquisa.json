@@ -12,10 +12,10 @@
     ],
     "tabela": {
       "colunas": [
-        { "campo": "codigo", "titulo": "Código", "mobileVisible": true },
-        { "campo": "nome", "titulo": "Nome", "mobileVisible": true },
-        { "campo": "descricao", "titulo": "Descrição", "mobileVisible": false },
-        { "campo": "created_at", "titulo": "Criado em", "mobileVisible": false }
+        { "campo": "codigo", "titulo": "Código", "visivelTelaPequena": false },
+        { "campo": "nome", "titulo": "Nome", "visivelTelaPequena": true },
+        { "campo": "descricao", "titulo": "Descrição", "visivelTelaPequena": false },
+        { "campo": "created_at", "titulo": "Criado em", "visivelTelaPequena": false }
       ],
       "campos": ["codigo", "nome", "descricao", "created_at"],
       "acoes": [
