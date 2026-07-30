@@ -3,12 +3,12 @@
     "tipo": "TELA_CADASTRO",
     "titulo": "Cadastro de Setor",
     "endpoint": "/api/setores",
-    "fieldsets": [
+    "itens": [
+      { "campo": "codigo", "label": "Código", "tipo": "text", "col": 4 },
       {
         "titulo": "Identificação",
         "columns": 12,
         "campos": [
-          { "campo": "codigo", "label": "Código", "tipo": "text", "col": 4 },
           { "campo": "nome", "label": "Nome do setor", "tipo": "text", "col": 8 }
         ]
       },

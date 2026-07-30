@@ -34,7 +34,7 @@ export default function TelaCadastro({ screenKey, closeModal }){
     }
   },[screenKey, params.id])
 
-  if (!meta) return null
+  if (!meta || !Array.isArray(meta.itens)) return null
 
   const handleSubmit = async (e) =>{
     e.preventDefault()
@@ -90,37 +90,46 @@ export default function TelaCadastro({ screenKey, closeModal }){
       <div className="page-card w-100">
         <h3>{meta.titulo || 'Cadastro'}</h3>
         <form onSubmit={handleSubmit} className="row g-3">
-        {meta.fieldsets ? (
-          meta.fieldsets.map((fs, fsi) => (
-            <fieldset key={fsi} className="border p-3 mb-3 w-100">
-              {fs.titulo && <legend className="float-none w-auto px-2">{fs.titulo}</legend>}
-              <div className="row g-3">
-                {fs.campos.map((c, idx) => (
-                  <div key={idx} className={`col-12 col-md-${c.col || 12}`}>
-                    <label className="form-label">{c.label}</label>
-                    {c.tipo === 'checkbox' ? (
-                      <div className="form-check">
-                        <input name={c.campo} defaultChecked={model[c.campo] ?? true} className={`form-check-input ${errors[c.campo] ? 'is-invalid' : ''}`} type="checkbox" />
-                        <label className="form-check-label">{c.label}</label>
-                        {errors[c.campo] && <div className="invalid-feedback">{errors[c.campo]}</div>}
-                      </div>
-                    ) : (
-                      <input name={c.campo} defaultValue={model[c.campo] || ''} className={`form-control ${errors[c.campo] ? 'is-invalid' : ''}`} />
-                    )}
-                  </div>
-                ))}
-              </div>
-            </fieldset>
-          ))
-        ) : (
-          meta.campos.map((c, idx) => (
+        {meta.itens.map((it, idx) => {
+          if (it.campos && Array.isArray(it.campos)){
+            return (
+              <fieldset key={idx} className="border p-3 mb-3 w-100">
+                {it.titulo && <legend className="float-none w-auto px-2">{it.titulo}</legend>}
+                <div className="row g-3">
+                  {it.campos.map((c, ci) => (
+                    <div key={ci} className={`col-12 col-md-${c.col || 12}`}>
+                      <label className="form-label">{c.label}</label>
+                      {c.tipo === 'checkbox' ? (
+                        <div className="form-check">
+                          <input name={c.campo} defaultChecked={model[c.campo] ?? true} className={`form-check-input ${errors[c.campo] ? 'is-invalid' : ''}`} type="checkbox" />
+                          <label className="form-check-label">{c.label}</label>
+                          {errors[c.campo] && <div className="invalid-feedback">{errors[c.campo]}</div>}
+                        </div>
+                      ) : (
+                        <input name={c.campo} defaultValue={model[c.campo] || ''} className={`form-control ${errors[c.campo] ? 'is-invalid' : ''}`} />
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </fieldset>
+            )
+          }
+          const c = it
+          return (
             <div key={idx} className={`col-12 col-md-${c.col || 12}`}>
               <label className="form-label">{c.label}</label>
-              <input name={c.campo} defaultValue={model[c.campo] || ''} className={`form-control ${errors[c.campo] ? 'is-invalid' : ''}`} />
-              {errors[c.campo] && <div className="invalid-feedback">{errors[c.campo]}</div>}
+              {c.tipo === 'checkbox' ? (
+                <div className="form-check">
+                  <input name={c.campo} defaultChecked={model[c.campo] ?? true} className={`form-check-input ${errors[c.campo] ? 'is-invalid' : ''}`} type="checkbox" />
+                  <label className="form-check-label">{c.label}</label>
+                  {errors[c.campo] && <div className="invalid-feedback">{errors[c.campo]}</div>}
+                </div>
+              ) : (
+                <input name={c.campo} defaultValue={model[c.campo] || ''} className={`form-control ${errors[c.campo] ? 'is-invalid' : ''}`} />
+              )}
             </div>
-          ))
-        )}
+          )
+        })}
 
         {Object.keys(errors).length > 0 && <div className="col-12"><div className="alert alert-danger">Corrija os erros no formulário.</div></div>}
         <div className="col-12">
