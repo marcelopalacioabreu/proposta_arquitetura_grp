@@ -12,10 +12,10 @@
     ],
     "tabela": {
       "colunas": [
-        { "campo": "codigo", "titulo": "Código" },
-        { "campo": "nome", "titulo": "Nome" },
-        { "campo": "descricao", "titulo": "Descrição" },
-        { "campo": "created_at", "titulo": "Criado em" }
+        { "campo": "codigo", "titulo": "Código", "mobileVisible": true },
+        { "campo": "nome", "titulo": "Nome", "mobileVisible": true },
+        { "campo": "descricao", "titulo": "Descrição", "mobileVisible": false },
+        { "campo": "created_at", "titulo": "Criado em", "mobileVisible": false }
       ],
       "campos": ["codigo", "nome", "descricao", "created_at"],
       "acoes": [

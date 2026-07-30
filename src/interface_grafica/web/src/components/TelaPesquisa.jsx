@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import api from '../services/api'
 import { useLocation, useNavigate } from 'react-router-dom'
 import ConfirmModal from './ConfirmModal'
+import modalService from '../utils/modalService'
 
 function useQuery(){
   return new URLSearchParams(useLocation().search)
@@ -17,6 +18,7 @@ export default function TelaPesquisa({ screenKey }){
   const navigate = useNavigate()
   const location = useLocation()
   const [confirmState, setConfirmState] = useState({ show: false, title: null, message: null, onConfirm: null })
+  const [isMobile, setIsMobile] = useState(typeof window !== 'undefined' ? window.innerWidth <= 768 : false)
 
   useEffect(()=>{
     api.get('/meta/screens', { block: true }).then(r=>{
@@ -38,6 +40,12 @@ export default function TelaPesquisa({ screenKey }){
     setOperadores(ops)
     setFormState(s => ({ ...s, campo: initialCampo, operador: query.get('operador') || ops[0], valor: query.get('valor') || '', valor_de: query.get('valor_de') || '', valor_ate: query.get('valor_ate') || '' }))
   },[meta])
+
+  useEffect(()=>{
+    function onResize(){ setIsMobile(window.innerWidth <= 768) }
+    window.addEventListener('resize', onResize)
+    return ()=> window.removeEventListener('resize', onResize)
+  },[])
 
   useEffect(()=>{
     if (!meta) return
@@ -174,55 +182,77 @@ export default function TelaPesquisa({ screenKey }){
         </form>
       </div>
 
+      <div className="table-responsive">
       <table className="table table-striped">
         <thead>
           <tr>
-            {((meta.tabela.colunas && meta.tabela.colunas.length) ? meta.tabela.colunas : []).map((c, idx) => {
-              const field = typeof c === 'string' ? c : c.campo
-              const title = typeof c === 'string' ? c : c.titulo
-              const curField = query.get('sortField')
-              const curDir = query.get('sortDir') || 'asc'
-              const isActive = curField === field
-              const icon = isActive ? (curDir === 'asc' ? 'arrow-up' : 'arrow-down') : 'dash'
-              return (
-                <th key={idx}>
-                  {title}{' '}
-                  <button className="btn btn-link p-0 btn-icon" title={`Ordenar por ${title}`} aria-label={`Ordenar por ${title}`} onClick={()=>{
-                    const cur = new URLSearchParams(location.search)
-                    if (cur.get('sortField') === field){
-                      cur.set('sortDir', cur.get('sortDir') === 'asc' ? 'desc' : 'asc')
-                    } else {
-                      cur.set('sortField', field)
-                      cur.set('sortDir', 'asc')
-                    }
-                    cur.set('page', '1')
-                    navigate({ search: cur.toString() })
-                  }}><i className={`bi bi-${icon}`}></i></button>
-                </th>
-              )
-            })}
-            <th>Ações</th>
+            {(() => {
+              const allCols = (meta.tabela.colunas && meta.tabela.colunas.length) ? meta.tabela.colunas : []
+              const cols = isMobile ? allCols.filter(col => (col.mobileVisible !== false)) : allCols
+              return cols.map((c, idx) => {
+                const field = typeof c === 'string' ? c : c.campo
+                const title = typeof c === 'string' ? c : c.titulo
+                const curField = query.get('sortField')
+                const curDir = query.get('sortDir') || 'asc'
+                const isActive = curField === field
+                const icon = isActive ? (curDir === 'asc' ? 'arrow-up' : 'arrow-down') : 'dash'
+                return (
+                  <th key={idx}>
+                    {title}{' '}
+                    <button className="btn btn-link p-0 btn-icon" title={`Ordenar por ${title}`} aria-label={`Ordenar por ${title}`} onClick={()=>{
+                      const cur = new URLSearchParams(location.search)
+                      if (cur.get('sortField') === field){
+                        cur.set('sortDir', cur.get('sortDir') === 'asc' ? 'desc' : 'asc')
+                      } else {
+                        cur.set('sortField', field)
+                        cur.set('sortDir', 'asc')
+                      }
+                      cur.set('page', '1')
+                      navigate({ search: cur.toString() })
+                    }}><i className={`bi bi-${icon}`}></i></button>
+                  </th>
+                )
+              })
+            })()}
+            {isMobile && <th />}
+            {!isMobile && <th>Ações</th>}
           </tr>
         </thead>
         <tbody>
           {items.map(it => (
             <tr key={it.id}>
-              {((meta.tabela.campos && meta.tabela.campos.length) ? meta.tabela.campos : meta.tabela.colunas).map((c, idx) => {
-                    const field = typeof c === 'string' ? c : c.campo
-                    return (<td key={idx}>{it[field]}</td>)
-                  })}
-              <td>
-                    {meta.tabela.acoes.map((a, ai) => (
-                      <React.Fragment key={ai}>
-                        {a.tipo === 'navegacao' && <button className="btn btn-sm btn-link btn-icon" onClick={()=> navigate(a.destino.replace('{id}', it[a.campo_id]))}><i className={`bi bi-${a.icone}`}></i></button>}
-                        {a.tipo === 'confirmacao_delete_ajax' && <button className="btn btn-sm btn-link text-danger btn-icon" onClick={()=> setConfirmState({ show: true, title: 'Excluir', message: 'Confirma exclusão?', onConfirm: async ()=>{ await api.delete(a.destino.replace('{id}', it[a.campo_id]), { block: true }); setItems(items.filter(x=> x.id !== it.id)); setConfirmState(s=> ({...s, show: false})) } }) }><i className={`bi bi-${a.icone}`}></i></button>}
-                      </React.Fragment>
-                    ))}
-              </td>
+              {(() => {
+                const allCols = (meta.tabela.colunas && meta.tabela.colunas.length) ? meta.tabela.colunas : []
+                const cols = isMobile ? allCols.filter(col => (col.mobileVisible !== false)) : allCols
+                return cols.map((c, idx) => {
+                  const field = typeof c === 'string' ? c : c.campo
+                  return (<td key={idx}>{it[field]}</td>)
+                })
+              })()}
+              {isMobile ? (
+                <td>
+                  <button className="btn btn-sm btn-link btn-icon" title="Mais campos" aria-label="Mais campos" onClick={() => {
+                    const allCols = (meta.tabela.colunas && meta.tabela.colunas.length) ? meta.tabela.colunas : []
+                    const hidden = allCols.filter(col => (col.mobileVisible === false))
+                    // pass actions to modal so actions render inside modal on mobile
+                    modalService.openComponentModal('RowDetails', { title: `${meta.titulo} — Detalhes`, item: it, columns: hidden, actions: meta.tabela.acoes })
+                  }}><i className="bi bi-three-dots" /></button>
+                </td>
+              ) : (
+                <td>
+                      {meta.tabela.acoes.map((a, ai) => (
+                        <React.Fragment key={ai}>
+                          {a.tipo === 'navegacao' && <button className="btn btn-sm btn-link btn-icon" onClick={()=> navigate(a.destino.replace('{id}', it[a.campo_id]))}><i className={`bi bi-${a.icone}`}></i></button>}
+                          {a.tipo === 'confirmacao_delete_ajax' && <button className="btn btn-sm btn-link text-danger btn-icon" onClick={()=> setConfirmState({ show: true, title: 'Excluir', message: 'Confirma exclusão?', onConfirm: async ()=>{ await api.delete(a.destino.replace('{id}', it[a.campo_id]), { block: true }); setItems(items.filter(x=> x.id !== it.id)); setConfirmState(s=> ({...s, show: false})) } }) }><i className={`bi bi-${a.icone}`}></i></button>}
+                        </React.Fragment>
+                      ))}
+                </td>
+              )}
             </tr>
           ))}
         </tbody>
       </table>
+      </div>
       {/* Pagination controls */}
       {meta.pagination && (
         <div className="d-flex justify-content-between align-items-center">

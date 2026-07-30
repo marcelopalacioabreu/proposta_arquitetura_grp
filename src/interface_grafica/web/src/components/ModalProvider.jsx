@@ -77,6 +77,11 @@ export default function ModalProvider({ children }){
         <div className="modal show" style={{ display: 'block', backgroundColor: 'rgba(0,0,0,0.5)' }} tabIndex={-1}>
           <div className="modal-dialog modal-xl modal-fullscreen-sm-down">
             <div className="modal-content">
+              {/* header with close button, similar to Alert/Confirm modals */}
+              <div className="modal-header">
+                <h5 className="modal-title">{componentModal.props?.title || ''}</h5>
+                <button type="button" className="btn-close" onClick={closeComponentModal}></button>
+              </div>
               <div className="modal-body">
                 <componentModal.Comp {...componentModal.props} closeModal={closeComponentModal} />
               </div>

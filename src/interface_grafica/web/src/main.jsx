@@ -14,28 +14,28 @@ import './services/api'
 
 function App(){
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route path='/' element={<Home/>} />
-        <Route path='/login' element={<Login/>} />
-        <Route path='/cadastro' element={<CadastroUsuario/>} />
-        <Route path='/painel/*' element={<PrivateLayout/>}>
-          <Route path='organizacoes' element={<TelaPesquisa screenKey={'organizacaoPesquisa'} />} />
-          <Route path='organizacoes/editar/:id' element={<TelaCadastro screenKey={'organizacaoCadastro'} />} />
-          <Route path='organizacoes/setores' element={<TelaPesquisa screenKey={'setorPesquisa'} />} />
-          <Route path='organizacoes/setores/editar/:id' element={<TelaCadastro screenKey={'setorCadastro'} />} />
-          <Route index element={<InicioPainel/>} />
-        </Route>
-        <Route path='*' element={<Navigate to='/' replace />} />
-      </Routes>
-    </BrowserRouter>
+    <Routes>
+      <Route path='/' element={<Home/>} />
+      <Route path='/login' element={<Login/>} />
+      <Route path='/cadastro' element={<CadastroUsuario/>} />
+      <Route path='/painel/*' element={<PrivateLayout/>}>
+        <Route path='organizacoes' element={<TelaPesquisa screenKey={'organizacaoPesquisa'} />} />
+        <Route path='organizacoes/editar/:id' element={<TelaCadastro screenKey={'organizacaoCadastro'} />} />
+        <Route path='organizacoes/setores' element={<TelaPesquisa screenKey={'setorPesquisa'} />} />
+        <Route path='organizacoes/setores/editar/:id' element={<TelaCadastro screenKey={'setorCadastro'} />} />
+        <Route index element={<InicioPainel/>} />
+      </Route>
+      <Route path='*' element={<Navigate to='/' replace />} />
+    </Routes>
   )
 }
 
 import ModalProvider from './components/ModalProvider'
 
 createRoot(document.getElementById('root')).render(
-  <ModalProvider>
-    <App />
-  </ModalProvider>
+  <BrowserRouter>
+    <ModalProvider>
+      <App />
+    </ModalProvider>
+  </BrowserRouter>
 )
