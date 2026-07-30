@@ -233,9 +233,8 @@ export default function TelaPesquisa({ screenKey }){
                 <td>
                   <button className="btn btn-sm btn-link btn-icon" title="Mais campos" aria-label="Mais campos" onClick={() => {
                     const allCols = (meta.tabela.colunas && meta.tabela.colunas.length) ? meta.tabela.colunas : []
-                    const hidden = allCols.filter(col => (col.mobileVisible === false))
-                    // pass actions to modal so actions render inside modal on mobile
-                    modalService.openComponentModal('RowDetails', { title: `${meta.titulo} — Detalhes`, item: it, columns: hidden, actions: meta.tabela.acoes })
+                    // pass ALL columns so modal shows complete record
+                    modalService.openComponentModal('RowDetails', { title: `${meta.titulo} — Detalhes`, item: it, columns: allCols, actions: meta.tabela.acoes })
                   }}><i className="bi bi-three-dots" /></button>
                 </td>
               ) : (
@@ -258,8 +257,8 @@ export default function TelaPesquisa({ screenKey }){
         <div className="d-flex justify-content-between align-items-center">
           <div>Mostrando {items.length} de {total}</div>
             <div>
-            <button className="btn btn-sm btn-secondary btn-icon me-2" title="Anterior" aria-label="Anterior" onClick={()=>{ const cur = new URLSearchParams(useLocation().search); const p = Math.max(1, parseInt(cur.get('page')||1)-1); cur.set('page', p); navigate({ search: cur.toString() }) }}><i className="bi bi-chevron-left" /></button>
-            <button className="btn btn-sm btn-secondary btn-icon" title="Próxima" aria-label="Próxima" onClick={()=>{ const cur = new URLSearchParams(useLocation().search); const p = Math.max(1, parseInt(cur.get('page')||1)+1); cur.set('page', p); navigate({ search: cur.toString() }) }}><i className="bi bi-chevron-right" /></button>
+            <button className="btn btn-sm btn-secondary btn-icon me-2 btn-icone-paginacao" title="Anterior" aria-label="Anterior" onClick={()=>{ const cur = new URLSearchParams(useLocation().search); const p = Math.max(1, parseInt(cur.get('page')||1)-1); cur.set('page', p); navigate({ search: cur.toString() }) }}><i className="bi bi-chevron-left" /></button>
+            <button className="btn btn-sm btn-secondary btn-icon btn-icone-paginacao" title="Próxima" aria-label="Próxima" onClick={()=>{ const cur = new URLSearchParams(useLocation().search); const p = Math.max(1, parseInt(cur.get('page')||1)+1); cur.set('page', p); navigate({ search: cur.toString() }) }}><i className="bi bi-chevron-right" /></button>
           </div>
         </div>
       )}
