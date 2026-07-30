@@ -11,8 +11,9 @@ export default function InicioPainel(){
             <div className="small text-muted">Visão geral rápida</div>
           </div>
           <div>
-            <button className="btn btn-outline-secondary me-2">Atualizar</button>
-            <Link to="/painel/organizacoes" className="btn btn-primary">Ir para Organizações</Link>
+            <button className="btn btn-outline-secondary btn-icon me-2" title="Atualizar" aria-label="Atualizar">
+              <i className="bi bi-arrow-clockwise" aria-hidden="true"></i>
+            </button>
           </div>
         </div>
 
