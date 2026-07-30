@@ -19,7 +19,7 @@ namespace Retaguarda.Api.Controllers
             _docMetaPath = Path.GetFullPath(Path.Combine(env.ContentRootPath, "..", "..", "..", "..", "DOCUMENTACAO", "METADADOS"));
         }
 
-        private string? FindFile(params string[] relativeParts)
+        private string? BuscarArquivo(params string[] relativeParts)
         {
             var projectPath = Path.Combine(new [] { _projectMetaPath }.Concat(relativeParts).ToArray());
             if (System.IO.File.Exists(projectPath)) return projectPath;
@@ -28,10 +28,10 @@ namespace Retaguarda.Api.Controllers
             return null;
         }
 
-        [HttpGet("routes")]
-        public IActionResult Routes()
+        [HttpGet("rotas")]
+        public IActionResult Rotas()
         {
-            var p = FindFile("routes.json") ?? FindFile("Rotas", "api.json");
+            var p = BuscarArquivo("cliente.json") ?? BuscarArquivo("Rotas", "api.json");
             if (p == null) return NotFoundError("Arquivo não encontrado");
             var json = System.IO.File.ReadAllText(p);
             var parsed = System.Text.Json.JsonDocument.Parse(json).RootElement;
@@ -39,9 +39,9 @@ namespace Retaguarda.Api.Controllers
         }
 
         [HttpGet("components")]
-        public IActionResult Components()
+        public IActionResult Componentes()
         {
-            var p = FindFile("components.json") ?? FindFile("Componentes", "components.json");
+            var p = BuscarArquivo("componentes.json") ?? BuscarArquivo("Componentes", "componentes.json");
             if (p == null) return NotFoundError("Arquivo não encontrado");
             var json = System.IO.File.ReadAllText(p);
             var parsed = System.Text.Json.JsonDocument.Parse(json).RootElement;
@@ -51,7 +51,7 @@ namespace Retaguarda.Api.Controllers
         [HttpGet("modulos")]
         public IActionResult Modulos()
         {
-            var p = FindFile("modulos.json") ?? FindFile("Modulos", "modulos.json");
+            var p = BuscarArquivo("modulos.json") ?? BuscarArquivo("Modulos", "modulos.json");
             if (p == null) return NotFoundError("Arquivo não encontrado");
             var json = System.IO.File.ReadAllText(p);
             var parsed = System.Text.Json.JsonDocument.Parse(json).RootElement;
@@ -59,7 +59,7 @@ namespace Retaguarda.Api.Controllers
         }
 
         [HttpGet("screens")]
-        public IActionResult Screens()
+        public IActionResult Telas()
         {
             // Aggregate all JSON files under Metadados/Contratos/Telas recursively
             var screensDirProject = Path.Combine(_projectMetaPath, "Telas");
@@ -67,7 +67,7 @@ namespace Retaguarda.Api.Controllers
 
             var aggregated = new System.Collections.Generic.Dictionary<string, object>();
 
-            void loadFromDir(string dir)
+            void carregarDoDiretorio(string dir)
             {
                 if (!Directory.Exists(dir)) return;
                 var files = Directory.GetFiles(dir, "*.json", SearchOption.AllDirectories);
@@ -87,18 +87,18 @@ namespace Retaguarda.Api.Controllers
             }
 
             // Load doc fallback first, then project to allow overrides
-            loadFromDir(screensDirDoc);
-            loadFromDir(screensDirProject);
+            carregarDoDiretorio(screensDirDoc);
+            carregarDoDiretorio(screensDirProject);
 
             return OkData(aggregated);
         }
 
         [HttpGet("all")]
-        public IActionResult All()
+        public IActionResult todos()
         {
-            var routesPath = FindFile("routes.json") ?? FindFile("Rotas","api.json");
-            var compsPath = FindFile("components.json") ?? FindFile("Componentes","components.json");
-            var screensPath = FindFile("screens.json") ?? FindFile("Telas","telas.json");
+            var routesPath = BuscarArquivo("cliente.json") ?? BuscarArquivo("Rotas","api.json");
+            var compsPath = BuscarArquivo("componentes.json") ?? BuscarArquivo("Componentes","componentes.json");
+            var screensPath = BuscarArquivo("telas.json") ?? BuscarArquivo("Telas","telas.json");
 
             var routes = routesPath != null ? System.IO.File.ReadAllText(routesPath) : "{}";
             var comps = compsPath != null ? System.IO.File.ReadAllText(compsPath) : "{}";
