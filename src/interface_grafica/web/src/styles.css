@@ -163,6 +163,7 @@ body{ font-family: Arial, sans-serif; margin:0; padding:0; background:#f5f7fa }
 }
 .btn-link.btn-icon{ padding:0.15rem; vertical-align:middle }
 .btn-sm.btn-icon{ height:2.25rem }
+.btn-comando-tela-pesquisa{ margin-left:0.1rem; margin-right:0.1rem }
 
 /* Ensure nav-link used as icon also centers content */
 .nav-link.btn-icon{ display:inline-flex; align-items:center; justify-content:center }

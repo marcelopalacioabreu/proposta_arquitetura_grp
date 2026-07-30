@@ -107,7 +107,7 @@ export default function TelaPesquisa({ screenKey }){
         <h3>{meta.titulo || 'Pesquisa'}</h3>
         <div>
           <button
-            className="btn btn-primary btn-icon"
+            className="btn btn-primary btn-icon btn-comando-tela-pesquisa"
             onClick={()=> navigate((meta.tabela?.acoes?.find(a=>a.tipo==='navegacao')?.destino || '/painel/organizacoes/editar/new').replace('{id}','new'))}
             title="Novo"
             aria-label="Novo"

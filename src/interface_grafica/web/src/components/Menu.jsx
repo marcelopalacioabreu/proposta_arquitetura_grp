@@ -105,8 +105,7 @@ export default function Menu(){
                       <div className="small text-muted mb-1 px-1">{g.group}</div>
                       <div className="list-group">
                         {g.items && g.items.map((it, ii) => (
-                          <Link key={ii} to={it.url} className={`list-group-item list-group-item-action d-flex align-items-center ${location.pathname === it.url ? 'active' : ''}`} onClick={()=>{}}
-                          >
+                          <Link key={ii} to={it.url} className={`list-group-item list-group-item-action d-flex align-items-center ${location.pathname === it.url ? 'active' : ''}`} onClick={()=>{}}>
                             {it.icone && <i className={`bi bi-${it.icone} me-2`} />}
                             <span className="item-label">{it.texto}</span>
                           </Link>
