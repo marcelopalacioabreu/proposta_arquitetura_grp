@@ -28,16 +28,18 @@ export default function Menu(){
       let bottom = 60
       if (footer){
         const rect = footer.getBoundingClientRect()
-        bottom = Math.round(window.innerHeight - rect.top)
+          // only use footer distance when footer is visible in the viewport
+          bottom = rect.top < window.innerHeight ? Math.round(window.innerHeight - rect.top) : 60
       }
       document.documentElement.style.setProperty('--menu-top', `${top}px`)
-      document.documentElement.style.setProperty('--menu-bottom', `${bottom}px`)
+        document.documentElement.style.setProperty('--menu-bottom', `${Math.max(0, bottom)}px`)
     }
     updateVars()
     window.addEventListener('resize', updateVars)
+      window.addEventListener('scroll', updateVars)
     const mo = new MutationObserver(updateVars)
     mo.observe(document.body, { childList: true, subtree: true })
-    return ()=>{ window.removeEventListener('resize', updateVars); mo.disconnect() }
+    return ()=>{ window.removeEventListener('resize', updateVars); window.removeEventListener('scroll', updateVars); mo.disconnect() }
   },[])
 
   // clear search when navigating
