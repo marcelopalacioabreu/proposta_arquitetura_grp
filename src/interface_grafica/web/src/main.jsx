@@ -8,8 +8,8 @@ import PrivateLayout from './components/PrivateLayout'
 import TelaPesquisa from './components/TelaPesquisa'
 import TelaCadastro from './components/TelaCadastro'
 import InicioPainel from './pages/painel/InicioPainel'
-import './styles.css'
 import 'bootstrap/dist/css/bootstrap.min.css'
+import './styles.css'
 import './services/api'
 
 function App(){
