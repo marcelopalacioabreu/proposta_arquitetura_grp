@@ -1,7 +1,7 @@
 import React from 'react'
 import { useNavigate } from 'react-router-dom'
-import api from '../services/api'
-import modalService from '../utils/modalService'
+import api from '../../services/api'
+import modalService from '../../utils/modalService'
 
 export default function RowDetails({ title = 'Detalhes', item = {}, columns = [], actions = [], closeModal }){
   const navigate = useNavigate()

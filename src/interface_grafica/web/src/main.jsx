@@ -4,9 +4,9 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import Home from './pages/Home'
 import Login from './pages/Login'
 import CadastroUsuario from './pages/CadastroUsuario'
-import PrivateLayout from './components/PrivateLayout'
-import TelaPesquisa from './components/TelaPesquisa'
-import TelaCadastro from './components/TelaCadastro'
+import PrivateLayout from './components/Layout/PrivateLayout'
+import TelaPesquisa from './components/Cadastros/TelaPesquisa'
+import TelaCadastro from './components/Cadastros/TelaCadastro'
 import InicioPainel from './pages/painel/InicioPainel'
 import 'bootstrap/dist/css/bootstrap.min.css'
 import './styles.css'
@@ -30,7 +30,7 @@ function App(){
   )
 }
 
-import ModalProvider from './components/ModalProvider'
+import ModalProvider from './components/InterfaceBasica/ModalProvider'
 
 createRoot(document.getElementById('root')).render(
   <BrowserRouter>

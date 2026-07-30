@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useCallback } from 'react'
 import AlertModal from './AlertModal'
 import ConfirmModal from './ConfirmModal'
-import BlockingOverlay from './BlockingOverlay'
-import modalService from '../utils/modalService'
+import BloqueioTela from './BloqueioTela'
+import modalService from '../../utils/modalService'
 import ReactDOM from 'react-dom'
 
 export const ModalContext = React.createContext(null)
@@ -46,10 +46,10 @@ export default function ModalProvider({ children }){
       let mod = null
       switch(name){
         case 'TelaCadastro':
-          mod = await import('./TelaCadastro')
+          mod = await import('../Cadastros/TelaCadastro')
           break
         case 'TelaPesquisa':
-          mod = await import('./TelaPesquisa')
+          mod = await import('../Cadastros/TelaPesquisa')
           break
         default:
           // try dynamic import by path-ish name
@@ -72,7 +72,7 @@ export default function ModalProvider({ children }){
       {children}
       <AlertModal show={alertState.show} message={alertState.message} onClose={closeAlert} />
       <ConfirmModal show={confirmState.show} title={'Confirmação'} message={confirmState.message} onConfirm={confirmState.onConfirm} onCancel={cancelConfirm} />
-      <BlockingOverlay show={blocking} />
+      <BloqueioTela show={blocking} />
       {componentModal.show && componentModal.Comp && (
         <div className="modal show" style={{ display: 'block', backgroundColor: 'rgba(0,0,0,0.5)' }} tabIndex={-1}>
           <div className="modal-dialog modal-xl modal-fullscreen-sm-down">

@@ -2,8 +2,8 @@ import React, { useState } from 'react'
 import api from '../services/api'
 import modalService from '../utils/modalService'
 import { useNavigate } from 'react-router-dom'
-import Navbar from '../components/Navbar'
-import Footer from '../components/Footer'
+import Navbar from '../components/Layout/Navbar'
+import Footer from '../components/Layout/Footer'
 
 export default function Login(){
   const [user,setUser] = useState('')
