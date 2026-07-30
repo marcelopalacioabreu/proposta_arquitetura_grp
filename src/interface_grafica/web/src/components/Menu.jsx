@@ -43,10 +43,16 @@ export default function Menu(){
   // clear search when navigating
   useEffect(()=>{ setQuery('') },[location.pathname])
 
+  const normalizeModulo = (g) => ({
+    ...g,
+    items: g.items || g.itens || [],
+    group: g.group || g.grupo || ''
+  })
+
   const filtered = useMemo(()=>{
-    if (!query) return modulos
+    if (!query) return modulos.map(normalizeModulo)
     const q = query.toLowerCase()
-    return modulos.map(g => ({ ...g, items: (g.items || []).filter(i => {
+    return modulos.map(normalizeModulo).map(g => ({ ...g, items: (g.items || []).filter(i => {
       // search text
       if (!((i.texto||'').toLowerCase().includes(q))) return false
       // permissions: if item has permisssoes, require that user has any of them
