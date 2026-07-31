@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import api from '../servicos/api'
-import modalService from '../utils/modalServico'
+import modalServico from '../utils/modalServico'
 import { useNavigate } from 'react-router-dom'
 import BarraNavegacao from '../componentes/Layout/BarraNavegacao'
 import Rodape from '../componentes/Layout/Rodape'
@@ -16,7 +16,7 @@ export default function Autenticacao(){
       const res = await api.post('/auth/login',{ username: user, password: pass }, { block: true })
       nav('/painel')
     }catch(err){
-      modalService.alertModal('Erro ao autenticar')
+      modalServico.modalAlerta('Erro ao autenticar')
     }
   }
 

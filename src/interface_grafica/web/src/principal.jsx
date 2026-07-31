@@ -30,12 +30,12 @@ function App(){
   )
 }
 
-import ModalProvider from './componentes/InterfaceBasica/ModalProvedor'
+import ModalProvedor from './componentes/InterfaceBasica/ModalProvedor'
 
 createRoot(document.getElementById('root')).render(
   <BrowserRouter>
-    <ModalProvider>
+    <ModalProvedor>
       <App />
-    </ModalProvider>
+    </ModalProvedor>
   </BrowserRouter>
 )

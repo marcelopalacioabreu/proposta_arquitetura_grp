@@ -1,13 +1,13 @@
 import React, { useState, useEffect, useCallback } from 'react'
-import AlertModal from './ModalAlerta'
-import ConfirmModal from './ModalConfirmacao'
+import ModalAlerta from './ModalAlerta'
+import ModalConfirmacao from './ModalConfirmacao'
 import BloqueioTela from './BloqueioTela'
-import modalService from '../../utils/modalServico'
+import modalServico from '../../utils/modalServico'
 import ReactDOM from 'react-dom'
 
 export const ModalContext = React.createContext(null)
 
-export default function ModalProvider({ children }){
+export default function ModalProvedor({ children }){
   const [alertState, setAlertState] = useState({ show:false, message: null })
   const [confirmState, setConfirmState] = useState({ show:false, message:null, onConfirm: null })
   const [blocking, setBlocking] = useState(false)
@@ -24,18 +24,18 @@ export default function ModalProvider({ children }){
 
   useEffect(()=>{
     // register handlers used by non-react code
-    modalService.registerModalHandlers({ alert, confirm: (m,cb)=> confirm(m,cb), block, unblock, loadHtml: (html)=> alert(html), openComponent: (name, p) => openComponent(name, p) })
+    modalServico.registrarGerenciadoresDeModais ({ alert, confirm: (m,cb)=> confirm(m,cb), block, unblock, loadHtml: (html)=> alert(html), openComponent: (name, p) => openComponent(name, p) })
     // expose simple globals for legacy scripts (blade/jQuery) to call
     try{
       window.bloquearTela = block
       window.desbloquearTela = unblock
-      window.alertModal = alert
-      window.confirmDialog = (msg, cb) => confirm(msg, cb)
-      window.loadInModal = (htmlOrUrl) => { /* keep simple: if html contains '<', render, else fetch */
+      window.modalAlerta = alert
+      window.dialogoConfirmacao = (msg, cb) => confirm(msg, cb)
+      window.carregarHtmlNoModal = (htmlOrUrl) => { /* keep simple: if html contains '<', render, else fetch */
         if (typeof htmlOrUrl === 'string' && htmlOrUrl.includes('<')) alert(htmlOrUrl)
         else fetch(htmlOrUrl).then(r=>r.text()).then(html=> alert(html)).catch(()=> alert('Erro ao carregar'))
       }
-      window.openComponentModal = (name, props) => openComponent(name, props)
+      window.abrirComponenteNoModal = (name, props) => openComponent(name, props)
     }catch{}
   },[alert, confirm, block, unblock])
 
@@ -53,7 +53,7 @@ export default function ModalProvider({ children }){
           break
         default:
           // try dynamic import by path-ish name
-          mod = await import(`./${name}`)
+          //mod = await import(`./${name}`)
       }
       const Comp = mod.default
       setComponentModal({ show:true, Comp, props: props || {} })
@@ -70,8 +70,8 @@ export default function ModalProvider({ children }){
   return (
     <ModalContext.Provider value={{ alert, confirm, block, unblock }}>
       {children}
-      <AlertModal show={alertState.show} message={alertState.message} onClose={closeAlert} />
-      <ConfirmModal show={confirmState.show} title={'Confirmação'} message={confirmState.message} onConfirm={confirmState.onConfirm} onCancel={cancelConfirm} />
+      <ModalAlerta show={alertState.show} message={alertState.message} onClose={closeAlert} />
+      <ModalConfirmacao show={confirmState.show} title={'Confirmação'} message={confirmState.message} onConfirm={confirmState.onConfirm} onCancel={cancelConfirm} />
       <BloqueioTela show={blocking} />
       {componentModal.show && componentModal.Comp && (
         <div className="modal show" style={{ display: 'block', backgroundColor: 'rgba(0,0,0,0.5)' }} tabIndex={-1}>
