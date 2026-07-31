@@ -1,12 +1,19 @@
 using Microsoft.EntityFrameworkCore;
 using Retaguarda.Dominio.Entidades;
+using Retaguarda.Dominio.Entidades.Base;
+using System.Threading;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
+using Microsoft.AspNetCore.Http;
 
 namespace Retaguarda.Persistencia.MYSQL
 {
     public class ApplicationDbContext : DbContext
     {
-        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
+        private readonly IHttpContextAccessor _httpContextAccessor;
+
+        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options, IHttpContextAccessor httpContextAccessor) : base(options)
         {
+            _httpContextAccessor = httpContextAccessor;
         }
 
         public DbSet<Organizacao> Organizacoes { get; set; } = null!;
@@ -179,6 +186,71 @@ namespace Retaguarda.Persistencia.MYSQL
                 b.Property(x => x.Nome).IsRequired().HasMaxLength(200);
                 b.HasOne(x => x.Organizacao).WithMany(o => o.Funcoes).HasForeignKey(x => x.OrganizacaoId).OnDelete(DeleteBehavior.Cascade);
             });
+        }
+
+        public override int SaveChanges()
+        {
+            ApplyPadraoCampos();
+            return base.SaveChanges();
+        }
+
+        public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+        {
+            ApplyPadraoCampos();
+            return base.SaveChangesAsync(cancellationToken);
+        }
+
+        private void ApplyPadraoCampos()
+        {
+            var utcNow = DateTime.UtcNow;
+            foreach (var entry in ChangeTracker.Entries<MultilocatarioEntidade>())
+            {
+                if (entry.State == EntityState.Added)
+                {
+                    entry.Entity.DataInsercao = utcNow;
+                    entry.Entity.DataAlteracao = null;
+                    entry.Entity.Ativo = true;
+
+                    // apply atuacao context when available and when sensible
+                    // apply escopo values from HttpContext.Items when available (no compile-time project refs)
+                    var ctx = _httpContextAccessor?.HttpContext;
+                    long? org = null, unidade = null, setor = null;
+                    if (ctx != null)
+                    {
+                        if (ctx.Items.ContainsKey("escopo.organizacaoId")) org = Convert.ToInt64(ctx.Items["escopo.organizacaoId"]);
+                        if (ctx.Items.ContainsKey("escopo.organizacaoUnidadeId")) unidade = Convert.ToInt64(ctx.Items["escopo.organizacaoUnidadeId"]);
+                        if (ctx.Items.ContainsKey("escopo.setorId")) setor = Convert.ToInt64(ctx.Items["escopo.setorId"]);
+                    }
+                    var t = entry.Entity.GetType().Name;
+                    // avoid setting OrganizacaoId on Organizacao entity itself
+                    if (org.HasValue && t != nameof(Retaguarda.Dominio.Entidades.Organizacao))
+                    {
+                        if (!entry.Entity.OrganizacaoId.HasValue) entry.Entity.OrganizacaoId = org;
+                    }
+                    if (unidade.HasValue)
+                    {
+                        if (!entry.Entity.OrganizacaoUnidadeId.HasValue) entry.Entity.OrganizacaoUnidadeId = unidade;
+                    }
+                    if (setor.HasValue)
+                    {
+                        if (!entry.Entity.SetorId.HasValue) entry.Entity.SetorId = setor;
+                    }
+                }
+                else if (entry.State == EntityState.Modified)
+                {
+                    // Always set DataAlteracao
+                    entry.Entity.DataAlteracao = utcNow;
+
+                    // Prevent ordinary updates from changing Ativo. Allow Ativo change only when it's the sole modified property.
+                    var modifiedNonAtivo = entry.Properties.Any(p => p.Metadata.Name != nameof(MultilocatarioEntidade.Ativo) && p.IsModified);
+                    if (modifiedNonAtivo)
+                    {
+                        // restore original value
+                        var original = entry.OriginalValues.GetValue<bool>(nameof(MultilocatarioEntidade.Ativo));
+                        entry.Entity.Ativo = original;
+                    }
+                }
+            }
         }
     }
 }

@@ -19,6 +19,10 @@ var connectionString = builder.Configuration.GetConnectionString("DefaultConnect
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
 
+// Request-scoped atuacao context (organizacao/unidade/setor) populated by middleware
+builder.Services.AddScoped<Retaguarda.Servicos.EscopoEmExecucao>();
+builder.Services.AddHttpContextAccessor();
+
 // DI: repositories and services
 builder.Services.AddScoped<IOrganizacaoRepositorio, OrganizacaoRepositorio>();
 builder.Services.AddScoped<IOrganizacaoServico, OrganizacaoServico>();
@@ -136,6 +140,7 @@ builder.Services.AddControllers(options =>
 var app = builder.Build();
 
 app.UseAuthentication();
+app.UseMiddleware<Retaguarda.Api.Middleware.AtuacaoMiddleware>();
 app.UseMiddleware<Retaguarda.Api.Middleware.UsuarioMiddleware>();
 app.UseAuthorization();
 

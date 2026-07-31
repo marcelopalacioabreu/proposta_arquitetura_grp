@@ -84,9 +84,20 @@ namespace Retaguarda.Api.Controllers
         {
             var e = _db.OrganizacaoUnidades.Find(id);
             if (e == null) return NotFoundError("Registro não encontrado");
-            _db.OrganizacaoUnidades.Remove(e);
+            e.Ativo = false;
             _db.SaveChanges();
             return OkMessage("Excluído");
+        }
+
+        [HttpPost("{id}/restaurar")]
+        [Authorize(Policy = "organizacoes.editar")]
+        public IActionResult Restaurar(long id)
+        {
+            var e = _db.OrganizacaoUnidades.Find(id);
+            if (e == null) return NotFoundError("Registro não encontrado");
+            e.Ativo = true;
+            _db.SaveChanges();
+            return OkMessage("Restaurado");
         }
 
         public class OrganizacaoUnidadeDto
