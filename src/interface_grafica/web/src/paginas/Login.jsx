@@ -1,9 +1,9 @@
 import React, { useState } from 'react'
-import api from '../services/api'
+import api from '../servicos/api'
 import modalService from '../utils/modalService'
 import { useNavigate } from 'react-router-dom'
-import BarraNavegacao from '../components/Layout/BarraNavegacao'
-import Rodape from '../components/Layout/Rodape'
+import BarraNavegacao from '../componentes/Layout/BarraNavegacao'
+import Rodape from '../componentes/Layout/Rodape'
 
 export default function Login(){
   const [user,setUser] = useState('')

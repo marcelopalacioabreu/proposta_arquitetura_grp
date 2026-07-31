@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useMemo } from 'react'
 import { Link, useLocation } from 'react-router-dom'
-import api from '../../services/api'
+import api from '../../servicos/api'
 
 export default function Menu(){
   const [modulos, setModulos] = useState([])

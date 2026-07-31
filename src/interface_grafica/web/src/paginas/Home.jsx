@@ -1,7 +1,7 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
-import BarraNavegacao from '../components/Layout/BarraNavegacao'
-import Rodape from '../components/Layout/Rodape'
+import BarraNavegacao from '../componentes/Layout/BarraNavegacao'
+import Rodape from '../componentes/Layout/Rodape'
 export default function Home(){
   return (
     <div className="d-flex flex-column min-vh-100">

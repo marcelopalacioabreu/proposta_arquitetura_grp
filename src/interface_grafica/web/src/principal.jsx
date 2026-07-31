@@ -1,16 +1,16 @@
 import React from 'react'
 import { createRoot } from 'react-dom/client'
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
-import Home from './pages/Home'
-import Login from './pages/Login'
-import CadastroUsuario from './pages/CadastroUsuario'
-import LayoutPrivado from './components/Layout/LayoutPrivado'
-import TelaPesquisa from './components/Cadastros/TelaPesquisa'
-import TelaCadastro from './components/Cadastros/TelaCadastro'
-import InicioPainel from './pages/painel/InicioPainel'
+import Home from './paginas/Home'
+import Login from './paginas/Login'
+import CadastroUsuario from './paginas/CadastroUsuario'
+import LayoutPrivado from './componentes/Layout/LayoutPrivado'
+import TelaPesquisa from './componentes/Cadastros/TelaPesquisa'
+import TelaCadastro from './componentes/Cadastros/TelaCadastro'
+import InicioPainel from './paginas/painel/InicioPainel'
 import 'bootstrap/dist/css/bootstrap.min.css'
 import './styles.css'
-import './services/api'
+import './servicos/api'
 
 function App(){
   return (
@@ -30,7 +30,7 @@ function App(){
   )
 }
 
-import ModalProvider from './components/InterfaceBasica/ModalProvedor'
+import ModalProvider from './componentes/InterfaceBasica/ModalProvedor'
 
 createRoot(document.getElementById('root')).render(
   <BrowserRouter>

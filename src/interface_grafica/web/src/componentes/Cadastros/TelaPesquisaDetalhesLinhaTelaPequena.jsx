@@ -1,6 +1,6 @@
 import React from 'react'
 import { useNavigate } from 'react-router-dom'
-import api from '../../services/api'
+import api from '../../servicos/api'
 import modalService from '../../utils/modalService'
 
 export default function TelaPesquisaDetalhesLinhaTelaPequena({ title = 'Detalhes', item = {}, columns = [], actions = [], closeModal }){

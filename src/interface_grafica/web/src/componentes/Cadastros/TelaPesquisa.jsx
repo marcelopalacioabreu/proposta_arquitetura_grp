@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import api from '../../services/api'
+import api from '../../servicos/api'
 import { useLocation, useNavigate } from 'react-router-dom'
 import ConfirmModal from '../InterfaceBasica/ModalConfirmacao'
 import modalService from '../../utils/modalService'
