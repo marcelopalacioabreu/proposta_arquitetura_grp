@@ -5,7 +5,7 @@ import Rodape from '../componentes/Layout/Rodape'
 export default function Inicial(){
   return (
     <div className="d-flex flex-column min-vh-100">
-      <BarraNavegacao brand="Retaguarda" />
+      <BarraNavegacao brand="Painel" />
       <div className="page-wrapper">
         <div className="page-card">
           <h2>Bem-vindo</h2>
