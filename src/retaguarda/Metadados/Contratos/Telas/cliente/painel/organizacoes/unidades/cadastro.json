@@ -1,0 +1,26 @@
+{
+  "organizacaoUnidadeCadastro": {
+    "tipo": "TELA_CADASTRO",
+    "titulo": "Cadastro de Unidade",
+    "endpoint": "/api/organizacao_unidades",
+    "itens": [
+      { "campo": "codigo", "label": "Código", "tipo": "text", "col": 4 },
+      {
+        "titulo": "Identificação",
+        "columns": 12,
+        "campos": [
+          { "campo": "nome", "label": "Nome da unidade", "tipo": "text", "col": 8 },
+          { "campo": "organizacaoId", "label": "Organização", "tipo": "select", "col": 4 }
+        ]
+      },
+      {
+        "titulo": "Detalhes",
+        "columns": 12,
+        "campos": [
+          { "campo": "descricao", "label": "Descrição", "tipo": "text", "col": 12 },
+          { "campo": "ativo", "label": "Ativo", "tipo": "checkbox", "col": 12 }
+        ]
+      }
+    ]
+  }
+}

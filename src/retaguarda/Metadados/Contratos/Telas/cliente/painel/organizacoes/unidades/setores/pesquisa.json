@@ -1,12 +1,11 @@
 {
-  "organizacaoPesquisa": {
+  "organizacaoUnidadeSetorPesquisa": {
     "tipo": "TELA_PESQUISA",
-    "titulo": "Organizações",
-    "endpoint": "/api/organizacoes",
+    "titulo": "Setores da Unidade",
+    "endpoint": "/api/organizacao_unidade_setores",
     "filtro": [
       { "campo": "codigo", "descricao": "Código", "tipo": "string", "col": 3 },
       { "campo": "nome", "descricao": "Nome", "tipo": "string", "col": 3 },
-      { "campo": "descricao", "descricao": "Descrição", "tipo": "string", "col": 3 },
       { "campo": "created_at", "descricao": "Criado em", "tipo": "date", "col": 3 },
       { "campo": "ativo", "descricao": "Ativo", "tipo": "boolean", "col": 3 }
     ],
@@ -14,14 +13,13 @@
       "colunas": [
         { "campo": "codigo", "titulo": "Código", "visivelTelaPequena": false },
         { "campo": "nome", "titulo": "Nome", "visivelTelaPequena": true },
-        { "campo": "descricao", "titulo": "Descrição", "visivelTelaPequena": false },
+        { "campo": "organizacaoUnidadeId", "titulo": "Unidade", "visivelTelaPequena": false },
         { "campo": "created_at", "titulo": "Criado em", "visivelTelaPequena": false }
       ],
-      "campos": ["codigo", "nome", "descricao", "created_at"],
+      "campos": ["codigo", "nome", "organizacaoUnidadeId", "created_at"],
       "acoes": [
-        { "tipo": "navegacao", "destino": "/painel/organizacoes/editar/{id}", "campo_id": "id", "icone": "pencil" },
-        { "tipo": "navegacao", "destino": "/painel/organizacoes/unidades?organizacaoId={id}", "campo_id": "id", "icone": "grid-3x3-gap" },
-        { "tipo": "confirmacao_delete_ajax", "destino": "/api/organizacoes/{id}", "campo_id": "id", "icone": "trash" }
+        { "tipo": "navegacao", "destino": "/painel/organizacoes/unidades/setores/editar/{id}", "campo_id": "id", "icone": "pencil" },
+        { "tipo": "confirmacao_delete_ajax", "destino": "/api/organizacao_unidade_setores/{id}", "campo_id": "id", "icone": "trash" }
       ]
     },
     "pagination": { "pageSize": 10 }

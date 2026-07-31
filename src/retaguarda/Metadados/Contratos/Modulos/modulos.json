@@ -12,6 +12,25 @@
                 ], 
           "conflitosCom": [""] 
         }
+        ,
+        {
+          "chave": "organizacoes.unidades", "texto": "Unidades", "icone": "grid-3x3-gap", "url": "/painel/organizacoes/unidades",
+          "permissoes": [
+            { "id": "organizacoes.visualizar", "texto": "Visualizar" },
+            { "id": "organizacoes.editar", "texto": "Criar/Editar" },
+            { "id": "organizacoes.excluir", "texto": "Excluir" }
+          ],
+          "conflitosCom": [""]
+        },
+        {
+          "chave": "organizacoes.setores", "texto": "Setores", "icone": "diagram-3-fill", "url": "/painel/organizacoes/setores",
+          "permissoes": [
+            { "id": "organizacoes.visualizar", "texto": "Visualizar" },
+            { "id": "organizacoes.editar", "texto": "Criar/Editar" },
+            { "id": "organizacoes.excluir", "texto": "Excluir" }
+          ],
+          "conflitosCom": [""]
+        }
       ]
     }
   ]
