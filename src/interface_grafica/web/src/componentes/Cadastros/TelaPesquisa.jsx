@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import api from '../../servicos/api'
-import { useLocation, useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import ConfirmModal from '../InterfaceBasica/ModalConfirmacao'
 import modalService from '../../utils/modalServico'
 
@@ -17,6 +17,7 @@ export default function TelaPesquisa({ screenKey }){
   const query = useQuery()
   const navigate = useNavigate()
   const location = useLocation()
+  const params = useParams()
   const [confirmState, setConfirmState] = useState({ show: false, title: null, message: null, onConfirm: null })
   const [isMobile, setIsMobile] = useState(typeof window !== 'undefined' ? window.innerWidth <= 768 : false)
 
@@ -49,44 +50,44 @@ export default function TelaPesquisa({ screenKey }){
 
   useEffect(()=>{
     if (!meta) return
-    // determine API endpoint from metadata
+    // determine API endpoint from metadata (strict: no fallbacks)
     let endpoint = null
     if (meta.endpoint) endpoint = meta.endpoint
     else if (meta.tabela && meta.tabela.endpoint) endpoint = meta.tabela.endpoint
-    // try to derive from delete/navigation actions if not provided
-    if (!endpoint && meta.tabela && Array.isArray(meta.tabela.acoes)){
-      for (const a of meta.tabela.acoes){
-        if (a.destino && a.destino.startsWith('/api/')){
-          // strip trailing /{id} if present
-          endpoint = a.destino.replace(/\/{?\{id\}}?$/, '')
-          // also remove any placeholder like /{id}
-          endpoint = endpoint.replace(/\/\{id\}$/, '')
-          break
-        }
-      }
+    if (!endpoint) {
+      console.error('TelaPesquisa: endpoint not defined in metadata for', screenKey)
+      setItems([]); setTotal(0); return
     }
-    if (!endpoint) endpoint = '/api/organizacoes'
+    // allow path params (e.g. /painel/organizacoes/unidades/1) to be mapped into query params
+    const pathParams = params || {}
     // build query from filters (single dynamic filter)
-    const params = {}
+    const queryParams = {}
     const campo = query.get('campo')
     const operador = query.get('operador')
     const valor = query.get('valor')
     const valorDe = query.get('valor_de')
     const valorAte = query.get('valor_ate')
     const inativo = query.get('inativo')
-    if (campo) params['campo'] = campo
-    if (operador) params['operador'] = operador
-    if (valor) params['valor'] = valor
-    if (valorDe) params['valor_de'] = valorDe
-    if (valorAte) params['valor_ate'] = valorAte
-    if (inativo) params['inativo'] = inativo
+    // map all path params into query params (if not present in querystring)
+    try{
+      Object.keys(pathParams).forEach(k => {
+        const v = pathParams[k]
+        if (v && !query.get(k)) queryParams[k] = v
+      })
+    }catch(e){ }
+    if (campo) queryParams['campo'] = campo
+    if (operador) queryParams['operador'] = operador
+    if (valor) queryParams['valor'] = valor
+    if (valorDe) queryParams['valor_de'] = valorDe
+    if (valorAte) queryParams['valor_ate'] = valorAte
+    if (inativo) queryParams['inativo'] = inativo
     // pagination and sorting from querystring
     const page = query.get('page') || 1
     const pageSize = query.get('pageSize') || (meta.pagination?.pageSize || 10)
     const sortField = query.get('sortField') || null
     const sortDir = query.get('sortDir') || null
 
-    api.get(endpoint, { params: { ...params, page, pageSize, sortField, sortDir }, block: true }).then(r=>{
+    api.get(endpoint, { params: { ...queryParams, page, pageSize, sortField, sortDir }, block: true }).then(r=>{
       // api.js unwraps envelope into resp.data and keeps the full envelope at resp.envelope
       const env = r.envelope || {}
       if (env.items) {
@@ -104,7 +105,7 @@ export default function TelaPesquisa({ screenKey }){
         setTotal(0)
       }
     }).catch(()=>{ setItems([]); setTotal(0) })
-  },[meta, useLocation().search])
+  },[meta, location.search, JSON.stringify(params)])
 
   if (!meta) return null
 

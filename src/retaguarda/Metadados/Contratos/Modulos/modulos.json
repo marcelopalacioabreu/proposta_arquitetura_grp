@@ -10,7 +10,8 @@
                     { "id": "organizacoes.editar", "texto": "Criar/Editar" },
                     { "id": "organizacoes.excluir", "texto": "Excluir" }
                 ], 
-          "conflitosCom": [""] 
+          "conflitosCom": [""],
+          "mostrarNoMenu": true
         }
         ,
         {
@@ -20,7 +21,8 @@
             { "id": "organizacoes.editar", "texto": "Criar/Editar" },
             { "id": "organizacoes.excluir", "texto": "Excluir" }
           ],
-          "conflitosCom": [""]
+          "conflitosCom": [""],
+          "mostrarNoMenu": false
         },
         {
           "chave": "organizacoes.setores", "texto": "Setores", "icone": "diagram-3-fill", "url": "/painel/organizacoes/setores",
@@ -29,7 +31,8 @@
             { "id": "organizacoes.editar", "texto": "Criar/Editar" },
             { "id": "organizacoes.excluir", "texto": "Excluir" }
           ],
-          "conflitosCom": [""]
+          "conflitosCom": [""],
+          "mostrarNoMenu": false
         }
       ]
     }

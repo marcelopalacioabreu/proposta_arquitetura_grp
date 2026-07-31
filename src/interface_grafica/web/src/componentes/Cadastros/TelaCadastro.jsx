@@ -1,6 +1,56 @@
 import React, { useEffect, useState } from 'react'
 import api from '../../servicos/api'
-import { useParams, useNavigate } from 'react-router-dom'
+import { useParams, useNavigate, useLocation } from 'react-router-dom'
+
+function SelectField({ name, value, error, fieldConfig, meta }){
+  const [options, setOptions] = useState([])
+  const location = useLocation()
+  const params = useParams()
+
+  useEffect(()=>{
+    // Strict metadata-driven: prefer Portuguese key 'extremidadeOpcoes', then 'optionsEndpoint', then meta mappings
+    let rawEndpoint = fieldConfig?.extremidadeOpcoes || fieldConfig?.optionsEndpoint || fieldConfig?.endpoint || null
+    if (!rawEndpoint && meta && (meta.extremidadeOpcoes || meta.options)) rawEndpoint = (meta.extremidadeOpcoes && meta.extremidadeOpcoes[name]) || (meta.options && meta.options[name])
+    if (!rawEndpoint){ setOptions([]); return }
+
+    // Build context from path params and query string
+    const ctx = { ...(params || {}) }
+    const sp = new URLSearchParams(location.search)
+    for (const [k,v] of sp.entries()) if (!(k in ctx)) ctx[k] = v
+
+    // support placeholder substitution in endpoint and querystring, e.g. /api/units?orgId={organizacaoId}
+    const [pathPart, qsPart] = rawEndpoint.split('?')
+    const finalPath = pathPart.replace(/\{(\w+)\}/g, (_, key) => ctx[key] ?? '')
+
+    const reqParams = {}
+    if (qsPart){
+      qsPart.split('&').forEach(pair => {
+        const [k,v] = pair.split('=')
+        if (!k) return
+        const replaced = (v || '').replace(/\{(\w+)\}/g, (_, key) => ctx[key] ?? '')
+        if (replaced !== '') reqParams[k] = replaced
+      })
+    }
+    // default pageSize for selects to retrieve full list unless metadata overrides
+    if (!('pageSize' in reqParams)) reqParams.pageSize = 1000
+
+    api.get(finalPath, { params: reqParams, block: true }).then(r=>{
+      const env = r.envelope || {}
+      let items = []
+      if (env.items) items = env.items
+      else if (Array.isArray(r.data)) items = r.data
+      else if (r.data) items = [r.data]
+      setOptions(items)
+    }).catch(()=> setOptions([]))
+  },[name, location.search, fieldConfig, meta])
+
+  return (
+    <select name={name} defaultValue={value || ''} className={`form-select ${error ? 'is-invalid' : ''}`}>
+      <option value="">-- selecione --</option>
+      {options.map(o => (<option key={o.id} value={o.id}>{o.nome || o.Nome || o.id}</option>))}
+    </select>
+  )
+}
 
 export default function TelaCadastro({ screenKey, closeModal }){
   const [meta, setMeta] = useState(null)
@@ -8,6 +58,7 @@ export default function TelaCadastro({ screenKey, closeModal }){
   const [errors, setErrors] = useState({})
   const params = useParams()
   const navigate = useNavigate()
+  const location = useLocation()
   const [submitting, setSubmitting] = useState(false)
 
   useEffect(()=>{
@@ -19,16 +70,7 @@ export default function TelaCadastro({ screenKey, closeModal }){
         let endpoint = null
         if (m && m.endpoint) endpoint = m.endpoint
         else if (m && m.tabela && m.tabela.endpoint) endpoint = m.tabela.endpoint
-        if (!endpoint && m && m.tabela && Array.isArray(m.tabela.acoes)){
-          for (const a of m.tabela.acoes){
-            if (a.destino && a.destino.startsWith('/api/')){
-              endpoint = a.destino.replace(/\/{?\{id\}}?$/, '')
-              endpoint = endpoint.replace(/\/\{id\}$/, '')
-              break
-            }
-          }
-        }
-        if (!endpoint) endpoint = '/api/organizacoes'
+        if (!endpoint){ console.error('TelaCadastro: endpoint not defined in metadata for', screenKey); return }
         api.get(`${endpoint}/${params.id}`, { block: true }).then(r=> setModel(r.data)).catch(()=>{})
       })
     }
@@ -44,21 +86,12 @@ export default function TelaCadastro({ screenKey, closeModal }){
     const obj = {}
     for (const [k,v] of fd.entries()) obj[k]=v
     try{
-      // derive endpoint from meta
+      // derive endpoint from meta (strict)
       const m = meta
       let endpoint = null
       if (m && m.endpoint) endpoint = m.endpoint
       else if (m && m.tabela && m.tabela.endpoint) endpoint = m.tabela.endpoint
-      if (!endpoint && m && m.tabela && Array.isArray(m.tabela.acoes)){
-        for (const a of m.tabela.acoes){
-          if (a.destino && a.destino.startsWith('/api/')){
-            endpoint = a.destino.replace(/\/{?\{id\}}?$/, '')
-            endpoint = endpoint.replace(/\/\{id\}$/, '')
-            break
-          }
-        }
-      }
-      if (!endpoint) endpoint = '/api/organizacoes'
+      if (!endpoint){ throw new Error('Endpoint não definido no metadado da tela') }
 
       if (params.id === 'new'){
         await api.post(endpoint, obj, { block: true })
@@ -99,15 +132,17 @@ export default function TelaCadastro({ screenKey, closeModal }){
                   {it.campos.map((c, ci) => (
                     <div key={ci} className={`col-12 col-md-${c.col || 12}`}>
                       <label className="form-label">{c.label}</label>
-                      {c.tipo === 'checkbox' ? (
+                        {c.tipo === 'checkbox' ? (
                         <div className="form-check">
                           <input name={c.campo} defaultChecked={model[c.campo] ?? true} className={`form-check-input ${errors[c.campo] ? 'is-invalid' : ''}`} type="checkbox" />
                           <label className="form-check-label">{c.label}</label>
                           {errors[c.campo] && <div className="invalid-feedback">{errors[c.campo]}</div>}
                         </div>
-                      ) : (
-                        <input name={c.campo} defaultValue={model[c.campo] || ''} className={`form-control ${errors[c.campo] ? 'is-invalid' : ''}`} />
-                      )}
+                        ) : c.tipo === 'select' ? (
+                          <SelectField name={c.campo} value={model[c.campo]} error={errors[c.campo]} fieldConfig={c} meta={meta} />
+                        ) : (
+                          <input name={c.campo} defaultValue={model[c.campo] || ''} className={`form-control ${errors[c.campo] ? 'is-invalid' : ''}`} />
+                        )}
                     </div>
                   ))}
                 </div>
@@ -124,6 +159,8 @@ export default function TelaCadastro({ screenKey, closeModal }){
                   <label className="form-check-label">{c.label}</label>
                   {errors[c.campo] && <div className="invalid-feedback">{errors[c.campo]}</div>}
                 </div>
+              ) : c.tipo === 'select' ? (
+                <SelectField name={c.campo} value={model[c.campo]} error={errors[c.campo]} fieldConfig={c} meta={meta} />
               ) : (
                 <input name={c.campo} defaultValue={model[c.campo] || ''} className={`form-control ${errors[c.campo] ? 'is-invalid' : ''}`} />
               )}

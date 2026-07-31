@@ -20,9 +20,14 @@ function App(){
       <Route path='/cadastro' element={<CadastroUsuario/>} />
       <Route path='/painel/*' element={<LayoutPrivado/>}>
         <Route path='organizacoes' element={<TelaPesquisa screenKey={'organizacaoPesquisa'} />} />
+        <Route path='organizacoes/:organizacaoId' element={<TelaPesquisa screenKey={'organizacaoPesquisa'} />} />
         <Route path='organizacoes/editar/:id' element={<TelaCadastro screenKey={'organizacaoCadastro'} />} />
-        <Route path='organizacoes/setores' element={<TelaPesquisa screenKey={'setorPesquisa'} />} />
-        <Route path='organizacoes/setores/editar/:id' element={<TelaCadastro screenKey={'setorCadastro'} />} />
+        <Route path='organizacoes/unidades' element={<TelaPesquisa screenKey={'organizacaoUnidadePesquisa'} />} />
+        <Route path='organizacoes/unidades/:organizacaoId' element={<TelaPesquisa screenKey={'organizacaoUnidadePesquisa'} />} />
+        <Route path='organizacoes/unidades/editar/:id' element={<TelaCadastro screenKey={'organizacaoUnidadeCadastro'} />} />
+        <Route path='organizacoes/unidades/setores' element={<TelaPesquisa screenKey={'organizacaoUnidadeSetorPesquisa'} />} />
+        <Route path='organizacoes/unidades/setores/:organizacaoUnidadeId' element={<TelaPesquisa screenKey={'organizacaoUnidadeSetorPesquisa'} />} />
+        <Route path='organizacoes/unidades/setores/editar/:id' element={<TelaCadastro screenKey={'organizacaoUnidadeSetorCadastro'} />} />
         <Route index element={<InicioPainel/>} />
       </Route>
       <Route path='*' element={<Navigate to='/' replace />} />

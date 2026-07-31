@@ -10,7 +10,7 @@
         "columns": 12,
         "campos": [
           { "campo": "nome", "label": "Nome do setor", "tipo": "text", "col": 8 },
-          { "campo": "organizacaoUnidadeId", "label": "Unidade", "tipo": "select", "col": 4 }
+          { "campo": "organizacaoUnidadeId", "label": "Unidade", "tipo": "select", "col": 4, "extremidadeOpcoes": "/api/organizacao_unidades?organizacaoId={organizacaoId}" }
         ]
       },
       {
