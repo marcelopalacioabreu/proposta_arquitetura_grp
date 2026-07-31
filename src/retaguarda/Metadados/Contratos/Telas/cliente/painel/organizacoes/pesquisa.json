@@ -20,7 +20,7 @@
       "campos": ["codigo", "nome", "descricao", "created_at"],
       "acoes": [
         { "tipo": "navegacao", "destino": "/painel/organizacoes/editar/{id}", "campo_id": "id", "icone": "pencil" },
-        { "tipo": "navegacao", "destino": "/painel/organizacoes/unidades?organizacaoId={id}", "campo_id": "id", "icone": "grid-3x3-gap" },
+        { "tipo": "navegacao", "destino": "/painel/organizacoes/unidades/{id}", "campo_id": "id", "icone": "grid-3x3-gap" },
         { "tipo": "confirmacao_delete_ajax", "destino": "/api/organizacoes/{id}", "campo_id": "id", "icone": "trash" }
       ]
     },

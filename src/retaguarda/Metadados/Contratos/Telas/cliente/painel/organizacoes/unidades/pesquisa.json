@@ -19,7 +19,7 @@
       "campos": ["codigo", "nome", "organizacaoId", "created_at"],
       "acoes": [
         { "tipo": "navegacao", "destino": "/painel/organizacoes/unidades/editar/{id}", "campo_id": "id", "icone": "pencil" },
-        { "tipo": "navegacao", "destino": "/painel/organizacoes/unidades/setores?organizacaoUnidadeId={id}", "campo_id": "id", "icone": "diagram-3" },
+        { "tipo": "navegacao", "destino": "/painel/organizacoes/unidades/setores/{id}", "campo_id": "id", "icone": "diagram-3" },
         { "tipo": "confirmacao_delete_ajax", "destino": "/api/organizacao_unidades/{id}", "campo_id": "id", "icone": "trash" }
       ]
     },
