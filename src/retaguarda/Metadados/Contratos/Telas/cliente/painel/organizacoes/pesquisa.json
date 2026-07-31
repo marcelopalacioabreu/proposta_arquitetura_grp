@@ -2,7 +2,7 @@
   "organizacaoPesquisa": {
     "tipo": "TELA_PESQUISA",
     "titulo": "Organizações",
-    "endpoint": "/api/organizacoes",
+    "extremidade": "/api/organizacoes",
     "filtro": [
       { "campo": "codigo", "descricao": "Código", "tipo": "string", "col": 3 },
       { "campo": "nome", "descricao": "Nome", "tipo": "string", "col": 3 },

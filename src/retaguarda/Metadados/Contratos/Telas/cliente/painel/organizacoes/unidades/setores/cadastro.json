@@ -2,7 +2,7 @@
   "organizacaoUnidadeSetorCadastro": {
     "tipo": "TELA_CADASTRO",
     "titulo": "Cadastro de Setor da Unidade",
-    "endpoint": "/api/organizacao_unidade_setores",
+    "extremidade": "/api/organizacao_unidade_setores",
     "itens": [
       { "campo": "codigo", "label": "Código", "tipo": "text", "col": 4 },
       {

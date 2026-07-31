@@ -2,7 +2,8 @@
   "organizacaoUnidadePesquisa": {
     "tipo": "TELA_PESQUISA",
     "titulo": "Unidades",
-    "endpoint": "/api/organizacao_unidades",
+    "extremidade": "/api/organizacao_unidades",
+    "camposChaveUrl": ["organizacaoId"] ,
     "filtro": [
       { "campo": "codigo", "descricao": "Código", "tipo": "string", "col": 3 },
       { "campo": "nome", "descricao": "Nome", "tipo": "string", "col": 3 },

@@ -61,20 +61,60 @@ export default function TelaCadastro({ screenKey, closeModal }){
   const location = useLocation()
   const [submitting, setSubmitting] = useState(false)
 
+  /*
+    Utilitários locais (Português)
+  */
+  function obterEndpointCadastro(metaObj){
+    if (!metaObj) return null
+    if (metaObj.extremidade) return metaObj.extremidade
+    if (metaObj.endpoint) return metaObj.endpoint
+    if (metaObj.tabela && (metaObj.tabela.extremidade || metaObj.tabela.endpoint)) return metaObj.tabela.extremidade || metaObj.tabela.endpoint
+    return null
+  }
+
+  function construirObjetoFormulario(formData){
+    const obj = {}
+    for (const [k,v] of formData.entries()) obj[k] = v
+    return obj
+  }
+
+  // Carrega metadados da tela
   useEffect(()=>{
-    api.get('/meta/screens', { block: true }).then(r=> setMeta(r.data[screenKey]))
+    api.get('/meta/screens', { block: true }).then(r=> setMeta(r.data[screenKey])).catch(()=>{})
+  },[screenKey])
+
+  // Quando metadados estiverem disponíveis e houver id, carrega o modelo para edição
+  useEffect(()=>{
+    if (!meta) return
     if (params.id && params.id !== 'new'){
-      // determine API endpoint from metadata
-      api.get('/meta/screens').then(r=>{
-        const m = r.data[screenKey]
-        let endpoint = null
-        if (m && m.endpoint) endpoint = m.endpoint
-        else if (m && m.tabela && m.tabela.endpoint) endpoint = m.tabela.endpoint
-        if (!endpoint){ console.error('TelaCadastro: endpoint not defined in metadata for', screenKey); return }
-        api.get(`${endpoint}/${params.id}`, { block: true }).then(r=> setModel(r.data)).catch(()=>{})
-      })
+      const endpoint = obterEndpointCadastro(meta)
+      if (!endpoint){ console.error('TelaCadastro: endpoint não definido nos metadados para', screenKey); return }
+      api.get(`${endpoint}/${params.id}`, { block: true }).then(r=> setModel(r.data)).catch(()=>{})
     }
-  },[screenKey, params.id])
+  },[meta, params.id])
+
+  // Renderiza um campo a partir do campo de metadados
+  function renderCampo(c, key){
+    const colunaClass = `col-12 col-md-${c.col || 12}`
+    const valor = model[c.campo]
+    const erro = errors[c.campo]
+    return (
+      <div key={key} className={colunaClass}>
+        <label className="form-label">{c.label}</label>
+        {c.tipo === 'checkbox' ? (
+          <div className="form-check">
+            <input name={c.campo} defaultChecked={valor ?? true} className={`form-check-input ${erro ? 'is-invalid' : ''}`} type="checkbox" />
+            <label className="form-check-label">{c.label}</label>
+            {erro && <div className="invalid-feedback">{erro}</div>}
+          </div>
+        ) : c.tipo === 'select' ? (
+          <SelectField name={c.campo} value={valor} error={erro} fieldConfig={c} meta={meta} />
+        ) : (
+          <input name={c.campo} defaultValue={valor || ''} className={`form-control ${erro ? 'is-invalid' : ''}`} />
+        )}
+      </div>
+    )
+  }
 
   if (!meta || !Array.isArray(meta.itens)) return null
 
@@ -83,21 +123,14 @@ export default function TelaCadastro({ screenKey, closeModal }){
     setSubmitting(true)
     setErrors({})
     const fd = new FormData(e.target)
-    const obj = {}
-    for (const [k,v] of fd.entries()) obj[k]=v
+    const obj = construirObjetoFormulario(fd)
     try{
       // derive endpoint from meta (strict)
-      const m = meta
-      let endpoint = null
-      if (m && m.endpoint) endpoint = m.endpoint
-      else if (m && m.tabela && m.tabela.endpoint) endpoint = m.tabela.endpoint
-      if (!endpoint){ throw new Error('Endpoint não definido no metadado da tela') }
+      const endpoint = obterEndpointCadastro(meta)
+      if (!endpoint) throw new Error('Endpoint não definido no metadado da tela')
 
-      if (params.id === 'new'){
-        await api.post(endpoint, obj, { block: true })
-      } else {
-        await api.put(`${endpoint}/${params.id}`, obj, { block: true })
-      }
+      if (params.id === 'new') await api.post(endpoint, obj, { block: true })
+      else await api.put(`${endpoint}/${params.id}`, obj, { block: true })
       if (typeof closeModal === 'function') closeModal()
       else navigate('/painel/organizacoes')
     }catch(err){
@@ -129,43 +162,13 @@ export default function TelaCadastro({ screenKey, closeModal }){
               <fieldset key={idx} className="border p-3 mb-3 w-100">
                 {it.titulo && <legend className="float-none w-auto px-2">{it.titulo}</legend>}
                 <div className="row g-3">
-                  {it.campos.map((c, ci) => (
-                    <div key={ci} className={`col-12 col-md-${c.col || 12}`}>
-                      <label className="form-label">{c.label}</label>
-                        {c.tipo === 'checkbox' ? (
-                        <div className="form-check">
-                          <input name={c.campo} defaultChecked={model[c.campo] ?? true} className={`form-check-input ${errors[c.campo] ? 'is-invalid' : ''}`} type="checkbox" />
-                          <label className="form-check-label">{c.label}</label>
-                          {errors[c.campo] && <div className="invalid-feedback">{errors[c.campo]}</div>}
-                        </div>
-                        ) : c.tipo === 'select' ? (
-                          <SelectField name={c.campo} value={model[c.campo]} error={errors[c.campo]} fieldConfig={c} meta={meta} />
-                        ) : (
-                          <input name={c.campo} defaultValue={model[c.campo] || ''} className={`form-control ${errors[c.campo] ? 'is-invalid' : ''}`} />
-                        )}
-                    </div>
-                  ))}
+                  {it.campos.map((c, ci) => renderCampo(c, `group-${idx}-${ci}`))}
                 </div>
               </fieldset>
             )
           }
           const c = it
-          return (
-            <div key={idx} className={`col-12 col-md-${c.col || 12}`}>
-              <label className="form-label">{c.label}</label>
-              {c.tipo === 'checkbox' ? (
-                <div className="form-check">
-                  <input name={c.campo} defaultChecked={model[c.campo] ?? true} className={`form-check-input ${errors[c.campo] ? 'is-invalid' : ''}`} type="checkbox" />
-                  <label className="form-check-label">{c.label}</label>
-                  {errors[c.campo] && <div className="invalid-feedback">{errors[c.campo]}</div>}
-                </div>
-              ) : c.tipo === 'select' ? (
-                <SelectField name={c.campo} value={model[c.campo]} error={errors[c.campo]} fieldConfig={c} meta={meta} />
-              ) : (
-                <input name={c.campo} defaultValue={model[c.campo] || ''} className={`form-control ${errors[c.campo] ? 'is-invalid' : ''}`} />
-              )}
-            </div>
-          )
+          return renderCampo(c, `single-${idx}`)
         })}
 
         {Object.keys(errors).length > 0 && <div className="col-12"><div className="alert alert-danger">Corrija os erros no formulário.</div></div>}

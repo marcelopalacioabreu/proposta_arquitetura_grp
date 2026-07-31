@@ -2,7 +2,7 @@
   "organizacaoCadastro": {
     "tipo": "TELA_CADASTRO",
     "titulo": "Cadastro de Organização",
-    "endpoint": "/api/organizacoes",
+    "extremidade": "/api/organizacoes",
     "itens": [
       { "campo": "codigo", "label": "Código", "tipo": "text", "col": 4 },
       {

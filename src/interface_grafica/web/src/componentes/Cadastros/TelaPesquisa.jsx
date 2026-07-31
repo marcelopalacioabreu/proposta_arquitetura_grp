@@ -4,6 +4,92 @@ import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import ConfirmModal from '../InterfaceBasica/ModalConfirmacao'
 import modalService from '../../utils/modalServico'
 
+/*
+  TelaPesquisa - utilitários e responsabilidades isoladas
+
+  Objetivos da refatoração:
+  - Extrair lógica de construção de endpoint e parâmetros para funções nomeadas em português
+  - Isolar renderização de colunas/ações para reduzir duplicação
+  - Documentar com exemplos de uso de URL e metadados
+
+  Exemplo de URL e metadado esperado:
+  URL: /painel/organizacoes/unidades/1?campo=nome
+  Metadado (tela):
+  {
+    "organizacaoUnidadePesquisa": {
+      "tipo": "TELA_PESQUISA",
+      "titulo": "Unidades",
+      "endpoint": "/api/organizacao_unidades",
+      "pagination": { "pageSize": 10 }
+    }
+  }
+
+  A função `obterEndpoint` usa estritamente `meta.endpoint` ou `meta.tabela.endpoint`.
+  A função `construirParametros` combina querystring e path params (useParams).
+*/
+
+// Retorna a extremidade (endpoint) definida nos metadados da tela (estrito - sem fallbacks)
+// Prioriza a chave em português `extremidade` e mantém compatibilidade com `endpoint`.
+function obterEndpoint(meta){
+  if (!meta) return null
+  if (meta.extremidade) return meta.extremidade
+  if (meta.endpoint) return meta.endpoint
+  if (meta.tabela && (meta.tabela.extremidade || meta.tabela.endpoint)) return meta.tabela.extremidade || meta.tabela.endpoint
+  return null
+}
+
+// Constroi um objeto de query params a partir da URL (querystring) e dos path params (useParams())
+// Mantemos apenas chaves que o metadado espera — por enquanto pass-through genérico.
+// Construir parâmetros combinando querystring, path params (useParams) e camposChaveUrl definidos nos metadados.
+// Se `meta.camposChaveUrl` existir, extraí valores numéricos da URL e mapeia na ordem para as chaves.
+function construirParametros(queryObj, pathParams, pathname, meta){
+  const p = {}
+  // copiar todos os pares da querystring
+  for (const [k,v] of queryObj.entries()) if (v !== null && v !== undefined && v !== '') p[k] = v
+  // mapear path params para query quando não existirem
+  try{ Object.keys(pathParams || {}).forEach(k=> { if (!p[k] && pathParams[k]) p[k] = pathParams[k] }) }catch(e){}
+
+  // Suporte camposChaveUrl: extrair segmentos numéricos da pathname e mapear para as chaves fornecidas
+  try{
+    const chaves = meta?.camposChaveUrl
+    if (Array.isArray(chaves) && chaves.length){
+      const segments = (pathname || '').split('/').map(s=> s.trim()).filter(Boolean)
+      // extrair apenas segmentos que são números
+      const nums = segments.map(s=> (s.match(/^\d+$/) ? s : null)).filter(Boolean)
+      for (let i=0;i<chaves.length && i<nums.length;i++){
+        const key = chaves[i]
+        if (!p[key] && nums[i]) p[key] = nums[i]
+      }
+    }
+  }catch(e){}
+
+  return p
+}
+
+// Render helpers — mantêm a renderização principal enxuta
+function obterColunasVisiveis(meta, isMobile){
+  const allCols = (meta.tabela && meta.tabela.colunas && meta.tabela.colunas.length) ? meta.tabela.colunas : []
+  return isMobile ? allCols.filter(col => (col.visivelTelaPequena !== false)) : allCols
+}
+
+function renderCelula(item, c, idx){
+  const field = typeof c === 'string' ? c : c.campo
+  return (<td key={idx}>{item[field]}</td>)
+}
+
+// Substitui placeholders no destino usando valores do item.
+// Exemplo: destino "/painel/organizacoes/unidades?organizacaoId={id}" com item.id=5
+// resulta em "/painel/organizacoes/unidades?organizacaoId=5"
+function aplicarDestino(destino, item, campoId){
+  if (!destino) return destino
+  return destino.replace(/\{(\w+)\}/g, (m, key) => {
+    // first try item[key], then if key === 'id' and campoId provided, try item[campoId]
+    if (item && Object.prototype.hasOwnProperty.call(item, key)) return item[key]
+    if (key === 'id' && campoId && item && Object.prototype.hasOwnProperty.call(item, campoId)) return item[campoId]
+    return ''
+  })
+}
+
 function useQuery(){
   return new URLSearchParams(useLocation().search)
 }
@@ -50,44 +136,22 @@ export default function TelaPesquisa({ screenKey }){
 
   useEffect(()=>{
     if (!meta) return
-    // determine API endpoint from metadata (strict: no fallbacks)
-    let endpoint = null
-    if (meta.endpoint) endpoint = meta.endpoint
-    else if (meta.tabela && meta.tabela.endpoint) endpoint = meta.tabela.endpoint
+    const endpoint = obterEndpoint(meta)
     if (!endpoint) {
-      console.error('TelaPesquisa: endpoint not defined in metadata for', screenKey)
+      console.error('TelaPesquisa: endpoint não definido nos metadados para', screenKey)
       setItems([]); setTotal(0); return
     }
-    // allow path params (e.g. /painel/organizacoes/unidades/1) to be mapped into query params
+
+    // construir parâmetros combinando querystring e path params
     const pathParams = params || {}
-    // build query from filters (single dynamic filter)
-    const queryParams = {}
-    const campo = query.get('campo')
-    const operador = query.get('operador')
-    const valor = query.get('valor')
-    const valorDe = query.get('valor_de')
-    const valorAte = query.get('valor_ate')
-    const inativo = query.get('inativo')
-    // map all path params into query params (if not present in querystring)
-    try{
-      Object.keys(pathParams).forEach(k => {
-        const v = pathParams[k]
-        if (v && !query.get(k)) queryParams[k] = v
-      })
-    }catch(e){ }
-    if (campo) queryParams['campo'] = campo
-    if (operador) queryParams['operador'] = operador
-    if (valor) queryParams['valor'] = valor
-    if (valorDe) queryParams['valor_de'] = valorDe
-    if (valorAte) queryParams['valor_ate'] = valorAte
-    if (inativo) queryParams['inativo'] = inativo
-    // pagination and sorting from querystring
+    const qp = construirParametros(query, pathParams, location.pathname, meta)
+    // paginação e ordenação
     const page = query.get('page') || 1
     const pageSize = query.get('pageSize') || (meta.pagination?.pageSize || 10)
     const sortField = query.get('sortField') || null
     const sortDir = query.get('sortDir') || null
 
-    api.get(endpoint, { params: { ...queryParams, page, pageSize, sortField, sortDir }, block: true }).then(r=>{
+    api.get(endpoint, { params: { ...qp, page, pageSize, sortField, sortDir }, block: true }).then(r=>{
       // api.js unwraps envelope into resp.data and keeps the full envelope at resp.envelope
       const env = r.envelope || {}
       if (env.items) {
@@ -190,30 +254,31 @@ export default function TelaPesquisa({ screenKey }){
             {(() => {
               const allCols = (meta.tabela.colunas && meta.tabela.colunas.length) ? meta.tabela.colunas : []
               const cols = isMobile ? allCols.filter(col => (col.visivelTelaPequena !== false)) : allCols
-              return cols.map((c, idx) => {
-                const field = typeof c === 'string' ? c : c.campo
-                const title = typeof c === 'string' ? c : c.titulo
-                const curField = query.get('sortField')
-                const curDir = query.get('sortDir') || 'asc'
-                const isActive = curField === field
-                const icon = isActive ? (curDir === 'asc' ? 'arrow-up' : 'arrow-down') : 'dash'
-                return (
-                  <th key={idx}>
-                    {title}{' '}
-                    <button className="btn btn-link p-0 btn-icon" title={`Ordenar por ${title}`} aria-label={`Ordenar por ${title}`} onClick={()=>{
-                      const cur = new URLSearchParams(location.search)
-                      if (cur.get('sortField') === field){
-                        cur.set('sortDir', cur.get('sortDir') === 'asc' ? 'desc' : 'asc')
-                      } else {
-                        cur.set('sortField', field)
-                        cur.set('sortDir', 'asc')
-                      }
-                      cur.set('page', '1')
-                      navigate({ search: cur.toString() })
-                    }}><i className={`bi bi-${icon}`}></i></button>
-                  </th>
-                )
-              })
+                const colsVisiveis = obterColunasVisiveis(meta, isMobile)
+                return colsVisiveis.map((c, idx) => {
+                  const field = typeof c === 'string' ? c : c.campo
+                  const title = typeof c === 'string' ? c : c.titulo
+                  const curField = query.get('sortField')
+                  const curDir = query.get('sortDir') || 'asc'
+                  const isActive = curField === field
+                  const icon = isActive ? (curDir === 'asc' ? 'arrow-up' : 'arrow-down') : 'dash'
+                  return (
+                    <th key={idx}>
+                      {title}{' '}
+                      <button className="btn btn-link p-0 btn-icon" title={`Ordenar por ${title}`} aria-label={`Ordenar por ${title}`} onClick={()=>{
+                        const cur = new URLSearchParams(location.search)
+                        if (cur.get('sortField') === field){
+                          cur.set('sortDir', cur.get('sortDir') === 'asc' ? 'desc' : 'asc')
+                        } else {
+                          cur.set('sortField', field)
+                          cur.set('sortDir', 'asc')
+                        }
+                        cur.set('page', '1')
+                        navigate({ search: cur.toString() })
+                      }}><i className={`bi bi-${icon}`}></i></button>
+                    </th>
+                  )
+                })
             })()}
             {isMobile && <th />}
             {!isMobile && <th>Ações</th>}
@@ -225,10 +290,8 @@ export default function TelaPesquisa({ screenKey }){
               {(() => {
                 const allCols = (meta.tabela.colunas && meta.tabela.colunas.length) ? meta.tabela.colunas : []
                 const cols = isMobile ? allCols.filter(col => (col.visivelTelaPequena !== false)) : allCols
-                return cols.map((c, idx) => {
-                  const field = typeof c === 'string' ? c : c.campo
-                  return (<td key={idx}>{it[field]}</td>)
-                })
+                const colsVisiveis = obterColunasVisiveis(meta, isMobile)
+                return colsVisiveis.map((c, idx) => renderCelula(it, c, idx))
               })()}
               {isMobile ? (
                 <td>
@@ -242,8 +305,8 @@ export default function TelaPesquisa({ screenKey }){
                 <td>
                       {meta.tabela.acoes.map((a, ai) => (
                         <React.Fragment key={ai}>
-                          {a.tipo === 'navegacao' && <button className="btn btn-sm btn-link btn-icon" onClick={()=> navigate(a.destino.replace('{id}', it[a.campo_id]))}><i className={`bi bi-${a.icone}`}></i></button>}
-                          {a.tipo === 'confirmacao_delete_ajax' && <button className="btn btn-sm btn-link text-danger btn-icon" onClick={()=> setConfirmState({ show: true, title: 'Excluir', message: 'Confirma exclusão?', onConfirm: async ()=>{ await api.delete(a.destino.replace('{id}', it[a.campo_id]), { block: true }); setItems(items.filter(x=> x.id !== it.id)); setConfirmState(s=> ({...s, show: false})) } }) }><i className={`bi bi-${a.icone}`}></i></button>}
+                          {a.tipo === 'navegacao' && <button className="btn btn-sm btn-link btn-icon" onClick={()=> navigate(aplicarDestino(a.destino, it, a.campo_id))}><i className={`bi bi-${a.icone}`}></i></button>}
+                          {a.tipo === 'confirmacao_delete_ajax' && <button className="btn btn-sm btn-link text-danger btn-icon" onClick={()=> setConfirmState({ show: true, title: 'Excluir', message: 'Confirma exclusão?', onConfirm: async ()=>{ await api.delete(aplicarDestino(a.destino, it, a.campo_id), { block: true }); setItems(items.filter(x=> x.id !== it.id)); setConfirmState(s=> ({...s, show: false})) } }) }><i className={`bi bi-${a.icone}`}></i></button>}
                         </React.Fragment>
                       ))}
                 </td>

@@ -2,7 +2,8 @@
   "organizacaoUnidadeSetorPesquisa": {
     "tipo": "TELA_PESQUISA",
     "titulo": "Setores da Unidade",
-    "endpoint": "/api/organizacao_unidade_setores",
+    "extremidade": "/api/organizacao_unidade_setores",
+    "camposChaveUrl": ["organizacaoId","organizacaoUnidadeId"] ,
     "filtro": [
       { "campo": "codigo", "descricao": "Código", "tipo": "string", "col": 3 },
       { "campo": "nome", "descricao": "Nome", "tipo": "string", "col": 3 },

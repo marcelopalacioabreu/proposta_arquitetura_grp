@@ -2,7 +2,7 @@
   "organizacaoUnidadeCadastro": {
     "tipo": "TELA_CADASTRO",
     "titulo": "Cadastro de Unidade",
-    "endpoint": "/api/organizacao_unidades",
+    "extremidade": "/api/organizacao_unidades",
     "itens": [
       { "campo": "codigo", "label": "Código", "tipo": "text", "col": 4 },
       {
