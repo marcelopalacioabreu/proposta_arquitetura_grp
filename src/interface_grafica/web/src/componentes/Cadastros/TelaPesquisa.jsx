@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import api from '../../servicos/api'
 import { useLocation, useNavigate } from 'react-router-dom'
 import ConfirmModal from '../InterfaceBasica/ModalConfirmacao'
-import modalService from '../../utils/modalService'
+import modalService from '../../utils/modalServico'
 
 function useQuery(){
   return new URLSearchParams(useLocation().search)

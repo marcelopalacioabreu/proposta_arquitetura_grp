@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react'
 import AlertModal from './ModalAlerta'
 import ConfirmModal from './ModalConfirmacao'
 import BloqueioTela from './BloqueioTela'
-import modalService from '../../utils/modalService'
+import modalService from '../../utils/modalServico'
 import ReactDOM from 'react-dom'
 
 export const ModalContext = React.createContext(null)

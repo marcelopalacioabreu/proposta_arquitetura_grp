@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import api from '../servicos/api'
-import modalService from '../utils/modalService'
+import modalService from '../utils/modalServico'
 import { useNavigate } from 'react-router-dom'
 import BarraNavegacao from '../componentes/Layout/BarraNavegacao'
 import Rodape from '../componentes/Layout/Rodape'

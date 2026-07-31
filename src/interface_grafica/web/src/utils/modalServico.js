@@ -29,6 +29,6 @@ export default {
   confirmDialog,
   bloquearTela,
   desbloquearTela,
-  loadInModalHtml
-  , openComponentModal
+  loadInModalHtml,
+  openComponentModal
 }

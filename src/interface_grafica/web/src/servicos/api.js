@@ -1,5 +1,5 @@
 import axios from 'axios'
-import modalService from '../utils/modalService'
+import modalService from '../utils/modalServico'
 
 const api = axios.create({
   withCredentials: true
