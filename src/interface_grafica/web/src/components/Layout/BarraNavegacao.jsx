@@ -2,7 +2,7 @@ import React, { useEffect, useState, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import api from '../../services/api'
 
-export default function Navbar({ brand = 'Painel' }){
+export default function BarraNavegacao({ brand = 'Painel' }){
   const [user, setUser] = useState(null)
   const [userMenuOpen, setUserMenuOpen] = useState(false)
   const userMenuRef = useRef()

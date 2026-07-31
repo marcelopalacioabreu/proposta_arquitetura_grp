@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import api from '../../services/api'
 import modalService from '../../utils/modalService'
 
-export default function RowDetails({ title = 'Detalhes', item = {}, columns = [], actions = [], closeModal }){
+export default function TelaPesquisaDetalhesLinhaTelaPequena({ title = 'Detalhes', item = {}, columns = [], actions = [], closeModal }){
   const navigate = useNavigate()
 
   const handleAction = async (a) => {
@@ -36,7 +36,7 @@ export default function RowDetails({ title = 'Detalhes', item = {}, columns = []
           const label = typeof c === 'string' ? c : (c.titulo || c.label || c.campo)
           return (
             <div key={idx} className="col-12 mb-2">
-              <div className="small text-muted">{label}</div>
+              <div className="small text-muted">{label}:</div>
               <div>{String(item[field] ?? '')}</div>
             </div>
           )

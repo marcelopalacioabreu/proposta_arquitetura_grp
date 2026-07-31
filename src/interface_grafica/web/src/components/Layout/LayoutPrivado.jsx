@@ -1,13 +1,13 @@
 import React from 'react'
 import { Outlet } from 'react-router-dom'
 import Menu from './Menu'
-import Navbar from './Navbar'
-import Footer from './Footer'
+import BarraNavegacao from './BarraNavegacao'
+import Rodape from './Rodape'
 
-export default function PrivateLayout(){
+export default function LayoutPrivado(){
   return (
     <div className="d-flex vh-100 w-100 page-root flex-column">
-      <Navbar brand="Painel" />
+      <BarraNavegacao brand="Painel" />
 
       <div className="container-fluid flex-fill position-relative">
         {/* Floating Menu overlays the content; no reserved sidebar width */}
@@ -33,7 +33,7 @@ export default function PrivateLayout(){
         </div>
       </div>
 
-      <Footer />
+      <Rodape />
     </div>
   )
 }

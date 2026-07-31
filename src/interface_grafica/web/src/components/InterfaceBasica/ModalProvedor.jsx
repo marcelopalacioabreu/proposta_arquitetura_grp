@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react'
-import AlertModal from './AlertModal'
-import ConfirmModal from './ConfirmModal'
+import AlertModal from './ModalAlerta'
+import ConfirmModal from './ModalConfirmacao'
 import BloqueioTela from './BloqueioTela'
 import modalService from '../../utils/modalService'
 import ReactDOM from 'react-dom'

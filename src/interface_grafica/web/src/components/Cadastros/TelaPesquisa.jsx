@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import api from '../../services/api'
 import { useLocation, useNavigate } from 'react-router-dom'
-import ConfirmModal from '../InterfaceBasica/ConfirmModal'
+import ConfirmModal from '../InterfaceBasica/ModalConfirmacao'
 import modalService from '../../utils/modalService'
 
 function useQuery(){
@@ -234,7 +234,7 @@ export default function TelaPesquisa({ screenKey }){
                   <button className="btn btn-sm btn-link btn-icon" title="Mais campos" aria-label="Mais campos" onClick={() => {
                     const allCols = (meta.tabela.colunas && meta.tabela.colunas.length) ? meta.tabela.colunas : []
                     // pass ALL columns so modal shows complete record
-                    modalService.openComponentModal('RowDetails', { title: `${meta.titulo} — Detalhes`, item: it, columns: allCols, actions: meta.tabela.acoes })
+                    modalService.openComponentModal('../Cadastros/TelaPesquisaDetalhesLinhaTelaPequena', { title: `${meta.titulo}`, item: it, columns: allCols, actions: meta.tabela.acoes })
                   }}><i className="bi bi-three-dots" /></button>
                 </td>
               ) : (

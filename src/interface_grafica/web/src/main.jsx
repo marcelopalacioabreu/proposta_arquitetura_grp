@@ -4,7 +4,7 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import Home from './pages/Home'
 import Login from './pages/Login'
 import CadastroUsuario from './pages/CadastroUsuario'
-import PrivateLayout from './components/Layout/PrivateLayout'
+import LayoutPrivado from './components/Layout/LayoutPrivado'
 import TelaPesquisa from './components/Cadastros/TelaPesquisa'
 import TelaCadastro from './components/Cadastros/TelaCadastro'
 import InicioPainel from './pages/painel/InicioPainel'
@@ -18,7 +18,7 @@ function App(){
       <Route path='/' element={<Home/>} />
       <Route path='/login' element={<Login/>} />
       <Route path='/cadastro' element={<CadastroUsuario/>} />
-      <Route path='/painel/*' element={<PrivateLayout/>}>
+      <Route path='/painel/*' element={<LayoutPrivado/>}>
         <Route path='organizacoes' element={<TelaPesquisa screenKey={'organizacaoPesquisa'} />} />
         <Route path='organizacoes/editar/:id' element={<TelaCadastro screenKey={'organizacaoCadastro'} />} />
         <Route path='organizacoes/setores' element={<TelaPesquisa screenKey={'setorPesquisa'} />} />
@@ -30,7 +30,7 @@ function App(){
   )
 }
 
-import ModalProvider from './components/InterfaceBasica/ModalProvider'
+import ModalProvider from './components/InterfaceBasica/ModalProvedor'
 
 createRoot(document.getElementById('root')).render(
   <BrowserRouter>

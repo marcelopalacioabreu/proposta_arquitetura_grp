@@ -2,8 +2,8 @@ import React, { useState } from 'react'
 import api from '../services/api'
 import modalService from '../utils/modalService'
 import { useNavigate } from 'react-router-dom'
-import Navbar from '../components/Layout/Navbar'
-import Footer from '../components/Layout/Footer'
+import BarraNavegacao from '../components/Layout/BarraNavegacao'
+import Rodape from '../components/Layout/Rodape'
 
 export default function Login(){
   const [user,setUser] = useState('')
@@ -22,7 +22,7 @@ export default function Login(){
 
   return (
     <div className="d-flex flex-column min-vh-100">
-      <Navbar brand="Retaguarda" />
+      <BarraNavegacao brand="Retaguarda" />
       <div className="page-wrapper flex-fill d-flex align-items-center justify-content-center">
         <div className="page-card" style={{maxWidth:420}}>
           <h3 className="mb-3">Entrar</h3>
@@ -41,7 +41,7 @@ export default function Login(){
           </form>
         </div>
       </div>
-      <Footer />
+      <Rodape />
     </div>
   )
 }

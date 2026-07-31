@@ -1,11 +1,11 @@
 import React from 'react'
-import Navbar from '../components/Layout/Navbar'
-import Footer from '../components/Layout/Footer'
+import BarraNavegacao from '../components/Layout/BarraNavegacao'
+import Rodape from '../components/Layout/Rodape'
 
 export default function CadastroUsuario(){
   return (
     <div className="d-flex flex-column min-vh-100">
-      <Navbar brand="Retaguarda" />
+      <BarraNavegacao brand="Retaguarda" />
       <div className="page-wrapper flex-fill d-flex align-items-center justify-content-center">
         <div className="page-card" style={{maxWidth:720}}>
           <h3 className="mb-3">Criar Conta</h3>
@@ -34,7 +34,7 @@ export default function CadastroUsuario(){
           </form>
         </div>
       </div>
-      <Footer />
+      <Rodape />
     </div>
   )
 }
