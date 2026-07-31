@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom'
 import BarraNavegacao from '../componentes/Layout/BarraNavegacao'
 import Rodape from '../componentes/Layout/Rodape'
 
-export default function Login(){
+export default function Autenticacao(){
   const [user,setUser] = useState('')
   const [pass,setPass] = useState('')
   const nav = useNavigate()

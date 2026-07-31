@@ -24,11 +24,11 @@ export default function BarraNavegacao({ brand = 'Painel' }){
     try{
       await api.post('/auth/logout', null, { block: true });
       setUser(null);
-      navigate('/login');
+      navigate('/autenticacao');
       // reload to ensure cookie is cleared and authenticated UI resets
       window.location.reload();
     }catch{
-      navigate('/login')
+      navigate('/autenticacao')
     }
   }
 
@@ -58,7 +58,7 @@ export default function BarraNavegacao({ brand = 'Painel' }){
                       <button className="dropdown-item" onClick={handleLogout}>Sair</button>
                     </>
                   ) : (
-                    <button className="dropdown-item" onClick={()=> navigate('/login')}>Entrar</button>
+                    <button className="dropdown-item" onClick={()=> navigate('/autenticacao')}>Entrar</button>
                   )}
                 </div>
               )}

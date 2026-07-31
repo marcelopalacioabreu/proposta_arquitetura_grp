@@ -1,8 +1,8 @@
 import React from 'react'
 import { createRoot } from 'react-dom/client'
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
-import Home from './paginas/Home'
-import Login from './paginas/Login'
+import Inicial from './paginas/Inicial'
+import Autenticacao from './paginas/Autenticacao'
 import CadastroUsuario from './paginas/CadastroUsuario'
 import LayoutPrivado from './componentes/Layout/LayoutPrivado'
 import TelaPesquisa from './componentes/Cadastros/TelaPesquisa'
@@ -15,8 +15,8 @@ import './servicos/api'
 function App(){
   return (
     <Routes>
-      <Route path='/' element={<Home/>} />
-      <Route path='/login' element={<Login/>} />
+      <Route path='/' element={<Inicial/>} />
+      <Route path='/autenticacao' element={<Autenticacao/>} />
       <Route path='/cadastro' element={<CadastroUsuario/>} />
       <Route path='/painel/*' element={<LayoutPrivado/>}>
         <Route path='organizacoes' element={<TelaPesquisa screenKey={'organizacaoPesquisa'} />} />
