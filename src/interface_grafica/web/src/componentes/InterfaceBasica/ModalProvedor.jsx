@@ -23,15 +23,15 @@ export default function ModalProvedor({ children }){
   const unblock = useCallback(()=> setBlocking(false), [])
 
   useEffect(()=>{
-    // register handlers used by non-react code
+    // registra os gerenciadores de modais usados por código não-React
     modalServico.registrarGerenciadoresDeModais ({ alert, confirm: (m,cb)=> confirm(m,cb), block, unblock, loadHtml: (html)=> alert(html), openComponent: (name, p) => openComponent(name, p) })
-    // expose simple globals for legacy scripts (blade/jQuery) to call
+    // Expondo funções globais para scripts legados (blade/jQuery) chamarem
     try{
       window.bloquearTela = block
       window.desbloquearTela = unblock
       window.modalAlerta = alert
       window.dialogoConfirmacao = (msg, cb) => confirm(msg, cb)
-      window.carregarHtmlNoModal = (htmlOrUrl) => { /* keep simple: if html contains '<', render, else fetch */
+      window.carregarHtmlNoModal = (htmlOrUrl) => { /* Simplicidade: se html contiver '<', renderizar, caso contrário buscar */
         if (typeof htmlOrUrl === 'string' && htmlOrUrl.includes('<')) alert(htmlOrUrl)
         else fetch(htmlOrUrl).then(r=>r.text()).then(html=> alert(html)).catch(()=> alert('Erro ao carregar'))
       }
@@ -39,7 +39,7 @@ export default function ModalProvedor({ children }){
     }catch{}
   },[alert, confirm, block, unblock])
 
-  // open a React component inside a modal by name (lazy import)
+  // Abrir um componente React dentro de um modal pelo nome (importação sob demanda)
   async function openComponent(name, props){
     setBlocking(true)
     try{
@@ -52,8 +52,8 @@ export default function ModalProvedor({ children }){
           mod = await import('../Cadastros/TelaPesquisa')
           break
         default:
-          // try dynamic import by path-ish name
-          //mod = await import(`./${name}`)
+          // Tenta importação dinâmica pelo caminho
+          // mod = await import(`./${name}`)
       }
       const Comp = mod.default
       setComponentModal({ show:true, Comp, props: props || {} })
