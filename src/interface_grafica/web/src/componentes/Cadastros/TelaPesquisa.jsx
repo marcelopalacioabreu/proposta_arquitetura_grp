@@ -180,6 +180,15 @@ export default function TelaPesquisa({ screenKey }){
     }).catch(()=>{ setItems([]); setTotal(0) })
   },[meta, location.search, JSON.stringify(params)])
 
+  // context values extracted from the current pathname (organizacaoId, organizacaoUnidadeId, etc.)
+  const pathContext = construirParametros(query, params, location.pathname, meta)
+
+  // Apply path-level placeholders (like {organizacaoId}) using pathContext but leave other placeholders (e.g. {id}) untouched
+  function aplicarContextoNoDestino(destino){
+    if (!destino) return destino
+    return destino.replace(/\{(\w+)\}/g, (m,k) => (pathContext && (k in pathContext) ? pathContext[k] : m))
+  }
+
   // Determine if an action should be visible based on meta flags or query parameters
   function actionIsVisible(a){
     try{
@@ -368,9 +377,9 @@ export default function TelaPesquisa({ screenKey }){
                 <td>
                       {meta.tabela.acoes.map((a, ai) => (
                         <React.Fragment key={ai}>
-                          {actionIsVisible(a) && a.tipo === 'navegacao' && <button className="btn btn-sm btn-link btn-icon" onClick={()=> navigate(aplicarDestino(a.destino, it, a.campo_id))}><i className={`bi bi-${a.icone}`}></i></button>}
-                          {actionIsVisible(a) && a.tipo === 'confirmacao_delete_ajax' && itemIsActive(it) && <button className="btn btn-sm btn-link text-danger btn-icon" onClick={()=> setConfirmState({ show: true, title: 'Excluir', message: a.mensagem || 'Confirma exclusão?', onConfirm: async ()=>{ await api.delete(aplicarDestino(a.destino, it, a.campo_id), { block: true }); setItems(items.filter(x=> x.id !== it.id)); setConfirmState(s=> ({...s, show: false})) } }) }><i className={`bi bi-${a.icone}`}></i></button>}
-                          {actionIsVisible(a) && a.tipo === 'confirmacao_post_ajax' && <button className="btn btn-sm btn-link btn-icon" onClick={()=> setConfirmState({ show: true, title: a.mensagem || 'Confirmar', message: a.mensagem || 'Confirma ação?', onConfirm: async ()=>{ await api.post(aplicarDestino(a.destino, it, a.campo_id), null, { block: true }); setItems(items.filter(x=> x.id !== it.id)); setConfirmState(s=> ({...s, show: false})) } }) }><i className={`bi bi-${a.icone}`}></i></button>}
+                          {actionIsVisible(a) && a.tipo === 'navegacao' && <button className="btn btn-sm btn-link btn-icon" onClick={()=> navigate(aplicarDestino(aplicarContextoNoDestino(a.destino), it, a.campo_id))}><i className={`bi bi-${a.icone}`}></i></button>}
+                          {actionIsVisible(a) && a.tipo === 'confirmacao_delete_ajax' && itemIsActive(it) && <button className="btn btn-sm btn-link text-danger btn-icon" onClick={()=> setConfirmState({ show: true, title: 'Excluir', message: a.mensagem || 'Confirma exclusão?', onConfirm: async ()=>{ await api.delete(aplicarDestino(aplicarContextoNoDestino(a.destino), it, a.campo_id), { block: true }); setItems(items.filter(x=> x.id !== it.id)); setConfirmState(s=> ({...s, show: false})) } }) }><i className={`bi bi-${a.icone}`}></i></button>}
+                          {actionIsVisible(a) && a.tipo === 'confirmacao_post_ajax' && <button className="btn btn-sm btn-link btn-icon" onClick={()=> setConfirmState({ show: true, title: a.mensagem || 'Confirmar', message: a.mensagem || 'Confirma ação?', onConfirm: async ()=>{ await api.post(aplicarDestino(aplicarContextoNoDestino(a.destino), it, a.campo_id), null, { block: true }); setItems(items.filter(x=> x.id !== it.id)); setConfirmState(s=> ({...s, show: false})) } }) }><i className={`bi bi-${a.icone}`}></i></button>}
                         </React.Fragment>
                       ))}
                 </td>
