@@ -32,14 +32,30 @@ namespace Retaguarda.Persistencia.Inicializadores
                     db.SaveChanges();
                 }
 
-                // Ensure a default setor exists for the organization
-                var setor = db.OrganizacaoSetores.FirstOrDefault(s => s.Nome == "Setor padrão" && s.OrganizacaoId == org.Id);
+                // Ensure a default unidade exists for the organization
+                var unidade = db.OrganizacaoUnidades.FirstOrDefault(u => u.Nome == "Unidade padrão" && u.OrganizacaoId == org.Id);
+                if (unidade == null)
+                {
+                    unidade = new OrganizacaoUnidade
+                    {
+                        Nome = "Unidade padrão",
+                        OrganizacaoId = org.Id,
+                        DataInsercao = DateTime.UtcNow,
+                        Ativo = true
+                    };
+                    db.OrganizacaoUnidades.Add(unidade);
+                    db.SaveChanges();
+                }
+
+                // Ensure a default setor exists for the organization and unit
+                var setor = db.OrganizacaoSetores.FirstOrDefault(s => s.Nome == "Setor padrão" && s.OrganizacaoId == org.Id && s.OrganizacaoUnidadeId == unidade.Id);
                 if (setor == null)
                 {
                     setor = new OrganizacaoSetor
                     {
                         Nome = "Setor padrão",
                         OrganizacaoId = org.Id,
+                        OrganizacaoUnidadeId = unidade.Id,
                         DataInsercao = DateTime.UtcNow,
                         Ativo = true
                     };
@@ -60,7 +76,7 @@ namespace Retaguarda.Persistencia.Inicializadores
                         OrganizacaoId = org.Id,
                         SetorId = setor.Id,
                         UltimoAcessoOrganizacaoId = org.Id,
-                        UltimoAcessoOrganizacaoUnidadeId = null,
+                        UltimoAcessoOrganizacaoUnidadeId = unidade.Id,
                         UltimoAcessoSetorId = setor.Id,
                         Ativo = true
                     };
