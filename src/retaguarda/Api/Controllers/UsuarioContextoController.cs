@@ -34,6 +34,20 @@ namespace Retaguarda.Api.Controllers
         {
             var u = _reqUsuario.Usuario;
             if (u == null) return UnauthorizedError("Usuário não autenticado");
+            // All three fields must be provided
+            if (!req.OrganizacaoId.HasValue || !req.OrganizacaoUnidadeId.HasValue || !req.SetorId.HasValue)
+                return BadRequest(new { message = "Selecione organização, unidade e setor válidos." });
+
+            // Validate existence of entities
+            var orgExists = await _db.Organizacoes.AnyAsync(o => o.Id == req.OrganizacaoId.Value && o.Ativo);
+            var unidadeExists = await _db.OrganizacaoUnidades.AnyAsync(u2 => u2.Id == req.OrganizacaoUnidadeId.Value && u2.Ativo);
+            var setorEntity = await _db.OrganizacaoSetores.FirstOrDefaultAsync(s => s.Id == req.SetorId.Value && s.Ativo);
+            if (!orgExists || !unidadeExists || setorEntity == null)
+                return BadRequest(new { message = "Um ou mais registros selecionados são inválidos." });
+
+            // Validate that the selected setor matches the provided org/unidade
+            if (setorEntity.OrganizacaoId != req.OrganizacaoId.Value || setorEntity.OrganizacaoUnidadeId != req.OrganizacaoUnidadeId.Value)
+                return BadRequest(new { message = "O setor selecionado não pertence à organização/unidade informada." });
 
             // Validate access: admins can set any context
             var isAdmin = await _db.Perfis
@@ -41,7 +55,7 @@ namespace Retaguarda.Api.Controllers
                 .Join(_db.PerfilUsuarios, p => p.Id, pu => pu.PerfilId, (p, pu) => pu)
                 .AnyAsync(pu => pu.UsuarioId == u.Id);
 
-            if (!isAdmin && req.SetorId.HasValue)
+            if (!isAdmin)
             {
                 var allowed = await _db.SetorUsuarios.AnyAsync(su => su.UsuarioId == u.Id && su.SetorId == req.SetorId.Value && su.Ativo);
                 if (!allowed) return UnauthorizedError("Usuário não tem permissão para atuar nesse setor");
