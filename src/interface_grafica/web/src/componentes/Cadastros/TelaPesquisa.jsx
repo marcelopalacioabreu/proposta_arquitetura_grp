@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import api from '../../servicos/api'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import ConfirmModal from '../InterfaceBasica/ModalConfirmacao'
-import modalService from '../../utils/modalServico'
+import modalServico from '../../utils/modalServico'
 
 /*
   TelaPesquisa - utilitários e responsabilidades isoladas
@@ -52,15 +52,24 @@ function construirParametros(queryObj, pathParams, pathname, meta){
   // Suporte camposChaveUrl: extrair segmentos numéricos da pathname e mapear para as chaves fornecidas
   try{
     const chaves = meta?.camposChaveUrl
-    if (Array.isArray(chaves) && chaves.length){
+    if (meta?.urlTela && typeof meta.urlTela === 'string'){
+      const keys = []
+      const regexStr = meta.urlTela.replace(/\{(\w+)\}/g, (_, k) => { keys.push(k); return '([^/]*)' })
+      const re = new RegExp('^' + regexStr + '$')
+      const path = (pathname || '').split('?')[0].split('/').map(s=>s.trim()).filter(Boolean).join('/')
+      const m = re.exec(path)
+      if (m){ for (let i=0;i<keys.length;i++) p[keys[i]] = m[i+1] }
+    } else if (Array.isArray(chaves) && chaves.length){
       const segments = (pathname || '').split('/').map(s=> s.trim()).filter(Boolean)
-      // extrair apenas segmentos que são números
-      const nums = segments.map(s=> (s.match(/^\d+$/) ? s : null)).filter(Boolean)
-      for (let i=0;i<chaves.length && i<nums.length;i++){
-        const key = chaves[i]
-        if (!p[key] && nums[i]) p[key] = nums[i]
+      // map last N segments to chaves to avoid taking resource names like 'painel'
+      const start = Math.max(0, segments.length - chaves.length)
+      for (let i=0;i<chaves.length;i++){
+        const idx = start + i
+        if (idx >= 0 && idx < segments.length) p[chaves[i]] = segments[idx]
       }
     }
+    // fallback to react-router params
+    Object.keys(pathParams || {}).forEach(k=> { if (!p[k] && pathParams[k]) p[k] = pathParams[k] })
   }catch(e){}
 
   return p
@@ -218,7 +227,24 @@ export default function TelaPesquisa({ screenKey }){
         <div>
           <button
             className="btn btn-primary btn-icon btn-comando-tela-pesquisa"
-            onClick={()=> navigate((meta.tabela?.acoes?.find(a=>a.tipo==='navegacao')?.destino || '/painel/organizacoes/editar/new').replace('{id}','new'))}
+            onClick={()=>{
+              // prefer to build a 'novo' destino using meta.urlTela or camposChaveUrl so parent ids are preserved
+              try{
+                const defaultAction = meta.tabela?.acoes?.find(a=>a.tipo==='navegacao')?.destino || '/painel/organizacoes/editar/{id}'
+                let novoDestino = null
+                if (meta?.urlTela){
+                  // construct route like /painel/{urlTela}/editar/{id}
+                  novoDestino = '/painel/' + meta.urlTela.replace(/^\/+/, '') + '/editar/{id}'
+                }
+                if (!novoDestino) novoDestino = defaultAction
+                // replace placeholders using path/query params
+                const pathParams = construirParametros(query, params, location.pathname, meta)
+                let final = novoDestino.replace(/\{(\w+)\}/g, (m,k) => (pathParams[k] || (k === 'id' ? 'new' : '')))
+                // ensure {id} becomes 'new'
+                final = final.replace('{id}','new')
+                navigate(final)
+              }catch(e){ navigate('/painel/organizacoes/editar/new') }
+            }}
             title="Novo"
             aria-label="Novo"
           >
@@ -335,7 +361,7 @@ export default function TelaPesquisa({ screenKey }){
                   <button className="btn btn-sm btn-link btn-icon" title="Mais campos" aria-label="Mais campos" onClick={() => {
                     const allCols = (meta.tabela.colunas && meta.tabela.colunas.length) ? meta.tabela.colunas : []
                     // pass ALL columns so modal shows complete record
-                    modalService.openComponentModal('../Cadastros/TelaPesquisaDetalhesLinhaTelaPequena', { title: `${meta.titulo}`, item: it, columns: allCols, actions: meta.tabela.acoes })
+                    abrirComponenteNoModal.abrirComponenteNoModal('../Cadastros/TelaPesquisaDetalhesLinhaTelaPequena', { title: `${meta.titulo}`, item: it, columns: allCols, actions: meta.tabela.acoes })
                   }}><i className="bi bi-three-dots" /></button>
                 </td>
               ) : (

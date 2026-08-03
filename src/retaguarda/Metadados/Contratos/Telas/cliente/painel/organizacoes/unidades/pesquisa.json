@@ -4,6 +4,7 @@
     "titulo": "Unidades",
     "extremidade": "/api/organizacao_unidades",
     "camposChaveUrl": ["organizacaoId"] ,
+    "urlTela": "organizacoes/{organizacaoId}/unidades",
     "filtro": [
       { "campo": "codigo", "descricao": "Código", "tipo": "string", "col": 3 },
       { "campo": "nome", "descricao": "Nome", "tipo": "string", "col": 3 },

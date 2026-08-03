@@ -3,6 +3,8 @@
     "tipo": "TELA_CADASTRO",
     "titulo": "Cadastro de Setor da Unidade",
     "extremidade": "/api/organizacao_unidade_setores",
+    "camposChaveUrl": ["organizacaoId","organizacaoUnidadeId"],
+    "urlTela": "organizacoes/{organizacaoId}/unidades/{organizacaoUnidadeId}/setores",
     "itens": [
       { "campo": "codigo", "label": "Código", "tipo": "text", "col": 4 },
       {
@@ -10,7 +12,7 @@
         "columns": 12,
         "campos": [
           { "campo": "nome", "label": "Nome do setor", "tipo": "text", "col": 8 },
-          { "campo": "organizacaoUnidadeId", "label": "Unidade", "tipo": "select", "col": 4, "extremidadeOpcoes": "/api/organizacao_unidades?organizacaoId={organizacaoId}" }
+          { "campo": "organizacaoUnidadeId", "label": "Unidade", "tipo": "hidden", "col": 4 }
         ]
       },
       {

@@ -3,6 +3,8 @@
     "tipo": "TELA_CADASTRO",
     "titulo": "Cadastro de Unidade",
     "extremidade": "/api/organizacao_unidades",
+    "camposChaveUrl": ["organizacaoId"],
+    "urlTela": "organizacoes/{organizacaoId}/unidades",
     "itens": [
       { "campo": "codigo", "label": "Código", "tipo": "text", "col": 4 },
       {
@@ -10,7 +12,7 @@
         "columns": 12,
         "campos": [
           { "campo": "nome", "label": "Nome da unidade", "tipo": "text", "col": 8 },
-          { "campo": "organizacaoId", "label": "Organização", "tipo": "select", "col": 4, "extremidadeOpcoes": "/api/organizacoes" }
+          { "campo": "organizacaoId", "label": "Organização", "tipo": "hidden", "col": 4 }
         ]
       },
       {
