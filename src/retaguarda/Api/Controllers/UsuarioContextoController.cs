@@ -72,11 +72,16 @@ namespace Retaguarda.Api.Controllers
         }
         
         [HttpGet]
-        [Authorize]
+        [AllowAnonymous]
         public async Task<IActionResult> Get()
         {
             var u = _reqUsuario.Usuario;
-            if (u == null) return UnauthorizedError("Usuário não autenticado");
+
+            // If no authenticated user, return a safe empty payload (200) so frontend can call without handling 401.
+            if (u == null)
+            {
+                return OkData(new { administrado = false, organizacoes = new object[0], unidades = new object[0], setores = new object[0], ultimoAcesso = new { } });
+            }
 
             // Check admin
             var isAdmin = await _db.Perfis
