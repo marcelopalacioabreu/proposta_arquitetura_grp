@@ -45,19 +45,25 @@ export default function Menu(){
   // Limpa a pesquisa ao mudar de rota, para não manter o filtro de pesquisa entre páginas
   useEffect(()=>{ setQuery('') },[location.pathname])
 
-  const normalizeModulo = (g) => ({
-    ...g,
-    items: g.items || g.itens || [],
-    group: g.group || g.grupo || ''
-  })
+  const normalizeModulo = (g) => {
+    // Normalize property names and remove entries marked to hide from menu.
+    // Input may use English keys (`items`/`group`) or Portuguese (`itens`/`grupo`).
+    const rawItems = g.itens || g.items || []
+    const itens = (g.mostrarNoMenu === false) ? [] : rawItems.filter(i => i.mostrarNoMenu !== false)
+    return {
+      ...g,
+      itens,
+      grupo: g.grupo || g.group || ''
+    }
+  }
 
   const filtered = useMemo(()=>{
     if (!query) {
-      return modulos.map(normalizeModulo)
+      return modulos.map(normalizeModulo).filter(g => (g.itens || []).length > 0)
     }
 
     const q = query.toLowerCase()
-    return modulos.map(normalizeModulo).map(g => ({ ...g, items: (g.items || []).filter(i => {
+    return modulos.map(normalizeModulo).map(g => ({ ...g, itens: (g.itens || []).filter(i => {
       // Pesquisa o texto
       if (!((i.texto||'').toLowerCase().includes(q))) return false
       
@@ -71,7 +77,7 @@ export default function Menu(){
       */
       
       return true
-    }) })).filter(g => (g.items || []).length > 0)
+    }) })).filter(g => (g.itens || []).length > 0)
 
   },[modulos, query])
 
@@ -102,9 +108,9 @@ export default function Menu(){
                   <input className="form-control form-control-sm mb-2" placeholder="Pesquisar menu..." value={query} onChange={e=> setQuery(e.target.value)} />
                   {filtered.map((g, gi) => (
                     <div key={gi} className="mb-2">
-                      <div className="small text-muted mb-1 px-1">{g.group}</div>
+                      <div className="small text-muted mb-1 px-1">{g.grupo}</div>
                       <div className="list-group">
-                        {g.items && g.items.map((it, ii) => (
+                        {g.itens && g.itens.map((it, ii) => (
                           <Link key={ii} to={it.url} className={`list-group-item list-group-item-action d-flex align-items-center ${location.pathname === it.url ? 'active' : ''}`} onClick={()=>{}}>
                             {it.icone && <i className={`bi bi-${it.icone} me-2`} />}
                             <span className="item-label">{it.texto}</span>
@@ -116,7 +122,7 @@ export default function Menu(){
                 </>
               ) : (
                 <div className="compact-icons d-flex flex-column align-items-center">
-                  {filtered.flatMap(g => g.items || []).map((it, idx) => {
+                  {filtered.flatMap(g => g.itens || []).map((it, idx) => {
                     const isActive = location.pathname === it.url
                     return (
                       <Link key={idx} to={it.url} className={`compact-icon mb-2 ${isActive ? 'active' : ''}`} title={it.texto}>
