@@ -52,6 +52,14 @@ namespace Retaguarda.Api.Controllers
             return OkMessage("Excluído");
         }
 
+        [HttpPost("{id}/restaurar")]
+        [Authorize(Policy = "organizacoes.editar")]
+        public IActionResult Restaurar(long id)
+        {
+            _servico.RestaurarAsync(id).GetAwaiter().GetResult();
+            return OkMessage("Restaurado");
+        }
+
         [HttpPut("{id}")]
         [Authorize(Policy = "organizacoes.editar")]
         public IActionResult Update(long id, [FromBody] OrganizacaoDto dto)

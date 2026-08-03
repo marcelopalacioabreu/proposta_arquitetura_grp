@@ -70,6 +70,17 @@ namespace Retaguarda.Api.Controllers
             return CreatedDataAtAction(nameof(Get), new { id = s.Id }, s, "Criado com sucesso");
         }
 
+        // Nested POST to create setor under a specific organizacao via URL
+        [HttpPost("~/api/organizacoes/{organizacaoId}/setores")]
+        [Authorize(Policy = "organizacoes.editar")]
+        public IActionResult CreateUnderOrganizacao(long organizacaoId, [FromBody] SetorDto dto)
+        {
+            var s = new OrganizacaoSetor { Nome = dto.Nome ?? string.Empty, OrganizacaoId = organizacaoId };
+            _db.OrganizacaoSetores.Add(s);
+            _db.SaveChanges();
+            return CreatedDataAtAction(nameof(Get), new { id = s.Id }, s, "Criado com sucesso");
+        }
+
         [HttpPut("{id}")]
         [Authorize(Policy = "organizacoes.editar")]
         public IActionResult Update(long id, [FromBody] SetorDto dto)

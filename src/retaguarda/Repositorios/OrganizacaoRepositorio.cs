@@ -91,7 +91,13 @@ namespace Retaguarda.Repositorios
         public async Task DeleteAsync(long id)
         {
             var e = await _db.Organizacoes.FindAsync(id);
-            if (e != null) { _db.Organizacoes.Remove(e); await _db.SaveChangesAsync(); }
+            if (e != null) { e.Ativo = false; await _db.SaveChangesAsync(); }
+        }
+
+        public async Task RestaurarAsync(long id)
+        {
+            var e = await _db.Organizacoes.FindAsync(id);
+            if (e != null) { e.Ativo = true; await _db.SaveChangesAsync(); }
         }
 
         public async Task UpdateAsync(Organizacao o)

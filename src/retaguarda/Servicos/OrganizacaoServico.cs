@@ -35,6 +35,11 @@ namespace Retaguarda.Servicos
             await _repositorio.DeleteAsync(id);
         }
 
+        public async Task RestaurarAsync(long id)
+        {
+            await _repositorio.RestaurarAsync(id);
+        }
+
         public async Task UpdateAsync(Organizacao o)
         {
             await _repositorio.UpdateAsync(o);
