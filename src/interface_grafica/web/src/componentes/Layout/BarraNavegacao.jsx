@@ -77,8 +77,8 @@ export default function BarraNavegacao({ brand = 'Painel' }){
                 <div className="dropdown-menu dropdown-menu-end show" style={{position:'absolute', right:0}}>
                   {user ? (
                     <>
-                      <button className="dropdown-item d-flex align-items-center" onClick={()=> setShowAtuacao(true)}><i className="bi bi-people me-2"/>Trocar setor</button>
                       <div className="dropdown-item-text">{user.nome || user.username}</div>
+                      <button className="dropdown-item d-flex align-items-center" onClick={()=> setShowAtuacao(true)}><i className="bi bi-people me-2"/>Trocar setor</button>
                       <a className="dropdown-item d-flex align-items-center" href="/painel"><i className="bi bi-speedometer2 me-2" />Painel</a>
                       <div className="dropdown-divider" />
                       <button className="dropdown-item" onClick={handleLogout}>Sair</button>
