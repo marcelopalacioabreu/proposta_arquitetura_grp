@@ -21,7 +21,8 @@
       "acoes": [
         { "tipo": "navegacao", "destino": "/painel/organizacoes/editar/{id}", "campo_id": "id", "icone": "pencil" },
         { "tipo": "navegacao", "destino": "/painel/organizacoes/unidades/{id}", "campo_id": "id", "icone": "grid-3x3-gap" },
-        { "tipo": "confirmacao_delete_ajax", "destino": "/api/organizacoes/{id}", "campo_id": "id", "icone": "trash" }
+        { "tipo": "confirmacao_delete_ajax", "destino": "/api/organizacoes/{id}", "campo_id": "id", "icone": "trash" },
+        { "tipo": "confirmacao_post_ajax", "destino": "/api/organizacoes/{id}/restaurar", "campo_id": "id", "icone": "arrow-counterclockwise", "exibirQuandoInativo": true, "mensagem": "Restaurar registro?" }
       ]
     },
     "pagination": { "pageSize": 10 }

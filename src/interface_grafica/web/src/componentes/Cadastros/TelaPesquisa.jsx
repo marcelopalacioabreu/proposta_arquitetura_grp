@@ -171,6 +171,43 @@ export default function TelaPesquisa({ screenKey }){
     }).catch(()=>{ setItems([]); setTotal(0) })
   },[meta, location.search, JSON.stringify(params)])
 
+  // Determine if an action should be visible based on meta flags or query parameters
+  function actionIsVisible(a){
+    try{
+      const qp = new URLSearchParams(location.search)
+      // If explicit flags provided, evaluate them (AND semantics)
+      if (a.exibirQuandoAtivo === true && qp.get('inativo') === '1') return false
+      if (a.exibirQuandoInativo === true && qp.get('inativo') !== '1') return false
+
+      if (a.exibirQuandoQuery){
+        // support simple expressions like 'inativo=1' or multiple joined by '&'
+        const parts = (a.exibirQuandoQuery||'').split('&').map(p=>p.trim()).filter(Boolean)
+        for (const part of parts){
+          const kv = part.split('=')
+          if (kv.length === 2){
+            const key = kv[0]; const val = kv[1]
+            if (qp.get(key) !== val) return false
+          } else {
+            if (!qp.has(part)) return false
+          }
+        }
+      }
+      return true
+    }catch(e){ return true }
+  }
+
+  function itemIsActive(item){
+    if (!item) return true
+    // consider typical fields that represent active/inactive
+    if (Object.prototype.hasOwnProperty.call(item, 'ativo')){
+      return item.ativo !== false
+    }
+    if (Object.prototype.hasOwnProperty.call(item, 'inativo')){
+      return !(item.inativo === '1' || item.inativo === 1 || item.inativo === true)
+    }
+    return true
+  }
+
   if (!meta) return null
 
   return (
@@ -305,8 +342,9 @@ export default function TelaPesquisa({ screenKey }){
                 <td>
                       {meta.tabela.acoes.map((a, ai) => (
                         <React.Fragment key={ai}>
-                          {a.tipo === 'navegacao' && <button className="btn btn-sm btn-link btn-icon" onClick={()=> navigate(aplicarDestino(a.destino, it, a.campo_id))}><i className={`bi bi-${a.icone}`}></i></button>}
-                          {a.tipo === 'confirmacao_delete_ajax' && <button className="btn btn-sm btn-link text-danger btn-icon" onClick={()=> setConfirmState({ show: true, title: 'Excluir', message: 'Confirma exclusão?', onConfirm: async ()=>{ await api.delete(aplicarDestino(a.destino, it, a.campo_id), { block: true }); setItems(items.filter(x=> x.id !== it.id)); setConfirmState(s=> ({...s, show: false})) } }) }><i className={`bi bi-${a.icone}`}></i></button>}
+                          {actionIsVisible(a) && a.tipo === 'navegacao' && <button className="btn btn-sm btn-link btn-icon" onClick={()=> navigate(aplicarDestino(a.destino, it, a.campo_id))}><i className={`bi bi-${a.icone}`}></i></button>}
+                          {actionIsVisible(a) && a.tipo === 'confirmacao_delete_ajax' && itemIsActive(it) && <button className="btn btn-sm btn-link text-danger btn-icon" onClick={()=> setConfirmState({ show: true, title: 'Excluir', message: a.mensagem || 'Confirma exclusão?', onConfirm: async ()=>{ await api.delete(aplicarDestino(a.destino, it, a.campo_id), { block: true }); setItems(items.filter(x=> x.id !== it.id)); setConfirmState(s=> ({...s, show: false})) } }) }><i className={`bi bi-${a.icone}`}></i></button>}
+                          {actionIsVisible(a) && a.tipo === 'confirmacao_post_ajax' && <button className="btn btn-sm btn-link btn-icon" onClick={()=> setConfirmState({ show: true, title: a.mensagem || 'Confirmar', message: a.mensagem || 'Confirma ação?', onConfirm: async ()=>{ await api.post(aplicarDestino(a.destino, it, a.campo_id), null, { block: true }); setItems(items.filter(x=> x.id !== it.id)); setConfirmState(s=> ({...s, show: false})) } }) }><i className={`bi bi-${a.icone}`}></i></button>}
                         </React.Fragment>
                       ))}
                 </td>

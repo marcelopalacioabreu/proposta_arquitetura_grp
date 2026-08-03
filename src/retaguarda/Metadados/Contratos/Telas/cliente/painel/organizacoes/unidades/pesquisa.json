@@ -21,7 +21,8 @@
       "acoes": [
         { "tipo": "navegacao", "destino": "/painel/organizacoes/unidades/editar/{id}", "campo_id": "id", "icone": "pencil" },
         { "tipo": "navegacao", "destino": "/painel/organizacoes/unidades/setores/{id}", "campo_id": "id", "icone": "diagram-3" },
-        { "tipo": "confirmacao_delete_ajax", "destino": "/api/organizacao_unidades/{id}", "campo_id": "id", "icone": "trash" }
+        { "tipo": "confirmacao_delete_ajax", "destino": "/api/organizacao_unidades/{id}", "campo_id": "id", "icone": "trash" },
+        { "tipo": "confirmacao_post_ajax", "destino": "/api/organizacao_unidades/{id}/restaurar", "campo_id": "id", "icone": "arrow-counterclockwise", "exibirQuandoInativo": true, "mensagem": "Restaurar registro?" }
       ]
     },
     "pagination": { "pageSize": 10 }

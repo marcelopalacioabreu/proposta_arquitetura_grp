@@ -20,7 +20,8 @@
       "campos": ["codigo", "nome", "organizacaoUnidadeId", "created_at"],
       "acoes": [
         { "tipo": "navegacao", "destino": "/painel/organizacoes/unidades/setores/editar/{id}", "campo_id": "id", "icone": "pencil" },
-        { "tipo": "confirmacao_delete_ajax", "destino": "/api/organizacao_unidade_setores/{id}", "campo_id": "id", "icone": "trash" }
+        { "tipo": "confirmacao_delete_ajax", "destino": "/api/organizacao_unidade_setores/{id}", "campo_id": "id", "icone": "trash" },
+        { "tipo": "confirmacao_post_ajax", "destino": "/api/organizacao_unidade_setores/{id}/restaurar", "campo_id": "id", "icone": "arrow-counterclockwise", "exibirQuandoInativo": true, "mensagem": "Restaurar registro?" }
       ]
     },
     "pagination": { "pageSize": 10 }
