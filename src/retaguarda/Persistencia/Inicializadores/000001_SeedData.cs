@@ -58,8 +58,11 @@ namespace Retaguarda.Persistencia.Inicializadores
                         DataInsercao = DateTime.UtcNow,
                         SenhaHash = HashPassword("admin"),
                         OrganizacaoId = org.Id,
-                        SetorId = setor.Id
-                        ,Ativo = true
+                        SetorId = setor.Id,
+                        UltimoAcessoOrganizacaoId = org.Id,
+                        UltimoAcessoOrganizacaoUnidadeId = null,
+                        UltimoAcessoSetorId = setor.Id,
+                        Ativo = true
                     };
 
                     db.Usuarios.Add(user);
@@ -78,6 +81,13 @@ namespace Retaguarda.Persistencia.Inicializadores
                     if (existsAssoc == null)
                     {
                         db.PerfilUsuarios.Add(new PerfilUsuario { UsuarioId = user.Id, PerfilId = adminPerfil.Id, OrganizacaoId = org.Id, DataInsercao = DateTime.UtcNow, Ativo = true });
+                        db.SaveChanges();
+                    }
+                    // Ensure the admin user is linked to the default setor via SetorUsuario
+                    var su = db.SetorUsuarios.FirstOrDefault(su2 => su2.UsuarioId == user.Id && su2.SetorId == setor.Id);
+                    if (su == null)
+                    {
+                        db.SetorUsuarios.Add(new SetorUsuario { UsuarioId = user.Id, SetorId = setor.Id, DataInsercao = DateTime.UtcNow, Ativo = true });
                         db.SaveChanges();
                     }
                 }

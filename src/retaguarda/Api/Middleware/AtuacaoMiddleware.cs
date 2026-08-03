@@ -22,6 +22,7 @@ namespace Retaguarda.Api.Middleware
 
             // also try to populate EscopoEmExecucao in DI for other consumers
             var req = context.RequestServices.GetService(typeof(EscopoEmExecucao)) as EscopoEmExecucao;
+            var reqUsuario = context.RequestServices.GetService(typeof(Retaguarda.Servicos.RequisicaoUsuario)) as Retaguarda.Servicos.RequisicaoUsuario;
 
             if (req != null)
             {
@@ -80,6 +81,20 @@ namespace Retaguarda.Api.Middleware
                         // ignore parse errors
                     }
                 }
+            }
+
+            // If no cookie/header provided, but we have authenticated user info, use their last-access defaults
+            if (req != null && string.IsNullOrEmpty((context.Request.Cookies.ContainsKey("atuacao") ? context.Request.Cookies["atuacao"] : null)) && reqUsuario?.Usuario != null)
+            {
+                var u = reqUsuario.Usuario;
+                if (u.UltimoAcessoOrganizacaoId.HasValue) { req.OrganizacaoId = u.UltimoAcessoOrganizacaoId; orgId = u.UltimoAcessoOrganizacaoId; }
+                else if (u.OrganizacaoId.HasValue) { req.OrganizacaoId = u.OrganizacaoId; orgId = u.OrganizacaoId; }
+
+                if (u.UltimoAcessoOrganizacaoUnidadeId.HasValue) { req.OrganizacaoUnidadeId = u.UltimoAcessoOrganizacaoUnidadeId; unidadeId = u.UltimoAcessoOrganizacaoUnidadeId; }
+                else if (u.OrganizacaoUnidadeId.HasValue) { req.OrganizacaoUnidadeId = u.OrganizacaoUnidadeId; unidadeId = u.OrganizacaoUnidadeId; }
+
+                if (u.UltimoAcessoSetorId.HasValue) { req.SetorId = u.UltimoAcessoSetorId; setorId = u.UltimoAcessoSetorId; }
+                else if (u.SetorId.HasValue) { req.SetorId = u.SetorId; setorId = u.SetorId; }
             }
 
             // persist the parsed ids into HttpContext.Items for lower layers to consume without compile-time refs

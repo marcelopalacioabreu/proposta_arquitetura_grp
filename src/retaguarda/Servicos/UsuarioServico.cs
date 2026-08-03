@@ -34,5 +34,16 @@ namespace Retaguarda.Servicos
         {
             return await _repositorio.ObterPorIdAsync(id);
         }
+
+        public async Task<Usuario?> AtualizarUltimoAcessoAsync(long id, long? organizacaoId, long? organizacaoUnidadeId, long? setorId)
+        {
+            var u = await _repositorio.ObterPorIdAsync(id);
+            if (u == null) return null;
+            u.UltimoAcessoOrganizacaoId = organizacaoId;
+            u.UltimoAcessoOrganizacaoUnidadeId = organizacaoUnidadeId;
+            u.UltimoAcessoSetorId = setorId;
+            await _repositorio.AtualizarAsync(u);
+            return u;
+        }
     }
 }

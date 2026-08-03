@@ -45,6 +45,15 @@ namespace Retaguarda.Persistencia.MYSQL
                     b.Property<long?>("OrganizacaoId")
                         .HasColumnType("bigint");
 
+                    b.Property<long?>("UltimoAcessoOrganizacaoId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long?>("UltimoAcessoOrganizacaoUnidadeId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long?>("UltimoAcessoSetorId")
+                        .HasColumnType("bigint");
+
                     
 
                     b.Property<long?>("OrganizacaoUnidadeId")

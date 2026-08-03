@@ -5,14 +5,36 @@ import api from '../../servicos/api'
 export default function BarraNavegacao({ brand = 'Painel' }){
   const [user, setUser] = useState(null)
   const [userMenuOpen, setUserMenuOpen] = useState(false)
+  const [showAtuacao, setShowAtuacao] = useState(false)
+  const [contexto, setContexto] = useState(null)
   const userMenuRef = useRef()
   const navigate = useNavigate()
 
   useEffect(()=>{
     let mounted = true
     api.get('/auth/me').then(r=>{ if (mounted) setUser(r.data) }).catch(()=>{ if (mounted) setUser(null) })
+    api.get('/api/usuario/contexto').then(r=>{ if (mounted) setContexto(r.data) }).catch(()=>{ if (mounted) setContexto(null) })
     return ()=> { mounted = false }
   },[])
+
+  const contextoDisplay = (() => {
+    if (!contexto) return '';
+    const ultimo = contexto.ultimoAcesso || {};
+    const parts = [];
+    if (ultimo.organizacaoId) {
+      const o = (contexto.organizacoes || []).find(x => x.id === ultimo.organizacaoId);
+      if (o) parts.push(o.nome);
+    }
+    if (ultimo.organizacaoUnidadeId) {
+      const u = (contexto.unidades || []).find(x => x.id === ultimo.organizacaoUnidadeId);
+      if (u) parts.push(u.nome);
+    }
+    if (ultimo.setorId) {
+      const s = (contexto.setores || []).find(x => x.id === ultimo.setorId);
+      if (s) parts.push(s.nome);
+    }
+    return parts.join(' / ');
+  })();
 
   useEffect(()=>{
     function onDoc(e){ if (userMenuRef.current && !userMenuRef.current.contains(e.target)) setUserMenuOpen(false) }
@@ -42,7 +64,10 @@ export default function BarraNavegacao({ brand = 'Painel' }){
             <i className="bi bi-house" style={{fontSize:'1.1rem'}} />
           </a>
           <div className="ms-auto d-flex align-items-center">
-            <div className="me-2 d-none d-md-block small text-muted">{user ? `Olá, ${user.nome || user.username}` : ''}</div>
+            <div className="me-3 d-none d-md-block text-end">
+              <div className="small text-muted">{user ? `Olá, ${user.nome || user.username}` : ''}</div>
+              <div className="small text-primary">{contextoDisplay}</div>
+            </div>
             <div className="position-relative" ref={userMenuRef}>
               <button className="btn btn-outline-secondary btn-sm d-flex align-items-center" onClick={()=> setUserMenuOpen(s=>!s)}>
                 <i className="bi bi-person-circle" style={{fontSize:'1.2rem'}} />
@@ -52,6 +77,7 @@ export default function BarraNavegacao({ brand = 'Painel' }){
                 <div className="dropdown-menu dropdown-menu-end show" style={{position:'absolute', right:0}}>
                   {user ? (
                     <>
+                      <button className="dropdown-item d-flex align-items-center" onClick={()=> setShowAtuacao(true)}><i className="bi bi-people me-2"/>Trocar setor</button>
                       <div className="dropdown-item-text">{user.nome || user.username}</div>
                       <a className="dropdown-item d-flex align-items-center" href="/painel"><i className="bi bi-speedometer2 me-2" />Painel</a>
                       <div className="dropdown-divider" />
@@ -66,6 +92,9 @@ export default function BarraNavegacao({ brand = 'Painel' }){
           </div>
         </div>
       </nav>
+      {showAtuacao && <React.Suspense fallback={null}><TrocarAtuacao onClose={()=> setShowAtuacao(false)} /></React.Suspense>}
     </>
   )
 }
+
+const TrocarAtuacao = React.lazy(() => import('../Atuacao/TrocarAtuacao'))

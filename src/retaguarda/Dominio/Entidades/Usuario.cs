@@ -12,5 +12,10 @@ namespace Retaguarda.Dominio.Entidades
         public string? Email { get; set; }
 
         public Organizacao? Organizacao { get; set; }
+        
+        // Último contexto de atuação selecionado pelo usuário
+        public long? UltimoAcessoOrganizacaoId { get; set; }
+        public long? UltimoAcessoOrganizacaoUnidadeId { get; set; }
+        public long? UltimoAcessoSetorId { get; set; }
     }
 }

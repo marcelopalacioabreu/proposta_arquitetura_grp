@@ -8,5 +8,6 @@ namespace Retaguarda.Servicos.Interfaces
         Task<Usuario?> AutenticarAsync(string username, string password);
         Task<Usuario> CriarUsuarioAsync(string username, string senha, string nome, string? email = null);
         Task<Usuario?> ObterPorIdAsync(long id);
+        Task<Usuario?> AtualizarUltimoAcessoAsync(long id, long? organizacaoId, long? organizacaoUnidadeId, long? setorId);
     }
 }

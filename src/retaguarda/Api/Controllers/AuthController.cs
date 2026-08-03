@@ -59,6 +59,53 @@ namespace Retaguarda.Api.Controllers
             if (req.AsCookie)
             {
                 Response.Cookies.Append("access_token", tokenString, new CookieOptions { HttpOnly = true, SameSite = SameSiteMode.Lax });
+                // Ensure user's UltimoAcesso fields are populated when missing, using user's default setor if available
+                try
+                {
+                    var db = HttpContext.RequestServices.GetService(typeof(Retaguarda.Persistencia.MYSQL.ApplicationDbContext)) as Retaguarda.Persistencia.MYSQL.ApplicationDbContext;
+                    if (db != null)
+                    {
+                        long? setorId = u.UltimoAcessoSetorId;
+                        if (!setorId.HasValue)
+                        {
+                            if (u.SetorId.HasValue) setorId = u.SetorId;
+                            else
+                            {
+                                var su = db.SetorUsuarios.Where(x => x.UsuarioId == u.Id && x.Ativo).OrderBy(x => x.Id).FirstOrDefault();
+                                if (su != null) setorId = su.SetorId;
+                            }
+                        }
+
+                        long? orgId = u.UltimoAcessoOrganizacaoId ?? u.OrganizacaoId;
+                        long? unidadeId = u.UltimoAcessoOrganizacaoUnidadeId ?? u.OrganizacaoUnidadeId;
+
+                        if (setorId.HasValue)
+                        {
+                            var setorEnt = db.OrganizacaoSetores.FirstOrDefault(s => s.Id == setorId.Value);
+                            if (setorEnt != null)
+                            {
+                                orgId = orgId ?? setorEnt.OrganizacaoId;
+                                unidadeId = unidadeId ?? setorEnt.OrganizacaoUnidadeId;
+                            }
+                        }
+
+                        // update if any UltimoAcesso is missing
+                        if (!u.UltimoAcessoOrganizacaoId.HasValue || !u.UltimoAcessoOrganizacaoUnidadeId.HasValue || !u.UltimoAcessoSetorId.HasValue)
+                        {
+                            var updated = await _usuarioServico.AtualizarUltimoAcessoAsync(u.Id, orgId, unidadeId, setorId);
+                            if (updated != null)
+                            {
+                                // set atuacao cookie for browser clients
+                                var cookieVal = System.Text.Json.JsonSerializer.Serialize(new { organizacaoId = updated.UltimoAcessoOrganizacaoId, organizacaoUnidadeId = updated.UltimoAcessoOrganizacaoUnidadeId, setorId = updated.UltimoAcessoSetorId });
+                                Response.Cookies.Append("atuacao", cookieVal, new CookieOptions { HttpOnly = true, SameSite = SameSiteMode.Lax });
+                            }
+                        }
+                    }
+                }
+                catch
+                {
+                    // swallow errors to avoid breaking login
+                }
                 return OkMessage("Autenticado");
             }
 

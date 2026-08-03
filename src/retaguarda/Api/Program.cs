@@ -140,8 +140,9 @@ builder.Services.AddControllers(options =>
 var app = builder.Build();
 
 app.UseAuthentication();
-app.UseMiddleware<Retaguarda.Api.Middleware.AtuacaoMiddleware>();
+// Ensure user info is loaded into RequisicaoUsuario before AtuacaoMiddleware
 app.UseMiddleware<Retaguarda.Api.Middleware.UsuarioMiddleware>();
+app.UseMiddleware<Retaguarda.Api.Middleware.AtuacaoMiddleware>();
 app.UseAuthorization();
 
 // Seed default admin user if missing (development convenience)

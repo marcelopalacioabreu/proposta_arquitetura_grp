@@ -31,5 +31,12 @@ namespace Retaguarda.Repositorios
             await _db.SaveChangesAsync();
             return usuario;
         }
+
+        public async Task<Usuario> AtualizarAsync(Usuario usuario)
+        {
+            _db.Usuarios.Update(usuario);
+            await _db.SaveChangesAsync();
+            return usuario;
+        }
     }
 }

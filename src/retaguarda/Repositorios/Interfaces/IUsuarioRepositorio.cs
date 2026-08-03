@@ -8,5 +8,6 @@ namespace Retaguarda.Repositorios.Interfaces
         Task<Usuario?> ObterPorIdAsync(long id);
         Task<Usuario?> ObterPorUsernameAsync(string username);
         Task<Usuario> AdicionarAsync(Usuario usuario);
+        Task<Usuario> AtualizarAsync(Usuario usuario);
     }
 }

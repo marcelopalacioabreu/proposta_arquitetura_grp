@@ -19,6 +19,24 @@ namespace Retaguarda.Persistencia.MYSQL.Migracoes
                 nullable: true);
 
             migrationBuilder.AddColumn<long>(
+                name: "UltimoAcessoOrganizacaoId",
+                table: "Usuarios",
+                type: "bigint",
+                nullable: true);
+
+            migrationBuilder.AddColumn<long>(
+                name: "UltimoAcessoOrganizacaoUnidadeId",
+                table: "Usuarios",
+                type: "bigint",
+                nullable: true);
+
+            migrationBuilder.AddColumn<long>(
+                name: "UltimoAcessoSetorId",
+                table: "Usuarios",
+                type: "bigint",
+                nullable: true);
+
+            migrationBuilder.AddColumn<long>(
                 name: "SetorId",
                 table: "Usuarios",
                 type: "bigint",
