@@ -1,7 +1,7 @@
 import React from 'react'
 import { useNavigate } from 'react-router-dom'
 import api from '../../servicos/api'
-import modalService from '../../utils/modalService'
+import modalServico from '../../utils/modalServico'
 
 export default function TelaPesquisaDetalhesLinhaTelaPequena({ title = 'Detalhes', item = {}, columns = [], actions = [], closeModal }){
   const navigate = useNavigate()
@@ -14,7 +14,7 @@ export default function TelaPesquisaDetalhesLinhaTelaPequena({ title = 'Detalhes
       return
     }
     if (a.tipo === 'confirmacao_delete_ajax'){
-      modalService.confirmDialog(a.mensagem || 'Confirma exclusão?', async () => {
+      modalServico.dialogoConfirmacao(a.mensagem || 'Confirma exclusão?', async () => {
         try{
           const destino = (a.destino || '').replace('{id}', item[a.campo_id] || item.id)
           await api.delete(destino, { block: true })
@@ -22,7 +22,7 @@ export default function TelaPesquisaDetalhesLinhaTelaPequena({ title = 'Detalhes
           // reload to refresh list
           window.location.reload()
         }catch(err){
-          modalService.alertModal('Erro ao excluir')
+          modalServico.modalAlerta('Erro ao excluir')
         }
       })
     }

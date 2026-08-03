@@ -48,14 +48,35 @@ export default function ModalProvedor({ children }){
         case 'TelaCadastro':
           mod = await import('../Cadastros/TelaCadastro')
           break
+        case 'TelaPesquisaDetalhesLinhaTelaPequena':
+          mod = await import('../Cadastros/TelaPesquisaDetalhesLinhaTelaPequena')
+          break
         case 'TelaPesquisa':
           mod = await import('../Cadastros/TelaPesquisa')
           break
         default:
-          // Tenta importação dinâmica pelo caminho
-          // mod = await import(`./${name}`)
+            // Tenta importação dinâmica pelo caminho fornecido (ex: '../Cadastros/Componente')
+            try{
+              // Allow dynamic runtime path; bundlers may need the comment to skip static analysis
+              // Try as provided
+              // eslint-disable-next-line no-useless-concat
+              mod = await import(/* @vite-ignore */ (name))
+            }catch(e){
+              // fallback: try adding common extensions
+              try{ mod = await import(/* @vite-ignore */ (name + '.jsx')) }catch(_){
+                try{ mod = await import(/* @vite-ignore */ (name + '.js')) }catch(__){
+                  // fallback: try relative to this folder
+                  try{ mod = await import(/* @vite-ignore */ (`./${name}`)) }catch(___){
+                    try{ mod = await import(/* @vite-ignore */ (`./${name}.jsx`)) }catch(____){
+                      try{ mod = await import(/* @vite-ignore */ (`./${name}.js`)) }catch(_____){ mod = null }
+                    }
+                  }
+                }
+              }
+            }
       }
-      const Comp = mod.default
+        if (!mod) throw new Error('Componente não encontrado: ' + name)
+        const Comp = mod.default || mod
       setComponentModal({ show:true, Comp, props: props || {} })
     }catch(err){
       alert('Erro ao abrir componente em modal')

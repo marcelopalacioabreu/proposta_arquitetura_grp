@@ -361,7 +361,7 @@ export default function TelaPesquisa({ screenKey }){
                   <button className="btn btn-sm btn-link btn-icon" title="Mais campos" aria-label="Mais campos" onClick={() => {
                     const allCols = (meta.tabela.colunas && meta.tabela.colunas.length) ? meta.tabela.colunas : []
                     // pass ALL columns so modal shows complete record
-                    modalServico.abrirComponenteNoModal('../Cadastros/TelaPesquisaDetalhesLinhaTelaPequena', { title: `${meta.titulo}`, item: it, columns: allCols, actions: meta.tabela.acoes })
+                    modalServico.abrirComponenteNoModal('TelaPesquisaDetalhesLinhaTelaPequena', { title: `${meta.titulo}`, item: it, columns: allCols, actions: meta.tabela.acoes })
                   }}><i className="bi bi-three-dots" /></button>
                 </td>
               ) : (
