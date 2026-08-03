@@ -113,6 +113,9 @@ export default function TelaCadastro({ screenKey, closeModal }){
   const camposChaveValores = meta ? obterValoresCamposChave(meta, location.pathname, params) : {}
 
   function renderCampo(c, key){
+    // do not render hidden fields here (they are emitted at the top of the form)
+    if (c.tipo === 'hidden') return null
+
     const colunaClass = `col-12 col-md-${c.col || 12}`
     const valor = model[c.campo]
     const erro = errors[c.campo]
@@ -137,9 +140,6 @@ export default function TelaCadastro({ screenKey, closeModal }){
           ) : (
             <SelectField name={c.campo} value={valor} error={erro} fieldConfig={c} meta={meta} />
           )
-        ) : c.tipo === 'hidden' ? (
-          // render only a hidden input; when value comes from URL prefer that
-          <input type="hidden" name={c.campo} value={(fromUrl ? camposChaveValores[c.campo] : (valor || ''))} />
         ) : (
           <input name={c.campo} defaultValue={valor || ''} className={`form-control ${erro ? 'is-invalid' : ''}`} />
         )}
@@ -148,6 +148,16 @@ export default function TelaCadastro({ screenKey, closeModal }){
   }
 
   if (!meta || !Array.isArray(meta.itens)) return null
+
+  // Collect hidden fields to render as bare inputs at the top of the form
+  const hiddenInputs = []
+  meta.itens.forEach(it => {
+    if (it.campos && Array.isArray(it.campos)){
+      it.campos.forEach(c => { if (c.tipo === 'hidden') hiddenInputs.push(c) })
+    } else {
+      if (it.tipo === 'hidden') hiddenInputs.push(it)
+    }
+  })
 
   const handleSubmit = async (e) =>{
     e.preventDefault()
@@ -193,6 +203,11 @@ export default function TelaCadastro({ screenKey, closeModal }){
       <div className="page-card w-100">
         <h3>{meta.titulo || 'Cadastro'}</h3>
         <form onSubmit={handleSubmit} className="row g-3">
+        {/* hidden inputs first */}
+        {hiddenInputs.map((c, hi) => (
+          <input key={`hidden-${hi}`} type="hidden" name={c.campo} value={(camposChaveValores && camposChaveValores[c.campo]) ? camposChaveValores[c.campo] : (model[c.campo] || '')} />
+        ))}
+
         {meta.itens.map((it, idx) => {
           if (it.campos && Array.isArray(it.campos)){
             return (
