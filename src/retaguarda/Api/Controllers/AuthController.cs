@@ -106,7 +106,10 @@ namespace Retaguarda.Api.Controllers
                 {
                     // swallow errors to avoid breaking login
                 }
-                return OkMessage("Autenticado");
+                // Return a successful envelope without a message so the frontend
+                // doesn't show a notification on every automatic login flow.
+                // return OkMessage("Autenticado");
+                return OkData(null);
             }
 
             return OkData(new { token = tokenString });
@@ -158,7 +161,8 @@ namespace Retaguarda.Api.Controllers
             {
                 Response.Cookies.Delete("access_token");
             }
-            return OkMessage("Desconectado");
+            //return OkMessage("Desconectado");
+            return OkData(null);
         }
     }
 }
