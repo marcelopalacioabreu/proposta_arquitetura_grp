@@ -6,6 +6,21 @@
     "itens": [
       { "campo": "nome", "label": "Nome", "tipo": "text", "col": 6 },
       { "campo": "username", "label": "Usuário", "tipo": "text", "col": 6 }
-    ]
+    ],
+    "filtro": [
+      { "campo": "nome", "descricao": "Nome", "tipo": "string" },
+      { "campo": "username", "descricao": "Usuário", "tipo": "string" }
+    ],
+    "tabela": {
+      "colunas": [
+        { "campo": "nome", "titulo": "Nome" },
+        { "campo": "username", "titulo": "Usuário" },
+        { "campo": "email", "titulo": "E-mail" }
+      ],
+      "acoes": [
+        { "tipo": "navegacao", "destino": "/painel/usuarios/editar/{id}", "icone": "pencil" }
+      ],
+      "pagination": { "pageSize": 10 }
+    }
   }
 }

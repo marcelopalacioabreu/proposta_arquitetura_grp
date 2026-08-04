@@ -6,6 +6,22 @@
     "itens": [
       { "campo": "nome", "label": "Nome", "tipo": "text", "col": 6 },
       { "campo": "documento", "label": "Documento", "tipo": "text", "col": 6 }
-    ]
+    ],
+    "filtro": [
+      { "campo": "nome", "descricao": "Nome", "tipo": "string" },
+      { "campo": "documento", "descricao": "Documento", "tipo": "string" }
+    ],
+    "tabela": {
+      "colunas": [
+        { "campo": "nome", "titulo": "Nome" },
+        { "campo": "documento", "titulo": "Documento" },
+        { "campo": "telefone", "titulo": "Telefone" },
+        { "campo": "email", "titulo": "E-mail" }
+      ],
+      "acoes": [
+        { "tipo": "navegacao", "destino": "/painel/pessoas/editar/{id}", "icone": "pencil" }
+      ],
+      "pagination": { "pageSize": 10 }
+    }
   }
 }

@@ -32,6 +32,12 @@ function App(){
         <Route path='organizacoes/unidades/setores/editar/:id' element={<TelaCadastro screenKey={'organizacaoUnidadeSetorCadastro'} />} />
         <Route path='organizacoes/:organizacaoId/unidades/:organizacaoUnidadeId/setores' element={<TelaPesquisa screenKey={'organizacaoUnidadeSetorPesquisa'} />} />
         <Route path='organizacoes/:organizacaoId/unidades/:organizacaoUnidadeId/setores/editar/:id' element={<TelaCadastro screenKey={'organizacaoUnidadeSetorCadastro'} />} />
+        <Route path='pessoas' element={<TelaPesquisa screenKey={'pessoaPesquisa'} />} />
+        <Route path='pessoas/editar/:id' element={<TelaCadastro screenKey={'pessoaCadastro'} />} />
+        <Route path='usuarios' element={<TelaPesquisa screenKey={'usuarioPesquisa'} />} />
+        <Route path='usuarios/editar/:id' element={<TelaCadastro screenKey={'usuarioCadastro'} />} />
+        <Route path='perfis' element={<TelaPesquisa screenKey={'perfilPesquisa'} />} />
+        <Route path='perfis/editar/:id' element={<TelaCadastro screenKey={'perfilCadastro'} />} />
         <Route index element={<InicioPainel/>} />
       </Route>
       <Route path='*' element={<Navigate to='/' replace />} />

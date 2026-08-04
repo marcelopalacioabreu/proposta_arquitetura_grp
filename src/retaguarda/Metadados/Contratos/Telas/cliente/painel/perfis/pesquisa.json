@@ -5,6 +5,19 @@
     "extremidade": "/api/perfis",
     "itens": [
       { "campo": "nome", "label": "Nome", "tipo": "text", "col": 6 }
-    ]
+    ],
+    "filtro": [
+      { "campo": "nome", "descricao": "Nome", "tipo": "string" }
+    ],
+    "tabela": {
+      "colunas": [
+        { "campo": "nome", "titulo": "Nome" },
+        { "campo": "administradorDoSistema", "titulo": "Administrador" }
+      ],
+      "acoes": [
+        { "tipo": "navegacao", "destino": "/painel/perfis/editar/{id}", "icone": "pencil" }
+      ],
+      "pagination": { "pageSize": 10 }
+    }
   }
 }
