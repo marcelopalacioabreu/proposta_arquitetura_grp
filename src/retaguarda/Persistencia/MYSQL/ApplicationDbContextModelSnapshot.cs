@@ -235,6 +235,57 @@ namespace Retaguarda.Persistencia.MYSQL
                     b.ToTable("Imoveis", (string)null);
                 });
 
+            modelBuilder.Entity("Retaguarda.Dominio.Entidades.Pessoa", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    b.Property<bool>("Ativo")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<string>("Documento")
+                        .HasMaxLength(100)
+                        .HasColumnType("varchar(100)");
+
+                    b.Property<DateTime?>("DataAlteracao")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<DateTime>("DataInsercao")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("Email")
+                        .HasMaxLength(200)
+                        .HasColumnType("varchar(200)");
+
+                    b.Property<long?>("OrganizacaoId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long?>("OrganizacaoUnidadeId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long?>("SetorId")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("Nome")
+                        .IsRequired()
+                        .HasMaxLength(300)
+                        .HasColumnType("varchar(300)");
+
+                    b.Property<string>("Telefone")
+                        .HasMaxLength(50)
+                        .HasColumnType("varchar(50)");
+
+                    b.Property<string>("TipoPessoaChave")
+                        .IsRequired()
+                        .HasMaxLength(8)
+                        .HasColumnType("varchar(8)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Pessoas", (string)null);
+                });
+
             modelBuilder.Entity("Retaguarda.Dominio.Entidades.Logradouro", b =>
                 {
                     b.Property<long>("Id")
@@ -377,6 +428,13 @@ namespace Retaguarda.Persistencia.MYSQL
                         .HasMaxLength(200)
                         .HasColumnType("varchar(200)");
 
+                    b.Property<string>("Hierarquia")
+                        .HasMaxLength(1000)
+                        .HasColumnType("varchar(1000)");
+
+                    b.Property<long?>("SetorPaiId")
+                        .HasColumnType("bigint");
+
                     b.Property<long?>("OrganizacaoId")
                         .HasColumnType("bigint");
 
@@ -391,6 +449,8 @@ namespace Retaguarda.Persistencia.MYSQL
                     b.HasKey("Id");
 
                     b.HasIndex("OrganizacaoId");
+
+                    b.HasIndex("SetorPaiId");
 
                     b.ToTable("OrganizacaoSetores", (string)null);
                 });
@@ -591,6 +651,7 @@ namespace Retaguarda.Persistencia.MYSQL
                     b.HasIndex("OrganizacaoId");
 
                     b.HasIndex("PerfilId");
+                    b.HasIndex(new[] { "PerfilId", "Nome" }).IsUnique();
 
                     b.ToTable("PerfilPermissoes", (string)null);
                 });
@@ -652,6 +713,9 @@ namespace Retaguarda.Persistencia.MYSQL
                         .HasColumnType("datetime(6)");
 
                     b.Property<bool>("HabilitarPermissoesNegativas")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<bool>("Padrao")
                         .HasColumnType("tinyint(1)");
 
                     b.Property<long?>("OrganizacaoId")
@@ -758,6 +822,9 @@ namespace Retaguarda.Persistencia.MYSQL
                         .IsRequired()
                         .HasColumnType("longtext");
 
+                    b.Property<long?>("PessoaId")
+                        .HasColumnType("bigint");
+
                     b.Property<long?>("SetorId")
                         .HasColumnType("bigint");
 
@@ -768,6 +835,7 @@ namespace Retaguarda.Persistencia.MYSQL
                     b.HasKey("Id");
 
                     b.HasIndex("OrganizacaoId");
+                    b.HasIndex("PessoaId");
 
                     b.ToTable("Usuarios", (string)null);
                 });
@@ -862,6 +930,11 @@ namespace Retaguarda.Persistencia.MYSQL
                         .WithMany("Setores")
                         .HasForeignKey("OrganizacaoId")
                         .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("Retaguarda.Dominio.Entidades.OrganizacaoSetor", "SetorPai")
+                        .WithMany()
+                        .HasForeignKey("SetorPaiId")
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.Navigation("Organizacao");
                 });
@@ -969,6 +1042,11 @@ namespace Retaguarda.Persistencia.MYSQL
                         .WithMany("Usuarios")
                         .HasForeignKey("OrganizacaoId")
                         .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("Retaguarda.Dominio.Entidades.Pessoa", "Pessoa")
+                        .WithMany()
+                        .HasForeignKey("PessoaId")
+                        .OnDelete(DeleteBehavior.SetNull);
 
                     b.Navigation("Organizacao");
                 });

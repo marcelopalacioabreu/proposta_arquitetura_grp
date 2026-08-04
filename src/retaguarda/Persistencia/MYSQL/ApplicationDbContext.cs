@@ -21,6 +21,7 @@ namespace Retaguarda.Persistencia.MYSQL
         public DbSet<OrganizacaoUnidade> OrganizacaoUnidades { get; set; } = null!;
         public DbSet<OrganizacaoUnidadeSetor> OrganizacaoUnidadeSetores { get; set; } = null!;
         public DbSet<Usuario> Usuarios { get; set; } = null!;
+        public DbSet<Pessoa> Pessoas { get; set; } = null!;
         public DbSet<Perfil> Perfis { get; set; } = null!;
         public DbSet<PerfilUsuario> PerfilUsuarios { get; set; } = null!;
         public DbSet<PerfilPermissao> PerfilPermissoes { get; set; } = null!;
@@ -52,6 +53,8 @@ namespace Retaguarda.Persistencia.MYSQL
                 b.ToTable("OrganizacaoSetores");
                 b.HasKey(x => x.Id);
                 b.Property(x => x.Nome).IsRequired().HasMaxLength(200);
+                b.Property(x => x.Hierarquia).HasMaxLength(1000);
+                b.HasOne(x => x.SetorPai).WithMany().HasForeignKey(x => x.SetorPaiId).OnDelete(DeleteBehavior.Restrict);
                 b.HasOne(x => x.Organizacao).WithMany(o => o.Setores).HasForeignKey(x => x.OrganizacaoId).OnDelete(DeleteBehavior.Cascade);
             });
 
@@ -61,6 +64,7 @@ namespace Retaguarda.Persistencia.MYSQL
                 b.HasKey(x => x.Id);
                 b.Property(x => x.Nome).IsRequired().HasMaxLength(200);
                 b.HasOne(x => x.Organizacao).WithMany(o => o.Usuarios).HasForeignKey(x => x.OrganizacaoId).OnDelete(DeleteBehavior.Cascade);
+                b.HasOne(x => x.Pessoa).WithMany().HasForeignKey(x => x.PessoaId).OnDelete(DeleteBehavior.SetNull);
             });
 
             modelBuilder.Entity<Perfil>(b =>
@@ -78,6 +82,7 @@ namespace Retaguarda.Persistencia.MYSQL
                 b.Property(x => x.Nome).IsRequired().HasMaxLength(200);
                 b.HasOne(x => x.Perfil).WithMany(p => p.Permissoes).HasForeignKey(x => x.PerfilId).OnDelete(DeleteBehavior.Cascade);
                 b.HasOne(x => x.Organizacao).WithMany().HasForeignKey(x => x.OrganizacaoId).OnDelete(DeleteBehavior.Cascade);
+                b.HasIndex(x => new { x.PerfilId, x.Nome }).IsUnique();
             });
 
             modelBuilder.Entity<PerfilUsuario>(b =>
@@ -93,8 +98,20 @@ namespace Retaguarda.Persistencia.MYSQL
                 b.ToTable("SetorUsuarios");
                 b.HasKey(x => x.Id);
                 b.Property(x => x.HabilitarPermissoesNegativas).IsRequired();
+                b.Property(x => x.Padrao).IsRequired().HasDefaultValue(false);
                 b.HasOne(x => x.Usuario).WithMany().HasForeignKey(x => x.UsuarioId).OnDelete(DeleteBehavior.Cascade);
                 b.HasOne(x => x.Setor).WithMany().HasForeignKey(x => x.SetorId).OnDelete(DeleteBehavior.Cascade);
+            });
+
+            modelBuilder.Entity<Pessoa>(b =>
+            {
+                b.ToTable("Pessoas");
+                b.HasKey(x => x.Id);
+                b.Property(x => x.Nome).IsRequired().HasMaxLength(300);
+                b.Property(x => x.TipoPessoaChave).IsRequired().HasMaxLength(8);
+                b.Property(x => x.Documento).HasMaxLength(100);
+                b.Property(x => x.Email).HasMaxLength(200);
+                b.Property(x => x.Telefone).HasMaxLength(50);
             });
 
             modelBuilder.Entity<OrganizacaoUnidade>(b =>

@@ -1,0 +1,12 @@
+{
+  "enumeracoes": [
+    {
+      "nome": "pessoa.tipos",
+      "descricao": "Tipos de pessoa",
+      "valores": [
+        { "chave": "F", "descricao": "Física" },
+        { "chave": "J", "descricao": "Jurídica" }
+      ]
+    }
+  ]
+}

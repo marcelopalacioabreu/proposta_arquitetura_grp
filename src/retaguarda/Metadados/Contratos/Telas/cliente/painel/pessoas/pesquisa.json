@@ -1,0 +1,11 @@
+{
+  "pessoaPesquisa": {
+    "tipo": "TELA_PESQUISA",
+    "titulo": "Pesquisa de Pessoas",
+    "extremidade": "/api/pessoas",
+    "itens": [
+      { "campo": "nome", "label": "Nome", "tipo": "text", "col": 6 },
+      { "campo": "documento", "label": "Documento", "tipo": "text", "col": 6 }
+    ]
+  }
+}

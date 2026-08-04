@@ -1,0 +1,11 @@
+{
+  "usuarioPesquisa": {
+    "tipo": "TELA_PESQUISA",
+    "titulo": "Pesquisa de Usuários",
+    "extremidade": "/api/usuarios",
+    "itens": [
+      { "campo": "nome", "label": "Nome", "tipo": "text", "col": 6 },
+      { "campo": "username", "label": "Usuário", "tipo": "text", "col": 6 }
+    ]
+  }
+}

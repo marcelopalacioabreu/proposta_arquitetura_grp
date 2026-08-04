@@ -34,6 +34,84 @@
           "conflitosCom": [""],
           "mostrarNoMenu": false
         }
+        ,
+        {
+          "chave": "pessoas", "texto": "Pessoas", "icone": "people", "url": "/painel/pessoas",
+          "permissoes": [
+            { "id": "pessoas.visualizar", "texto": "Visualizar" },
+            { "id": "pessoas.editar", "texto": "Criar/Editar" },
+            { "id": "pessoas.excluir", "texto": "Excluir" }
+          ],
+          "conflitosCom": [""],
+          "mostrarNoMenu": true
+        }
+        ,
+        {
+          "chave": "usuarios", "texto": "Usuários", "icone": "person-badge", "url": "/painel/usuarios",
+          "permissoes": [
+            { "id": "usuarios.visualizar", "texto": "Visualizar" },
+            { "id": "usuarios.editar", "texto": "Criar/Editar" },
+            { "id": "usuarios.excluir", "texto": "Excluir" }
+          ],
+          "conflitosCom": [""],
+          "mostrarNoMenu": true
+        }
+      ]
+    }
+    ,
+    {
+      "grupo": "Endereçamento",
+      "itens": [
+        {
+          "chave": "enderecos.bairros", "texto": "Bairros", "icone": "geo-alt", "url": "/painel/enderecos/bairros",
+          "permissoes": [
+            { "id": "bairros.visualizar", "texto": "Visualizar" },
+            { "id": "bairros.editar", "texto": "Criar/Editar" },
+            { "id": "bairros.excluir", "texto": "Excluir" }
+          ],
+          "conflitosCom": [""],
+          "mostrarNoMenu": true
+        },
+        {
+          "chave": "enderecos.municipios", "texto": "Municípios", "icone": "globe2", "url": "/painel/enderecos/municipios",
+          "permissoes": [
+            { "id": "municipios.visualizar", "texto": "Visualizar" },
+            { "id": "municipios.editar", "texto": "Criar/Editar" },
+            { "id": "municipios.excluir", "texto": "Excluir" }
+          ],
+          "conflitosCom": [""],
+          "mostrarNoMenu": false
+        },
+        {
+          "chave": "enderecos.logradouros", "texto": "Logradouros", "icone": "map", "url": "/painel/enderecos/logradouros",
+          "permissoes": [
+            { "id": "logradouros.visualizar", "texto": "Visualizar" },
+            { "id": "logradouros.editar", "texto": "Criar/Editar" },
+            { "id": "logradouros.excluir", "texto": "Excluir" }
+          ],
+          "conflitosCom": [""],
+          "mostrarNoMenu": false
+        },
+        {
+          "chave": "enderecos.ceps", "texto": "CEPs", "icone": "barcode", "url": "/painel/enderecos/ceps",
+          "permissoes": [
+            { "id": "ceps.visualizar", "texto": "Visualizar" },
+            { "id": "ceps.editar", "texto": "Criar/Editar" },
+            { "id": "ceps.excluir", "texto": "Excluir" }
+          ],
+          "conflitosCom": [""],
+          "mostrarNoMenu": false
+        },
+        {
+          "chave": "enderecos.enderecos", "texto": "Endereços", "icone": "house", "url": "/painel/enderecos",
+          "permissoes": [
+            { "id": "enderecos.visualizar", "texto": "Visualizar" },
+            { "id": "enderecos.editar", "texto": "Criar/Editar" },
+            { "id": "enderecos.excluir", "texto": "Excluir" }
+          ],
+          "conflitosCom": [""],
+          "mostrarNoMenu": true
+        }
       ]
     }
   ]

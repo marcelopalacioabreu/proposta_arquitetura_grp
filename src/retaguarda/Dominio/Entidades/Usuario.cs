@@ -17,5 +17,9 @@ namespace Retaguarda.Dominio.Entidades
         public long? UltimoAcessoOrganizacaoId { get; set; }
         public long? UltimoAcessoOrganizacaoUnidadeId { get; set; }
         public long? UltimoAcessoSetorId { get; set; }
+
+        // Association to Pessoa (shared at organization level)
+        public long? PessoaId { get; set; }
+        public Pessoa? Pessoa { get; set; }
     }
 }

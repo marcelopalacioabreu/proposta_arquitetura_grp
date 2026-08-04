@@ -1,0 +1,18 @@
+{
+  "perfilCadastro": {
+    "tipo": "TELA_CADASTRO_ESPECIAL",
+    "titulo": "Cadastro de Perfil",
+    "extremidade": "/api/perfis",
+    "itens": [
+      { "campo": "nome", "label": "Nome do perfil", "tipo": "text", "col": 8 },
+      { "campo": "administradorDoSistema", "label": "Administrador do sistema", "tipo": "checkbox", "col": 4 },
+      {
+        "titulo": "Permissões (baseado em modulos.json)",
+        "columns": 12,
+        "campos": [
+          { "campo": "permissoes", "tipo": "permissoes_modulos", "source": "/Metadados/Contratos/Modulos/modulos.json", "col": 12 }
+        ]
+      }
+    ]
+  }
+}

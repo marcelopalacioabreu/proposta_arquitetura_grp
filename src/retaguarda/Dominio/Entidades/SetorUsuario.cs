@@ -11,6 +11,9 @@ namespace Retaguarda.Dominio.Entidades
         // When true, this association enables negative permissions behavior
         public bool HabilitarPermissoesNegativas { get; set; } = false;
 
+        // When true, this association marks the user's default/primary sector
+        public bool Padrao { get; set; } = false;
+
         public Usuario? Usuario { get; set; }
         public OrganizacaoSetor? Setor { get; set; }
     }

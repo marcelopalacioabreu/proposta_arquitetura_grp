@@ -1,0 +1,10 @@
+{
+  "perfilPesquisa": {
+    "tipo": "TELA_PESQUISA",
+    "titulo": "Pesquisa de Perfis",
+    "extremidade": "/api/perfis",
+    "itens": [
+      { "campo": "nome", "label": "Nome", "tipo": "text", "col": 6 }
+    ]
+  }
+}

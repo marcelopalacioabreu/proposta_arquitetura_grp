@@ -1,0 +1,14 @@
+{
+  "pessoaCadastro": {
+    "tipo": "TELA_CADASTRO",
+    "titulo": "Cadastro de Pessoa",
+    "extremidade": "/api/pessoas",
+    "itens": [
+      { "campo": "nome", "label": "Nome / Razão Social", "tipo": "text", "col": 8 },
+      { "campo": "tipoPessoaChave", "label": "Tipo", "tipo": "select", "col": 4, "enumeracao": "pessoa.tipos" },
+      { "campo": "documento", "label": "Documento", "tipo": "text", "col": 6 },
+      { "campo": "telefone", "label": "Telefone", "tipo": "text", "col": 3 },
+      { "campo": "email", "label": "E-mail", "tipo": "text", "col": 3 }
+    ]
+  }
+}
