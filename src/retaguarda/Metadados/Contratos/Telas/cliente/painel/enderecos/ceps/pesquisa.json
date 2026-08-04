@@ -1,0 +1,13 @@
+{
+  "cepPesquisa": {
+    "tipo": "TELA_PESQUISA",
+    "titulo": "Pesquisa de CEPs",
+    "extremidade": "/api/ceps",
+    "itens": [
+      { "campo": "codigo", "label": "CEP", "tipo": "text", "col": 4 },
+      { "campo": "imovelCadastro", "label": "Imóvel", "tipo": "text", "col": 8 }
+    ],
+    "filtro": [ { "campo": "codigo", "descricao": "CEP", "tipo": "string" } ],
+    "tabela": { "colunas": [ { "campo": "codigo", "titulo": "CEP" }, { "campo": "Imovel", "titulo": "Imóvel" } ], "acoes": [ { "tipo": "navegacao", "destino": "/painel/enderecos/ceps/editar/{id}", "icone": "pencil" } ], "pagination": { "pageSize": 10 } }
+  }
+}

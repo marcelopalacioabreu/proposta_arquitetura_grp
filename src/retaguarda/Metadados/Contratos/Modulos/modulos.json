@@ -73,7 +73,7 @@
           "mostrarNoMenu": true
         },
         {
-          "chave": "enderecos.ceps", "texto": "CEPs", "icone": "barcode", "url": "/painel/enderecos/ceps",
+          "chave": "enderecos.ceps", "texto": "CEPs", "icone": "envelope", "url": "/painel/enderecos/ceps",
           "permissoes": [
             { "id": "ceps.visualizar", "texto": "Visualizar" },
             { "id": "ceps.editar", "texto": "Criar/Editar" },
