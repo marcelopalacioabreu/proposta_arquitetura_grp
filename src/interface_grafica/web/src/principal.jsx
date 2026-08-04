@@ -42,6 +42,18 @@ function App(){
         <Route path='enderecos/editar/:id' element={<TelaCadastro screenKey={'enderecosCadastro'} />} />
         <Route path='enderecos/bairros' element={<TelaPesquisa screenKey={'bairrosPesquisa'} />} />
         <Route path='enderecos/bairros/editar/:id' element={<TelaCadastro screenKey={'bairrosCadastro'} />} />
+        <Route path='enderecos/municipios' element={<TelaPesquisa screenKey={'municipioPesquisa'} />} />
+        <Route path='enderecos/municipios/editar/:id' element={<TelaCadastro screenKey={'municipioCadastro'} />} />
+        <Route path='enderecos/logradouros' element={<TelaPesquisa screenKey={'logradouroPesquisa'} />} />
+        <Route path='enderecos/logradouros/editar/:id' element={<TelaCadastro screenKey={'logradouroCadastro'} />} />
+        <Route path='enderecos/ceps' element={<TelaPesquisa screenKey={'cepPesquisa'} />} />
+        <Route path='enderecos/ceps/editar/:id' element={<TelaCadastro screenKey={'cepCadastro'} />} />
+        <Route path='enderecos/imoveis' element={<TelaPesquisa screenKey={'imovelPesquisa'} />} />
+        <Route path='enderecos/imoveis/editar/:id' element={<TelaCadastro screenKey={'imovelCadastro'} />} />
+        <Route path='enderecos/paises' element={<TelaPesquisa screenKey={'paisPesquisa'} />} />
+        <Route path='enderecos/paises/editar/:id' element={<TelaCadastro screenKey={'paisCadastro'} />} />
+        <Route path='enderecos/ufs' element={<TelaPesquisa screenKey={'ufPesquisa'} />} />
+        <Route path='enderecos/ufs/editar/:id' element={<TelaCadastro screenKey={'ufCadastro'} />} />
         <Route index element={<InicioPainel/>} />
       </Route>
       <Route path='*' element={<Navigate to='/' replace />} />

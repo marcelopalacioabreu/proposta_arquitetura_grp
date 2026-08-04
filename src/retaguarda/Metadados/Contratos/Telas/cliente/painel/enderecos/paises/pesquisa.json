@@ -1,0 +1,12 @@
+{
+  "paisPesquisa": {
+    "tipo": "TELA_PESQUISA",
+    "titulo": "Pesquisa de Países",
+    "extremidade": "/api/paises",
+    "itens": [
+      { "campo": "nome", "label": "Nome", "tipo": "text", "col": 12 }
+    ],
+    "filtro": [ { "campo": "nome", "descricao": "Nome", "tipo": "string" } ],
+    "tabela": { "colunas": [ { "campo": "nome", "titulo": "Nome" } ], "acoes": [ { "tipo": "navegacao", "destino": "/painel/enderecos/paises/editar/{id}", "icone": "pencil" } ], "pagination": { "pageSize": 10 } }
+  }
+}

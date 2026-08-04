@@ -1,0 +1,12 @@
+{
+  "municipioCadastro": {
+    "tipo": "TELA_CADASTRO",
+    "titulo": "Cadastro de Município",
+    "extremidade": "/api/municipios",
+    "itens": [
+      { "campo": "nome", "label": "Nome", "tipo": "text", "col": 6 },
+      { "campo": "codigoIbge", "label": "Código IBGE", "tipo": "text", "col": 3 },
+      { "campo": "ufId", "label": "UF", "tipo": "select", "url": "/api/ufs", "col": 3 }
+    ]
+  }
+}

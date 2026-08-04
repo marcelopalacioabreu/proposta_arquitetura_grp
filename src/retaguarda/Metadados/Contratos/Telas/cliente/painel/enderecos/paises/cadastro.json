@@ -1,0 +1,8 @@
+{
+  "paisCadastro": {
+    "tipo": "TELA_CADASTRO",
+    "titulo": "Cadastro de País",
+    "extremidade": "/api/paises",
+    "itens": [ { "campo": "nome", "label": "Nome", "tipo": "text", "col": 12 } ]
+  }
+}

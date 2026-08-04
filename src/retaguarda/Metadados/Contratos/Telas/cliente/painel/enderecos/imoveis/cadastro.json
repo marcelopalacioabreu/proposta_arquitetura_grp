@@ -1,0 +1,11 @@
+{
+  "imovelCadastro": {
+    "tipo": "TELA_CADASTRO",
+    "titulo": "Cadastro de Imóvel",
+    "extremidade": "/api/imoveis",
+    "itens": [
+      { "campo": "cadastro", "label": "Cadastro Imobiliário", "tipo": "text", "col": 6 },
+      { "campo": "logradouroId", "label": "Logradouro", "tipo": "select", "url": "/api/logradouros", "col": 6 }
+    ]
+  }
+}

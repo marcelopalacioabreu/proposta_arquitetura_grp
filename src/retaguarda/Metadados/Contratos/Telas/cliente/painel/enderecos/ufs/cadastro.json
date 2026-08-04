@@ -1,0 +1,12 @@
+{
+  "ufCadastro": {
+    "tipo": "TELA_CADASTRO",
+    "titulo": "Cadastro de UF",
+    "extremidade": "/api/ufs",
+    "itens": [
+      { "campo": "nome", "label": "Nome", "tipo": "text", "col": 8 },
+      { "campo": "sigla", "label": "Sigla", "tipo": "text", "col": 4 },
+      { "campo": "paisId", "label": "País", "tipo": "select", "url": "/api/paises", "col": 4 }
+    ]
+  }
+}

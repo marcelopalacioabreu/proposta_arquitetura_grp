@@ -1,0 +1,12 @@
+{
+  "enderecosCadastro": {
+    "tipo": "TELA_CADASTRO",
+    "titulo": "Cadastro de Endereço",
+    "extremidade": "/api/enderecos",
+    "itens": [
+      { "campo": "cepId", "label": "CEP", "tipo": "select", "url": "/api/ceps", "col": 4 },
+      { "campo": "usuarioId", "label": "Usuário", "tipo": "select", "url": "/api/usuarios", "col": 4 },
+      { "campo": "complemento", "label": "Complemento", "tipo": "text", "col": 4 }
+    ]
+  }
+}

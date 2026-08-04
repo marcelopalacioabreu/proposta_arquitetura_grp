@@ -45,17 +45,6 @@ namespace Retaguarda.Persistencia.MYSQL
                     b.Property<long?>("OrganizacaoId")
                         .HasColumnType("bigint");
 
-                    b.Property<long?>("UltimoAcessoOrganizacaoId")
-                        .HasColumnType("bigint");
-
-                    b.Property<long?>("UltimoAcessoOrganizacaoUnidadeId")
-                        .HasColumnType("bigint");
-
-                    b.Property<long?>("UltimoAcessoSetorId")
-                        .HasColumnType("bigint");
-
-                    
-
                     b.Property<long?>("OrganizacaoUnidadeId")
                         .HasColumnType("bigint");
 
@@ -95,8 +84,6 @@ namespace Retaguarda.Persistencia.MYSQL
                     b.Property<long?>("OrganizacaoId")
                         .HasColumnType("bigint");
 
-                    
-
                     b.Property<long?>("OrganizacaoUnidadeId")
                         .HasColumnType("bigint");
 
@@ -135,8 +122,6 @@ namespace Retaguarda.Persistencia.MYSQL
 
                     b.Property<long?>("OrganizacaoId")
                         .HasColumnType("bigint");
-
-                    
 
                     b.Property<long?>("OrganizacaoUnidadeId")
                         .HasColumnType("bigint");
@@ -179,8 +164,6 @@ namespace Retaguarda.Persistencia.MYSQL
                     b.Property<long?>("OrganizacaoId")
                         .HasColumnType("bigint");
 
-                    
-
                     b.Property<long?>("OrganizacaoUnidadeId")
                         .HasColumnType("bigint");
 
@@ -220,8 +203,6 @@ namespace Retaguarda.Persistencia.MYSQL
                     b.Property<long?>("OrganizacaoId")
                         .HasColumnType("bigint");
 
-                    
-
                     b.Property<long?>("OrganizacaoUnidadeId")
                         .HasColumnType("bigint");
 
@@ -233,57 +214,6 @@ namespace Retaguarda.Persistencia.MYSQL
                     b.HasIndex("LogradouroId");
 
                     b.ToTable("Imoveis", (string)null);
-                });
-
-            modelBuilder.Entity("Retaguarda.Dominio.Entidades.Pessoa", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    b.Property<bool>("Ativo")
-                        .HasColumnType("tinyint(1)");
-
-                    b.Property<string>("Documento")
-                        .HasMaxLength(100)
-                        .HasColumnType("varchar(100)");
-
-                    b.Property<DateTime?>("DataAlteracao")
-                        .HasColumnType("datetime(6)");
-
-                    b.Property<DateTime>("DataInsercao")
-                        .HasColumnType("datetime(6)");
-
-                    b.Property<string>("Email")
-                        .HasMaxLength(200)
-                        .HasColumnType("varchar(200)");
-
-                    b.Property<long?>("OrganizacaoId")
-                        .HasColumnType("bigint");
-
-                    b.Property<long?>("OrganizacaoUnidadeId")
-                        .HasColumnType("bigint");
-
-                    b.Property<long?>("SetorId")
-                        .HasColumnType("bigint");
-
-                    b.Property<string>("Nome")
-                        .IsRequired()
-                        .HasMaxLength(300)
-                        .HasColumnType("varchar(300)");
-
-                    b.Property<string>("Telefone")
-                        .HasMaxLength(50)
-                        .HasColumnType("varchar(50)");
-
-                    b.Property<string>("TipoPessoaChave")
-                        .IsRequired()
-                        .HasMaxLength(8)
-                        .HasColumnType("varchar(8)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Pessoas", (string)null);
                 });
 
             modelBuilder.Entity("Retaguarda.Dominio.Entidades.Logradouro", b =>
@@ -312,8 +242,6 @@ namespace Retaguarda.Persistencia.MYSQL
                     b.Property<long?>("OrganizacaoId")
                         .HasColumnType("bigint");
 
-                    
-
                     b.Property<long?>("OrganizacaoUnidadeId")
                         .HasColumnType("bigint");
 
@@ -340,6 +268,10 @@ namespace Retaguarda.Persistencia.MYSQL
                     b.Property<bool>("Ativo")
                         .HasColumnType("tinyint(1)");
 
+                    b.Property<string>("CodigoIbge")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
                     b.Property<DateTime?>("DataAlteracao")
                         .HasColumnType("datetime(6)");
 
@@ -353,8 +285,6 @@ namespace Retaguarda.Persistencia.MYSQL
 
                     b.Property<long?>("OrganizacaoId")
                         .HasColumnType("bigint");
-
-                    
 
                     b.Property<long?>("OrganizacaoUnidadeId")
                         .HasColumnType("bigint");
@@ -395,8 +325,6 @@ namespace Retaguarda.Persistencia.MYSQL
                     b.Property<long?>("OrganizacaoId")
                         .HasColumnType("bigint");
 
-                    
-
                     b.Property<long?>("OrganizacaoUnidadeId")
                         .HasColumnType("bigint");
 
@@ -423,27 +351,26 @@ namespace Retaguarda.Persistencia.MYSQL
                     b.Property<DateTime>("DataInsercao")
                         .HasColumnType("datetime(6)");
 
+                    b.Property<string>("Hierarquia")
+                        .IsRequired()
+                        .HasMaxLength(1000)
+                        .HasColumnType("varchar(1000)");
+
                     b.Property<string>("Nome")
                         .IsRequired()
                         .HasMaxLength(200)
                         .HasColumnType("varchar(200)");
 
-                    b.Property<string>("Hierarquia")
-                        .HasMaxLength(1000)
-                        .HasColumnType("varchar(1000)");
-
-                    b.Property<long?>("SetorPaiId")
-                        .HasColumnType("bigint");
-
                     b.Property<long?>("OrganizacaoId")
                         .HasColumnType("bigint");
-
-                    
 
                     b.Property<long?>("OrganizacaoUnidadeId")
                         .HasColumnType("bigint");
 
                     b.Property<long?>("SetorId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long?>("SetorPaiId")
                         .HasColumnType("bigint");
 
                     b.HasKey("Id");
@@ -477,8 +404,6 @@ namespace Retaguarda.Persistencia.MYSQL
 
                     b.Property<long?>("OrganizacaoId")
                         .HasColumnType("bigint");
-
-                    
 
                     b.Property<long?>("OrganizacaoUnidadeId")
                         .HasColumnType("bigint");
@@ -515,8 +440,6 @@ namespace Retaguarda.Persistencia.MYSQL
 
                     b.Property<long?>("OrganizacaoId")
                         .HasColumnType("bigint");
-
-                    
 
                     b.Property<long?>("OrganizacaoUnidadeId")
                         .HasColumnType("bigint");
@@ -558,8 +481,6 @@ namespace Retaguarda.Persistencia.MYSQL
                     b.Property<long?>("OrganizacaoId")
                         .HasColumnType("bigint");
 
-                    
-
                     b.Property<long?>("OrganizacaoUnidadeId")
                         .HasColumnType("bigint");
 
@@ -597,8 +518,6 @@ namespace Retaguarda.Persistencia.MYSQL
                     b.Property<long?>("OrganizacaoId")
                         .HasColumnType("bigint");
 
-                    
-
                     b.Property<long?>("OrganizacaoUnidadeId")
                         .HasColumnType("bigint");
 
@@ -635,8 +554,6 @@ namespace Retaguarda.Persistencia.MYSQL
                     b.Property<long?>("OrganizacaoId")
                         .HasColumnType("bigint");
 
-                    
-
                     b.Property<long?>("OrganizacaoUnidadeId")
                         .HasColumnType("bigint");
 
@@ -650,8 +567,8 @@ namespace Retaguarda.Persistencia.MYSQL
 
                     b.HasIndex("OrganizacaoId");
 
-                    b.HasIndex("PerfilId");
-                    b.HasIndex(new[] { "PerfilId", "Nome" }).IsUnique();
+                    b.HasIndex("PerfilId", "Nome")
+                        .IsUnique();
 
                     b.ToTable("PerfilPermissoes", (string)null);
                 });
@@ -674,8 +591,6 @@ namespace Retaguarda.Persistencia.MYSQL
                     b.Property<long?>("OrganizacaoId")
                         .HasColumnType("bigint");
 
-                    
-
                     b.Property<long?>("OrganizacaoUnidadeId")
                         .HasColumnType("bigint");
 
@@ -697,6 +612,57 @@ namespace Retaguarda.Persistencia.MYSQL
                     b.ToTable("PerfilUsuarios", (string)null);
                 });
 
+            modelBuilder.Entity("Retaguarda.Dominio.Entidades.Pessoa", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    b.Property<bool>("Ativo")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<DateTime?>("DataAlteracao")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<DateTime>("DataInsercao")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("Documento")
+                        .HasMaxLength(100)
+                        .HasColumnType("varchar(100)");
+
+                    b.Property<string>("Email")
+                        .HasMaxLength(200)
+                        .HasColumnType("varchar(200)");
+
+                    b.Property<string>("Nome")
+                        .IsRequired()
+                        .HasMaxLength(300)
+                        .HasColumnType("varchar(300)");
+
+                    b.Property<long?>("OrganizacaoId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long?>("OrganizacaoUnidadeId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long?>("SetorId")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("Telefone")
+                        .HasMaxLength(50)
+                        .HasColumnType("varchar(50)");
+
+                    b.Property<string>("TipoPessoaChave")
+                        .IsRequired()
+                        .HasMaxLength(8)
+                        .HasColumnType("varchar(8)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Pessoas", (string)null);
+                });
+
             modelBuilder.Entity("Retaguarda.Dominio.Entidades.SetorUsuario", b =>
                 {
                     b.Property<long>("Id")
@@ -715,16 +681,16 @@ namespace Retaguarda.Persistencia.MYSQL
                     b.Property<bool>("HabilitarPermissoesNegativas")
                         .HasColumnType("tinyint(1)");
 
-                    b.Property<bool>("Padrao")
-                        .HasColumnType("tinyint(1)");
-
                     b.Property<long?>("OrganizacaoId")
                         .HasColumnType("bigint");
 
-                    
-
                     b.Property<long?>("OrganizacaoUnidadeId")
                         .HasColumnType("bigint");
+
+                    b.Property<bool>("Padrao")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("tinyint(1)")
+                        .HasDefaultValue(false);
 
                     b.Property<long>("SetorId")
                         .HasColumnType("bigint");
@@ -763,8 +729,6 @@ namespace Retaguarda.Persistencia.MYSQL
 
                     b.Property<long?>("OrganizacaoId")
                         .HasColumnType("bigint");
-
-                    
 
                     b.Property<long?>("OrganizacaoUnidadeId")
                         .HasColumnType("bigint");
@@ -813,19 +777,26 @@ namespace Retaguarda.Persistencia.MYSQL
                     b.Property<long?>("OrganizacaoId")
                         .HasColumnType("bigint");
 
-                    
-
                     b.Property<long?>("OrganizacaoUnidadeId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long?>("PessoaId")
                         .HasColumnType("bigint");
 
                     b.Property<string>("SenhaHash")
                         .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.Property<long?>("PessoaId")
+                    b.Property<long?>("SetorId")
                         .HasColumnType("bigint");
 
-                    b.Property<long?>("SetorId")
+                    b.Property<long?>("UltimoAcessoOrganizacaoId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long?>("UltimoAcessoOrganizacaoUnidadeId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long?>("UltimoAcessoSetorId")
                         .HasColumnType("bigint");
 
                     b.Property<string>("Username")
@@ -835,6 +806,7 @@ namespace Retaguarda.Persistencia.MYSQL
                     b.HasKey("Id");
 
                     b.HasIndex("OrganizacaoId");
+
                     b.HasIndex("PessoaId");
 
                     b.ToTable("Usuarios", (string)null);
@@ -937,6 +909,8 @@ namespace Retaguarda.Persistencia.MYSQL
                         .OnDelete(DeleteBehavior.Restrict);
 
                     b.Navigation("Organizacao");
+
+                    b.Navigation("SetorPai");
                 });
 
             modelBuilder.Entity("Retaguarda.Dominio.Entidades.OrganizacaoUnidade", b =>
@@ -1049,6 +1023,8 @@ namespace Retaguarda.Persistencia.MYSQL
                         .OnDelete(DeleteBehavior.SetNull);
 
                     b.Navigation("Organizacao");
+
+                    b.Navigation("Pessoa");
                 });
 
             modelBuilder.Entity("Retaguarda.Dominio.Entidades.Organizacao", b =>

@@ -1,0 +1,12 @@
+{
+  "logradouroCadastro": {
+    "tipo": "TELA_CADASTRO",
+    "titulo": "Cadastro de Logradouro",
+    "extremidade": "/api/logradouros",
+    "itens": [
+      { "campo": "tipo", "label": "Tipo", "tipo": "text", "col": 3 },
+      { "campo": "nome", "label": "Nome", "tipo": "text", "col": 6 },
+      { "campo": "bairroId", "label": "Bairro", "tipo": "select", "url": "/api/bairros", "col": 3 }
+    ]
+  }
+}

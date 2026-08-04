@@ -1,0 +1,11 @@
+{
+  "bairrosCadastro": {
+    "tipo": "TELA_CADASTRO",
+    "titulo": "Cadastro de Bairro",
+    "extremidade": "/api/bairros",
+    "itens": [
+      { "campo": "nome", "label": "Nome", "tipo": "text", "col": 8 },
+      { "campo": "municipioId", "label": "Município", "tipo": "select", "url": "/api/municipios", "col": 4 }
+    ]
+  }
+}

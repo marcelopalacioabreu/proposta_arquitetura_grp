@@ -63,11 +63,41 @@
       "grupo": "Endereçamento",
       "itens": [
         {
+          "chave": "enderecos.enderecos", "texto": "Endereços", "icone": "house", "url": "/painel/enderecos",
+          "permissoes": [
+            { "id": "enderecos.visualizar", "texto": "Visualizar" },
+            { "id": "enderecos.editar", "texto": "Criar/Editar" },
+            { "id": "enderecos.excluir", "texto": "Excluir" }
+          ],
+          "conflitosCom": [""],
+          "mostrarNoMenu": true
+        },
+        {
+          "chave": "enderecos.ceps", "texto": "CEPs", "icone": "barcode", "url": "/painel/enderecos/ceps",
+          "permissoes": [
+            { "id": "ceps.visualizar", "texto": "Visualizar" },
+            { "id": "ceps.editar", "texto": "Criar/Editar" },
+            { "id": "ceps.excluir", "texto": "Excluir" }
+          ],
+          "conflitosCom": [""],
+          "mostrarNoMenu": true
+        },
+        {
           "chave": "enderecos.bairros", "texto": "Bairros", "icone": "geo-alt", "url": "/painel/enderecos/bairros",
           "permissoes": [
             { "id": "bairros.visualizar", "texto": "Visualizar" },
             { "id": "bairros.editar", "texto": "Criar/Editar" },
             { "id": "bairros.excluir", "texto": "Excluir" }
+          ],
+          "conflitosCom": [""],
+          "mostrarNoMenu": true
+        },
+        {
+          "chave": "enderecos.logradouros", "texto": "Logradouros", "icone": "map", "url": "/painel/enderecos/logradouros",
+          "permissoes": [
+            { "id": "logradouros.visualizar", "texto": "Visualizar" },
+            { "id": "logradouros.editar", "texto": "Criar/Editar" },
+            { "id": "logradouros.excluir", "texto": "Excluir" }
           ],
           "conflitosCom": [""],
           "mostrarNoMenu": true
@@ -80,34 +110,34 @@
             { "id": "municipios.excluir", "texto": "Excluir" }
           ],
           "conflitosCom": [""],
-          "mostrarNoMenu": false
+          "mostrarNoMenu": true
         },
         {
-          "chave": "enderecos.logradouros", "texto": "Logradouros", "icone": "map", "url": "/painel/enderecos/logradouros",
+          "chave": "enderecos.ufs", "texto": "UFs", "icone": "signpost-split", "url": "/painel/enderecos/ufs",
           "permissoes": [
-            { "id": "logradouros.visualizar", "texto": "Visualizar" },
-            { "id": "logradouros.editar", "texto": "Criar/Editar" },
-            { "id": "logradouros.excluir", "texto": "Excluir" }
+            { "id": "ufs.visualizar", "texto": "Visualizar" },
+            { "id": "ufs.editar", "texto": "Criar/Editar" },
+            { "id": "ufs.excluir", "texto": "Excluir" }
           ],
           "conflitosCom": [""],
-          "mostrarNoMenu": false
+          "mostrarNoMenu": true
         },
         {
-          "chave": "enderecos.ceps", "texto": "CEPs", "icone": "barcode", "url": "/painel/enderecos/ceps",
+          "chave": "enderecos.paises", "texto": "Países", "icone": "globe", "url": "/painel/enderecos/paises",
           "permissoes": [
-            { "id": "ceps.visualizar", "texto": "Visualizar" },
-            { "id": "ceps.editar", "texto": "Criar/Editar" },
-            { "id": "ceps.excluir", "texto": "Excluir" }
+            { "id": "paises.visualizar", "texto": "Visualizar" },
+            { "id": "paises.editar", "texto": "Criar/Editar" },
+            { "id": "paises.excluir", "texto": "Excluir" }
           ],
           "conflitosCom": [""],
-          "mostrarNoMenu": false
+          "mostrarNoMenu": true
         },
         {
-          "chave": "enderecos.enderecos", "texto": "Endereços", "icone": "house", "url": "/painel/enderecos",
+          "chave": "enderecos.imoveis", "texto": "Imóveis", "icone": "house-door", "url": "/painel/enderecos/imoveis",
           "permissoes": [
-            { "id": "enderecos.visualizar", "texto": "Visualizar" },
-            { "id": "enderecos.editar", "texto": "Criar/Editar" },
-            { "id": "enderecos.excluir", "texto": "Excluir" }
+            { "id": "imoveis.visualizar", "texto": "Visualizar" },
+            { "id": "imoveis.editar", "texto": "Criar/Editar" },
+            { "id": "imoveis.excluir", "texto": "Excluir" }
           ],
           "conflitosCom": [""],
           "mostrarNoMenu": true

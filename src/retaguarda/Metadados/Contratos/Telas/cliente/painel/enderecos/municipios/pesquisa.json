@@ -1,0 +1,13 @@
+{
+  "municipioPesquisa": {
+    "tipo": "TELA_PESQUISA",
+    "titulo": "Pesquisa de Municípios",
+    "extremidade": "/api/municipios",
+    "itens": [
+      { "campo": "nome", "label": "Nome", "tipo": "text", "col": 8 },
+      { "campo": "codigoIbge", "label": "Código IBGE", "tipo": "text", "col": 4 }
+    ],
+    "filtro": [ { "campo": "nome", "descricao": "Nome", "tipo": "string" } ],
+    "tabela": { "colunas": [ { "campo": "nome", "titulo": "Nome" }, { "campo": "codigoIbge", "titulo": "Código IBGE" } ], "acoes": [ { "tipo": "navegacao", "destino": "/painel/enderecos/municipios/editar/{id}", "icone": "pencil" } ], "pagination": { "pageSize": 10 } }
+  }
+}

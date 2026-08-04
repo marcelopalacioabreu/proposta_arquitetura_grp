@@ -1,0 +1,22 @@
+{
+  "ufPesquisa": {
+    "tipo": "TELA_PESQUISA",
+    "titulo": "Pesquisa de UFs",
+    "extremidade": "/api/ufs",
+    "itens": [
+      { "campo": "nome", "label": "Nome", "tipo": "text", "col": 6 },
+      { "campo": "sigla", "label": "Sigla", "tipo": "text", "col": 6 }
+    ],
+    "filtro": [
+      { "campo": "nome", "descricao": "Nome", "tipo": "string" }
+    ],
+    "tabela": {
+      "colunas": [
+        { "campo": "nome", "titulo": "Nome" },
+        { "campo": "sigla", "titulo": "Sigla" }
+      ],
+      "acoes": [ { "tipo": "navegacao", "destino": "/painel/enderecos/ufs/editar/{id}", "icone": "pencil" } ],
+      "pagination": { "pageSize": 10 }
+    }
+  }
+}
