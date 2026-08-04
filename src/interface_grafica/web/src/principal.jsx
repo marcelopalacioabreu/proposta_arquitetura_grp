@@ -38,6 +38,10 @@ function App(){
         <Route path='usuarios/editar/:id' element={<TelaCadastro screenKey={'usuarioCadastro'} />} />
         <Route path='perfis' element={<TelaPesquisa screenKey={'perfilPesquisa'} />} />
         <Route path='perfis/editar/:id' element={<TelaCadastro screenKey={'perfilCadastro'} />} />
+        <Route path='enderecos' element={<TelaPesquisa screenKey={'enderecosPesquisa'} />} />
+        <Route path='enderecos/editar/:id' element={<TelaCadastro screenKey={'enderecosCadastro'} />} />
+        <Route path='enderecos/bairros' element={<TelaPesquisa screenKey={'bairrosPesquisa'} />} />
+        <Route path='enderecos/bairros/editar/:id' element={<TelaCadastro screenKey={'bairrosCadastro'} />} />
         <Route index element={<InicioPainel/>} />
       </Route>
       <Route path='*' element={<Navigate to='/' replace />} />

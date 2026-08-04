@@ -1,0 +1,25 @@
+{
+  "bairrosPesquisa": {
+    "tipo": "TELA_PESQUISA",
+    "titulo": "Pesquisa de Bairros",
+    "extremidade": "/api/bairros",
+    "itens": [
+      { "campo": "nome", "label": "Nome", "tipo": "text", "col": 6 },
+      { "campo": "municipioNome", "label": "Município", "tipo": "text", "col": 6 }
+    ],
+    "filtro": [
+      { "campo": "nome", "descricao": "Nome", "tipo": "string" },
+      { "campo": "municipioId", "descricao": "Município", "tipo": "number" }
+    ],
+    "tabela": {
+      "colunas": [
+        { "campo": "nome", "titulo": "Nome" },
+        { "campo": "municipioNome", "titulo": "Município" }
+      ],
+      "acoes": [
+        { "tipo": "navegacao", "destino": "/painel/enderecos/bairros/editar/{id}", "icone": "pencil" }
+      ],
+      "pagination": { "pageSize": 10 }
+    }
+  }
+}

@@ -1,0 +1,27 @@
+{
+  "enderecosPesquisa": {
+    "tipo": "TELA_PESQUISA",
+    "titulo": "Pesquisa de Endereços",
+    "extremidade": "/api/enderecos",
+    "itens": [
+      { "campo": "logradouro", "label": "Logradouro", "tipo": "text", "col": 6 },
+      { "campo": "numero", "label": "Número", "tipo": "text", "col": 2 },
+      { "campo": "bairroNome", "label": "Bairro", "tipo": "text", "col": 4 }
+    ],
+    "filtro": [
+      { "campo": "logradouro", "descricao": "Logradouro", "tipo": "string" },
+      { "campo": "bairro", "descricao": "Bairro", "tipo": "string" }
+    ],
+    "tabela": {
+      "colunas": [
+        { "campo": "logradouro", "titulo": "Logradouro" },
+        { "campo": "numero", "titulo": "Número" },
+        { "campo": "bairroNome", "titulo": "Bairro" }
+      ],
+      "acoes": [
+        { "tipo": "navegacao", "destino": "/painel/enderecos/editar/{id}", "icone": "pencil" }
+      ],
+      "pagination": { "pageSize": 10 }
+    }
+  }
+}

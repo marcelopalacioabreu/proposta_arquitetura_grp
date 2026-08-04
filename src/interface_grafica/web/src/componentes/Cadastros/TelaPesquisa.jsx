@@ -119,6 +119,7 @@ export default function TelaPesquisa({ screenKey }){
   useEffect(()=>{
     api.get('/meta/screens', { block: true }).then(r=>{
       const s = r.data[screenKey]
+      console.log('TelaPesquisa meta loaded', screenKey, s)
       setMeta(s)
     })
   },[screenKey])
