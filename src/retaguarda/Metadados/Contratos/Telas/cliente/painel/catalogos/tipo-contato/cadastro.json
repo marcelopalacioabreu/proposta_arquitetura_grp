@@ -1,0 +1,11 @@
+{
+  "tipoContatoCadastro": {
+    "tipo": "TELA_CADASTRO",
+    "titulo": "Tipo de Contato",
+    "extremidade": "/api/tiposcontato",
+    "itens": [
+      { "campo": "codigo", "label": "Código", "tipo": "text", "col": 4 },
+      { "campo": "nome", "label": "Nome", "tipo": "text", "col": 8 }
+    ]
+  }
+}

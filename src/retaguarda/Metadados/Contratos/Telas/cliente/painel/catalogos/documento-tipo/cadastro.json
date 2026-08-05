@@ -1,0 +1,11 @@
+{
+  "documentoTipoCadastro": {
+    "tipo": "TELA_CADASTRO",
+    "titulo": "Tipo de Documento",
+    "extremidade": "/api/documentotipos",
+    "itens": [
+      { "campo": "codigo", "label": "Código", "tipo": "text", "col": 4 },
+      { "campo": "nome", "label": "Nome", "tipo": "text", "col": 8 }
+    ]
+  }
+}

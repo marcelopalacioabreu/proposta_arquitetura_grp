@@ -1,0 +1,17 @@
+{
+  "tipoImovelPesquisa": {
+    "titulo": "Pesquisa de Tipos de Imóvel",
+    "extremidade": "/api/tiposimovel",
+    "tabela": {
+      "colunas": [
+        { "campo": "codigo", "titulo": "Código" },
+        { "campo": "nome", "titulo": "Nome" }
+      ],
+      "acoes": [
+        { "tipo": "navegacao", "destino": "/painel/catalogos/tipo-imovel/editar/{id}", "campo_id": "id", "icone": "pencil" },
+        { "tipo": "confirmacao_delete_ajax", "destino": "/api/tiposimovel/{id}", "campo_id": "id", "icone": "trash" }
+      ],
+      "pagination": { "pageSize": 10 }
+    }
+  }
+}

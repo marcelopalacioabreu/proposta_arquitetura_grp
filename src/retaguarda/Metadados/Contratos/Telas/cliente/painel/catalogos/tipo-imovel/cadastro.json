@@ -1,0 +1,11 @@
+{
+  "tipoImovelCadastro": {
+    "tipo": "TELA_CADASTRO",
+    "titulo": "Tipo de Imóvel",
+    "extremidade": "/api/tiposimovel",
+    "itens": [
+      { "campo": "codigo", "label": "Código", "tipo": "text", "col": 4 },
+      { "campo": "nome", "label": "Nome", "tipo": "text", "col": 8 }
+    ]
+  }
+}

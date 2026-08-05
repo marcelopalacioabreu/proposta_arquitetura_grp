@@ -1,5 +1,90 @@
 {
-  "modulos": [
+  "modulos": [    
+    {
+      "grupo": "Definições",
+      "itens": [
+        { 
+          "chave": "catalogos.nivelgov", "texto": "Nível de Governo", "icone": "diagram-3", "url": "/painel/catalogos/nivel-governo", 
+          "permissoes": [ 
+          { "id": "nivelgov.visualizar", "texto": "Visualizar" },
+          { "id": "nivelgov.editar", "texto": "Criar/Editar" },
+          { "id": "nivelgov.excluir", "texto": "Excluir" } 
+          ], 
+          "conflitosCom": [""], 
+          "mostrarNoMenu": true 
+        },
+        { 
+          "chave": "catalogos.natureza_juridica", "texto": "Natureza Jurídica", "icone": "briefcase", "url": "/painel/catalogos/natureza-juridica", 
+          "permissoes": [ 
+          { "id": "natureza.visualizar", "texto": "Visualizar" },
+          { "id": "natureza.editar", "texto": "Criar/Editar" },
+          { "id": "natureza.excluir", "texto": "Excluir" } 
+          ], 
+          "conflitosCom": [""], 
+          "mostrarNoMenu": true 
+        },
+        { 
+          "chave": "catalogos.tipo_unidade", "texto": "Tipo de Unidade", "icone": "grid", "url": "/painel/catalogos/tipo-unidade", 
+          "permissoes": [ 
+          { "id": "tipoUnidade.visualizar", "texto": "Visualizar" },
+          { "id": "tipoUnidade.editar", "texto": "Criar/Editar" },
+          { "id": "tipoUnidade.excluir", "texto": "Excluir" } 
+          ], 
+          "conflitosCom": [""], 
+          "mostrarNoMenu": true 
+        },
+        { 
+          "chave": "catalogos.tipo_endereco", "texto": "Tipo de Endereço", "icone": "geo", "url": "/painel/catalogos/tipo-endereco", 
+          "permissoes": [ 
+          { "id": "tipoEndereco.visualizar", "texto": "Visualizar" },
+          { "id": "tipoEndereco.editar", "texto": "Criar/Editar" },
+          { "id": "tipoEndereco.excluir", "texto": "Excluir" } 
+          ], 
+          "conflitosCom": [""], 
+          "mostrarNoMenu": true 
+        },
+        { 
+          "chave": "catalogos.tipo_contato", "texto": "Tipo de Contato", "icone": "telephone", "url": "/painel/catalogos/tipo-contato", 
+          "permissoes": [ 
+          { "id": "tipoContato.visualizar", "texto": "Visualizar" },
+          { "id": "tipoContato.editar", "texto": "Criar/Editar" },
+          { "id": "tipoContato.excluir", "texto": "Excluir" } 
+          ], 
+          "conflitosCom": [""], 
+          "mostrarNoMenu": true 
+        },
+        { 
+          "chave": "catalogos.documento_tipo", "texto": "Tipo de Documento", "icone": "file-earmark-text", "url": "/painel/catalogos/documento-tipo", 
+          "permissoes": [ 
+          { "id": "documentoTipo.visualizar", "texto": "Visualizar" },
+          { "id": "documentoTipo.editar", "texto": "Criar/Editar" },
+          { "id": "documentoTipo.excluir", "texto": "Excluir" } 
+          ], 
+          "conflitosCom": [""], 
+          "mostrarNoMenu": true 
+        },
+        { 
+          "chave": "catalogos.tipo_imovel", "texto": "Tipo de Imóvel", "icone": "house", "url": "/painel/catalogos/tipo-imovel", 
+          "permissoes": [ 
+          { "id": "tipoImovel.visualizar", "texto": "Visualizar" },
+          { "id": "tipoImovel.editar", "texto": "Criar/Editar" },
+          { "id": "tipoImovel.excluir", "texto": "Excluir" } 
+          ], 
+          "conflitosCom": [""], 
+          "mostrarNoMenu": true 
+        },
+        { 
+          "chave": "catalogos.situacao", "texto": "Situações", "icone": "exclamation-triangle", "url": "/painel/catalogos/situacoes", 
+          "permissoes": [ 
+          { "id": "situacao.visualizar", "texto": "Visualizar" },
+          { "id": "situacao.editar", "texto": "Criar/Editar" },
+          { "id": "situacao.excluir", "texto": "Excluir" } 
+          ], 
+          "conflitosCom": [""], 
+          "mostrarNoMenu": true 
+        }
+      ]
+    },
     {
       "grupo": "Administração",
       "itens": [

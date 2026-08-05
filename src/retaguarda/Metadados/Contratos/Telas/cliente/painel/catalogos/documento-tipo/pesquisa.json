@@ -1,0 +1,17 @@
+{
+  "documentoTipoPesquisa": {
+    "titulo": "Pesquisa de Tipos de Documento",
+    "extremidade": "/api/documentotipos",
+    "tabela": {
+      "colunas": [
+        { "campo": "codigo", "titulo": "Código" },
+        { "campo": "nome", "titulo": "Nome" }
+      ],
+      "acoes": [
+        { "tipo": "navegacao", "destino": "/painel/catalogos/documento-tipo/editar/{id}", "campo_id": "id", "icone": "pencil" },
+        { "tipo": "confirmacao_delete_ajax", "destino": "/api/documentotipos/{id}", "campo_id": "id", "icone": "trash" }
+      ],
+      "pagination": { "pageSize": 10 }
+    }
+  }
+}

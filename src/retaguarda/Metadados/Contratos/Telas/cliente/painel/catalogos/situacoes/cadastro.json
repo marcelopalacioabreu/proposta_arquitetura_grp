@@ -1,0 +1,11 @@
+{
+  "situacaoCadastro": {
+    "tipo": "TELA_CADASTRO",
+    "titulo": "Situação",
+    "extremidade": "/api/situacoes",
+    "itens": [
+      { "campo": "codigo", "label": "Código", "tipo": "text", "col": 4 },
+      { "campo": "nome", "label": "Nome", "tipo": "text", "col": 8 }
+    ]
+  }
+}

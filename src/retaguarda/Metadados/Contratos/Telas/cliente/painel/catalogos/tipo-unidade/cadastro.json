@@ -1,0 +1,11 @@
+{
+  "tipoUnidadeCadastro": {
+    "tipo": "TELA_CADASTRO",
+    "titulo": "Tipo de Unidade",
+    "extremidade": "/api/tiposunidade",
+    "itens": [
+      { "campo": "codigo", "label": "Código", "tipo": "text", "col": 4 },
+      { "campo": "nome", "label": "Nome", "tipo": "text", "col": 8 }
+    ]
+  }
+}
