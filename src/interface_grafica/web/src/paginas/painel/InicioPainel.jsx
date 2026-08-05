@@ -22,6 +22,14 @@ export default function InicioPainel(){
   const atividades = dashboard?.atividades || []
   const atalhos = dashboard?.atalhos || [ { label:'Organizações', path:'/painel/organizacoes', variant:'primary' }, { label:'Usuários', path:'/painel/usuarios', variant:'secondary' }, { label:'Perfis', path:'/painel/perfis', variant:'secondary' } ]
 
+  const iconFor = (label) => {
+    const key = (label || '').toLowerCase()
+    if (key.includes('organiza')) return 'bi-building'
+    if (key.includes('usuário') || key.includes('usuario') || key.includes('usuários') || key.includes('usuarios')) return 'bi-people'
+    if (key.includes('perfil')) return 'bi-shield-lock'
+    return 'bi-grid-3x3-gap'
+  }
+
   return (
     <div className="page-wrapper">
       <div className="page-card w-100">
@@ -76,9 +84,12 @@ export default function InicioPainel(){
           <div className="col-md-4">
             <div className="p-3 bg-white border rounded mb-3">
               <h6>Atalhos</h6>
-              <div className="d-grid gap-2">
+              <div className="d-flex flex-column gap-2 align-items-start dashboard-shortcuts">
                 {atalhos.map((at, i) => (
-                  <Link key={i} to={at.path} className={`btn btn-sm btn-${at.variant === 'primary' ? 'primary' : 'outline-secondary'}`}>{at.label}</Link>
+                  <Link key={i} to={at.path} className={`btn btn-sm ${at.variant === 'primary' ? 'btn-primary' : 'btn-outline-secondary'} text-start px-3 d-inline-flex align-items-center`}>
+                    <i className={`bi ${iconFor(at.label)} me-2`} aria-hidden="true" />
+                    <span>{at.label}</span>
+                  </Link>
                 ))}
               </div>
             </div>
