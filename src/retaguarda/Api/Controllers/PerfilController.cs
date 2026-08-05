@@ -34,6 +34,12 @@ namespace Retaguarda.Api.Controllers
         {
             var p = _db.Perfis.Find(id);
             if (p == null) return NotFoundError("Registro não encontrado");
+            // Debug log: record requested id and returned entity values to help trace mismatches
+            try
+            {
+                System.Console.WriteLine($"PerfilController.Get requested id={id} -> returned Perfil.Id={p.Id} AdministradorDoSistema={p.AdministradorDoSistema}");
+            }
+            catch { /* ignore logging errors */ }
             var permissoes = _db.PerfilPermissoes.Where(x => x.PerfilId == id && x.Ativo).Select(x => x.Nome).ToList();
             return OkData(new { perfil = p, permissoes });
         }

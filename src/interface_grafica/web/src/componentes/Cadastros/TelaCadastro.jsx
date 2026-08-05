@@ -134,7 +134,11 @@ export default function TelaCadastro({ screenKey, closeModal }){
     if (params.id && params.id !== 'new'){
       const endpoint = obterEndpointCadastro(meta)
       if (!endpoint){ console.error('TelaCadastro: endpoint não definido nos metadados para', screenKey); return }
-      api.get(`${endpoint}/${params.id}`, { block: true }).then(r=> setModel(r.data)).catch(()=>{})
+      console.debug('Fetching model for', endpoint, 'id=', params.id)
+      api.get(`${endpoint}/${params.id}`, { block: true }).then(r=>{
+        console.debug('Fetched model payload', r.data)
+        setModel(r.data)
+      }).catch((e)=>{ console.error('Error fetching model', e) })
     }
   },[meta, params.id])
 
@@ -142,12 +146,22 @@ export default function TelaCadastro({ screenKey, closeModal }){
 
   function getFieldValue(modelObj, campo){
     if (!modelObj) return undefined
-    // direct
+    // direct (case-sensitive)
     if (Object.prototype.hasOwnProperty.call(modelObj, campo)) return modelObj[campo]
-    // try one-level nested objects: perfil, data, etc.
+    // direct (case-insensitive)
+    const lowerCampo = String(campo).toLowerCase()
+    for (const k of Object.keys(modelObj)){
+      if (String(k).toLowerCase() === lowerCampo) return modelObj[k]
+    }
+    // try one-level nested objects: perfil, data, etc. (case-insensitive)
     for (const k of Object.keys(modelObj)){
       const v = modelObj[k]
-      if (v && typeof v === 'object' && Object.prototype.hasOwnProperty.call(v, campo)) return v[campo]
+      if (v && typeof v === 'object'){
+        if (Object.prototype.hasOwnProperty.call(v, campo)) return v[campo]
+        for (const nk of Object.keys(v)){
+          if (String(nk).toLowerCase() === lowerCampo) return v[nk]
+        }
+      }
     }
     return undefined
   }
@@ -178,7 +192,8 @@ export default function TelaCadastro({ screenKey, closeModal }){
         <label className="form-label">{c.label}</label>
         {c.tipo === 'checkbox' ? (
           <div className="form-check">
-            <input name={c.campo} defaultChecked={valor ?? true} className={`form-check-input ${erro ? 'is-invalid' : ''}`} type="checkbox" />
+              {/* Use a key tied to the resolved value so the input is remounted when model is loaded */}
+              <input key={`${c.campo}_${String(Boolean(valor))}`} name={c.campo} defaultChecked={Boolean(valor)} className={`form-check-input ${erro ? 'is-invalid' : ''}`} type="checkbox" />
             <label className="form-check-label">{c.label}</label>
             {erro && <div className="invalid-feedback">{erro}</div>}
           </div>
@@ -277,6 +292,15 @@ export default function TelaCadastro({ screenKey, closeModal }){
           const c = it
           return renderCampo(c, `single-${idx}`)
         })}
+
+        {/* Debug panel - temporary: show model and resolved admin flag */}
+        <div className="col-12 mt-3">
+          <details>
+            <summary>DEBUG: model / resolved fields</summary>
+            <pre style={{maxHeight:300, overflow:'auto'}}>{JSON.stringify(model, null, 2)}</pre>
+            <div>resolved administradorDoSistema: {String(getFieldValue(model, 'administradorDoSistema'))}</div>
+          </details>
+        </div>
 
         {Object.keys(errors).length > 0 && <div className="col-12"><div className="alert alert-danger">Corrija os erros no formulário.</div></div>}
         <div className="col-12">
