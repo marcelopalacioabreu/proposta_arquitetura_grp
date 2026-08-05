@@ -76,7 +76,27 @@ export default function TelaCadastro({ screenKey, closeModal }){
         obj[k] = v
       }
     }
-    return obj
+      // Normalize checkbox values to boolean based on meta definitions when available
+      try{
+        if (meta && Array.isArray(meta.itens)){
+          const normalizeField = (c) => {
+            if (!c || !c.campo) return
+            if (c.tipo === 'checkbox'){
+              // checkbox present in formData -> 'on' or value; absent -> undefined
+              obj[c.campo] = Boolean(obj[c.campo] === 'on' || obj[c.campo] === 'true' || obj[c.campo] === true)
+            }
+          }
+          meta.itens.forEach(it => {
+            if (it.campos && Array.isArray(it.campos)) it.campos.forEach(normalizeField)
+            else normalizeField(it)
+          })
+        }
+      }catch(e){ /* ignore */ }
+
+      // also coerce any remaining 'on' strings to true to be safe
+      Object.keys(obj).forEach(k => { if (obj[k] === 'on') obj[k] = true })
+
+      return obj
   }
 
   // Extrai valores usando meta.urlTela (preferido) ou mapeia camposChaveUrl para segmentos da URL
@@ -120,12 +140,24 @@ export default function TelaCadastro({ screenKey, closeModal }){
 
   const camposChaveValores = meta ? obterValoresCamposChave(meta, location.pathname, params) : {}
 
+  function getFieldValue(modelObj, campo){
+    if (!modelObj) return undefined
+    // direct
+    if (Object.prototype.hasOwnProperty.call(modelObj, campo)) return modelObj[campo]
+    // try one-level nested objects: perfil, data, etc.
+    for (const k of Object.keys(modelObj)){
+      const v = modelObj[k]
+      if (v && typeof v === 'object' && Object.prototype.hasOwnProperty.call(v, campo)) return v[campo]
+    }
+    return undefined
+  }
+
   function renderCampo(c, key){
     // do not render hidden fields here (they are emitted at the top of the form)
     if (c.tipo === 'hidden') return null
 
     const colunaClass = `col-12 col-md-${c.col || 12}`
-    const valor = model[c.campo]
+    const valor = getFieldValue(model, c.campo)
     const erro = errors[c.campo]
     // determine if this campo is driven by URL
     const fromUrl = camposChaveValores && Object.prototype.hasOwnProperty.call(camposChaveValores, c.campo)
@@ -199,12 +231,15 @@ export default function TelaCadastro({ screenKey, closeModal }){
           if (endpoint === '/api/organizacao_unidades' && camposChaveValores.organizacaoId){ createEndpoint = `/api/organizacoes/${camposChaveValores.organizacaoId}/unidades` }
           if (endpoint === '/api/organizacao_unidade_setores' && camposChaveValores.organizacaoUnidadeId){ createEndpoint = `/api/organizacao_unidades/${camposChaveValores.organizacaoUnidadeId}/setores` }
         }catch(e){}
+        console.debug('Submitting create payload', obj)
         await api.post(createEndpoint, obj, { block: true })
       }
       else await api.put(`${endpoint}/${params.id}`, obj, { block: true })
       if (typeof closeModal === 'function') closeModal()
       else navigate('/painel/organizacoes')
     }catch(err){
+      console.error('Save error', err)
+      if (err.response) console.error('Server response', err.response.data)
       if (err.response && err.response.status === 400){
         const data = err.response.data
         if (data && data.errors){
@@ -225,7 +260,7 @@ export default function TelaCadastro({ screenKey, closeModal }){
         <form onSubmit={handleSubmit} className="row g-3">
         {/* hidden inputs first */}
         {hiddenInputs.map((c, hi) => (
-          <input key={`hidden-${hi}`} type="hidden" name={c.campo} value={(camposChaveValores && camposChaveValores[c.campo]) ? camposChaveValores[c.campo] : (model[c.campo] || '')} />
+            <input key={`hidden-${hi}`} type="hidden" name={c.campo} value={(camposChaveValores && camposChaveValores[c.campo]) ? camposChaveValores[c.campo] : (getFieldValue(model,c.campo) || '')} />
         ))}
 
         {meta.itens.map((it, idx) => {
