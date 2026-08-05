@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import api from '../../servicos/api'
 import { useParams, useNavigate, useLocation } from 'react-router-dom'
+import PermissoesModulos from './PermissoesModulos'
 
 function SelectField({ name, value, error, fieldConfig, meta }){
   const [options, setOptions] = useState([])
@@ -67,7 +68,14 @@ export default function TelaCadastro({ screenKey, closeModal }){
 
   function construirObjetoFormulario(formData){
     const obj = {}
-    for (const [k,v] of formData.entries()) obj[k] = v
+    for (const [k,v] of formData.entries()){
+      if (Object.prototype.hasOwnProperty.call(obj, k)){
+        if (!Array.isArray(obj[k])) obj[k] = [obj[k]]
+        obj[k].push(v)
+      } else {
+        obj[k] = v
+      }
+    }
     return obj
   }
 
@@ -121,6 +129,18 @@ export default function TelaCadastro({ screenKey, closeModal }){
     const erro = errors[c.campo]
     // determine if this campo is driven by URL
     const fromUrl = camposChaveValores && Object.prototype.hasOwnProperty.call(camposChaveValores, c.campo)
+    if (c.tipo === 'permissoes_modulos'){
+      const colunaClass = `col-12 col-md-${c.col || 12}`
+      const valor = model[c.campo]
+      const erro = errors[c.campo]
+      return (
+        <div key={key} className={colunaClass}>
+          <label className="form-label">{c.label}</label>
+          <PermissoesModulos name={c.campo} source={c.source} value={valor} error={erro} />
+        </div>
+      )
+    }
+
     return (
       <div key={key} className={colunaClass}>
         <label className="form-label">{c.label}</label>

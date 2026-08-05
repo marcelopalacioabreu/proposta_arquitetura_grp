@@ -23,7 +23,8 @@
         "campos": [
           { "campo": "organizacaoId", "label": "Organização", "tipo": "select", "url": "/api/organizacoes", "col": 4 },
           { "campo": "organizacaoUnidadeId", "label": "Unidade", "tipo": "select", "url": "/api/organizacao_unidades", "col": 4 },
-          { "campo": "setorIds", "label": "Setores (múltiplo)", "tipo": "multiselect", "url": "/api/setores", "col": 4 }
+          { "campo": "setorIds", "label": "Setores (múltiplo)", "tipo": "multiselect", "url": "/api/setores", "col": 4 },
+          { "campo": "perfilIds", "label": "Perfis (múltiplo)", "tipo": "multiselect", "url": "/api/perfis", "col": 4 }
         ]
       }
     ]

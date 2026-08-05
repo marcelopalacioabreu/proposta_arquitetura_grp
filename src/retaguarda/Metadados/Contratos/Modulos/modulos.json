@@ -56,6 +56,17 @@
           "conflitosCom": [""],
           "mostrarNoMenu": true
         }
+        ,
+        {
+          "chave": "perfis", "texto": "Perfis", "icone": "shield-lock", "url": "/painel/perfis",
+          "permissoes": [
+            { "id": "perfis.visualizar", "texto": "Visualizar" },
+            { "id": "perfis.editar", "texto": "Criar/Editar" },
+            { "id": "perfis.excluir", "texto": "Excluir" }
+          ],
+          "conflitosCom": [""],
+          "mostrarNoMenu": true
+        }
       ]
     }
     ,
