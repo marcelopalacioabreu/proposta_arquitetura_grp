@@ -46,8 +46,8 @@ export default function Menu(){
   useEffect(()=>{ setQuery('') },[location.pathname])
 
   const normalizeModulo = (g) => {
-    // Normalize property names and remove entries marked to hide from menu.
-    // Input may use English keys (`items`/`group`) or Portuguese (`itens`/`grupo`).
+    // Normaliza nomes de propriedades e remove entradas marcadas para ocultar do menu.
+    // A entrada pode usar chaves em inglês (`items`/`group`) ou português (`itens`/`grupo`).
     const rawItems = g.itens || g.items || []
     const itens = (g.mostrarNoMenu === false) ? [] : rawItems.filter(i => i.mostrarNoMenu !== false)
     return {
@@ -102,6 +102,11 @@ export default function Menu(){
       <div className={`floating-bar ${compact ? 'compact' : 'expanded'}`}>
         <div className="floating-buttons d-flex flex-column">
           <div className="menu-panel">
+            <div className="toggle-tab">
+              <button className="btn btn-outline-secondary btn-sm toggle-compact" onClick={()=> setCompact(c=>!c)} title={compact ? 'Expandir barra' : 'Compactar barra'}>
+                <i className={`bi bi-${compact ? 'chevron-bar-right' : 'chevron-bar-left'}`}></i>
+              </button>
+            </div>
             <div className={`p-2 ${compact ? 'compact-body' : ''}`}>
               {!compact ? (
                 <>
@@ -135,11 +140,7 @@ export default function Menu(){
             </div>
           </div>
 
-          <div className="mt-auto d-flex justify-content-center w-100">
-            <button className="btn btn-outline-secondary btn-sm toggle-compact" onClick={()=> setCompact(c=>!c)} title={compact ? 'Expandir barra' : 'Compactar barra'}>
-              <i className={`bi bi-${compact ? 'chevron-bar-right' : 'chevron-bar-left'}`}></i>
-            </button>
-          </div>
+          
         </div>
       </div>
     </>
