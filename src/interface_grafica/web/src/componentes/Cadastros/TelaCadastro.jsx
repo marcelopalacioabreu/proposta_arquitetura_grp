@@ -294,6 +294,7 @@ export default function TelaCadastro({ screenKey, closeModal }){
         })}
 
         {/* Debug panel - temporary: show model and resolved admin flag */}
+        {/*
         <div className="col-12 mt-3">
           <details>
             <summary>DEBUG: model / resolved fields</summary>
@@ -301,6 +302,7 @@ export default function TelaCadastro({ screenKey, closeModal }){
             <div>resolved administradorDoSistema: {String(getFieldValue(model, 'administradorDoSistema'))}</div>
           </details>
         </div>
+        */}
 
         {Object.keys(errors).length > 0 && <div className="col-12"><div className="alert alert-danger">Corrija os erros no formulário.</div></div>}
         <div className="col-12">

@@ -2,6 +2,10 @@
   "tipoImovelPesquisa": {
     "titulo": "Pesquisa de Tipos de Imóvel",
     "extremidade": "/api/tiposimovel",
+    "filtro": [
+      { "campo": "codigo", "descricao": "Código", "tipo": "string", "col": 3 },
+      { "campo": "nome", "descricao": "Nome", "tipo": "string", "col": 6 }
+    ],
     "tabela": {
       "colunas": [
         { "campo": "codigo", "titulo": "Código" },
