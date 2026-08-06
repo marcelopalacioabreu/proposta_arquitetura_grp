@@ -4,11 +4,43 @@
     "titulo": "Cadastro de Pessoa",
     "extremidade": "/api/pessoas",
     "itens": [
-      { "campo": "nome", "label": "Nome / Razão Social", "tipo": "text", "col": 8 },
+      { "campo": "nome", "label": "Nome / Razão Social", "tipo": "text", "col": 6 },
+      { "campo": "nomeSocial", "label": "Nome Social", "tipo": "text", "col": 6 },
       { "campo": "tipoPessoaChave", "label": "Tipo", "tipo": "select", "col": 4, "enumeracao": "pessoa.tipos" },
-      { "campo": "documento", "label": "Documento", "tipo": "text", "col": 6 },
-      { "campo": "telefone", "label": "Telefone", "tipo": "text", "col": 3 },
-      { "campo": "email", "label": "E-mail", "tipo": "text", "col": 3 }
+
+      {
+        "titulo": "Documentos e Contatos",
+        "columns": 12,
+        "campos": [
+          { "campo": "cpf", "label": "CPF", "tipo": "text", "col": 4 },
+          { "campo": "documento", "label": "Documento", "tipo": "text", "col": 4 },
+          { "campo": "telefone", "label": "Telefone", "tipo": "text", "col": 4 },
+          { "campo": "email", "label": "E-mail", "tipo": "text", "col": 4 }
+        ]
+      },
+
+      {
+        "titulo": "Dados Pessoais",
+        "columns": 12,
+        "campos": [
+          { "campo": "dataNascimento", "label": "Data de Nascimento", "tipo": "date", "col": 4 },
+          { "campo": "sexoId", "label": "Sexo", "tipo": "select", "url": "/api/sexos", "col": 4 },
+          { "campo": "estadoCivilId", "label": "Estado Civil", "tipo": "select", "url": "/api/estadocivis", "col": 4 },
+          { "campo": "nacionalidadePaisId", "label": "Nacionalidade (País)", "tipo": "select", "url": "/api/paises", "col": 6 },
+          { "campo": "naturalidadeMunicipioId", "label": "Naturalidade (Município)", "tipo": "select", "url": "/api/municipios", "col": 6 }
+        ]
+      },
+
+      {
+        "titulo": "Familiares / Outros",
+        "columns": 12,
+        "campos": [
+          { "campo": "nomeMae", "label": "Nome da Mãe", "tipo": "text", "col": 6 },
+          { "campo": "nomePai", "label": "Nome do Pai", "tipo": "text", "col": 6 },
+          { "campo": "pcd", "label": "Pessoas com deficiência", "tipo": "checkbox", "col": 3 },
+          { "campo": "dataObito", "label": "Data de Óbito", "tipo": "date", "col": 3 }
+        ]
+      }
     ]
   }
 }
