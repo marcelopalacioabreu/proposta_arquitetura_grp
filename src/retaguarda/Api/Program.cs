@@ -1,10 +1,12 @@
 using System.Text;
 using System.Security.Cryptography;
+using System.IO;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using System.Text.Json.Serialization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using Retaguarda.Persistencia.MYSQL;
+using Retaguarda.Persistencia;
 using Retaguarda.Repositorios.Interfaces;
 using Retaguarda.Repositorios;
 using Retaguarda.Servicos.Interfaces;
@@ -14,21 +16,29 @@ using Retaguarda.Api.Authorization;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Persist DataProtection keys in a workspace-level folder so other apps (e.g. PlanejadorFluxo)
+// can share the same key ring and validate cookies/tickets when necessary.
+builder.Services.AddDataProtection()
+    .PersistKeysToFileSystem(new DirectoryInfo(Path.GetFullPath(Path.Combine(builder.Environment.ContentRootPath, "..", "..", "..", "data-protection-keys"))))
+    .SetApplicationName("Retaguarda");
+
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 
-builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
+// Allow selecting the EF provider at runtime via configuration:
+// Persistence:Provider = "Postgres" (default) or "MySql"
+var persistenceProvider = builder.Configuration["Persistence:Provider"] ?? "Postgres";
+// Register persistence, repositories and domain services via centralized configuration helpers
+// These helpers will register the correct DbContext (Postgres/MySQL) and repository/service implementations.
+Retaguarda.Persistencia.Configuracao.RegistrarServices(builder.Services, builder.Configuration);
 
 // Request-scoped atuacao context (organizacao/unidade/setor) populated by middleware
-builder.Services.AddScoped<Retaguarda.Servicos.EscopoEmExecucao>();
+// `AddHttpContextAccessor` is required by `ApplicationDbContext` and other helpers.
 builder.Services.AddHttpContextAccessor();
 
-// DI: repositories and services
-builder.Services.AddScoped<IOrganizacaoRepositorio, OrganizacaoRepositorio>();
-builder.Services.AddScoped<IOrganizacaoServico, OrganizacaoServico>();
-builder.Services.AddScoped<Retaguarda.Repositorios.Interfaces.IUsuarioRepositorio, Retaguarda.Repositorios.UsuarioRepositorio>();
-builder.Services.AddScoped<Retaguarda.Servicos.Interfaces.IUsuarioServico, Retaguarda.Servicos.UsuarioServico>();
-builder.Services.AddScoped<Retaguarda.Servicos.RequisicaoUsuario>();
+// Centralized registration: persistence (DbContext), repositories and domain services
+Retaguarda.Persistencia.Configuracao.RegistrarServices(builder.Services, builder.Configuration);
+Retaguarda.Repositorios.Configuracao.RegistrarServices(builder.Services, builder.Configuration);
+Retaguarda.Servicos.Configuracao.RegistrarServices(builder.Services, builder.Configuration);
 
 // JWT settings
 var jwtKey = builder.Configuration["Jwt:Key"] ?? "change_this_secret_for_prod";
@@ -124,8 +134,7 @@ builder.Services.AddAuthorization(options =>
 
 // Register authorization handler that checks permissions in database
 builder.Services.AddScoped<Microsoft.AspNetCore.Authorization.IAuthorizationHandler, Retaguarda.Api.Authorization.PermissionAuthorizationHandler>();
-// Permission service
-builder.Services.AddScoped<Retaguarda.Servicos.Interfaces.IPermissionService, Retaguarda.Servicos.PermissionService>();
+// Permission service is registered by Retaguarda.Servicos.Configuracao
 
 builder.Services.AddControllers(options =>
 {

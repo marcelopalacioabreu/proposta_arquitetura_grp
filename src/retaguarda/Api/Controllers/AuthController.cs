@@ -58,11 +58,27 @@ namespace Retaguarda.Api.Controllers
 
             if (req.AsCookie)
             {
-                Response.Cookies.Append("access_token", tokenString, new CookieOptions { HttpOnly = true, SameSite = SameSiteMode.Lax });
+                // Cookie configuration is configurable via configuration keys:
+                // Jwt:Cookie:Name, Jwt:Cookie:Domain, Jwt:Cookie:SameSite, Jwt:Cookie:Secure
+                var cookieName = _config["Jwt:Cookie:Name"] ?? "access_token";
+                var cookieDomain = _config["Jwt:Cookie:Domain"];
+                var sameSiteCfg = _config["Jwt:Cookie:SameSite"] ?? "Lax";
+                var secureCfg = _config["Jwt:Cookie:Secure"];
+
+                SameSiteMode sameSite = SameSiteMode.Lax;
+                if (Enum.TryParse<SameSiteMode>(sameSiteCfg, true, out var parsed)) sameSite = parsed;
+
+                var secure = false;
+                if (!string.IsNullOrEmpty(secureCfg) && bool.TryParse(secureCfg, out var parsedSecure)) secure = parsedSecure;
+
+                var cookieOptions = new CookieOptions { HttpOnly = true, SameSite = sameSite, Secure = secure };
+                if (!string.IsNullOrEmpty(cookieDomain)) cookieOptions.Domain = cookieDomain;
+
+                Response.Cookies.Append(cookieName, tokenString, cookieOptions);
                 // Ensure user's UltimoAcesso fields are populated when missing, using user's default setor if available
                 try
                 {
-                    var db = HttpContext.RequestServices.GetService(typeof(Retaguarda.Persistencia.MYSQL.ApplicationDbContext)) as Retaguarda.Persistencia.MYSQL.ApplicationDbContext;
+                    var db = HttpContext.RequestServices.GetService(typeof(Retaguarda.Persistencia.IApplicationDbContext)) as Retaguarda.Persistencia.IApplicationDbContext;
                     if (db != null)
                     {
                         long? setorId = u.UltimoAcessoSetorId;
@@ -136,7 +152,7 @@ namespace Retaguarda.Api.Controllers
             }
 
             // Include permissions summary for the UI
-            var db = HttpContext.RequestServices.GetService(typeof(Retaguarda.Persistencia.MYSQL.ApplicationDbContext)) as Retaguarda.Persistencia.MYSQL.ApplicationDbContext;
+            var db = HttpContext.RequestServices.GetService(typeof(Retaguarda.Persistencia.IApplicationDbContext)) as Retaguarda.Persistencia.IApplicationDbContext;
             var permissoes = new System.Collections.Generic.List<string>();
             var isAdmin = false;
             if (db != null)

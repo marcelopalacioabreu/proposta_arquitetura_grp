@@ -1,7 +1,7 @@
 using System.Linq;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Retaguarda.Persistencia.MYSQL;
+using Retaguarda.Persistencia;
 using Retaguarda.Dominio.Entidades;
 
 namespace Retaguarda.Api.Controllers
@@ -10,9 +10,9 @@ namespace Retaguarda.Api.Controllers
     [Route("api/pessoas")]
     public class PessoaController : BaseController
     {
-        private readonly ApplicationDbContext _db;
+        private readonly Retaguarda.Persistencia.IApplicationDbContext _db;
 
-        public PessoaController(ApplicationDbContext db)
+        public PessoaController(Retaguarda.Persistencia.IApplicationDbContext db)
         {
             _db = db;
         }

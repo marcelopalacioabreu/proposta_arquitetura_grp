@@ -4,11 +4,11 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using Retaguarda.Persistencia.MYSQL;
+using Retaguarda.Persistencia;
 
 #nullable disable
 
-namespace Retaguarda.Persistencia.Migracoes.MYSQL
+namespace Retaguarda.Persistencia.MYSQL.Migracoes
 {
     [DbContext(typeof(ApplicationDbContext))]
     [Migration("000002_UsuarioAuth")]

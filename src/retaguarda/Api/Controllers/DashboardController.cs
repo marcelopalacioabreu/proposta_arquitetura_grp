@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Retaguarda.Persistencia.MYSQL;
+using Retaguarda.Persistencia;
 
 namespace Retaguarda.Api.Controllers
 {
@@ -11,9 +11,9 @@ namespace Retaguarda.Api.Controllers
     [Route("api/dashboard")]
     public class DashboardController : BaseController
     {
-        private readonly ApplicationDbContext _db;
+        private readonly Retaguarda.Persistencia.IApplicationDbContext _db;
 
-        public DashboardController(ApplicationDbContext db)
+        public DashboardController(Retaguarda.Persistencia.IApplicationDbContext db)
         {
             _db = db;
         }

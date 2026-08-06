@@ -2,16 +2,16 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
-using Retaguarda.Persistencia.MYSQL;
+using Retaguarda.Persistencia;
 using Retaguarda.Servicos.Interfaces;
 
 namespace Retaguarda.Servicos
 {
     public class PermissionService : IPermissionService
     {
-        private readonly ApplicationDbContext _db;
+        private readonly Retaguarda.Persistencia.IApplicationDbContext _db;
 
-        public PermissionService(ApplicationDbContext db)
+        public PermissionService(Retaguarda.Persistencia.IApplicationDbContext db)
         {
             _db = db;
         }

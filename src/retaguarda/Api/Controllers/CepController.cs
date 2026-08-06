@@ -1,7 +1,7 @@
 using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Retaguarda.Persistencia.MYSQL;
+using Retaguarda.Persistencia;
 using Retaguarda.Dominio.Entidades;
 
 namespace Retaguarda.Api.Controllers
@@ -10,9 +10,9 @@ namespace Retaguarda.Api.Controllers
     [Route("api/ceps")]
     public class CepController : BaseController
     {
-        private readonly ApplicationDbContext _db;
+        private readonly Retaguarda.Persistencia.IApplicationDbContext _db;
 
-        public CepController(ApplicationDbContext db)
+        public CepController(Retaguarda.Persistencia.IApplicationDbContext db)
         {
             _db = db;
         }

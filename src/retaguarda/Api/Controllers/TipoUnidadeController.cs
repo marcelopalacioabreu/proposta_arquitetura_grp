@@ -1,6 +1,6 @@
 using System.Linq;
 using Microsoft.AspNetCore.Mvc;
-using Retaguarda.Persistencia.MYSQL;
+using Retaguarda.Persistencia;
 using Retaguarda.Dominio.Entidades;
 
 namespace Retaguarda.Api.Controllers
@@ -9,9 +9,9 @@ namespace Retaguarda.Api.Controllers
     [Route("api/tiposunidade")]
     public class TipoUnidadeController : BaseController
     {
-        private readonly ApplicationDbContext _db;
+        private readonly Retaguarda.Persistencia.IApplicationDbContext _db;
 
-        public TipoUnidadeController(ApplicationDbContext db)
+        public TipoUnidadeController(Retaguarda.Persistencia.IApplicationDbContext db)
         {
             _db = db;
         }

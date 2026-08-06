@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
 using Microsoft.EntityFrameworkCore;
-using Retaguarda.Persistencia.MYSQL;
+using Retaguarda.Persistencia;
 
 namespace Retaguarda.Api.Authorization
 {

@@ -4,15 +4,15 @@ using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using Retaguarda.Dominio.Entidades;
 using Retaguarda.Repositorios.Interfaces;
-using Retaguarda.Persistencia.MYSQL;
+using Retaguarda.Persistencia;
 
 namespace Retaguarda.Repositorios
 {
     public class OrganizacaoRepositorio : IOrganizacaoRepositorio
     {
-        private readonly ApplicationDbContext _db;
+        private readonly Retaguarda.Persistencia.IApplicationDbContext _db;
 
-        public OrganizacaoRepositorio(ApplicationDbContext db)
+        public OrganizacaoRepositorio(Retaguarda.Persistencia.IApplicationDbContext db)
         {
             _db = db;
         }

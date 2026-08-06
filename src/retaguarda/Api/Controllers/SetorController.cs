@@ -1,7 +1,7 @@
 using System.Linq;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Retaguarda.Persistencia.MYSQL;
+using Retaguarda.Persistencia;
 using Retaguarda.Dominio.Entidades;
 using Retaguarda.Api.Models;
 
@@ -11,9 +11,9 @@ namespace Retaguarda.Api.Controllers
     [Route("api/setores")]
     public class SetorController : BaseController
     {
-        private readonly ApplicationDbContext _db;
+        private readonly Retaguarda.Persistencia.IApplicationDbContext _db;
 
-        public SetorController(ApplicationDbContext db)
+        public SetorController(Retaguarda.Persistencia.IApplicationDbContext db)
         {
             _db = db;
         }

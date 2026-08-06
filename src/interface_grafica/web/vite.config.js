@@ -7,7 +7,9 @@ export default defineConfig({
     proxy: {
       '/api': 'http://localhost:5000',
       '/auth': 'http://localhost:5000',
-      '/meta': 'http://localhost:5000'
+      '/meta': 'http://localhost:5000',
+      // Development proxy for PlanejadorFluxo (Elsa Studio or proxy service)
+      '/planejadorDeFluxo': 'http://localhost:6000'
     }
   }
 })

@@ -2,23 +2,25 @@
 
 Essas instruções cobrem pré-requisitos, criação do banco, execução de migrations/seed e como rodar frontend e backend em modo desenvolvimento.
 
-## Pré-requisitos
-- MySQL Server (local) — exemplo: MySQL 8.x
+-## Pré-requisitos
+- PostgreSQL Server (local) — exemplo: PostgreSQL 15+
 - .NET SDK 8.0 (net8.0)
 - Node.js 18+ e npm
 - (Opcional) `dotnet-ef` se desejar rodar migrations manualmente: `dotnet tool install --global dotnet-ef`
 
 ## Configurar banco de dados
-1. Crie o banco MySQL usado pela aplicação (exemplo):
+1. Crie o banco PostgreSQL usado pela aplicação (exemplo):
 
 ```sql
-CREATE DATABASE demonstracao_arquitetura CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+CREATE DATABASE grp_banco_01;
+-- (Opcional) banco separado para Elsa:
+CREATE DATABASE grp_planejador_de_fluxos_banco_01;
 ```
 
-2. Configure a string de conexão em `src/retaguarda/Api/appsettings.Development.json` ou via variável de ambiente `ConnectionStrings__DefaultConnection` no formato:
+2. Configure a string de conexão em `src/retaguarda/Api/appsettings.Development.json` ou via variável de ambiente `ConnectionStrings__DefaultConnection` no formato (PostgreSQL):
 
 ```
-server=localhost;user=root;password=senha;database=demonstracao_arquitetura;TreatTinyAsBoolean=false;CharSet=utf8mb4;
+Host=localhost;Port=5432;Database=grp_banco_01;Username=postgres;Password=postgres
 ```
 
 (O arquivo `appsettings.*.json` pode não existir no repositório; usar variáveis de ambiente é recomendado.)
@@ -70,7 +72,7 @@ npm run dev
 - Configure `Jwt:Key` e outras secrets via `appsettings` ou gerenciador de segredos.
 
 ## Problemas comuns
-- Erro ao aplicar migrations: verifique a string de conexão e se o MySQL está acessível.
+- Erro ao aplicar migrations: verifique a string de conexão e se o PostgreSQL está acessível.
 - Erro de porta já em uso: ajuste `ASPNETCORE_URLS` ou a porta do DevServer do Vite.
 
 ---

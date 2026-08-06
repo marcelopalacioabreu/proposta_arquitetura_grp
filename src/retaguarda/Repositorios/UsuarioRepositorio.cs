@@ -1,16 +1,16 @@
 using System.Threading.Tasks;
 using Retaguarda.Dominio.Entidades;
 using Retaguarda.Repositorios.Interfaces;
-using Retaguarda.Persistencia.MYSQL;
+using Retaguarda.Persistencia;
 using Microsoft.EntityFrameworkCore;
 
 namespace Retaguarda.Repositorios
 {
     public class UsuarioRepositorio : IUsuarioRepositorio
     {
-        private readonly ApplicationDbContext _db;
+        private readonly Retaguarda.Persistencia.IApplicationDbContext _db;
 
-        public UsuarioRepositorio(ApplicationDbContext db)
+        public UsuarioRepositorio(Retaguarda.Persistencia.IApplicationDbContext db)
         {
             _db = db;
         }

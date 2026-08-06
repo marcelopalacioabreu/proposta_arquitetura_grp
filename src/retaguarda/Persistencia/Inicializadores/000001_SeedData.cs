@@ -2,8 +2,9 @@ using System;
 using System.Linq;
 using System.Security.Cryptography;
 using Microsoft.Extensions.DependencyInjection;
-using Retaguarda.Persistencia.MYSQL;
+using Retaguarda.Persistencia;
 using Retaguarda.Dominio.Entidades;
+using Retaguarda.Persistencia.MYSQL;
 
 namespace Retaguarda.Persistencia.Inicializadores
 {
@@ -13,7 +14,7 @@ namespace Retaguarda.Persistencia.Inicializadores
         {
             using var scope = services.CreateScope();
             var sp = scope.ServiceProvider;
-            var db = sp.GetService<ApplicationDbContext>();
+            var db = sp.GetService<Retaguarda.Persistencia.IApplicationDbContext>();
             if (db == null) return;
 
             try

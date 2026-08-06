@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using Retaguarda.Servicos;
-using Retaguarda.Persistencia.MYSQL;
+using Retaguarda.Persistencia;
 using Microsoft.EntityFrameworkCore;
 
 namespace Retaguarda.Api.Controllers
@@ -12,9 +12,9 @@ namespace Retaguarda.Api.Controllers
     {
         private readonly RequisicaoUsuario _reqUsuario;
         private readonly Retaguarda.Servicos.Interfaces.IUsuarioServico _usuarioServico;
-        private readonly ApplicationDbContext _db;
+        private readonly Retaguarda.Persistencia.IApplicationDbContext _db;
 
-        public UsuarioContextoController(RequisicaoUsuario reqUsuario, Retaguarda.Servicos.Interfaces.IUsuarioServico usuarioServico, ApplicationDbContext db)
+        public UsuarioContextoController(RequisicaoUsuario reqUsuario, Retaguarda.Servicos.Interfaces.IUsuarioServico usuarioServico, Retaguarda.Persistencia.IApplicationDbContext db)
         {
             _reqUsuario = reqUsuario;
             _usuarioServico = usuarioServico;

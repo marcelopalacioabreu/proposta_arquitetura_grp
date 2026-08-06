@@ -2,7 +2,7 @@
 
 #nullable disable
 
-namespace Retaguarda.Persistencia.Migracoes.MYSQL
+namespace Retaguarda.Persistencia.MYSQL.Migracoes
 {
     /// <inheritdoc />
     public partial class AddAtivo : Migration

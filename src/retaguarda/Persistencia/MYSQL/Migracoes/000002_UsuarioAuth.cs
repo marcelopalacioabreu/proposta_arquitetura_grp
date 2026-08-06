@@ -2,7 +2,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace Retaguarda.Persistencia.Migracoes.MYSQL
+namespace Retaguarda.Persistencia.MYSQL.Migracoes
 {
     /// <inheritdoc />
     public partial class _000002_UsuarioAuth : Migration

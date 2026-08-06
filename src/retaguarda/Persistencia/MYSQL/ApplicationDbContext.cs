@@ -7,13 +7,10 @@ using Microsoft.AspNetCore.Http;
 
 namespace Retaguarda.Persistencia.MYSQL
 {
-    public class ApplicationDbContext : DbContext
+    public class ApplicationDbContext : Retaguarda.Persistencia.ApplicationDbContext, Retaguarda.Persistencia.IApplicationDbContext
     {
-        private readonly IHttpContextAccessor _httpContextAccessor;
-
-        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options, IHttpContextAccessor httpContextAccessor) : base(options)
+        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options, IHttpContextAccessor httpContextAccessor) : base(options, httpContextAccessor)
         {
-            _httpContextAccessor = httpContextAccessor;
         }
 
         public DbSet<Organizacao> Organizacoes { get; set; } = null!;

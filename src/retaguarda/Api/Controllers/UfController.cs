@@ -1,6 +1,6 @@
 using System.Linq;
 using Microsoft.AspNetCore.Mvc;
-using Retaguarda.Persistencia.MYSQL;
+using Retaguarda.Persistencia;
 using Retaguarda.Dominio.Entidades;
 
 namespace Retaguarda.Api.Controllers
@@ -9,9 +9,9 @@ namespace Retaguarda.Api.Controllers
     [Route("api/ufs")]
     public class UfController : BaseController
     {
-        private readonly ApplicationDbContext _db;
+        private readonly Retaguarda.Persistencia.IApplicationDbContext _db;
 
-        public UfController(ApplicationDbContext db)
+        public UfController(Retaguarda.Persistencia.IApplicationDbContext db)
         {
             _db = db;
         }

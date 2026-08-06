@@ -1,7 +1,7 @@
 using System.Linq;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Retaguarda.Persistencia.MYSQL;
+using Retaguarda.Persistencia;
 using Retaguarda.Dominio.Entidades;
 using Retaguarda.Api.Models;
 
@@ -11,9 +11,9 @@ namespace Retaguarda.Api.Controllers
     [Route("api/organizacao_unidades")]
     public class OrganizacaoUnidadeController : BaseController
     {
-        private readonly ApplicationDbContext _db;
+        private readonly Retaguarda.Persistencia.IApplicationDbContext _db;
 
-        public OrganizacaoUnidadeController(ApplicationDbContext db)
+        public OrganizacaoUnidadeController(Retaguarda.Persistencia.IApplicationDbContext db)
         {
             _db = db;
         }

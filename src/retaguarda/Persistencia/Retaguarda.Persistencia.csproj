@@ -1,14 +1,28 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
+    <TargetFramework>net9.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.0" />
-    <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="8.0.0" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.1" />
+    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.0.4" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.1" />
     <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.2.0" />
+    <!-- MySQL EF Core provider (required to build/run migrations against MySQL) -->
+    <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="9.0.0" />
+  </ItemGroup>
+  <!-- Exclude MySQL migration folder from compilation when using Postgres provider -->
+  <!-- Conditionally include / exclude migration folders depending on Persistence__Provider MSBuild property (set via env var)
+       - When Persistence__Provider != MySql, remove MYSQL migrations
+       - When Persistence__Provider == MySql, remove POSTGRESQL migrations
+  -->
+  <ItemGroup>
+    <Compile Remove="MYSQL\Migracoes\**\*.cs" Condition=" '$(Persistence__Provider)' != 'MySql' " />
+    <EmbeddedResource Remove="MYSQL\Migracoes\**\*.resx" Condition=" '$(Persistence__Provider)' != 'MySql' " />
+
+    <Compile Remove="POSTGRESQL\Migracoes\**\*.cs" Condition=" '$(Persistence__Provider)' == 'MySql' " />
+    <EmbeddedResource Remove="POSTGRESQL\Migracoes\**\*.resx" Condition=" '$(Persistence__Provider)' == 'MySql' " />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Dominio\Retaguarda.Dominio.csproj" />
