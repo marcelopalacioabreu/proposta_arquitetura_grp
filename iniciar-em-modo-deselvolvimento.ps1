@@ -101,7 +101,14 @@ $planeCmd = 'set Elsa__BaseUrl=' + $elsaUrl + ' & set ASPNETCORE_URLS=' + $plane
 Start-Process cmd -ArgumentList '/k', $planeCmd
 
 Write-Host '4) Iniciando frontend (nova janela)'
-$frontCmd = 'cd /d "' + $PSScriptRoot + '\src\interface_grafica\web"'
+$webPath = Join-Path $PSScriptRoot 'src\interface_grafica\web'
+# Prepare front-end command: set PLANEJADOR_URL and run npm install (if node_modules missing) then npm run dev
+$frontCmd = 'set PLANEJADOR_URL=' + $planejadorUrl + ' & cd /d "' + $webPath + '"'
+# If node_modules doesn't exist, run npm install; then start dev server
+if (-not (Test-Path (Join-Path $webPath 'node_modules'))) {
+    $frontCmd += ' & npm install'
+}
+$frontCmd += ' & npm run dev'
 Start-Process cmd -ArgumentList '/k', $frontCmd
 
 Write-Host 'Tudo iniciado. Verifique as janelas Backend e Frontend.'
