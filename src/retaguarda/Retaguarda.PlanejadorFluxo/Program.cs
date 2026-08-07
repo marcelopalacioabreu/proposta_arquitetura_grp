@@ -136,6 +136,31 @@ if (!string.IsNullOrEmpty(planejadorConnection))
 var app = builder.Build();
 
 
+// Serve Blazor framework files (/_framework) for embedded Blazor WASM (Elsa Studio)
+app.UseBlazorFrameworkFiles();
+// Serve static files from the NuGet package providing the Blazor WebAssembly runtime
+// (blazor.webassembly.js) so the Studio client can load the runtime when requested
+// via the proxied prefix (e.g. /planejadorDeFluxo/_framework/...).
+try
+{
+	var userProfile = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
+	var nugetRoot = Path.Combine(userProfile, ".nuget", "packages");
+	if (Directory.Exists(nugetRoot))
+	{
+		var files = Directory.EnumerateFiles(nugetRoot, "blazor.webassembly.js", SearchOption.AllDirectories);
+		var first = files.FirstOrDefault();
+		if (!string.IsNullOrEmpty(first))
+		{
+			var frameworkDir = Path.GetDirectoryName(first);
+			if (Directory.Exists(frameworkDir))
+			{
+				var provider = new Microsoft.Extensions.FileProviders.PhysicalFileProvider(frameworkDir);
+				app.UseStaticFiles(new StaticFileOptions { FileProvider = provider, RequestPath = "/_framework" });
+			}
+		}
+	}
+}
+catch { }
 app.UseStaticFiles();
 app.UseRouting();
 app.UseAuthentication();

@@ -3,7 +3,12 @@
 @{
     var baseUrl = $"{Request.Scheme}://{Request.Host}";
     var apiUrl = baseUrl + Url.Content("~/elsa/api");
-    var basePath = "";
+    // If requests are proxied via Vite, the proxy will set X-Forwarded-Prefix
+    // to the original path prefix (e.g. /painel/planejadorFluxo). Use it
+    // as the base path so Blazor requests assets relative to that prefix.
+    var forwarded = Request.Headers["X-Forwarded-Prefix"].ToString();
+    var basePath = string.IsNullOrEmpty(forwarded) ? string.Empty : forwarded;
+    var baseHref = string.IsNullOrEmpty(basePath) ? "/" : (basePath.EndsWith("/") ? basePath : basePath + "/");
 }
 
 <!DOCTYPE html>
@@ -13,14 +18,14 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <title>Elsa Studio</title>
-    <base href="/" />
+    <base href="@baseHref" />
     <link rel="apple-touch-icon" sizes="180x180" href="@basePath/_content/Elsa.Studio.Shell/apple-touch-icon.png">
     <link rel="icon" type="image/png" sizes="32x32" href="@basePath/_content/Elsa.Studio.Shell/favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="@basePath/_content/Elsa.Studio.Shell/favicon-16x16.png">
     <link rel="manifest" href="@basePath/_content/Elsa.Studio.Shell/site.webmanifest">
     <link href="@basePath/_content/MudBlazor/MudBlazor.min.css" rel="stylesheet" />
     <link href="@basePath/_content/Elsa.Studio.Shell/css/shell.css" rel="stylesheet">
-    <link href="ElsaStudio.styles.css" rel="stylesheet">
+    <link href="@basePath/_content/Elsa.Studio.Shell/ElsaStudio.styles.css" rel="stylesheet">
 </head>
 
 <body>
@@ -41,7 +46,7 @@
             "basePath": "@basePath"
         } };
     </script>
-    <script src="_framework/blazor.webassembly.js"></script>
+    <script src="@basePath/_framework/blazor.webassembly.js"></script>
 </body>
 
 </html>

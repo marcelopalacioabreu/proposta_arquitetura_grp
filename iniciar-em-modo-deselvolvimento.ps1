@@ -32,7 +32,7 @@ Write-Host "ASPNETCORE_ENVIRONMENT=$Env:ASPNETCORE_ENVIRONMENT"
 
 # Allow overriding Elsa base URL and Planejador port via environment variables
 if (-not $Env:Elsa__BaseUrl) { $Env:Elsa__BaseUrl = 'http://localhost:4500' }
-if (-not $Env:PLANEJADOR_PORT) { $Env:PLANEJADOR_PORT = '6000' }
+if (-not $Env:PLANEJADOR_PORT) { $Env:PLANEJADOR_PORT = '6001' }
 # Read current Elsa base then compute planner URL
 $elsaUrl = $Env:Elsa__BaseUrl
 $planejadorPort = $Env:PLANEJADOR_PORT

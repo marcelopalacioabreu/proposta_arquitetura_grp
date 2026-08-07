@@ -21,8 +21,8 @@ Como usar (desenvolvimento):
 
 - Execute a API principal (Retaguarda.Api) normalmente (ex.: `dotnet run --project src/retaguarda/Api`).
 - Execute o Elsa Studio/Server em `http://localhost:4500` (padrão) ou ajuste `appsettings.json` `Elsa:BaseUrl`.
-- Execute o PlanejadorFluxo (este projeto): `dotnet run --project src/retaguarda/Retaguarda.PlanejadorFluxo` (irá rodar em uma porta aleatória, ex.: 6000).
-- No front-end (Vite) já foi adicionado proxy para `/planejadorDeFluxo` apontando para `http://localhost:6000`.
+- Execute o PlanejadorFluxo (este projeto): `dotnet run --project src/retaguarda/Retaguarda.PlanejadorFluxo` (irá rodar em uma porta aleatória, ex.: 6001).
+- No front-end (Vite) já foi adicionado proxy para `/planejadorDeFluxo` apontando para `http://localhost:6001`.
 
 Observações:
 - Este projeto apenas implementa um proxy simples. Para integrar diretamente o Elsa Studio no ASP.NET Core consulte a documentação oficial do Elsa.
