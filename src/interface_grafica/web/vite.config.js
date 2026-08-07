@@ -1,6 +1,9 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 
+// Planejador URL can be overridden via environment variable PLANEJADOR_URL
+const planejadorUrl = process.env.PLANEJADOR_URL || 'http://localhost:54263'
+
 export default defineConfig({
   plugins: [react()],
   server: {
@@ -9,7 +12,7 @@ export default defineConfig({
       '/auth': 'http://localhost:5000',
       '/meta': 'http://localhost:5000',
       // Development proxy for PlanejadorFluxo (Elsa Studio or proxy service)
-      '/planejadorDeFluxo': 'http://localhost:6000'
+      '/planejadorDeFluxo': planejadorUrl
     }
   }
 })
