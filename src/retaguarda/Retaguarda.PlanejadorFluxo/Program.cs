@@ -13,8 +13,8 @@ using System.Text;
 using Microsoft.EntityFrameworkCore;
 using Elsa;
 using Elsa.Extensions;
-using Elsa.Persistence.EntityFramework.Core;
-using Elsa.Persistence.EntityFramework.PostgreSql;
+using Elsa.Persistence.EFCore;
+using Elsa.Persistence.EFCore.PostgreSql;
 
 var builder = WebApplication.CreateBuilder(args);
 
