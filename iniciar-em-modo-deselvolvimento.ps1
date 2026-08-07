@@ -33,9 +33,16 @@ Write-Host "ASPNETCORE_ENVIRONMENT=$Env:ASPNETCORE_ENVIRONMENT"
 # Allow overriding Elsa base URL and Planejador port via environment variables
 if (-not $Env:Elsa__BaseUrl) { $Env:Elsa__BaseUrl = 'http://localhost:4500' }
 if (-not $Env:PLANEJADOR_PORT) { $Env:PLANEJADOR_PORT = '6000' }
+# Read current Elsa base then compute planner URL
 $elsaUrl = $Env:Elsa__BaseUrl
 $planejadorPort = $Env:PLANEJADOR_PORT
 $planejadorUrl = "http://localhost:$planejadorPort"
+
+# If we're hosting Elsa Server + Studio in the same project, ensure the Elsa base URL
+# points to the planner host so the Studio client talks to the correct backend.
+Write-Host "Aligning Elsa BaseUrl with planejador URL: $planejadorUrl"
+$Env:Elsa__BaseUrl = $planejadorUrl
+$elsaUrl = $Env:Elsa__BaseUrl
 Write-Host "Elsa BaseUrl: $elsaUrl"
 Write-Host "Planejador will run on: $planejadorUrl"
 
@@ -46,14 +53,16 @@ try { $resp = Invoke-WebRequest -Uri $elsaUrl -UseBasicParsing -TimeoutSec 3 -Er
 if ($provider -eq 'MySql' -or $provider -eq 'mysql' -or $provider -eq 'MYSQL') { $contextType = 'Retaguarda.Persistencia.MYSQL.ApplicationDbContext' } else { $contextType = 'Retaguarda.Persistencia.POSTGRESQL.ApplicationDbContext' }
 Write-Host "Using EF DbContext: $contextType"
 
-# Apply API migrations
-$efArgs = @( 'database', 'update', '--project', 'src\retaguarda\Persistencia\Retaguarda.Persistencia.csproj', '--startup-project', 'src\retaguarda\Api\Retaguarda.Api.csproj', '--context', $contextType )
+# Apply API migrations (use absolute paths so script works from any CWD)
+$apiProject = Join-Path $PSScriptRoot 'src\retaguarda\Persistencia\Retaguarda.Persistencia.csproj'
+$apiStartup = Join-Path $PSScriptRoot 'src\retaguarda\Api\Retaguarda.Api.csproj'
+$efArgs = @( 'database', 'update', '--project', $apiProject, '--startup-project', $apiStartup, '--context', $contextType )
 dotnet ef @efArgs
 if ($LASTEXITCODE -ne 0) { Write-Error 'Falha ao aplicar migrations para a API. Verifique a string de conexao e o servidor PostgreSQL.'; exit 1 }
 
 # Apply PlanejadorFluxo migrations if any
 Write-Host '2.1) Aplicando migrations do PlanejadorFluxo (Elsa)'
-$planejadorProj = 'src\retaguarda\Retaguarda.PlanejadorFluxo\Retaguarda.PlanejadorFluxo.csproj'
+$planejadorProj = Join-Path $PSScriptRoot 'src\retaguarda\Retaguarda.PlanejadorFluxo\Retaguarda.PlanejadorFluxo.csproj'
 $startupProj = $planejadorProj
 $dbctxListRaw = dotnet ef dbcontext list --project $planejadorProj --startup-project $startupProj 2>&1
 if ($dbctxListRaw -match 'No DbContext was found') {

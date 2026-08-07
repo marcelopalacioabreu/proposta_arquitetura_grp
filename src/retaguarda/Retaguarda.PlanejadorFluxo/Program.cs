@@ -146,6 +146,11 @@ app.UseAuthorization();
 app.UseWorkflowsApi();
 app.UseWorkflows();
 app.MapStaticAssets();
+
+// Serve the Elsa Studio host page from /studio when Studio is hosted in this app.
+// This maps any /studio/* path to the _Host.cshtml Blazor WASM host page.
+app.MapFallbackToPage("/studio/{**path}", "/_Host");
+app.MapFallbackToPage("/studio", "/_Host");
 #endif
 
 app.MapGet("/", () => "Retaguarda.PlanejadorFluxo running");

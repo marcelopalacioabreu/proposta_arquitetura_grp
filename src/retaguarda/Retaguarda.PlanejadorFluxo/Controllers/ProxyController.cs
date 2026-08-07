@@ -21,6 +21,14 @@ namespace Retaguarda.PlanejadorFluxo.Controllers
         [HttpDelete]
         public async Task<IActionResult> Proxy(string path)
         {
+            // If the request is for the Studio and Elsa is hosted in the same app,
+            // redirect the browser to the local /studio fallback page so static assets
+            // and the Blazor WASM host are served directly by this app instead of proxying.
+            if (!string.IsNullOrEmpty(path) && path.TrimStart('/').StartsWith("studio", System.StringComparison.OrdinalIgnoreCase))
+            {
+                return Redirect("/studio" + Request.QueryString);
+            }
+
             var client = _httpFactory.CreateClient("Elsa");
 
             var targetUri = path ?? string.Empty;
