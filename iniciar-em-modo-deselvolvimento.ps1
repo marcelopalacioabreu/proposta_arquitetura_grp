@@ -9,7 +9,23 @@ if (-not (Get-Command node -ErrorAction SilentlyContinue)) { Write-Warning 'Node
 if (-not (Get-Command npm -ErrorAction SilentlyContinue)) { Write-Warning 'npm nao encontrado. Frontend pode nao iniciar.' }
 
 Write-Host '2) Aplicando migrations (EF Core)'
-dotnet tool restore
+# Restore local tool manifest if present, otherwise ensure dotnet-ef is available globally
+$toolsManifestPaths = @()
+$toolsManifestPaths += Join-Path $PSScriptRoot '.config\dotnet-tools.json'
+$toolsManifestPaths += Join-Path $PSScriptRoot 'dotnet-tools.json'
+$manifestExists = $false
+foreach ($p in $toolsManifestPaths) { if (Test-Path $p) { $manifestExists = $true; break } }
+if ($manifestExists) {
+	dotnet tool restore
+} else {
+	Write-Host 'No tools manifest found; ensuring dotnet-ef (9.0.13) is installed globally'
+	$efCmd = Get-Command dotnet-ef -ErrorAction SilentlyContinue
+	if ($efCmd) {
+		dotnet tool update --global dotnet-ef --version 9.0.13 | Out-Null
+	} else {
+		dotnet tool install --global dotnet-ef --version 9.0.13 | Out-Null
+	}
+}
 if (-not $Env:Persistence__Provider) { $Env:Persistence__Provider = 'Postgres' }
 $provider = $Env:Persistence__Provider
 Write-Host "Using persistence provider: $provider"
@@ -33,9 +49,18 @@ if ($LASTEXITCODE -ne 0) { Write-Error 'Falha ao aplicar migrations para a API. 
 
 # Apply Elsa/PlanejadorFluxo migrations (if any)
 Write-Host '2.1) Aplicando migrations do PlanejadorFluxo (Elsa)'
-$efArgsElsa = @( 'database', 'update', '--project', 'src\retaguarda\Retaguarda.PlanejadorFluxo\Retaguarda.PlanejadorFluxo.csproj', '--startup-project', 'src\retaguarda\Retaguarda.PlanejadorFluxo\Retaguarda.PlanejadorFluxo.csproj' )
-dotnet ef @efArgsElsa
-if ($LASTEXITCODE -ne 0) { Write-Warning 'Falha ao aplicar migrations do PlanejadorFluxo (pode não haver migrations geradas localmente). Verifique a configuração ou gere as migrations manualmente.' }
+# Check whether the startup/project assembly exposes any DbContext before attempting update
+$planejadorProj = 'src\retaguarda\Retaguarda.PlanejadorFluxo\Retaguarda.PlanejadorFluxo.csproj'
+$startupProj = $planejadorProj
+Write-Host "Checking for DbContexts in $planejadorProj..."
+$dbctxList = dotnet ef dbcontext list --project $planejadorProj --startup-project $startupProj 2>&1
+if ($dbctxList -match 'No DbContext was found') {
+	Write-Host 'No DbContext found in PlanejadorFluxo project; skipping Elsa migrations.'
+} else {
+	$efArgsElsa = @( 'database', 'update', '--project', $planejadorProj, '--startup-project', $startupProj )
+	dotnet ef @efArgsElsa
+	if ($LASTEXITCODE -ne 0) { Write-Warning 'Falha ao aplicar migrations do PlanejadorFluxo (verifique a configuração ou gere as migrations manualmente).' }
+}
 
 Write-Host '3) Iniciando backend (nova janela)'
 Start-Process cmd -ArgumentList '/k', "cd /d `"$PSScriptRoot\src\retaguarda\Api`" & dotnet run --project Retaguarda.Api.csproj"
