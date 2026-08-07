@@ -15,8 +15,12 @@ using Elsa;
 using Elsa.Extensions;
 using Elsa.Persistence.EFCore;
 using Elsa.Persistence.EFCore.PostgreSql;
+using Elsa.Persistence.EFCore.Extensions;
+using Elsa.Persistence.EFCore.Modules.Management;
+using Elsa.Persistence.EFCore.Modules.Runtime;
 
 var builder = WebApplication.CreateBuilder(args);
+builder.WebHost.UseStaticWebAssets();
 
 // Load optional config
 builder.Configuration.AddJsonFile("appsettings.json", optional: true, reloadOnChange: true);
@@ -86,13 +90,34 @@ var elsaConnection = builder.Configuration.GetSection("Elsa:ConnectionStrings")?
 #if ENABLE_ELSA
 if (!string.IsNullOrEmpty(elsaConnection))
 {
+	// Configure Elsa management and runtime with EF Core (Postgres)
 	builder.Services.AddElsa(elsa =>
 	{
-		elsa.AddConsoleActivities().AddHttpActivities();
-		elsa.UseEntityFrameworkPersistence(ef => ef.UseNpgsql(elsaConnection));
+		elsa.UseWorkflowManagement(management =>
+		{
+			management.UseEntityFrameworkCore(ef =>
+			{
+				ef.UsePostgreSql(elsaConnection);
+				ef.RunMigrations = builder.Environment.IsDevelopment();
+			});
+		});
+
+		elsa.UseWorkflowRuntime(runtime =>
+		{
+			runtime.UseEntityFrameworkCore(ef =>
+			{
+				ef.UsePostgreSql(elsaConnection);
+				ef.RunMigrations = builder.Environment.IsDevelopment();
+			});
+		});
+
+		// Expose Elsa workflow APIs and enable HTTP activities
+		elsa.UseWorkflowsApi();
+		elsa.UseHttp();
 	});
 
-	builder.Services.AddElsaApiEndpoints();
+	// Map Elsa endpoints at runtime
+	// Note: the middleware call is done after building the app (app.UseWorkflowsApi())
 }
 #endif
 
@@ -110,10 +135,18 @@ if (!string.IsNullOrEmpty(planejadorConnection))
 
 var app = builder.Build();
 
+
 app.UseStaticFiles();
 app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
+
+// Map Elsa endpoints and static assets (Studio WASM)
+#if ENABLE_ELSA
+app.UseWorkflowsApi();
+app.UseWorkflows();
+app.MapStaticAssets();
+#endif
 
 app.MapGet("/", () => "Retaguarda.PlanejadorFluxo running");
 app.MapControllers();
