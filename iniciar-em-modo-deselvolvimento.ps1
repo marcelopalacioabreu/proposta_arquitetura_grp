@@ -66,7 +66,8 @@ Write-Host '3) Iniciando backend (nova janela)'
 Start-Process cmd -ArgumentList '/k', "cd /d `"$PSScriptRoot\src\retaguarda\Api`" & dotnet run --project Retaguarda.Api.csproj"
 
 Write-Host '3.1) Iniciando PlanejadorFluxo (Elsa) (nova janela)'
-Start-Process cmd -ArgumentList '/k', "cd /d `"$PSScriptRoot\src\retaguarda\Retaguarda.PlanejadorFluxo`" & dotnet run --project Retaguarda.PlanejadorFluxo.csproj"
+# Start PlanejadorFluxo on a fixed port that matches the dev proxy (6000)
+Start-Process cmd -ArgumentList '/k', "set ASPNETCORE_URLS=http://localhost:6000 & cd /d `"$PSScriptRoot\src\retaguarda\Retaguarda.PlanejadorFluxo`" & dotnet run --project Retaguarda.PlanejadorFluxo.csproj"
 
 Write-Host '4) Iniciando frontend (nova janela)'
 Start-Process cmd -ArgumentList '/k', "cd /d `"$PSScriptRoot\src\interface_grafica\web`" & if exist node_modules (npm run dev) else (npm install & npm run dev)"

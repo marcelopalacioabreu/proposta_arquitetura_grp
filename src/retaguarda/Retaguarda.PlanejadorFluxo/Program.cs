@@ -75,6 +75,7 @@ builder.Services.AddHttpClient("Elsa", client =>
 });
 
 builder.Services.AddControllers();
+
 builder.Services.AddRazorPages();
 
 // Register Elsa services if Elsa connection is configured
@@ -94,6 +95,18 @@ if (!string.IsNullOrEmpty(elsaConnection))
 	builder.Services.AddElsaApiEndpoints();
 }
 #endif
+
+// Register the PlanejadorFluxo DbContext if a connection string is available
+var planejadorConnection = builder.Configuration.GetSection("Elsa:ConnectionStrings")?.GetValue<string>("DefaultConnection")
+	?? builder.Configuration.GetConnectionString("DefaultConnection");
+if (!string.IsNullOrEmpty(planejadorConnection))
+{
+	builder.Services.AddHttpContextAccessor();
+	builder.Services.AddDbContext<Retaguarda.PlanejadorFluxo.PlanejadorFluxoDbContext>(options =>
+		options.UseNpgsql(planejadorConnection));
+
+	// Note: we register the PlanejadorFluxoDbContext for EF and DI; do not map to IApplicationDbContext here.
+}
 
 var app = builder.Build();
 
