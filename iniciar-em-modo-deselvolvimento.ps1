@@ -46,6 +46,10 @@ $elsaUrl = $Env:Elsa__BaseUrl
 Write-Host "Elsa BaseUrl: $elsaUrl"
 Write-Host "Planejador will run on: $planejadorUrl"
 
+# Enable/disable compiling with ENABLE_ELSA symbol. Set environment variable ENABLE_ELSA=1 or 'true' to enable.
+if (-not $Env:ENABLE_ELSA) { $Env:ENABLE_ELSA = '1' }
+Write-Host "ENABLE_ELSA=$Env:ENABLE_ELSA"
+
 # Quick reachability check for Elsa (best-effort)
 try { $resp = Invoke-WebRequest -Uri $elsaUrl -UseBasicParsing -TimeoutSec 3 -ErrorAction Stop; Write-Host "Elsa reachable: $($resp.StatusCode) at $elsaUrl" } catch { Write-Warning "Elsa not reachable at $elsaUrl - planner may fail to contact Elsa." }
 
@@ -111,8 +115,12 @@ $planeDir = Join-Path $PSScriptRoot 'src\retaguarda\Retaguarda.PlanejadorFluxo'
 # Ensure Elsa base URL points to the planner host when hosting Elsa Server+Studio in the same project
 # Set Elsa__BaseUrl to the planejadorUrl so Studio JS client will call the correct backend
 $planeCmd = 'set Elsa__BaseUrl=' + $planejadorUrl + ' & cd /d "' + $planeDir + '"'
-# Build with compilation symbol to enable Elsa code paths
-$planeCmd += ' & dotnet build -c Debug /p:DefineConstants=ENABLE_ELSA'
+# Build with compilation symbol to enable Elsa code paths when requested
+if ($Env:ENABLE_ELSA -eq '1' -or $Env:ENABLE_ELSA.ToLower() -eq 'true') {
+    $planeCmd += ' & dotnet build -c Debug /p:DefineConstants=ENABLE_ELSA'
+} else {
+    $planeCmd += ' & dotnet build -c Debug'
+}
 # Then run with no launch profile and explicit urls
 $planeCmd += ' & dotnet run --project Retaguarda.PlanejadorFluxo.csproj --no-launch-profile --urls "' + $planejadorUrl + '"'
 Start-Process cmd -ArgumentList '/k', $planeCmd

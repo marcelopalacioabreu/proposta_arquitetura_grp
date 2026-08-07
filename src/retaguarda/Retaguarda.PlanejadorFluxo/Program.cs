@@ -135,6 +135,9 @@ if (!string.IsNullOrEmpty(planejadorConnection))
 
 var app = builder.Build();
 
+// Register static web assets from referenced packages before serving static files
+// (follows Elsa docs recommendation: call MapStaticAssets before UseStaticFiles)
+try { app.MapStaticAssets(); } catch { }
 
 // Serve Blazor framework files (/_framework) for embedded Blazor WASM (Elsa Studio)
 app.UseBlazorFrameworkFiles();
@@ -161,16 +164,109 @@ try
 	}
 }
 catch { }
+// Also try to serve Elsa Studio _content assets directly from the Elsa.Studio.Shell package
+try
+{
+	var userProfile = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
+	var nugetRoot = Path.Combine(userProfile, ".nuget", "packages");
+	if (Directory.Exists(nugetRoot))
+	{
+		// Find the Elsa.Studio.Shell package folder (pick the first match)
+		var shellPkg = Directory.EnumerateDirectories(nugetRoot, "elsa.studio.shell*", SearchOption.TopDirectoryOnly).OrderByDescending(d => d).FirstOrDefault();
+		if (!string.IsNullOrEmpty(shellPkg))
+		{
+			var staticRoot = Path.Combine(shellPkg, "staticwebassets");
+			if (Directory.Exists(staticRoot))
+			{
+				var provider = new Microsoft.Extensions.FileProviders.PhysicalFileProvider(staticRoot);
+				// Map the package's static assets under the expected _content path
+				app.UseStaticFiles(new StaticFileOptions { FileProvider = provider, RequestPath = "/_content/Elsa.Studio.Shell" });
+			}
+		}
+	}
+}
+catch { }
+
+// (Removed heuristic NuGet-serving middleware. Rely on MapStaticAssets() and UseStaticFiles() per docs.)
+
+// Serve the Blazor runtime from NuGet cache as a compatibility fallback when static web assets
+// do not expose it (helps when Studio is provided via NuGet packages instead of a project reference).
+app.MapGet("/_framework/blazor.webassembly.js", async (HttpContext ctx) =>
+{
+	try
+	{
+		var userProfile = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
+		var nugetRoot = Path.Combine(userProfile, ".nuget", "packages");
+		if (Directory.Exists(nugetRoot))
+		{
+			var candidates = new[] { "microsoft.aspnetcore.app.internal.assets", "microsoft.aspnetcore.components.webassembly" };
+			foreach (var c in candidates)
+			{
+				var dirs = Directory.EnumerateDirectories(nugetRoot, c + "*", SearchOption.TopDirectoryOnly);
+				foreach (var dir in dirs)
+				{
+					var p1 = Path.Combine(dir, "_framework", "blazor.webassembly.js");
+					var p2 = Directory.EnumerateFiles(dir, "blazor.webassembly.js", SearchOption.AllDirectories).FirstOrDefault();
+					var file = File.Exists(p1) ? p1 : p2;
+					if (!string.IsNullOrEmpty(file) && File.Exists(file))
+					{
+						ctx.Response.ContentType = "application/javascript";
+						await ctx.Response.SendFileAsync(file);
+						return;
+					}
+				}
+			}
+		}
+	}
+	catch { }
+	ctx.Response.StatusCode = 404;
+});
+
+// Serve a compatibility file name ElsaStudio.styles.css by returning the package's shell.css
+app.MapGet("/_content/Elsa.Studio.Shell/ElsaStudio.styles.css", async (HttpContext ctx) =>
+{
+	try
+	{
+		var userProfile = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
+		var nugetRoot = Path.Combine(userProfile, ".nuget", "packages");
+		if (Directory.Exists(nugetRoot))
+		{
+			var shellPkg = Directory.EnumerateDirectories(nugetRoot, "elsa.studio.shell*", SearchOption.TopDirectoryOnly).OrderByDescending(d => d).FirstOrDefault();
+			if (!string.IsNullOrEmpty(shellPkg))
+			{
+				var candidate = Path.Combine(shellPkg, "staticwebassets", "css", "shell.css");
+				if (!File.Exists(candidate))
+				{
+					// try other locations
+					candidate = Directory.EnumerateFiles(Path.Combine(shellPkg, "staticwebassets"), "shell.css", SearchOption.AllDirectories).FirstOrDefault();
+				}
+
+				if (!string.IsNullOrEmpty(candidate) && File.Exists(candidate))
+				{
+					ctx.Response.ContentType = "text/css";
+					await ctx.Response.SendFileAsync(candidate);
+					return;
+				}
+			}
+		}
+	}
+	catch { }
+	ctx.Response.StatusCode = 404;
+});
+
+
+#if ENABLE_ELSA
+// Map Elsa static web assets before UseStaticFiles so the framework can register package assets
+app.MapStaticAssets();
+
 app.UseStaticFiles();
 app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 
-// Map Elsa endpoints and static assets (Studio WASM)
-#if ENABLE_ELSA
+// Map Elsa endpoints and middleware
 app.UseWorkflowsApi();
 app.UseWorkflows();
-app.MapStaticAssets();
 
 // Serve the Elsa Studio host page from /studio when Studio is hosted in this app.
 // This maps any /studio/* path to the _Host.cshtml Blazor WASM host page.
@@ -188,6 +284,37 @@ app.MapGet("/painel", async (HttpContext http, IConfiguration config) =>
 	var html = $"<html><body style='margin:0;padding:0;'><iframe src='/planejadorDeFluxo/' style='width:100%;height:100vh;border:0;'></iframe></body></html>";
 	http.Response.ContentType = "text/html; charset=utf-8";
 	await http.Response.WriteAsync(html);
+});
+
+// Diagnostic endpoint to help locate static assets in NuGet cache
+app.MapGet("/__debug/elsa-static", (HttpContext http) =>
+{
+	var result = new System.Collections.Generic.List<string>();
+	try
+	{
+		var userProfile = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
+		var nugetRoot = Path.Combine(userProfile, ".nuget", "packages");
+		result.Add($"NuGetRoot={nugetRoot}");
+		if (Directory.Exists(nugetRoot))
+		{
+			var blazorFiles = Directory.EnumerateFiles(nugetRoot, "blazor.webassembly.js", SearchOption.AllDirectories).Take(20);
+			result.Add("blazor.webassembly.js candidates:");
+			foreach (var f in blazorFiles) result.Add(f);
+
+			var shellFiles = Directory.EnumerateFiles(nugetRoot, "shell.css", SearchOption.AllDirectories).Take(20);
+			result.Add("shell.css candidates:");
+			foreach (var f in shellFiles) result.Add(f);
+		}
+		else
+		{
+			result.Add("NuGet root not found");
+		}
+	}
+	catch (Exception ex)
+	{
+		result.Add("error: " + ex.Message);
+	}
+	return Results.Text(string.Join("\n", result));
 });
 
 app.Run();
