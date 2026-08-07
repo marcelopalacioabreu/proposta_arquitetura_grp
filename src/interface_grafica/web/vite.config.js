@@ -12,7 +12,12 @@ export default defineConfig({
       '/auth': 'http://localhost:5000',
       '/meta': 'http://localhost:5000',
       // Development proxy for PlanejadorFluxo (Elsa Studio or proxy service)
-      '/planejadorDeFluxo': planejadorUrl
+      // Strip the /planejadorDeFluxo prefix when forwarding to the planner host
+      '/planejadorDeFluxo': {
+        target: planejadorUrl,
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/planejadorDeFluxo/, '')
+      }
     }
   }
 })

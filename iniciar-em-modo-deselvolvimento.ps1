@@ -97,7 +97,15 @@ $apiCmd = 'cd /d "' + $PSScriptRoot + '\src\retaguarda\Api" & dotnet run --proje
 Start-Process cmd -ArgumentList '/k', $apiCmd
 
 Write-Host '3.1) Iniciando PlanejadorFluxo (Elsa) (nova janela)'
-$planeCmd = 'set Elsa__BaseUrl=' + $elsaUrl + ' & set ASPNETCORE_URLS=' + $planejadorUrl + ' & cd /d "' + $PSScriptRoot + '\src\retaguarda\Retaguarda.PlanejadorFluxo" & dotnet run --project Retaguarda.PlanejadorFluxo.csproj'
+# Build with ENABLE_ELSA defined, then run with explicit --urls so the process listens on the configured port.
+$planeDir = Join-Path $PSScriptRoot 'src\retaguarda\Retaguarda.PlanejadorFluxo'
+# Ensure Elsa base URL points to the planner host when hosting Elsa Server+Studio in the same project
+# Set Elsa__BaseUrl to the planejadorUrl so Studio JS client will call the correct backend
+$planeCmd = 'set Elsa__BaseUrl=' + $planejadorUrl + ' & cd /d "' + $planeDir + '"'
+# Build with compilation symbol to enable Elsa code paths
+$planeCmd += ' & dotnet build -c Debug /p:DefineConstants=ENABLE_ELSA'
+# Then run with no launch profile and explicit urls
+$planeCmd += ' & dotnet run --project Retaguarda.PlanejadorFluxo.csproj --no-launch-profile --urls "' + $planejadorUrl + '"'
 Start-Process cmd -ArgumentList '/k', $planeCmd
 
 Write-Host '4) Iniciando frontend (nova janela)'
