@@ -73,6 +73,7 @@ function App(){
         <Route path='catalogos/situacoes' element={<TelaPesquisa screenKey={'situacaoPesquisa'} />} />
         <Route path='catalogos/situacoes/editar/:id' element={<TelaCadastro screenKey={'situacaoCadastro'} />} />
         <Route index element={<InicioPainel/>} />
+        {/* Planejador de Fluxo (Elsa) - proxied via /planejadorDeFluxo in vite dev server */}
         <Route path='planejadorFluxo' element={<PainelPlanejadorFluxo/>} />
       </Route>
       <Route path='*' element={<Navigate to='/' replace />} />

@@ -1,5 +1,21 @@
 {
-  "modulos": [    
+  "modulos": [
+    {
+      "grupo": "Automação",
+      "itens": [
+        {
+          "chave": "planejadorFluxo",
+          "texto": "Planejador de Fluxo",
+          "icone": "gear-wide-connected",
+          "url": "/painel/planejadorFluxo",
+          "permissoes": [
+            { "id": "planejadorFluxo.visualizar", "texto": "Visualizar" }
+          ],
+          "conflitosCom": [""],
+          "mostrarNoMenu": true
+        }
+      ]
+    },
     {
       "grupo": "Definições",
       "itens": [
