@@ -7,21 +7,22 @@ using Microsoft.AspNetCore.Components.Authorization;
 namespace ElsaStudio;
 
 /// <summary>
-/// Determines auth state by calling /identity/me on the PlanejadorFluxo server.
-/// The browser sends the HttpOnly access_token cookie automatically (same-origin proxy).
+/// Determines auth state by calling /identity/token on the PlanejadorFluxo server.
+/// The server reads the HttpOnly access_token cookie and returns the JWT + user info.
 /// No token is ever stored in JavaScript-accessible storage.
 /// </summary>
 public class CookieAuthStateProvider : AuthenticationStateProvider
 {
-    private readonly HttpClient _http;
+    private readonly IHttpClientFactory _factory;
 
-    public CookieAuthStateProvider(HttpClient http) => _http = http;
+    public CookieAuthStateProvider(IHttpClientFactory factory) => _factory = factory;
 
     public override async Task<AuthenticationState> GetAuthenticationStateAsync()
     {
         try
         {
-            var response = await _http.GetAsync("/identity/me");
+            var http = _factory.CreateClient("identity");
+            var response = await http.GetAsync("/identity/token");
             if (response.IsSuccessStatusCode)
             {
                 var body   = await response.Content.ReadAsStringAsync();

@@ -143,16 +143,43 @@ app.UseWorkflowsApi();
 app.UseWorkflows();
 app.MapRazorPages();
 app.MapControllers();
-// Endpoint used by CookieAuthStateProvider in Elsa Studio to verify the access_token cookie
-app.MapGet("/identity/me",
-    [Microsoft.AspNetCore.Authorization.Authorize] (HttpContext ctx) => Results.Ok(new
+// Reads the HttpOnly access_token cookie server-side and returns the validated JWT + user info.
+// Called by CookieTokenHandler and CookieAuthStateProvider in Elsa Studio WASM.
+// NOT protected by [Authorize] — it validates the cookie internally.
+app.MapGet("/identity/token", (HttpContext ctx, IConfiguration cfg) =>
+{
+    if (!ctx.Request.Cookies.TryGetValue("access_token", out var token))
+        return Results.Unauthorized();
+
+    try
     {
-        id   = ctx.User.FindFirst("sub")?.Value
-               ?? ctx.User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value,
-        name = ctx.User.FindFirst("name")?.Value
-               ?? ctx.User.Identity?.Name
-               ?? "Usuário"
-    }));
+        var rawKey = cfg["Jwt:Key"] ?? "change_this_secret_for_prod";
+        var keyBytes = System.Text.Encoding.UTF8.GetBytes(rawKey);
+        if (keyBytes.Length < 32)
+        {
+            using var sha = System.Security.Cryptography.SHA256.Create();
+            keyBytes = sha.ComputeHash(keyBytes);
+        }
+        var handler = new System.IdentityModel.Tokens.Jwt.JwtSecurityTokenHandler();
+        var principal = handler.ValidateToken(token,
+            new Microsoft.IdentityModel.Tokens.TokenValidationParameters
+            {
+                ValidateIssuerSigningKey = true,
+                IssuerSigningKey = new Microsoft.IdentityModel.Tokens.SymmetricSecurityKey(keyBytes),
+                ValidateIssuer   = false,
+                ValidateAudience = false,
+                ValidateLifetime = true,
+                ClockSkew = System.TimeSpan.FromMinutes(1)
+            }, out _);
+
+        var name = principal.FindFirst("name")?.Value
+            ?? principal.Identity?.Name
+            ?? "Usuário";
+
+        return Results.Ok(new { token, name });
+    }
+    catch { return Results.Unauthorized(); }
+});
 // Prevent HTML host page from being returned for unmatched /elsa paths (would break JSON parsing in Blazor)
 app.MapFallback("/elsa/{**path}", () => Results.NotFound(new { title = "Not found", status = 404 }));
 app.MapFallbackToPage("/_Host");
