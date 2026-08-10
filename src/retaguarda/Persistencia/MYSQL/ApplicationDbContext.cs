@@ -46,6 +46,8 @@ namespace Retaguarda.Persistencia.MYSQL
         public DbSet<TipoImovel> TiposImovel { get; set; } = null!;
         public DbSet<SituacaoImovel> SituacoesImovel { get; set; } = null!;
 
+        public DbSet<OrquestracaoFluxoProcesso> OrquestracaoFluxoProcessos { get; set; } = null!;
+
         // relation tables
         public DbSet<OrganizacaoEndereco> OrganizacaoEnderecos { get; set; } = null!;
         public DbSet<OrganizacaoUnidadeEndereco> OrganizacaoUnidadeEnderecos { get; set; } = null!;
@@ -265,6 +267,16 @@ namespace Retaguarda.Persistencia.MYSQL
                 b.HasKey(x => x.Id);
                 b.Property(x => x.Nome).IsRequired().HasMaxLength(200);
                 b.HasOne(x => x.Organizacao).WithMany(o => o.Funcoes).HasForeignKey(x => x.OrganizacaoId).OnDelete(DeleteBehavior.Cascade);
+            });
+
+            modelBuilder.Entity<OrquestracaoFluxoProcesso>(b =>
+            {
+                b.ToTable("OrquestracaoFluxoProcessos");
+                b.HasKey(x => x.Id);
+                b.Property(x => x.Nome).IsRequired().HasMaxLength(200);
+                b.Property(x => x.Descricao).HasMaxLength(2000);
+                b.Property(x => x.WorkflowDefinitionId).HasMaxLength(200);
+                b.Property(x => x.WorkflowVersion);
             });
         }
 

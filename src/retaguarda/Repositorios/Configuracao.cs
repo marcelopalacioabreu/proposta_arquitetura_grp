@@ -12,6 +12,7 @@ namespace Retaguarda.Repositorios
         {
             services.AddScoped<Interfaces.IOrganizacaoRepositorio, OrganizacaoRepositorio>();
             services.AddScoped<Interfaces.IUsuarioRepositorio, UsuarioRepositorio>();
+            services.AddScoped<Interfaces.IOrquestracaoFluxoProcessoRepositorio, OrquestracaoFluxoProcessoRepositorio>();
             return services;
         }
     }

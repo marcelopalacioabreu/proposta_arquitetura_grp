@@ -13,6 +13,7 @@ namespace Retaguarda.Servicos
             services.AddScoped<Interfaces.IOrganizacaoServico, OrganizacaoServico>();
             services.AddScoped<Interfaces.IUsuarioServico, UsuarioServico>();
             services.AddScoped<Interfaces.IPermissionService, PermissionService>();
+            services.AddScoped<Interfaces.IOrquestracaoFluxoProcessoServico, OrquestracaoFluxoProcessoServico>();
             services.AddScoped<RequisicaoUsuario>();
             services.AddScoped<EscopoEmExecucao>();
             return services;

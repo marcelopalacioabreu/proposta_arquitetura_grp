@@ -40,6 +40,8 @@ namespace Retaguarda.Persistencia
         DbSet<TipoImovel> TiposImovel { get; set; }
         DbSet<SituacaoImovel> SituacoesImovel { get; set; }
 
+        DbSet<OrquestracaoFluxoProcesso> OrquestracaoFluxoProcessos { get; set; }
+
         DbSet<OrganizacaoEndereco> OrganizacaoEnderecos { get; set; }
         DbSet<OrganizacaoUnidadeEndereco> OrganizacaoUnidadeEnderecos { get; set; }
         DbSet<OrganizacaoSetorEndereco> OrganizacaoSetorEnderecos { get; set; }

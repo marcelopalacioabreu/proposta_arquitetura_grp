@@ -17,6 +17,24 @@
       ]
     },
     {
+      "grupo": "Automação",
+      "itens": [
+        {
+          "chave": "orquestracaoFluxo.processos",
+          "texto": "Processos de Orquestração",
+          "icone": "collection-play",
+          "url": "/painel/orquestracao-fluxo/processos",
+          "permissoes": [
+            { "id": "orquestracaoFluxo.visualizar", "texto": "Visualizar" },
+            { "id": "orquestracaoFluxo.editar", "texto": "Criar/Editar" },
+            { "id": "orquestracaoFluxo.excluir", "texto": "Excluir" }
+          ],
+          "conflitosCom": [""],
+          "mostrarNoMenu": true
+        }
+      ]
+    },
+    {
       "grupo": "Definições",
       "itens": [
         { 
