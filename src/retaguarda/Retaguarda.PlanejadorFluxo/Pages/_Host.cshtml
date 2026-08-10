@@ -52,6 +52,24 @@
     <script src="@basePath/_content/CodeBeam.MudBlazor.Extensions/MudExtensions.min.js"></script>
     <script src="@basePath/_content/Radzen.Blazor/Radzen.Blazor.js"></script>
     <script>
+        // Keep all Blazor/Elsa navigation within the proxy base path.
+        // Elsa Studio uses absolute paths (/login, /workflows) which would otherwise
+        // escape the proxy scope and land on the React app.
+        (function(){
+            var base = '@basePath';
+            if (!base) return;
+            function prefix(url) {
+                if (!url || typeof url !== 'string') return url;
+                if (url.indexOf('://') !== -1 || url.startsWith('//')) return url;
+                if (url.startsWith(base + '/') || url === base) return url;
+                if (url.startsWith('/')) return base + url;
+                return url;
+            }
+            var _push = history.pushState.bind(history);
+            var _replace = history.replaceState.bind(history);
+            history.pushState    = function(s,t,u){ return _push(s,t,prefix(u)); };
+            history.replaceState = function(s,t,u){ return _replace(s,t,prefix(u)); };
+        })();
         window.getClientConfig = function() { return {
             "apiUrl": "@apiUrl",
             "basePath": "@basePath"

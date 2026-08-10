@@ -1,0 +1,13 @@
+@inject IJSRuntime JS
+
+@* Rendered by Elsa Studio Shell when the user is not authenticated.
+   Redirects the parent frame to the main app login page. *@
+
+@code {
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender) return;
+        await JS.InvokeVoidAsync("eval",
+            "(window.top && window.top !== window ? window.top : window).location.replace('/autenticacao')");
+    }
+}

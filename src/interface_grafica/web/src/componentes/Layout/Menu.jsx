@@ -81,6 +81,9 @@ export default function Menu(){
 
   },[modulos, query])
 
+  // Elsa Studio tem sua própria barra lateral; não renderiza o menu flutuante nessa rota
+  if (location.pathname.includes('/planejadorFluxo')) return null
+
   function renderCompactIcon(name, active){
     if (!name) return <i className="bi bi-square" />
     const defaultColor = active ? '#fff' : '#495057'

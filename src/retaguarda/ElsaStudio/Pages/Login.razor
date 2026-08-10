@@ -1,0 +1,15 @@
+@page "/login"
+@inject IJSRuntime JS
+
+@* If the main-app cookie is not present/valid, the cookie auth check returns 401 and this page
+   redirects the parent frame to the main app login so the user authenticates there. *@
+
+@code {
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender) return;
+        // Navigate the top-level window so the user logs in via the main application
+        await JS.InvokeVoidAsync("eval",
+            "(window.top && window.top !== window ? window.top : window).location.replace('/autenticacao')");
+    }
+}

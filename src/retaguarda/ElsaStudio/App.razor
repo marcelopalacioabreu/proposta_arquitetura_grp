@@ -1,12 +1,21 @@
-﻿<Router AppAssembly="@typeof(App).Assembly">
+﻿@using System.Reflection
+
+<Router AppAssembly="@typeof(App).Assembly" AdditionalAssemblies="@_elsaAssemblies">
     <Found Context="routeData">
         <RouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)" />
         <FocusOnNavigate RouteData="@routeData" Selector="h1" />
     </Found>
     <NotFound>
-        <PageTitle>Not found</PageTitle>
         <LayoutView Layout="@typeof(MainLayout)">
-            <p role="alert">Sorry, there's nothing at this address.</p>
+            <p role="alert">Página não encontrada.</p>
         </LayoutView>
     </NotFound>
 </Router>
+
+@code {
+    // Scans all Elsa.Studio.* assemblies so module pages (Dashboard, Workflows, etc.) are routable
+    private static readonly IReadOnlyList<Assembly> _elsaAssemblies =
+        AppDomain.CurrentDomain.GetAssemblies()
+            .Where(a => a.GetName().Name?.StartsWith("Elsa.Studio") == true)
+            .ToArray();
+}

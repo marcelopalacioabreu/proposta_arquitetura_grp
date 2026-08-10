@@ -26,6 +26,12 @@ builder.Services.AddDataProtection()
     .PersistKeysToFileSystem(new DirectoryInfo(keysPath))
     .SetApplicationName("Retaguarda");
 
+// Expose the main app DB, repositories and services so custom Elsa activities can inject them
+builder.Services.AddHttpContextAccessor();
+Retaguarda.Persistencia.Configuracao.RegistrarServices(builder.Services, builder.Configuration);
+Retaguarda.Repositorios.Configuracao.RegistrarServices(builder.Services, builder.Configuration);
+Retaguarda.Servicos.Configuracao.RegistrarServices(builder.Services, builder.Configuration);
+
 var services = builder.Services;
 var configuration = builder.Configuration;
 
@@ -34,10 +40,12 @@ var connectionString = configuration.GetSection("Elsa:ConnectionStrings")
     ?? configuration.GetConnectionString("DefaultConnection")
     ?? throw new InvalidOperationException("No database connection string configured.");
 
+var jwtKey = configuration["Jwt:Key"] ?? "change_this_secret_for_prod";
+
 services.AddElsa(elsa => elsa
     .UseIdentity(identity =>
     {
-        identity.TokenOptions = options => options.SigningKey = "large-signing-key-for-signing-JWT-tokens-elsa";
+        identity.TokenOptions = options => options.SigningKey = jwtKey;
         identity.UseAdminUserProvider();
     })
     .UseDefaultAuthentication()
@@ -66,6 +74,21 @@ services.AddCors(cors => cors.AddDefaultPolicy(policy =>
 
 services.AddRazorPages(options =>
     options.Conventions.ConfigureFilter(new IgnoreAntiforgeryTokenAttribute()));
+
+// Accept the main-app HttpOnly cookie as a Bearer token so same-origin Elsa API calls are authenticated
+services.PostConfigure<Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerOptions>(
+    Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerDefaults.AuthenticationScheme,
+    opts =>
+    {
+        var prev = opts.Events?.OnMessageReceived;
+        opts.Events ??= new Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerEvents();
+        opts.Events.OnMessageReceived = async ctx =>
+        {
+            if (prev != null) await prev(ctx);
+            if (string.IsNullOrEmpty(ctx.Token) && ctx.Request.Cookies.ContainsKey("access_token"))
+                ctx.Token = ctx.Request.Cookies["access_token"];
+        };
+    });
 
 // Named client retained for ProxyController (/planejadorDeFluxo/{**path})
 services.AddHttpClient("Elsa", client =>
@@ -120,6 +143,16 @@ app.UseWorkflowsApi();
 app.UseWorkflows();
 app.MapRazorPages();
 app.MapControllers();
+// Endpoint used by CookieAuthStateProvider in Elsa Studio to verify the access_token cookie
+app.MapGet("/identity/me",
+    [Microsoft.AspNetCore.Authorization.Authorize] (HttpContext ctx) => Results.Ok(new
+    {
+        id   = ctx.User.FindFirst("sub")?.Value
+               ?? ctx.User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value,
+        name = ctx.User.FindFirst("name")?.Value
+               ?? ctx.User.Identity?.Name
+               ?? "Usuário"
+    }));
 // Prevent HTML host page from being returned for unmatched /elsa paths (would break JSON parsing in Blazor)
 app.MapFallback("/elsa/{**path}", () => Results.NotFound(new { title = "Not found", status = 404 }));
 app.MapFallbackToPage("/_Host");

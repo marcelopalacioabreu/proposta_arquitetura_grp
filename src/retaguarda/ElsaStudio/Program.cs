@@ -48,6 +48,23 @@ else if (authProvider.Equals("OpenIdConnect", StringComparison.OrdinalIgnoreCase
     });
     authenticationHandler = typeof(OidcAuthenticatingApiHttpMessageHandler);
 }
+else if (authProvider.Equals("Cookie", StringComparison.OrdinalIgnoreCase))
+{
+    // Cookie-based SSO: the browser sends the HttpOnly access_token cookie automatically
+    // for all same-origin requests. The server validates it via PostConfigure<JwtBearerOptions>.
+    // No token is ever stored in JavaScript-accessible storage.
+    authenticationHandler = typeof(ElsaStudio.CookiePassthroughHandler);
+    builder.Services.AddTransient<ElsaStudio.CookiePassthroughHandler>();
+    builder.Services.AddAuthorizationCore();
+    builder.Services.AddHttpClient<ElsaStudio.CookieAuthStateProvider>(c =>
+        c.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress));
+    builder.Services.AddScoped<Microsoft.AspNetCore.Components.Authorization.AuthenticationStateProvider,
+        ElsaStudio.CookieAuthStateProvider>();
+    // When the user is not authenticated, Elsa Studio renders this component instead of its own login form
+    builder.Services.AddSingleton<Elsa.Studio.Contracts.IUnauthorizedComponentProvider>(
+        new Elsa.Studio.Authentication.Abstractions.ComponentProviders
+            .UnauthorizedComponentProvider<ElsaStudio.RedirectToLogin>());
+}
 else
 {
     throw new InvalidOperationException($"Unsupported Authentication:Provider value '{authProvider}'.");

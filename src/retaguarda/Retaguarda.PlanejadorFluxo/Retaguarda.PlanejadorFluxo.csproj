@@ -27,6 +27,8 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Persistencia\Retaguarda.Persistencia.csproj" />
+    <ProjectReference Include="..\Repositorios\Retaguarda.Repositorios.csproj" />
+    <ProjectReference Include="..\Servicos\Retaguarda.Servicos.csproj" />
     <ProjectReference Include="..\ElsaStudio\ElsaStudio.csproj" />
   </ItemGroup>
 

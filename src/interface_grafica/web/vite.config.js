@@ -18,6 +18,11 @@ export default defineConfig({
         target: planejadorUrl,
         changeOrigin: true
       },
+      // Auth check endpoint for CookieAuthStateProvider (cookie forwarded to PlanejadorFluxo)
+      '/identity': {
+        target: planejadorUrl,
+        changeOrigin: true
+      },
       // Blazor WASM runtime and package static assets (absolute paths in _Host.cshtml)
       '/_framework': { target: planejadorUrl, changeOrigin: true },
       '/_content': { target: planejadorUrl, changeOrigin: true },
