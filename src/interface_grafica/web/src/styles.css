@@ -103,9 +103,10 @@ body{ font-family: Arial, sans-serif; margin:0; padding:0; background:#f5f7fa }
 .compact-icons::-webkit-scrollbar{ display:none; height:0; width:0 }
 
 /* Toggle tab (drawer pull) placed at the top of the floating bar */
-.floating-bar .toggle-tab{ position:absolute; top:8px; left:100%; z-index:1055 }
+.floating-bar .toggle-tab{ position:absolute; top:72px; left:100%; z-index:1055; }
 .floating-bar .toggle-tab .toggle-compact{ border-radius:0px 12px 12px 0px; padding:.18rem .45rem; display:inline-flex; align-items:center; justify-content:center; box-shadow:0 4px 10px rgba(0,0,0,0.06) }
 .floating-bar .toggle-tab .toggle-compact i{ font-size:1rem }
+.floating-bar .toggle-tab button:hover{ color: unset; }
 
 /* Ensure icons are visible (in case list-group has full-width styles) */
 .floating-bar.compact .menu-panel .list-group-item{ background:transparent !important; border:0 !important }
@@ -147,7 +148,7 @@ body{ font-family: Arial, sans-serif; margin:0; padding:0; background:#f5f7fa }
 	color: #495057 !important;
 	fill: #495057 !important;
 }
-.floating-bar .toggle-compact{ border-radius:6px }
+.floating-bar .toggle-compact{ border-radius:6px; background:rgba(255,255,255,0.95); }
 
 /* center the main square vertically when compact */
 .floating-bar.compact .floating-buttons{ justify-content:center }
