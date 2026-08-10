@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.DataProtection;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -66,6 +67,13 @@ services.AddCors(cors => cors.AddDefaultPolicy(policy =>
 services.AddRazorPages(options =>
     options.Conventions.ConfigureFilter(new IgnoreAntiforgeryTokenAttribute()));
 
+// Named client retained for ProxyController (/planejadorDeFluxo/{**path})
+services.AddHttpClient("Elsa", client =>
+{
+    var baseUrl = configuration["Elsa:BaseUrl"] ?? "http://localhost:6001";
+    client.BaseAddress = new Uri(baseUrl);
+});
+
 var app = builder.Build();
 
 if (!app.Environment.IsDevelopment())
@@ -73,6 +81,34 @@ if (!app.Environment.IsDevelopment())
     app.UseExceptionHandler("/Error");
     app.UseHsts();
 }
+
+// Catch exceptions from Elsa middleware and return JSON so Blazor never receives HTML
+app.Use(async (ctx, next) =>
+{
+    if (!ctx.Request.Path.StartsWithSegments("/elsa"))
+    {
+        await next(ctx);
+        return;
+    }
+    try
+    {
+        await next(ctx);
+    }
+    catch (Exception ex)
+    {
+        if (!ctx.Response.HasStarted)
+        {
+            ctx.Response.StatusCode = StatusCodes.Status500InternalServerError;
+            ctx.Response.ContentType = "application/problem+json";
+            await ctx.Response.WriteAsJsonAsync(new
+            {
+                title = "An error occurred processing the request",
+                status = 500,
+                detail = app.Environment.IsDevelopment() ? ex.Message : null
+            });
+        }
+    }
+});
 
 app.UseRouting();
 app.UseCors();
@@ -84,6 +120,8 @@ app.UseWorkflowsApi();
 app.UseWorkflows();
 app.MapRazorPages();
 app.MapControllers();
+// Prevent HTML host page from being returned for unmatched /elsa paths (would break JSON parsing in Blazor)
+app.MapFallback("/elsa/{**path}", () => Results.NotFound(new { title = "Not found", status = 404 }));
 app.MapFallbackToPage("/_Host");
 
 app.Run();

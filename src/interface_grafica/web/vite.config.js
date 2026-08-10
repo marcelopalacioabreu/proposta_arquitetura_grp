@@ -12,63 +12,27 @@ export default defineConfig({
       '/api': 'http://localhost:5000',
       '/auth': 'http://localhost:5000',
       '/meta': 'http://localhost:5000',
-      // Development proxy for PlanejadorFluxo (Elsa Studio or proxy service)
-      // Strip the /planejadorDeFluxo prefix when forwarding to the planner host
+      // Elsa API calls from Blazor WASM arrive here (same-origin) because the /planejadorDeFluxo
+      // proxy below uses changeOrigin:false, making _Host.cshtml generate apiUrl=http://localhost:5173/elsa/api
+      '/elsa': {
+        target: planejadorUrl,
+        changeOrigin: true
+      },
+      // Blazor WASM runtime and package static assets (absolute paths in _Host.cshtml)
+      '/_framework': { target: planejadorUrl, changeOrigin: true },
+      '/_content': { target: planejadorUrl, changeOrigin: true },
+      '/_blazor': { target: planejadorUrl, changeOrigin: true },
+      // Elsa Studio host page loader — changeOrigin:false keeps Host:localhost:5173 so that
+      // _Host.cshtml computes apiUrl=http://localhost:5173/elsa/api (proxied by /elsa above)
       '/planejadorDeFluxo': {
         target: planejadorUrl,
-        changeOrigin: true,
+        changeOrigin: false,
         rewrite: (path) => path.replace(/^\/planejadorDeFluxo/, ''),
         headers: {
+          // Tells _Host.cshtml to set <base href="/planejadorDeFluxo/"> so all Blazor resource
+          // fetches (appsettings.json, _framework/*.wasm, etc.) go through this proxy
           'X-Forwarded-Prefix': '/planejadorDeFluxo'
         }
-      }
-      ,
-      // Proxy the embedded painel route used by the app so requests like
-      // /painel/planejadorFluxo/_framework/* are forwarded to the planner's /_framework/*
-      '/painel/planejadorDeFluxo': {
-        target: planejadorUrl,
-        changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/painel\/planejadorDeFluxo/, ''),
-        headers: {
-          'X-Forwarded-Prefix': '/painel/planejadorDeFluxo'
-        }
-      }
-      ,
-      // Proxy Blazor WASM static assets and runtime requests to the planner host
-      // so absolute paths like /_framework/* and /_content/* are served correctly.
-      '/_framework': {
-        target: planejadorUrl,
-        changeOrigin: true
-      },
-      '/_content': {
-        target: planejadorUrl,
-        changeOrigin: true
-      },
-      '/_blazor': {
-        target: planejadorUrl,
-        changeOrigin: true
-      }
-      ,
-      // Explicit proxies for prefixed requests (embedded paths)
-      '/planejadorDeFluxo/_framework': {
-        target: planejadorUrl,
-        changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/planejadorDeFluxo/, '')
-      },
-      '/planejadorDeFluxo/_content': {
-        target: planejadorUrl,
-        changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/planejadorDeFluxo/, '')
-      },
-      '/painel/planejadorDeFluxo/_framework': {
-        target: planejadorUrl,
-        changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/painel\/planejadorDeFluxo/, '')
-      },
-      '/painel/planejadorDeFluxo/_content': {
-        target: planejadorUrl,
-        changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/painel\/planejadorDeFluxo/, '')
       }
     }
   }
