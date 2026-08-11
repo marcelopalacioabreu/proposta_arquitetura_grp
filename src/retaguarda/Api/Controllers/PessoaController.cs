@@ -1,8 +1,8 @@
-using System.Linq;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Retaguarda.Persistencia;
-using Retaguarda.Dominio.Entidades;
+using Retaguarda.Servicos.Interfaces;
+using Retaguarda.DTO.Dtos;
+using Retaguarda.DTO.Parametros;
 
 namespace Retaguarda.Api.Controllers
 {
@@ -10,77 +10,57 @@ namespace Retaguarda.Api.Controllers
     [Route("api/pessoas")]
     public class PessoaController : BaseController
     {
-        private readonly Retaguarda.Persistencia.IApplicationDbContext _db;
+        private readonly IPessoaServico _servico;
 
-        public PessoaController(Retaguarda.Persistencia.IApplicationDbContext db)
+        public PessoaController(IPessoaServico servico)
         {
-            _db = db;
+            _servico = servico;
         }
 
         [HttpGet]
         [Authorize(Policy = "pessoas.visualizar")]
-        public IActionResult GetAll([FromQuery] string? q, [FromQuery] int page = 1, [FromQuery] int pageSize = 10)
+        public IActionResult GetAll([FromQuery] PesquisaParametrosDto parametros, [FromQuery] int? page = null, [FromQuery] int? pageSize = null, [FromQuery] string? sortField = null, [FromQuery] string? sortDir = null, [FromQuery] string? campo = null, [FromQuery] string? operador = null, [FromQuery] string? valor = null, [FromQuery(Name = "valor_de")] string? valorDe = null, [FromQuery(Name = "valor_ate")] string? valorAte = null)
         {
-            var query = _db.Pessoas.AsQueryable();
-            query = query.Where(x => x.Ativo);
-            if (!string.IsNullOrWhiteSpace(q)) query = query.Where(x => x.Nome.Contains(q) || (x.Documento != null && x.Documento.Contains(q)));
-            var total = query.Count();
-            var items = query.OrderBy(x => x.Nome).Skip((page - 1) * pageSize).Take(pageSize).Select(x => new { x.Id, x.Nome, x.TipoPessoaChave, x.Documento }).ToList();
-            return OkList(items, total, page, pageSize);
+            parametros = NormalizarPesquisaParametros(parametros, page, pageSize, sortField, sortDir, campo, operador, valor, valorDe, valorAte);
+            var (items, total) = _servico.ListarAsync(parametros).Result;
+            return OkList(items, total, parametros.Pagina, parametros.TamanhoPagina);
         }
 
         [HttpGet("{id}")]
         [Authorize(Policy = "pessoas.visualizar")]
         public IActionResult Get(long id)
         {
-            var p = _db.Pessoas.Find(id);
-            if (p == null) return NotFoundError("Registro não encontrado");
-            return OkData(p);
+            var e = _servico.ObterPorIdAsync(id).Result;
+            if (e == null) return NotFoundError("Registro não encontrado");
+            return OkData(e);
         }
 
         [HttpPost]
         [Authorize(Policy = "pessoas.editar")]
         public IActionResult Create([FromBody] PessoaDto dto)
         {
-            var p = new Pessoa { Nome = dto.Nome ?? string.Empty, TipoPessoaChave = dto.TipoPessoaChave ?? "F", Documento = dto.Documento, Email = dto.Email, Telefone = dto.Telefone };
-            _db.Pessoas.Add(p);
-            _db.SaveChanges();
-            return CreatedDataAtAction(nameof(Get), new { id = p.Id }, p, "Criado com sucesso");
-        }
-
-        [HttpPut("{id}")]
-        [Authorize(Policy = "pessoas.editar")]
-        public IActionResult Update(long id, [FromBody] PessoaDto dto)
-        {
-            var p = _db.Pessoas.Find(id);
-            if (p == null) return NotFoundError("Registro não encontrado");
-            p.Nome = dto.Nome ?? p.Nome;
-            p.TipoPessoaChave = dto.TipoPessoaChave ?? p.TipoPessoaChave;
-            p.Documento = dto.Documento ?? p.Documento;
-            p.Email = dto.Email ?? p.Email;
-            p.Telefone = dto.Telefone ?? p.Telefone;
-            _db.SaveChanges();
-            return OkMessage("Atualizado");
+            if (!ModelState.IsValid) return BadRequestModelState();
+            var o = _servico.CriarAsync(dto).Result;
+            return CreatedDataAtAction(nameof(Get), new { id = o.Id }, o, "Criado com sucesso");
         }
 
         [HttpDelete("{id}")]
         [Authorize(Policy = "pessoas.excluir")]
         public IActionResult Delete(long id)
         {
-            var p = _db.Pessoas.Find(id);
-            if (p == null) return NotFoundError("Registro não encontrado");
-            p.Ativo = false;
-            _db.SaveChanges();
+            _servico.DeleteAsync(id).GetAwaiter().GetResult();
             return OkMessage("Excluído");
         }
 
-        public class PessoaDto
+        [HttpPut("{id}")]
+        [Authorize(Policy = "pessoas.editar")]
+        public IActionResult Update(long id, [FromBody] PessoaDto dto)
         {
-            public string? Nome { get; set; }
-            public string? TipoPessoaChave { get; set; }
-            public string? Documento { get; set; }
-            public string? Telefone { get; set; }
-            public string? Email { get; set; }
+            if (!ModelState.IsValid) return BadRequestModelState();
+            var existing = _servico.ObterPorIdAsync(id).Result;
+            if (existing == null) return NotFoundError("Registro não encontrado");
+            _servico.UpdateAsync(id, dto).GetAwaiter().GetResult();
+            return OkMessage("Atualizado");
         }
     }
 }

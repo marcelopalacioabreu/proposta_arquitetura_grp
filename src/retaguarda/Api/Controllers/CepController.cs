@@ -1,8 +1,10 @@
-using System.Linq;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Retaguarda.Servicos.Interfaces;
+using Retaguarda.DTO.Dtos;
+using Retaguarda.DTO.Parametros;
 using Retaguarda.Persistencia;
-using Retaguarda.Dominio.Entidades;
 
 namespace Retaguarda.Api.Controllers
 {
@@ -10,34 +12,35 @@ namespace Retaguarda.Api.Controllers
     [Route("api/ceps")]
     public class CepController : BaseController
     {
-        private readonly Retaguarda.Persistencia.IApplicationDbContext _db;
+        private readonly ICepServico _servico;
+        private readonly IApplicationDbContext _db;
 
-        public CepController(Retaguarda.Persistencia.IApplicationDbContext db)
+        public CepController(ICepServico servico, IApplicationDbContext db)
         {
+            _servico = servico;
             _db = db;
         }
 
         [HttpGet]
-        public IActionResult GetAll([FromQuery] string? q, [FromQuery] int page = 1, [FromQuery] int pageSize = 10)
+        [Authorize(Policy = "ceps.visualizar")]
+        public IActionResult GetAll([FromQuery] PesquisaParametrosDto parametros, [FromQuery] int? page = null, [FromQuery] int? pageSize = null, [FromQuery] string? sortField = null, [FromQuery] string? sortDir = null, [FromQuery] string? campo = null, [FromQuery] string? operador = null, [FromQuery] string? valor = null, [FromQuery(Name = "valor_de")] string? valorDe = null, [FromQuery(Name = "valor_ate")] string? valorAte = null)
         {
-            var query = _db.Ceps.AsQueryable();
-            if (!string.IsNullOrWhiteSpace(q)) query = query.Where(x => x.Codigo.Contains(q));
-            var total = query.Count();
-            var items = query.OrderBy(x => x.Codigo).Skip((page - 1) * pageSize).Take(pageSize)
-                .Select(x => new { x.Id, x.Codigo, Imovel = x.Imovel != null ? x.Imovel.Cadastro : string.Empty, x.ImovelId })
-                .ToList();
-            return OkList(items, total, page, pageSize);
+            parametros = NormalizarPesquisaParametros(parametros, page, pageSize, sortField, sortDir, campo, operador, valor, valorDe, valorAte);
+            var (items, total) = _servico.ListarAsync(parametros).Result;
+            return OkList(items, total, parametros.Pagina, parametros.TamanhoPagina);
         }
 
         [HttpGet("{id}")]
+        [Authorize(Policy = "ceps.visualizar")]
         public IActionResult Get(long id)
         {
-            var c = _db.Ceps.Find(id);
-            if (c == null) return NotFoundError("Registro não encontrado");
-            return OkData(c);
+            var e = _servico.ObterPorIdAsync(id).Result;
+            if (e == null) return NotFoundError("Registro não encontrado");
+            return OkData(e);
         }
 
         [HttpGet("codigo/{codigo}")]
+        [Authorize(Policy = "ceps.visualizar")]
         public IActionResult GetByCodigo(string codigo)
         {
             var c = _db.Ceps
@@ -51,12 +54,12 @@ namespace Retaguarda.Api.Controllers
 
             if (c == null) return NotFoundError("CEP não encontrado");
 
-            var imovel = c.Imovel;
-            var logradouro = imovel?.Logradouro;
-            var bairro = logradouro?.Bairro;
-            var municipio = bairro?.Municipio;
-            var uf = municipio?.Uf;
-            var pais = uf?.Pais;
+            var imovel = c.Imovel!;
+            var logradouro = imovel?.Logradouro!;
+            var bairro = logradouro?.Bairro!;
+            var municipio = bairro?.Municipio!;
+            var uf = municipio?.Uf!;
+            var pais = uf?.Pais!;
 
             var result = new
             {
@@ -97,31 +100,30 @@ namespace Retaguarda.Api.Controllers
         }
 
         [HttpPost]
-        public IActionResult Create([FromBody] Cep dto)
+        [Authorize(Policy = "ceps.editar")]
+        public IActionResult Create([FromBody] CepDto dto)
         {
-            _db.Ceps.Add(dto);
-            _db.SaveChanges();
-            return CreatedDataAtAction(nameof(Get), new { id = dto.Id }, dto, "Criado com sucesso");
+            if (!ModelState.IsValid) return BadRequestModelState();
+            var o = _servico.CriarAsync(dto).Result;
+            return CreatedDataAtAction(nameof(Get), new { id = o.Id }, o, "Criado com sucesso");
         }
 
         [HttpPut("{id}")]
-        public IActionResult Update(long id, [FromBody] Cep dto)
+        [Authorize(Policy = "ceps.editar")]
+        public IActionResult Update(long id, [FromBody] CepDto dto)
         {
-            var c = _db.Ceps.Find(id);
-            if (c == null) return NotFoundError("Registro não encontrado");
-            c.Codigo = dto.Codigo ?? c.Codigo;
-            c.ImovelId = dto.ImovelId;
-            _db.SaveChanges();
+            if (!ModelState.IsValid) return BadRequestModelState();
+            var existing = _servico.ObterPorIdAsync(id).Result;
+            if (existing == null) return NotFoundError("Registro não encontrado");
+            _servico.UpdateAsync(id, dto).GetAwaiter().GetResult();
             return OkMessage("Atualizado");
         }
 
         [HttpDelete("{id}")]
+        [Authorize(Policy = "ceps.excluir")]
         public IActionResult Delete(long id)
         {
-            var c = _db.Ceps.Find(id);
-            if (c == null) return NotFoundError("Registro não encontrado");
-            c.Ativo = false;
-            _db.SaveChanges();
+            _servico.DeleteAsync(id).GetAwaiter().GetResult();
             return OkMessage("Excluído");
         }
     }

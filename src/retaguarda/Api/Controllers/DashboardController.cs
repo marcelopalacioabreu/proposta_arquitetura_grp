@@ -36,7 +36,7 @@ namespace Retaguarda.Api.Controllers
                 var unidades = await _db.OrganizacaoUnidades.Select(x => new { Tipo = "Unidade", Texto = x.Nome, Data = x.DataAlteracao ?? x.DataInsercao }).Take(10).ToListAsync();
                 var setores = await _db.OrganizacaoSetores.Select(x => new { Tipo = "Setor", Texto = x.Nome, Data = x.DataAlteracao ?? x.DataInsercao }).Take(10).ToListAsync();
 
-                var merged = orgs.Concat(users).Concat(profiles).Concat(unidades).Concat(setores).Where(x => x.Data != null).OrderByDescending(x => x.Data).Take(5).Select(x => new { tipo = x.Tipo, texto = x.Texto, data = x.Data }).ToList();
+                var merged = orgs.Concat(users).Concat(profiles).Concat(unidades).Concat(setores).OrderByDescending(x => x.Data).Take(5).Select(x => new { tipo = x.Tipo, texto = x.Texto, data = x.Data }).ToList();
 
                 // shortcuts (simple repaginada)
                 var atalhos = new[] {

@@ -79,7 +79,9 @@ namespace Retaguarda.Api.Controllers
                         var doc = System.Text.Json.JsonDocument.Parse(txt);
                         foreach (var prop in doc.RootElement.EnumerateObject())
                         {
-                            aggregated[prop.Name] = System.Text.Json.JsonSerializer.Deserialize<object>(prop.Value.GetRawText());
+                            var value = System.Text.Json.JsonSerializer.Deserialize<object>(prop.Value.GetRawText());
+                            if (value != null)
+                                aggregated[prop.Name] = value;
                         }
                     }
                     catch { /* ignore malformed */ }

@@ -8,6 +8,7 @@
     <ProjectReference Include="..\Persistencia\Retaguarda.Persistencia.csproj" />
     <ProjectReference Include="..\Repositorios\Retaguarda.Repositorios.csproj" />
     <ProjectReference Include="..\Servicos\Retaguarda.Servicos.csproj" />
+    <ProjectReference Include="..\Retaguarda.DTO\Retaguarda.DTO.csproj" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.13" />

@@ -1,48 +1,51 @@
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Retaguarda.Dominio.Entidades;
 using Retaguarda.Repositorios.Interfaces;
+using Retaguarda.Servicos.Base;
 using Retaguarda.Servicos.Interfaces;
+using Retaguarda.DTO.Dtos;
 
 namespace Retaguarda.Servicos
 {
-    public class OrganizacaoServico : IOrganizacaoServico
+    public class OrganizacaoServico : ServicoBase<Organizacao, OrganizacaoDto>, IOrganizacaoServico
     {
-        private readonly IOrganizacaoRepositorio _repositorio;
+        private readonly IOrganizacaoRepositorio _repositorioConcrete;
 
-        public OrganizacaoServico(IOrganizacaoRepositorio repositorio)
+        public OrganizacaoServico(IOrganizacaoRepositorio repositorio) : base(repositorio)
         {
-            _repositorio = repositorio;
+            _repositorioConcrete = repositorio;
         }
 
-        public async Task<Organizacao?> ObterPorIdAsync(long id)
+        protected override OrganizacaoDto ToDto(Organizacao e)
         {
-            return await _repositorio.ObterPorIdAsync(id);
+            return new OrganizacaoDto
+            {
+                Id = e.Id,
+                Nome = e.Nome,
+                Codigo = e.Codigo,
+                Sigla = e.Sigla,
+                Ativo = e.Ativo
+            };
         }
 
-        public async Task<(List<Organizacao> Items, int Total)> ListarAsync(string? nomeFilter, int page, int pageSize, string? sortField, string? sortDir, string? campo = null, string? operador = null, string? valor = null, string? valorDe = null, string? valorAte = null, int? inativo = null)
+        protected override Organizacao FromDto(OrganizacaoDto dto)
         {
-            return await _repositorio.ListarAsync(nomeFilter, page, pageSize, sortField, sortDir, campo, operador, valor, valorDe, valorAte, inativo);
+            return new Organizacao
+            {
+                Nome = dto.Nome,
+                Codigo = dto.Codigo,
+                Sigla = dto.Sigla,
+                Ativo = dto.Ativo
+            };
         }
 
-        public async Task<Organizacao> CriarAsync(string nome)
+        protected override void UpdateEntityFromDto(Organizacao entity, OrganizacaoDto dto)
         {
-            var o = new Organizacao { Nome = nome };
-            return await _repositorio.AdicionarAsync(o);
-        }
-
-        public async Task DeleteAsync(long id)
-        {
-            await _repositorio.DeleteAsync(id);
-        }
-
-        public async Task RestaurarAsync(long id)
-        {
-            await _repositorio.RestaurarAsync(id);
-        }
-
-        public async Task UpdateAsync(Organizacao o)
-        {
-            await _repositorio.UpdateAsync(o);
+            entity.Nome = dto.Nome;
+            entity.Codigo = dto.Codigo;
+            entity.Sigla = dto.Sigla;
+            entity.Ativo = dto.Ativo;
         }
     }
 }

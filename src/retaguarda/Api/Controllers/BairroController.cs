@@ -1,7 +1,8 @@
-using System.Linq;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Retaguarda.Persistencia;
-using Retaguarda.Dominio.Entidades;
+using Retaguarda.Servicos.Interfaces;
+using Retaguarda.DTO.Dtos;
+using Retaguarda.DTO.Parametros;
 
 namespace Retaguarda.Api.Controllers
 {
@@ -9,60 +10,57 @@ namespace Retaguarda.Api.Controllers
     [Route("api/bairros")]
     public class BairroController : BaseController
     {
-        private readonly Retaguarda.Persistencia.IApplicationDbContext _db;
+        private readonly IBairroServico _servico;
 
-        public BairroController(Retaguarda.Persistencia.IApplicationDbContext db)
+        public BairroController(IBairroServico servico)
         {
-            _db = db;
+            _servico = servico;
         }
 
         [HttpGet]
-        public IActionResult GetAll([FromQuery] string? q, [FromQuery] int page = 1, [FromQuery] int pageSize = 10)
+        [Authorize(Policy = "bairros.visualizar")]
+        public IActionResult GetAll([FromQuery] PesquisaParametrosDto parametros, [FromQuery] int? page = null, [FromQuery] int? pageSize = null, [FromQuery] string? sortField = null, [FromQuery] string? sortDir = null, [FromQuery] string? campo = null, [FromQuery] string? operador = null, [FromQuery] string? valor = null, [FromQuery(Name = "valor_de")] string? valorDe = null, [FromQuery(Name = "valor_ate")] string? valorAte = null)
         {
-            var query = _db.Bairros.AsQueryable();
-            if (!string.IsNullOrWhiteSpace(q)) query = query.Where(x => x.Nome.Contains(q));
-            var total = query.Count();
-            var items = query.OrderBy(x => x.Nome).Skip((page - 1) * pageSize).Take(pageSize)
-                .Select(x => new { x.Id, x.Nome, MunicipioNome = x.Municipio != null ? x.Municipio.Nome : string.Empty, x.MunicipioId })
-                .ToList();
-            return OkList(items, total, page, pageSize);
+            parametros = NormalizarPesquisaParametros(parametros, page, pageSize, sortField, sortDir, campo, operador, valor, valorDe, valorAte);
+            var (items, total) = _servico.ListarAsync(parametros).Result;
+            return OkList(items, total, parametros.Pagina, parametros.TamanhoPagina);
         }
 
         [HttpGet("{id}")]
+        [Authorize(Policy = "bairros.visualizar")]
         public IActionResult Get(long id)
         {
-            var b = _db.Bairros.Find(id);
-            if (b == null) return NotFoundError("Registro não encontrado");
-            return OkData(b);
+            var e = _servico.ObterPorIdAsync(id).Result;
+            if (e == null) return NotFoundError("Registro não encontrado");
+            return OkData(e);
         }
 
         [HttpPost]
-        public IActionResult Create([FromBody] Bairro dto)
+        [Authorize(Policy = "bairros.editar")]
+        public IActionResult Create([FromBody] BairroDto dto)
         {
-            _db.Bairros.Add(dto);
-            _db.SaveChanges();
-            return CreatedDataAtAction(nameof(Get), new { id = dto.Id }, dto, "Criado com sucesso");
-        }
-
-        [HttpPut("{id}")]
-        public IActionResult Update(long id, [FromBody] Bairro dto)
-        {
-            var b = _db.Bairros.Find(id);
-            if (b == null) return NotFoundError("Registro não encontrado");
-            b.Nome = dto.Nome ?? b.Nome;
-            b.MunicipioId = dto.MunicipioId;
-            _db.SaveChanges();
-            return OkMessage("Atualizado");
+            if (!ModelState.IsValid) return BadRequestModelState();
+            var o = _servico.CriarAsync(dto).Result;
+            return CreatedDataAtAction(nameof(Get), new { id = o.Id }, o, "Criado com sucesso");
         }
 
         [HttpDelete("{id}")]
+        [Authorize(Policy = "bairros.excluir")]
         public IActionResult Delete(long id)
         {
-            var b = _db.Bairros.Find(id);
-            if (b == null) return NotFoundError("Registro não encontrado");
-            b.Ativo = false;
-            _db.SaveChanges();
+            _servico.DeleteAsync(id).GetAwaiter().GetResult();
             return OkMessage("Excluído");
+        }
+
+        [HttpPut("{id}")]
+        [Authorize(Policy = "bairros.editar")]
+        public IActionResult Update(long id, [FromBody] BairroDto dto)
+        {
+            if (!ModelState.IsValid) return BadRequestModelState();
+            var existing = _servico.ObterPorIdAsync(id).Result;
+            if (existing == null) return NotFoundError("Registro não encontrado");
+            _servico.UpdateAsync(id, dto).GetAwaiter().GetResult();
+            return OkMessage("Atualizado");
         }
     }
 }

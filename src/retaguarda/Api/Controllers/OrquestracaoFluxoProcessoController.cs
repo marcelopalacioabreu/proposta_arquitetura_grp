@@ -1,7 +1,9 @@
+using System.Linq;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Retaguarda.Servicos.Interfaces;
-using Retaguarda.Dominio.Entidades;
+using Retaguarda.DTO.Dtos;
+using Retaguarda.Api.Utils;
 
 namespace Retaguarda.Api.Controllers
 {
@@ -18,7 +20,19 @@ namespace Retaguarda.Api.Controllers
         public IActionResult GetAll([FromQuery] string? nome, [FromQuery] int page = 1, [FromQuery] int pageSize = 10, [FromQuery] string? sortField = null, [FromQuery] string? sortDir = null,
             [FromQuery] string? campo = null, [FromQuery] string? operador = null, [FromQuery] string? valor = null, [FromQuery(Name = "valor_de")] string? valorDe = null, [FromQuery(Name = "valor_ate")] string? valorAte = null, [FromQuery] int? inativo = null)
         {
-            var (items, total) = _servico.ListarAsync(nome, page, pageSize, sortField, sortDir, campo, operador, valor, valorDe, valorAte, inativo).Result;
+            var filtros = FiltrosHelper.MontarFiltros(campo, operador, valor, valorDe, valorAte);
+            var parametros = new Retaguarda.DTO.Parametros.PesquisaParametrosDto
+            {
+                Nome = nome,
+                Pagina = page,
+                TamanhoPagina = pageSize,
+                SortField = sortField,
+                SortDir = sortDir,
+                Filtros = filtros,
+                Inativo = inativo
+            };
+
+            var (items, total) = _servico.ListarAsync(parametros).Result;
             return OkList(items, total, page, pageSize);
         }
 
@@ -26,9 +40,9 @@ namespace Retaguarda.Api.Controllers
         [Authorize(Policy = "orquestracaoFluxo.visualizar")]
         public IActionResult Get(long id)
         {
-            var e = _servico.ObterPorIdAsync(id).Result;
-            if (e == null) return NotFoundError("Registro não encontrado");
-            return OkData(e);
+            var dto = _servico.ObterPorIdAsync(id).Result;
+            if (dto == null) return NotFoundError("Registro não encontrado");
+            return OkData(dto);
         }
 
         [HttpPost]
@@ -36,7 +50,8 @@ namespace Retaguarda.Api.Controllers
         public IActionResult Create([FromBody] CriarDto dto)
         {
             if (!ModelState.IsValid) return BadRequestModelState();
-            var o = _servico.CriarAsync(dto.Nome, dto.Descricao, dto.WorkflowDefinitionId, dto.WorkflowVersion).Result;
+            var toCreate = new OrquestracaoFluxoProcessoDto { Nome = dto.Nome, Descricao = dto.Descricao, WorkflowDefinitionId = dto.WorkflowDefinitionId, WorkflowVersion = dto.WorkflowVersion };
+            var o = _servico.CriarAsync(toCreate).Result;
             return CreatedDataAtAction(nameof(Get), new { id = o.Id }, o, "Criado com sucesso");
         }
 
@@ -63,11 +78,8 @@ namespace Retaguarda.Api.Controllers
             if (!ModelState.IsValid) return BadRequestModelState();
             var existing = _servico.ObterPorIdAsync(id).Result;
             if (existing == null) return NotFoundError("Registro não encontrado");
-            existing.Nome = dto.Nome;
-            existing.Descricao = dto.Descricao ?? string.Empty;
-            existing.WorkflowDefinitionId = dto.WorkflowDefinitionId;
-            existing.WorkflowVersion = dto.WorkflowVersion;
-            _servico.UpdateAsync(existing).GetAwaiter().GetResult();
+            var toUpdate = new OrquestracaoFluxoProcessoDto { Nome = dto.Nome, Descricao = dto.Descricao, WorkflowDefinitionId = dto.WorkflowDefinitionId, WorkflowVersion = dto.WorkflowVersion };
+            _servico.UpdateAsync(id, toUpdate).GetAwaiter().GetResult();
             return OkMessage("Atualizado");
         }
 

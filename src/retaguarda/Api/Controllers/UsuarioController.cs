@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Retaguarda.Persistencia;
 using Retaguarda.Dominio.Entidades;
+using Retaguarda.DTO.Dtos;
 
 namespace Retaguarda.Api.Controllers
 {
@@ -159,7 +160,7 @@ namespace Retaguarda.Api.Controllers
             public string? Email { get; set; }
             public long? OrganizacaoId { get; set; }
             public long? PessoaId { get; set; }
-            public PessoaController.PessoaDto? Pessoa { get; set; }
+            public PessoaDto? Pessoa { get; set; }
             public long[]? SetorIds { get; set; }
             public long? PadraoSetorId { get; set; }
             public long[]? PerfilIds { get; set; }

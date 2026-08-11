@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Retaguarda.Api.Models;
 using Retaguarda.Api.Utils;
+using Retaguarda.DTO.Parametros;
 
 namespace Retaguarda.Api.Controllers
 {
@@ -45,6 +46,32 @@ namespace Retaguarda.Api.Controllers
         protected IActionResult Error(string mensagem, int status = 500, object? detalhes = null)
         {
             return StatusCode(status, EnvelopeResult.Error(mensagem, detalhes));
+        }
+
+        protected PesquisaParametrosDto NormalizarPesquisaParametros(
+            PesquisaParametrosDto? parametros,
+            int? page = null,
+            int? pageSize = null,
+            string? sortField = null,
+            string? sortDir = null,
+            string? campo = null,
+            string? operador = null,
+            string? valor = null,
+            string? valorDe = null,
+            string? valorAte = null)
+        {
+            parametros ??= new PesquisaParametrosDto();
+            if (page.HasValue) parametros.Pagina = page.Value;
+            if (pageSize.HasValue) parametros.TamanhoPagina = pageSize.Value;
+            if (!string.IsNullOrWhiteSpace(sortField)) parametros.SortField = sortField;
+            if (!string.IsNullOrWhiteSpace(sortDir)) parametros.SortDir = sortDir;
+
+            if (parametros.Filtros == null || parametros.Filtros.Count == 0)
+            {
+                parametros.Filtros = FiltrosHelper.MontarFiltros(campo, operador, valor, valorDe, valorAte);
+            }
+
+            return parametros;
         }
     }
 }

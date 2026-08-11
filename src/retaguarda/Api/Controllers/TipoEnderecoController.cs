@@ -1,7 +1,8 @@
-using System.Linq;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Retaguarda.Persistencia;
-using Retaguarda.Dominio.Entidades;
+using Retaguarda.Servicos.Interfaces;
+using Retaguarda.DTO.Dtos;
+using Retaguarda.DTO.Parametros;
 
 namespace Retaguarda.Api.Controllers
 {
@@ -9,58 +10,57 @@ namespace Retaguarda.Api.Controllers
     [Route("api/tiposendereco")]
     public class TipoEnderecoController : BaseController
     {
-        private readonly Retaguarda.Persistencia.IApplicationDbContext _db;
+        private readonly ITipoEnderecoServico _servico;
 
-        public TipoEnderecoController(Retaguarda.Persistencia.IApplicationDbContext db)
+        public TipoEnderecoController(ITipoEnderecoServico servico)
         {
-            _db = db;
+            _servico = servico;
         }
 
         [HttpGet]
-        public IActionResult GetAll([FromQuery] string? q, [FromQuery] int page = 1, [FromQuery] int pageSize = 10)
+        [Authorize(Policy = "tiposendereco.visualizar")]
+        public IActionResult GetAll([FromQuery] PesquisaParametrosDto parametros, [FromQuery] int? page = null, [FromQuery] int? pageSize = null, [FromQuery] string? sortField = null, [FromQuery] string? sortDir = null, [FromQuery] string? campo = null, [FromQuery] string? operador = null, [FromQuery] string? valor = null, [FromQuery(Name = "valor_de")] string? valorDe = null, [FromQuery(Name = "valor_ate")] string? valorAte = null)
         {
-            var query = _db.TiposEndereco.AsQueryable();
-            if (!string.IsNullOrWhiteSpace(q)) query = query.Where(x => x.Nome.Contains(q) || x.Codigo.Contains(q));
-            var total = query.Count();
-            var items = query.OrderBy(x => x.Nome).Skip((page - 1) * pageSize).Take(pageSize).Select(x => new { x.Id, x.Codigo, x.Nome }).ToList();
-            return OkList(items, total, page, pageSize);
+            parametros = NormalizarPesquisaParametros(parametros, page, pageSize, sortField, sortDir, campo, operador, valor, valorDe, valorAte);
+            var (items, total) = _servico.ListarAsync(parametros).Result;
+            return OkList(items, total, parametros.Pagina, parametros.TamanhoPagina);
         }
 
         [HttpGet("{id}")]
+        [Authorize(Policy = "tiposendereco.visualizar")]
         public IActionResult Get(long id)
         {
-            var e = _db.TiposEndereco.Find(id);
+            var e = _servico.ObterPorIdAsync(id).Result;
             if (e == null) return NotFoundError("Registro não encontrado");
             return OkData(e);
         }
 
         [HttpPost]
-        public IActionResult Create([FromBody] TipoEndereco dto)
+        [Authorize(Policy = "tiposendereco.editar")]
+        public IActionResult Create([FromBody] TipoEnderecoDto dto)
         {
-            _db.TiposEndereco.Add(dto);
-            _db.SaveChanges();
-            return CreatedDataAtAction(nameof(Get), new { id = dto.Id }, dto, "Criado com sucesso");
-        }
-
-        [HttpPut("{id}")]
-        public IActionResult Update(long id, [FromBody] TipoEndereco dto)
-        {
-            var e = _db.TiposEndereco.Find(id);
-            if (e == null) return NotFoundError("Registro não encontrado");
-            e.Codigo = dto.Codigo ?? e.Codigo;
-            e.Nome = dto.Nome ?? e.Nome;
-            _db.SaveChanges();
-            return OkMessage("Atualizado");
+            if (!ModelState.IsValid) return BadRequestModelState();
+            var o = _servico.CriarAsync(dto).Result;
+            return CreatedDataAtAction(nameof(Get), new { id = o.Id }, o, "Criado com sucesso");
         }
 
         [HttpDelete("{id}")]
+        [Authorize(Policy = "tiposendereco.excluir")]
         public IActionResult Delete(long id)
         {
-            var e = _db.TiposEndereco.Find(id);
-            if (e == null) return NotFoundError("Registro não encontrado");
-            e.Ativo = false;
-            _db.SaveChanges();
+            _servico.DeleteAsync(id).GetAwaiter().GetResult();
             return OkMessage("Excluído");
+        }
+
+        [HttpPut("{id}")]
+        [Authorize(Policy = "tiposendereco.editar")]
+        public IActionResult Update(long id, [FromBody] TipoEnderecoDto dto)
+        {
+            if (!ModelState.IsValid) return BadRequestModelState();
+            var existing = _servico.ObterPorIdAsync(id).Result;
+            if (existing == null) return NotFoundError("Registro não encontrado");
+            _servico.UpdateAsync(id, dto).GetAwaiter().GetResult();
+            return OkMessage("Atualizado");
         }
     }
 }

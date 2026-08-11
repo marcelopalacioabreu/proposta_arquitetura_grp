@@ -1,15 +1,9 @@
-using System.Threading.Tasks;
-using Retaguarda.Dominio.Entidades;
+using Retaguarda.DTO.Dtos;
 
 namespace Retaguarda.Servicos.Interfaces
 {
-    public interface IOrganizacaoServico
+    public interface IOrganizacaoServico : IServicoBase<OrganizacaoDto>
     {
-        Task<Organizacao?> ObterPorIdAsync(long id);
-        Task<(List<Organizacao> Items, int Total)> ListarAsync(string? nomeFilter, int page, int pageSize, string? sortField, string? sortDir, string? campo = null, string? operador = null, string? valor = null, string? valorDe = null, string? valorAte = null, int? inativo = null);
-        Task<Organizacao> CriarAsync(string nome);
-        Task DeleteAsync(long id);
-        Task RestaurarAsync(long id);
-        Task UpdateAsync(Organizacao o);
+        // Additional organization-specific service methods can be added here.
     }
 }

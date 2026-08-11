@@ -3,6 +3,7 @@ using Elsa.Workflows;
 using Elsa.Workflows.Attributes;
 using Elsa.Workflows.Models;
 using Microsoft.Extensions.Logging;
+using Retaguarda.DTO.Dtos;
 using Retaguarda.Servicos.Interfaces;
 
 namespace Retaguarda.PlanejadorFluxo.Atividades
@@ -33,7 +34,8 @@ namespace Retaguarda.PlanejadorFluxo.Atividades
                 return;
             }
 
-            var criada = await orgService.CriarAsync(nome);
+            var organizacaoDto = new OrganizacaoDto { Nome = nome };
+            var criada = await orgService.CriarAsync(organizacaoDto);
 
             context.Set(OrganizacaoId, criada.Id);
             logger.LogInformation("Organização criada via fluxo: Id={Id} Nome={Nome} (OrgContext={OrgContext})", criada.Id, criada.Nome, orgId?.ToString() ?? "-" );

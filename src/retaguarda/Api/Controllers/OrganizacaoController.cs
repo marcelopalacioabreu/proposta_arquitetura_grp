@@ -1,8 +1,10 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Retaguarda.Servicos.Interfaces;
-using Retaguarda.Dominio.Entidades;
+using Retaguarda.DTO.Dtos;
+using Retaguarda.DTO.Parametros;
 using Retaguarda.Api.Models;
+using Retaguarda.Api.Utils;
 
 namespace Retaguarda.Api.Controllers
 {
@@ -19,11 +21,11 @@ namespace Retaguarda.Api.Controllers
 
         [HttpGet]
         [Authorize(Policy = "organizacoes.visualizar")]
-        public IActionResult GetAll([FromQuery] string? nome, [FromQuery] int page = 1, [FromQuery] int pageSize = 10, [FromQuery] string? sortField = null, [FromQuery] string? sortDir = null,
-            [FromQuery] string? campo = null, [FromQuery] string? operador = null, [FromQuery] string? valor = null, [FromQuery(Name = "valor_de")] string? valorDe = null, [FromQuery(Name = "valor_ate")] string? valorAte = null, [FromQuery] int? inativo = null)
+        public IActionResult GetAll([FromQuery] PesquisaParametrosDto parametros, [FromQuery] int? page = null, [FromQuery] int? pageSize = null, [FromQuery] string? sortField = null, [FromQuery] string? sortDir = null, [FromQuery] string? campo = null, [FromQuery] string? operador = null, [FromQuery] string? valor = null, [FromQuery(Name = "valor_de")] string? valorDe = null, [FromQuery(Name = "valor_ate")] string? valorAte = null)
         {
-            var (items, total) = _servico.ListarAsync(nome, page, pageSize, sortField, sortDir, campo, operador, valor, valorDe, valorAte, inativo).Result;
-            return OkList(items, total, page, pageSize);
+            parametros = NormalizarPesquisaParametros(parametros, page, pageSize, sortField, sortDir, campo, operador, valor, valorDe, valorAte);
+            var (items, total) = _servico.ListarAsync(parametros).Result;
+            return OkList(items, total, parametros.Pagina, parametros.TamanhoPagina);
         }
 
         [HttpGet("{id}")]
@@ -40,7 +42,7 @@ namespace Retaguarda.Api.Controllers
         public IActionResult Create([FromBody] OrganizacaoDto dto)
         {
             if (!ModelState.IsValid) return BadRequestModelState();
-            var o = _servico.CriarAsync(dto.Nome).Result;
+            var o = _servico.CriarAsync(dto).Result;
             return CreatedDataAtAction(nameof(Get), new { id = o.Id }, o, "Criado com sucesso");
         }
 
@@ -67,15 +69,9 @@ namespace Retaguarda.Api.Controllers
             if (!ModelState.IsValid) return BadRequestModelState();
             var existing = _servico.ObterPorIdAsync(id).Result;
             if (existing == null) return NotFoundError("Registro não encontrado");
-            existing.Nome = dto.Nome;
-            _servico.UpdateAsync(existing).GetAwaiter().GetResult();
+            _servico.UpdateAsync(id, dto).GetAwaiter().GetResult();
             return OkMessage("Atualizado");
         }
-
-        public class OrganizacaoDto
-        {
-            [System.ComponentModel.DataAnnotations.Required]
-            public string Nome { get; set; } = string.Empty;
-        }
+        
     }
 }

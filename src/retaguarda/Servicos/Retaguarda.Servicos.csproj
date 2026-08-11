@@ -7,5 +7,6 @@
   <ItemGroup>
     <ProjectReference Include="..\Dominio\Retaguarda.Dominio.csproj" />
     <ProjectReference Include="..\Repositorios\Retaguarda.Repositorios.csproj" />
+    <ProjectReference Include="..\Retaguarda.DTO\Retaguarda.DTO.csproj" />
   </ItemGroup>
 </Project>
