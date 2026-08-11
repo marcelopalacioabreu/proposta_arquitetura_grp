@@ -16,35 +16,33 @@ using Retaguarda.Api.Authorization;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Persist DataProtection keys in a workspace-level folder so other apps (e.g. PlanejadorFluxo)
-// can share the same key ring and validate cookies/tickets when necessary.
+// Persiste as chaves de proteção de dados em uma pasta de nível de espaço de trabalho para que outros aplicativos (por exemplo, PlanejadorFluxo) possam compartilhar o mesmo anel de chaves e validar cookies/tickets quando necessário.
+// Pode ser necessário ajustar as permissões de leitura/gravação para a pasta de chaves, dependendo do ambiente de hospedagem (por exemplo, IIS, Docker, etc.).
 builder.Services.AddDataProtection()
     .PersistKeysToFileSystem(new DirectoryInfo(Path.GetFullPath(Path.Combine(builder.Environment.ContentRootPath, "..", "..", "..", "data-protection-keys"))))
     .SetApplicationName("Retaguarda");
 
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 
-// Allow selecting the EF provider at runtime via configuration:
-// Persistence:Provider = "Postgres" (default) or "MySql"
+// Permite selecionar o provedor EF em tempo de execução via configuração:
+// Persistence:Provider = "Postgres" (padrão) ou "MySql"
 var persistenceProvider = builder.Configuration["Persistence:Provider"] ?? "Postgres";
-// Register persistence, repositories and domain services via centralized configuration helpers
-// These helpers will register the correct DbContext (Postgres/MySQL) and repository/service implementations.
-Retaguarda.Persistencia.Configuracao.RegistrarServices(builder.Services, builder.Configuration);
 
-// Request-scoped atuacao context (organizacao/unidade/setor) populated by middleware
-// `AddHttpContextAccessor` is required by `ApplicationDbContext` and other helpers.
+// Contexto de atuação (organizacao/unidade/setor) com escopo de requisição, preenchido pelo middleware
+// `AddHttpContextAccessor` é necessário para `ApplicationDbContext` e outros helpers.
 builder.Services.AddHttpContextAccessor();
 
-// Centralized registration: persistence (DbContext), repositories and domain services
+// Registro centralizado: persistência (DbContext), repositórios e serviços de domínio
 Retaguarda.Persistencia.Configuracao.RegistrarServices(builder.Services, builder.Configuration);
 Retaguarda.Repositorios.Configuracao.RegistrarServices(builder.Services, builder.Configuration);
 Retaguarda.Servicos.Configuracao.RegistrarServices(builder.Services, builder.Configuration);
 
-// JWT settings
+// JWT
 var jwtKey = builder.Configuration["Jwt:Key"] ?? "change_this_secret_for_prod";
 var jwtIssuer = builder.Configuration["Jwt:Issuer"] ?? "Retaguarda";
 var keyBytes = Encoding.UTF8.GetBytes(jwtKey);
-// Ensure key is at least 256 bits (32 bytes) for HS256. If shorter, use SHA256 of the provided key.
+
+// Garante que a chave seja de pelo menos 256 bits (32 bytes) para HS256. Se for mais curta, use SHA256 da chave fornecida.
 if (keyBytes.Length < 32)
 {
     using var sha = SHA256.Create();
@@ -69,7 +67,7 @@ builder.Services.AddAuthentication(options =>
             IssuerSigningKey = new SymmetricSecurityKey(keyBytes)
         };
 
-        // Allow token from cookie named "access_token" when not present in Authorization header
+        // Permite que o token seja enviado via cookie chamado "access_token" quando não estiver presente no cabeçalho Authorization
         options.Events = new JwtBearerEvents
         {
             OnMessageReceived = context =>
@@ -84,12 +82,12 @@ builder.Services.AddAuthentication(options =>
         };
     });
 
-// Register authorization policies for permissions declared in metadata (modulos.json)
+// Registra políticas de autorização para permissões declaradas em metadados (modulos.json)
 builder.Services.AddAuthorization(options =>
 {
     try
     {
-        // Look for modulos.json in project metadata or documentation fallback
+        // Procura por modulos.json nos metadados do projeto ou faz fallback para documentação
         var projectMeta = Path.GetFullPath(Path.Combine(builder.Environment.ContentRootPath, "..", "Metadados", "Contratos", "Modulos", "modulos.json"));
         var docMeta = Path.GetFullPath(Path.Combine(builder.Environment.ContentRootPath, "..", "..", "..", "..", "DOCUMENTACAO", "METADADOS", "Modulos", "modulos.json"));
         string? metaPath = null;
@@ -116,7 +114,7 @@ builder.Services.AddAuthorization(options =>
                                 var pid = idProp.GetString();
                                 if (!string.IsNullOrEmpty(pid))
                                 {
-                                    // Add policy that uses PermissionRequirement (checked via DB in handler)
+                                    //Adiciona política que usa PermissionRequirement (verificado via DB no handler)
                                     options.AddPolicy(pid, policy => policy.Requirements.Add(new PermissionRequirement(pid)));
                                 }
                             }
@@ -128,33 +126,33 @@ builder.Services.AddAuthorization(options =>
     }
     catch
     {
-        // ignore errors during policy registration to avoid breaking startup
+        // Ignore erros durante o registro de políticas para evitar quebrar a inicialização
     }
 });
 
-// Register authorization handler that checks permissions in database
+// Registra o manipulador de autorização que verifica permissões no banco de dados
 builder.Services.AddScoped<Microsoft.AspNetCore.Authorization.IAuthorizationHandler, Retaguarda.Api.Authorization.PermissionAuthorizationHandler>();
-// Permission service is registered by Retaguarda.Servicos.Configuracao
+// O serviço de permissões é registrado por Retaguarda.Servicos.Configuracao
 
 builder.Services.AddControllers(options =>
 {
-    // Register a global action filter that wraps results into EnvelopeResult
+    // Registra um filtro de ação global que encapsula os resultados em EnvelopeResult
     options.Filters.Add<EnvelopeActionFilter>();
 }).AddJsonOptions(opts =>
 {
-    // Avoid errors when EF Core creates object graphs with back-references
+    // Evita erros quando o EF Core cria grafos de objetos com referências de volta
     opts.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
-    // keep default max depth (32) unless explicit needs arise
+    // Manter a profundidade máxima padrão (32) a menos que surjam necessidades explícitas
 });
 var app = builder.Build();
 
 app.UseAuthentication();
-// Ensure user info is loaded into RequisicaoUsuario before AtuacaoMiddleware
+// Garante que as informações do usuário sejam carregadas em RequisicaoUsuario antes do AtuacaoMiddleware
 app.UseMiddleware<Retaguarda.Api.Middleware.UsuarioMiddleware>();
 app.UseMiddleware<Retaguarda.Api.Middleware.AtuacaoMiddleware>();
 app.UseAuthorization();
 
-// Seed default admin user if missing (development convenience)
+// Inicializa o banco de dados com o usuário administrador padrão se não existir (conveniência de desenvolvimento)
 Retaguarda.Persistencia.Inicializadores.SeedData.EnsureSeed(app.Services);
 
 app.MapControllers();
