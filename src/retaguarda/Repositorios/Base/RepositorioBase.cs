@@ -15,7 +15,16 @@ namespace Retaguarda.Repositorios.Base
         public RepositorioBase(IApplicationDbContext db)
         {
             _db = db;
-            _dbSet = (DbSet<T>)_db.GetType().GetProperty(typeof(T).Name + "s")?.GetValue(_db) ?? throw new System.InvalidOperationException($"DbSet for {typeof(T).Name} not found on IApplicationDbContext");
+            
+            // Find the DbSet<T> property by checking the generic type parameter
+            var dbSetProperty = _db.GetType()
+                .GetProperties()
+                .FirstOrDefault(p => 
+                    p.PropertyType.IsGenericType && 
+                    p.PropertyType.GetGenericTypeDefinition() == typeof(DbSet<>) &&
+                    p.PropertyType.GetGenericArguments()[0] == typeof(T));
+            
+            _dbSet = (DbSet<T>)(dbSetProperty?.GetValue(_db) ?? throw new System.InvalidOperationException($"DbSet for {typeof(T).Name} not found on IApplicationDbContext"));
         }
 
         public virtual async Task<T?> ObterPorIdAsync(long id) => await _dbSet.FindAsync(id);
