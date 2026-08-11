@@ -1,0 +1,21 @@
+{
+  "orquestracaoFluxoProcessoPesquisa": {
+    "titulo": "Pesquisa de Processos de Orquestração",
+    "extremidade": "/api/orquestracaoFluxo/processos",
+    "filtro": [
+      { "campo": "nome", "descricao": "Nome", "tipo": "string", "col": 12 }
+    ],
+    "tabela": {
+      "colunas": [
+        { "campo": "nome", "titulo": "Nome" },
+        { "campo": "descricao", "titulo": "Descrição" },
+        { "campo": "workflowDefinitionId", "titulo": "Workflow ID" }
+      ],
+      "acoes": [
+        { "tipo": "navegacao", "destino": "/painel/orquestracao-fluxo/processos/editar/{id}", "campo_id": "id", "icone": "pencil" },
+        { "tipo": "confirmacao_delete_ajax", "destino": "/api/orquestracaoFluxo/processos/{id}", "campo_id": "id", "icone": "trash" }
+      ],
+      "pagination": { "pageSize": 10 }
+    }
+  }
+}

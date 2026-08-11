@@ -1,0 +1,14 @@
+{
+  "orquestracaoFluxoProcessoCadastro": {
+    "tipo": "TELA_CADASTRO",
+    "titulo": "Processo de Orquestração de Fluxo",
+    "extremidade": "/api/orquestracaoFluxo/processos",
+    "itens": [
+      { "campo": "nome", "label": "Nome", "tipo": "text", "col": 12, "obrigatorio": true },
+      { "campo": "descricao", "label": "Descrição", "tipo": "textarea", "col": 12 },
+      { "campo": "workflowDefinitionId", "label": "Workflow Definition ID", "tipo": "text", "col": 6 },
+      { "campo": "workflowVersion", "label": "Workflow Version", "tipo": "number", "col": 6 },
+      { "campo": "ativo", "label": "Ativo", "tipo": "checkbox", "col": 12 }
+    ]
+  }
+}

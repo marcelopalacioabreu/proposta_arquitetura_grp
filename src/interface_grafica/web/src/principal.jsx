@@ -72,6 +72,9 @@ function App(){
         <Route path='catalogos/tipo-imovel/editar/:id' element={<TelaCadastro screenKey={'tipoImovelCadastro'} />} />
         <Route path='catalogos/situacoes' element={<TelaPesquisa screenKey={'situacaoPesquisa'} />} />
         <Route path='catalogos/situacoes/editar/:id' element={<TelaCadastro screenKey={'situacaoCadastro'} />} />
+        {/* Orquestração de Fluxo */}
+        <Route path='orquestracao-fluxo/processos' element={<TelaPesquisa screenKey={'orquestracaoFluxoProcessoPesquisa'} />} />
+        <Route path='orquestracao-fluxo/processos/editar/:id' element={<TelaCadastro screenKey={'orquestracaoFluxoProcessoCadastro'} />} />
         <Route index element={<InicioPainel/>} />
         {/* Planejador de Fluxo (Elsa) - proxied via /planejadorDeFluxo in vite dev server */}
         <Route path='planejadorFluxo' element={<PainelPlanejadorFluxo/>} />
