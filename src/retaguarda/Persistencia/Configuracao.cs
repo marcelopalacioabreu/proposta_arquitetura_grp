@@ -25,7 +25,8 @@ namespace Retaguarda.Persistencia
             if (provider.Equals("Postgres", System.StringComparison.OrdinalIgnoreCase))
             {
                 services.AddDbContext<Retaguarda.Persistencia.POSTGRESQL.ApplicationDbContext>(options =>
-                    options.UseNpgsql(connectionString, b => b.MigrationsAssembly("Retaguarda.Persistencia")));
+                    options.UseNpgsql(connectionString, b => b.MigrationsAssembly("Retaguarda.Persistencia"))
+                           .ConfigureWarnings(w => w.Ignore(Microsoft.EntityFrameworkCore.Diagnostics.RelationalEventId.PendingModelChangesWarning)));
                 services.AddScoped<Retaguarda.Persistencia.IApplicationDbContext>(sp =>
                     sp.GetRequiredService<Retaguarda.Persistencia.POSTGRESQL.ApplicationDbContext>());
             }
@@ -63,14 +64,16 @@ namespace Retaguarda.Persistencia
                 }
 
                 services.AddDbContext<Retaguarda.Persistencia.MYSQL.ApplicationDbContext>(options =>
-                    options.UseMySql(mysqlConnection, ServerVersion.AutoDetect(mysqlConnection), b => b.MigrationsAssembly("Retaguarda.Persistencia")));
+                    options.UseMySql(mysqlConnection, ServerVersion.AutoDetect(mysqlConnection), b => b.MigrationsAssembly("Retaguarda.Persistencia"))
+                           .ConfigureWarnings(w => w.Ignore(Microsoft.EntityFrameworkCore.Diagnostics.RelationalEventId.PendingModelChangesWarning)));
                 services.AddScoped<Retaguarda.Persistencia.IApplicationDbContext>(sp =>
                     sp.GetRequiredService<Retaguarda.Persistencia.MYSQL.ApplicationDbContext>());
             }
             else
             {
                 services.AddDbContext<Retaguarda.Persistencia.POSTGRESQL.ApplicationDbContext>(options =>
-                    options.UseNpgsql(connectionString, b => b.MigrationsAssembly("Retaguarda.Persistencia")));
+                    options.UseNpgsql(connectionString, b => b.MigrationsAssembly("Retaguarda.Persistencia"))
+                           .ConfigureWarnings(w => w.Ignore(Microsoft.EntityFrameworkCore.Diagnostics.RelationalEventId.PendingModelChangesWarning)));
                 services.AddScoped<Retaguarda.Persistencia.IApplicationDbContext>(sp =>
                     sp.GetRequiredService<Retaguarda.Persistencia.POSTGRESQL.ApplicationDbContext>());
             }

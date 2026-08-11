@@ -339,6 +339,69 @@ namespace Retaguarda.Persistencia.POSTGRESQL
                     b.ToTable("Documentos", (string)null);
                 });
 
+                modelBuilder.Entity("Retaguarda.Dominio.Entidades.OrquestracaoFluxoProcesso", b =>
+                    {
+                        b.Property<long>("Id")
+                            .ValueGeneratedOnAdd()
+                            .HasColumnType("bigint");
+
+                        NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
+                        b.Property<bool>("Ativo")
+                            .HasColumnType("boolean");
+
+                        b.Property<DateTime?>("DataAlteracao")
+                            .HasColumnType("timestamp with time zone");
+
+                        b.Property<DateTime>("DataInsercao")
+                            .HasColumnType("timestamp with time zone");
+
+                        b.Property<Guid>("IdentificadorUnico")
+                            .HasColumnType("uuid");
+
+                        b.Property<string>("IdentificadorUnicoAmigavel")
+                            .IsRequired()
+                            .HasColumnType("text");
+
+                        b.Property<string>("Nome")
+                            .IsRequired()
+                            .HasMaxLength(200)
+                            .HasColumnType("character varying(200)");
+
+                        b.Property<string>("Descricao")
+                            .HasMaxLength(2000)
+                            .HasColumnType("character varying(2000)");
+
+                        b.Property<string>("WorkflowDefinitionId")
+                            .HasMaxLength(200)
+                            .HasColumnType("character varying(200)");
+
+                        b.Property<int?>("WorkflowVersion")
+                            .HasColumnType("integer");
+
+                        b.Property<long?>("OrganizacaoId")
+                            .HasColumnType("bigint");
+
+                        b.Property<long?>("OrganizacaoUnidadeId")
+                            .HasColumnType("bigint");
+
+                        b.Property<long?>("SetorId")
+                            .HasColumnType("bigint");
+
+                        b.Property<long?>("UsuarioAlteracaoId")
+                            .HasColumnType("bigint");
+
+                        b.Property<long?>("UsuarioInsercaoId")
+                            .HasColumnType("bigint");
+
+                        b.Property<long>("Versao")
+                            .HasColumnType("bigint");
+
+                        b.HasKey("Id");
+
+                        b.ToTable("OrquestracaoFluxoProcessos", (string)null);
+                    });
+
             modelBuilder.Entity("Retaguarda.Dominio.Entidades.DocumentoRelacionamento", b =>
                 {
                     b.Property<long>("Id")
