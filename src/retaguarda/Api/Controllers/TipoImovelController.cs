@@ -18,7 +18,7 @@ namespace Retaguarda.Api.Controllers
         }
 
         [HttpGet]
-        [Authorize(Policy = "tiposimovel.visualizar")]
+        [Authorize(Policy = "tipoImovel.visualizar")]
         public IActionResult GetAll([FromQuery] PesquisaParametrosDto parametros, [FromQuery] int? page = null, [FromQuery] int? pageSize = null, [FromQuery] string? sortField = null, [FromQuery] string? sortDir = null, [FromQuery] string? campo = null, [FromQuery] string? operador = null, [FromQuery] string? valor = null, [FromQuery(Name = "valor_de")] string? valorDe = null, [FromQuery(Name = "valor_ate")] string? valorAte = null)
         {
             parametros = NormalizarPesquisaParametros(parametros, page, pageSize, sortField, sortDir, campo, operador, valor, valorDe, valorAte);
@@ -27,7 +27,7 @@ namespace Retaguarda.Api.Controllers
         }
 
         [HttpGet("{id}")]
-        [Authorize(Policy = "tiposimovel.visualizar")]
+        [Authorize(Policy = "tipoImovel.visualizar")]
         public IActionResult Get(long id)
         {
             var e = _servico.ObterPorIdAsync(id).Result;
@@ -36,7 +36,7 @@ namespace Retaguarda.Api.Controllers
         }
 
         [HttpPost]
-        [Authorize(Policy = "tiposimovel.editar")]
+        [Authorize(Policy = "tipoImovel.editar")]
         public IActionResult Create([FromBody] TipoImovelDto dto)
         {
             if (!ModelState.IsValid) return BadRequestModelState();
@@ -45,7 +45,7 @@ namespace Retaguarda.Api.Controllers
         }
 
         [HttpDelete("{id}")]
-        [Authorize(Policy = "tiposimovel.excluir")]
+        [Authorize(Policy = "tipoImovel.excluir")]
         public IActionResult Delete(long id)
         {
             _servico.DeleteAsync(id).GetAwaiter().GetResult();
@@ -53,7 +53,7 @@ namespace Retaguarda.Api.Controllers
         }
 
         [HttpPut("{id}")]
-        [Authorize(Policy = "tiposimovel.editar")]
+        [Authorize(Policy = "tipoImovel.editar")]
         public IActionResult Update(long id, [FromBody] TipoImovelDto dto)
         {
             if (!ModelState.IsValid) return BadRequestModelState();
