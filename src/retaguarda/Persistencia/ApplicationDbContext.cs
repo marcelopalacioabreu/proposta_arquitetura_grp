@@ -10,7 +10,7 @@ namespace Retaguarda.Persistencia
 
         protected ApplicationDbContext(DbContextOptions options, IHttpContextAccessor httpContextAccessor) : base(options)
         {
-            _httpContextAccessor = httpContextAccessor;
+            _httpContextAccessor = httpContextAccessor; // Can be null during design-time
         }
     }
 }

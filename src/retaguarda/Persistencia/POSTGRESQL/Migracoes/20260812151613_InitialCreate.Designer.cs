@@ -4,23 +4,26 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using Retaguarda.Persistencia.MYSQL;
+using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
+using Retaguarda.Persistencia.POSTGRESQL;
 
 #nullable disable
 
-namespace Retaguarda.Persistencia.MYSQL.Migracoes
+namespace Retaguarda.Persistencia.POSTGRESQL.Migracoes
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20260805182838_bootstrap_catalogs")]
-    partial class bootstrap_catalogs
+    [Migration("20260812151613_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.0")
-                .HasAnnotation("Relational:MaxIdentifierLength", 64);
+                .HasAnnotation("ProductVersion", "9.0.13")
+                .HasAnnotation("Relational:MaxIdentifierLength", 63);
+
+            NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
             modelBuilder.Entity("Retaguarda.Dominio.Entidades.Bairro", b =>
                 {
@@ -28,21 +31,23 @@ namespace Retaguarda.Persistencia.MYSQL.Migracoes
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bigint");
 
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
                     b.Property<bool>("Ativo")
-                        .HasColumnType("tinyint(1)");
+                        .HasColumnType("boolean");
 
                     b.Property<DateTime?>("DataAlteracao")
-                        .HasColumnType("datetime(6)");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<DateTime>("DataInsercao")
-                        .HasColumnType("datetime(6)");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<Guid>("IdentificadorUnico")
-                        .HasColumnType("char(36)");
+                        .HasColumnType("uuid");
 
                     b.Property<string>("IdentificadorUnicoAmigavel")
                         .IsRequired()
-                        .HasColumnType("longtext");
+                        .HasColumnType("text");
 
                     b.Property<long>("MunicipioId")
                         .HasColumnType("bigint");
@@ -50,7 +55,7 @@ namespace Retaguarda.Persistencia.MYSQL.Migracoes
                     b.Property<string>("Nome")
                         .IsRequired()
                         .HasMaxLength(200)
-                        .HasColumnType("varchar(200)");
+                        .HasColumnType("character varying(200)");
 
                     b.Property<long?>("OrganizacaoId")
                         .HasColumnType("bigint");
@@ -83,26 +88,28 @@ namespace Retaguarda.Persistencia.MYSQL.Migracoes
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bigint");
 
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
                     b.Property<bool>("Ativo")
-                        .HasColumnType("tinyint(1)");
+                        .HasColumnType("boolean");
 
                     b.Property<string>("Codigo")
                         .IsRequired()
                         .HasMaxLength(20)
-                        .HasColumnType("varchar(20)");
+                        .HasColumnType("character varying(20)");
 
                     b.Property<DateTime?>("DataAlteracao")
-                        .HasColumnType("datetime(6)");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<DateTime>("DataInsercao")
-                        .HasColumnType("datetime(6)");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<Guid>("IdentificadorUnico")
-                        .HasColumnType("char(36)");
+                        .HasColumnType("uuid");
 
                     b.Property<string>("IdentificadorUnicoAmigavel")
                         .IsRequired()
-                        .HasColumnType("longtext");
+                        .HasColumnType("text");
 
                     b.Property<long?>("ImovelId")
                         .HasColumnType("bigint");
@@ -138,31 +145,33 @@ namespace Retaguarda.Persistencia.MYSQL.Migracoes
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bigint");
 
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
                     b.Property<bool>("Ativo")
-                        .HasColumnType("tinyint(1)");
+                        .HasColumnType("boolean");
 
                     b.Property<string>("ContatoValor")
                         .IsRequired()
                         .HasMaxLength(500)
-                        .HasColumnType("varchar(500)");
+                        .HasColumnType("character varying(500)");
 
                     b.Property<DateTime?>("DataAlteracao")
-                        .HasColumnType("datetime(6)");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<DateTime>("DataInsercao")
-                        .HasColumnType("datetime(6)");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<Guid>("IdentificadorUnico")
-                        .HasColumnType("char(36)");
+                        .HasColumnType("uuid");
 
                     b.Property<string>("IdentificadorUnicoAmigavel")
                         .IsRequired()
-                        .HasColumnType("longtext");
+                        .HasColumnType("text");
 
                     b.Property<string>("Nome")
                         .IsRequired()
                         .HasMaxLength(200)
-                        .HasColumnType("varchar(200)");
+                        .HasColumnType("character varying(200)");
 
                     b.Property<long?>("OrganizacaoId")
                         .HasColumnType("bigint");
@@ -196,24 +205,26 @@ namespace Retaguarda.Persistencia.MYSQL.Migracoes
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bigint");
 
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
                     b.Property<bool>("Ativo")
-                        .HasColumnType("tinyint(1)");
+                        .HasColumnType("boolean");
 
                     b.Property<long>("ContatoId")
                         .HasColumnType("bigint");
 
                     b.Property<DateTime?>("DataAlteracao")
-                        .HasColumnType("datetime(6)");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<DateTime>("DataInsercao")
-                        .HasColumnType("datetime(6)");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<Guid>("IdentificadorUnico")
-                        .HasColumnType("char(36)");
+                        .HasColumnType("uuid");
 
                     b.Property<string>("IdentificadorUnicoAmigavel")
                         .IsRequired()
-                        .HasColumnType("longtext");
+                        .HasColumnType("text");
 
                     b.Property<long?>("OrganizacaoId")
                         .HasColumnType("bigint");
@@ -250,45 +261,47 @@ namespace Retaguarda.Persistencia.MYSQL.Migracoes
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bigint");
 
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
                     b.Property<bool>("Ativo")
-                        .HasColumnType("tinyint(1)");
+                        .HasColumnType("boolean");
 
                     b.Property<DateTime?>("DataAlteracao")
-                        .HasColumnType("datetime(6)");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<DateTime?>("DataEmissao")
-                        .HasColumnType("datetime(6)");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<DateTime>("DataInsercao")
-                        .HasColumnType("datetime(6)");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<DateTime?>("DataValidade")
-                        .HasColumnType("datetime(6)");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Digito")
                         .IsRequired()
                         .HasMaxLength(20)
-                        .HasColumnType("varchar(20)");
+                        .HasColumnType("character varying(20)");
 
                     b.Property<long?>("DocumentoTipoId")
                         .HasColumnType("bigint");
 
                     b.Property<Guid>("IdentificadorUnico")
-                        .HasColumnType("char(36)");
+                        .HasColumnType("uuid");
 
                     b.Property<string>("IdentificadorUnicoAmigavel")
                         .IsRequired()
-                        .HasColumnType("longtext");
+                        .HasColumnType("text");
 
                     b.Property<string>("Numero")
                         .IsRequired()
                         .HasMaxLength(200)
-                        .HasColumnType("varchar(200)");
+                        .HasColumnType("character varying(200)");
 
                     b.Property<string>("Observacao")
                         .IsRequired()
                         .HasMaxLength(1000)
-                        .HasColumnType("varchar(1000)");
+                        .HasColumnType("character varying(1000)");
 
                     b.Property<long?>("OrganizacaoId")
                         .HasColumnType("bigint");
@@ -299,10 +312,10 @@ namespace Retaguarda.Persistencia.MYSQL.Migracoes
                     b.Property<string>("OrgaoEmissor")
                         .IsRequired()
                         .HasMaxLength(100)
-                        .HasColumnType("varchar(100)");
+                        .HasColumnType("character varying(100)");
 
                     b.Property<bool>("Principal")
-                        .HasColumnType("tinyint(1)");
+                        .HasColumnType("boolean");
 
                     b.Property<long?>("SetorId")
                         .HasColumnType("bigint");
@@ -310,7 +323,7 @@ namespace Retaguarda.Persistencia.MYSQL.Migracoes
                     b.Property<string>("UfEmissor")
                         .IsRequired()
                         .HasMaxLength(8)
-                        .HasColumnType("varchar(8)");
+                        .HasColumnType("character varying(8)");
 
                     b.Property<long?>("UsuarioAlteracaoId")
                         .HasColumnType("bigint");
@@ -319,7 +332,7 @@ namespace Retaguarda.Persistencia.MYSQL.Migracoes
                         .HasColumnType("bigint");
 
                     b.Property<bool>("Validado")
-                        .HasColumnType("tinyint(1)");
+                        .HasColumnType("boolean");
 
                     b.Property<long>("Versao")
                         .HasColumnType("bigint");
@@ -335,24 +348,26 @@ namespace Retaguarda.Persistencia.MYSQL.Migracoes
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bigint");
 
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
                     b.Property<bool>("Ativo")
-                        .HasColumnType("tinyint(1)");
+                        .HasColumnType("boolean");
 
                     b.Property<DateTime?>("DataAlteracao")
-                        .HasColumnType("datetime(6)");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<DateTime>("DataInsercao")
-                        .HasColumnType("datetime(6)");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<long>("DocumentoId")
                         .HasColumnType("bigint");
 
                     b.Property<Guid>("IdentificadorUnico")
-                        .HasColumnType("char(36)");
+                        .HasColumnType("uuid");
 
                     b.Property<string>("IdentificadorUnicoAmigavel")
                         .IsRequired()
-                        .HasColumnType("longtext");
+                        .HasColumnType("text");
 
                     b.Property<long?>("OrganizacaoId")
                         .HasColumnType("bigint");
@@ -389,31 +404,33 @@ namespace Retaguarda.Persistencia.MYSQL.Migracoes
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bigint");
 
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
                     b.Property<bool>("Ativo")
-                        .HasColumnType("tinyint(1)");
+                        .HasColumnType("boolean");
 
                     b.Property<string>("Codigo")
                         .IsRequired()
                         .HasMaxLength(50)
-                        .HasColumnType("varchar(50)");
+                        .HasColumnType("character varying(50)");
 
                     b.Property<DateTime?>("DataAlteracao")
-                        .HasColumnType("datetime(6)");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<DateTime>("DataInsercao")
-                        .HasColumnType("datetime(6)");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<Guid>("IdentificadorUnico")
-                        .HasColumnType("char(36)");
+                        .HasColumnType("uuid");
 
                     b.Property<string>("IdentificadorUnicoAmigavel")
                         .IsRequired()
-                        .HasColumnType("longtext");
+                        .HasColumnType("text");
 
                     b.Property<string>("Nome")
                         .IsRequired()
                         .HasMaxLength(200)
-                        .HasColumnType("varchar(200)");
+                        .HasColumnType("character varying(200)");
 
                     b.Property<long?>("OrganizacaoId")
                         .HasColumnType("bigint");
@@ -444,8 +461,10 @@ namespace Retaguarda.Persistencia.MYSQL.Migracoes
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bigint");
 
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
                     b.Property<bool>("Ativo")
-                        .HasColumnType("tinyint(1)");
+                        .HasColumnType("boolean");
 
                     b.Property<long>("CepId")
                         .HasColumnType("bigint");
@@ -453,20 +472,20 @@ namespace Retaguarda.Persistencia.MYSQL.Migracoes
                     b.Property<string>("Complemento")
                         .IsRequired()
                         .HasMaxLength(500)
-                        .HasColumnType("varchar(500)");
+                        .HasColumnType("character varying(500)");
 
                     b.Property<DateTime?>("DataAlteracao")
-                        .HasColumnType("datetime(6)");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<DateTime>("DataInsercao")
-                        .HasColumnType("datetime(6)");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<Guid>("IdentificadorUnico")
-                        .HasColumnType("char(36)");
+                        .HasColumnType("uuid");
 
                     b.Property<string>("IdentificadorUnicoAmigavel")
                         .IsRequired()
-                        .HasColumnType("longtext");
+                        .HasColumnType("text");
 
                     b.Property<long?>("OrganizacaoId")
                         .HasColumnType("bigint");
@@ -504,26 +523,28 @@ namespace Retaguarda.Persistencia.MYSQL.Migracoes
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bigint");
 
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
                     b.Property<bool>("Ativo")
-                        .HasColumnType("tinyint(1)");
+                        .HasColumnType("boolean");
 
                     b.Property<DateTime?>("DataAlteracao")
-                        .HasColumnType("datetime(6)");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<DateTime>("DataInsercao")
-                        .HasColumnType("datetime(6)");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<Guid>("IdentificadorUnico")
-                        .HasColumnType("char(36)");
+                        .HasColumnType("uuid");
 
                     b.Property<string>("IdentificadorUnicoAmigavel")
                         .IsRequired()
-                        .HasColumnType("longtext");
+                        .HasColumnType("text");
 
                     b.Property<string>("Nome")
                         .IsRequired()
                         .HasMaxLength(200)
-                        .HasColumnType("varchar(200)");
+                        .HasColumnType("character varying(200)");
 
                     b.Property<long?>("OrganizacaoId")
                         .HasColumnType("bigint");
@@ -556,13 +577,15 @@ namespace Retaguarda.Persistencia.MYSQL.Migracoes
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bigint");
 
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
                     b.Property<bool>("Ativo")
-                        .HasColumnType("tinyint(1)");
+                        .HasColumnType("boolean");
 
                     b.Property<string>("Cadastro")
                         .IsRequired()
                         .HasMaxLength(200)
-                        .HasColumnType("varchar(200)");
+                        .HasColumnType("character varying(200)");
 
                     b.Property<long?>("CepId")
                         .HasColumnType("bigint");
@@ -570,39 +593,39 @@ namespace Retaguarda.Persistencia.MYSQL.Migracoes
                     b.Property<string>("Complemento")
                         .IsRequired()
                         .HasMaxLength(500)
-                        .HasColumnType("varchar(500)");
+                        .HasColumnType("character varying(500)");
 
                     b.Property<DateTime?>("DataAlteracao")
-                        .HasColumnType("datetime(6)");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<DateTime>("DataInsercao")
-                        .HasColumnType("datetime(6)");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<Guid>("IdentificadorUnico")
-                        .HasColumnType("char(36)");
+                        .HasColumnType("uuid");
 
                     b.Property<string>("IdentificadorUnicoAmigavel")
                         .IsRequired()
-                        .HasColumnType("longtext");
+                        .HasColumnType("text");
 
                     b.Property<string>("InscricaoImobiliaria")
                         .IsRequired()
                         .HasMaxLength(200)
-                        .HasColumnType("varchar(200)");
+                        .HasColumnType("character varying(200)");
 
                     b.Property<double?>("Latitude")
-                        .HasColumnType("double");
+                        .HasColumnType("double precision");
 
                     b.Property<long?>("LogradouroId")
                         .HasColumnType("bigint");
 
                     b.Property<double?>("Longitude")
-                        .HasColumnType("double");
+                        .HasColumnType("double precision");
 
                     b.Property<string>("Numero")
                         .IsRequired()
                         .HasMaxLength(50)
-                        .HasColumnType("varchar(50)");
+                        .HasColumnType("character varying(50)");
 
                     b.Property<long?>("OrganizacaoId")
                         .HasColumnType("bigint");
@@ -643,29 +666,31 @@ namespace Retaguarda.Persistencia.MYSQL.Migracoes
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bigint");
 
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
                     b.Property<bool>("Ativo")
-                        .HasColumnType("tinyint(1)");
+                        .HasColumnType("boolean");
 
                     b.Property<long>("BairroId")
                         .HasColumnType("bigint");
 
                     b.Property<DateTime?>("DataAlteracao")
-                        .HasColumnType("datetime(6)");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<DateTime>("DataInsercao")
-                        .HasColumnType("datetime(6)");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<Guid>("IdentificadorUnico")
-                        .HasColumnType("char(36)");
+                        .HasColumnType("uuid");
 
                     b.Property<string>("IdentificadorUnicoAmigavel")
                         .IsRequired()
-                        .HasColumnType("longtext");
+                        .HasColumnType("text");
 
                     b.Property<string>("Nome")
                         .IsRequired()
                         .HasMaxLength(300)
-                        .HasColumnType("varchar(300)");
+                        .HasColumnType("character varying(300)");
 
                     b.Property<long?>("OrganizacaoId")
                         .HasColumnType("bigint");
@@ -678,7 +703,7 @@ namespace Retaguarda.Persistencia.MYSQL.Migracoes
 
                     b.Property<string>("Tipo")
                         .IsRequired()
-                        .HasColumnType("longtext");
+                        .HasColumnType("text");
 
                     b.Property<long?>("UsuarioAlteracaoId")
                         .HasColumnType("bigint");
@@ -702,30 +727,32 @@ namespace Retaguarda.Persistencia.MYSQL.Migracoes
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bigint");
 
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
                     b.Property<bool>("Ativo")
-                        .HasColumnType("tinyint(1)");
+                        .HasColumnType("boolean");
 
                     b.Property<string>("CodigoIbge")
                         .IsRequired()
-                        .HasColumnType("longtext");
+                        .HasColumnType("text");
 
                     b.Property<DateTime?>("DataAlteracao")
-                        .HasColumnType("datetime(6)");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<DateTime>("DataInsercao")
-                        .HasColumnType("datetime(6)");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<Guid>("IdentificadorUnico")
-                        .HasColumnType("char(36)");
+                        .HasColumnType("uuid");
 
                     b.Property<string>("IdentificadorUnicoAmigavel")
                         .IsRequired()
-                        .HasColumnType("longtext");
+                        .HasColumnType("text");
 
                     b.Property<string>("Nome")
                         .IsRequired()
                         .HasMaxLength(200)
-                        .HasColumnType("varchar(200)");
+                        .HasColumnType("character varying(200)");
 
                     b.Property<long?>("OrganizacaoId")
                         .HasColumnType("bigint");
@@ -761,31 +788,33 @@ namespace Retaguarda.Persistencia.MYSQL.Migracoes
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bigint");
 
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
                     b.Property<bool>("Ativo")
-                        .HasColumnType("tinyint(1)");
+                        .HasColumnType("boolean");
 
                     b.Property<string>("Codigo")
                         .IsRequired()
                         .HasMaxLength(50)
-                        .HasColumnType("varchar(50)");
+                        .HasColumnType("character varying(50)");
 
                     b.Property<DateTime?>("DataAlteracao")
-                        .HasColumnType("datetime(6)");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<DateTime>("DataInsercao")
-                        .HasColumnType("datetime(6)");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<Guid>("IdentificadorUnico")
-                        .HasColumnType("char(36)");
+                        .HasColumnType("uuid");
 
                     b.Property<string>("IdentificadorUnicoAmigavel")
                         .IsRequired()
-                        .HasColumnType("longtext");
+                        .HasColumnType("text");
 
                     b.Property<string>("Nome")
                         .IsRequired()
                         .HasMaxLength(200)
-                        .HasColumnType("varchar(200)");
+                        .HasColumnType("character varying(200)");
 
                     b.Property<long?>("OrganizacaoId")
                         .HasColumnType("bigint");
@@ -816,31 +845,33 @@ namespace Retaguarda.Persistencia.MYSQL.Migracoes
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bigint");
 
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
                     b.Property<bool>("Ativo")
-                        .HasColumnType("tinyint(1)");
+                        .HasColumnType("boolean");
 
                     b.Property<string>("Codigo")
                         .IsRequired()
                         .HasMaxLength(50)
-                        .HasColumnType("varchar(50)");
+                        .HasColumnType("character varying(50)");
 
                     b.Property<DateTime?>("DataAlteracao")
-                        .HasColumnType("datetime(6)");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<DateTime>("DataInsercao")
-                        .HasColumnType("datetime(6)");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<Guid>("IdentificadorUnico")
-                        .HasColumnType("char(36)");
+                        .HasColumnType("uuid");
 
                     b.Property<string>("IdentificadorUnicoAmigavel")
                         .IsRequired()
-                        .HasColumnType("longtext");
+                        .HasColumnType("text");
 
                     b.Property<string>("Nome")
                         .IsRequired()
                         .HasMaxLength(200)
-                        .HasColumnType("varchar(200)");
+                        .HasColumnType("character varying(200)");
 
                     b.Property<long?>("OrganizacaoId")
                         .HasColumnType("bigint");
@@ -871,52 +902,54 @@ namespace Retaguarda.Persistencia.MYSQL.Migracoes
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bigint");
 
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
                     b.Property<bool>("Ativo")
-                        .HasColumnType("tinyint(1)");
+                        .HasColumnType("boolean");
 
                     b.Property<string>("Cnpj")
                         .IsRequired()
                         .HasMaxLength(14)
-                        .HasColumnType("varchar(14)");
+                        .HasColumnType("character varying(14)");
 
                     b.Property<string>("Codigo")
                         .IsRequired()
                         .HasMaxLength(50)
-                        .HasColumnType("varchar(50)");
+                        .HasColumnType("character varying(50)");
 
                     b.Property<DateTime?>("DataAlteracao")
-                        .HasColumnType("datetime(6)");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<DateTime?>("DataExtincao")
-                        .HasColumnType("datetime(6)");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<DateTime?>("DataFundacao")
-                        .HasColumnType("datetime(6)");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<DateTime>("DataInsercao")
-                        .HasColumnType("datetime(6)");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("HierarquiaCodigo")
                         .IsRequired()
                         .HasMaxLength(600)
-                        .HasColumnType("varchar(600)");
+                        .HasColumnType("character varying(600)");
 
                     b.Property<Guid>("IdentificadorUnico")
-                        .HasColumnType("char(36)");
+                        .HasColumnType("uuid");
 
                     b.Property<string>("IdentificadorUnicoAmigavel")
                         .IsRequired()
-                        .HasColumnType("longtext");
+                        .HasColumnType("text");
 
                     b.Property<string>("InscricaoEstadual")
                         .IsRequired()
                         .HasMaxLength(50)
-                        .HasColumnType("varchar(50)");
+                        .HasColumnType("character varying(50)");
 
                     b.Property<string>("InscricaoMunicipal")
                         .IsRequired()
                         .HasMaxLength(50)
-                        .HasColumnType("varchar(50)");
+                        .HasColumnType("character varying(50)");
 
                     b.Property<long?>("NaturezaJuridicaId")
                         .HasColumnType("bigint");
@@ -930,12 +963,12 @@ namespace Retaguarda.Persistencia.MYSQL.Migracoes
                     b.Property<string>("Nome")
                         .IsRequired()
                         .HasMaxLength(200)
-                        .HasColumnType("varchar(200)");
+                        .HasColumnType("character varying(200)");
 
                     b.Property<string>("NomeFantasia")
                         .IsRequired()
                         .HasMaxLength(300)
-                        .HasColumnType("varchar(300)");
+                        .HasColumnType("character varying(300)");
 
                     b.Property<long?>("OrganizacaoId")
                         .HasColumnType("bigint");
@@ -952,7 +985,7 @@ namespace Retaguarda.Persistencia.MYSQL.Migracoes
                     b.Property<string>("RazaoSocial")
                         .IsRequired()
                         .HasMaxLength(300)
-                        .HasColumnType("varchar(300)");
+                        .HasColumnType("character varying(300)");
 
                     b.Property<long?>("SetorId")
                         .HasColumnType("bigint");
@@ -960,7 +993,7 @@ namespace Retaguarda.Persistencia.MYSQL.Migracoes
                     b.Property<string>("Sigla")
                         .IsRequired()
                         .HasMaxLength(30)
-                        .HasColumnType("varchar(30)");
+                        .HasColumnType("character varying(30)");
 
                     b.Property<long?>("SituacaoId")
                         .HasColumnType("bigint");
@@ -988,30 +1021,32 @@ namespace Retaguarda.Persistencia.MYSQL.Migracoes
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bigint");
 
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
                     b.Property<bool>("Ativo")
-                        .HasColumnType("tinyint(1)");
+                        .HasColumnType("boolean");
 
                     b.Property<DateTime?>("DataAlteracao")
-                        .HasColumnType("datetime(6)");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<DateTime>("DataInsercao")
-                        .HasColumnType("datetime(6)");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<long>("EnderecoId")
                         .HasColumnType("bigint");
 
                     b.Property<bool>("EnderecoPrincipal")
-                        .HasColumnType("tinyint(1)");
+                        .HasColumnType("boolean");
 
                     b.Property<long?>("EnderecoTipoId")
                         .HasColumnType("bigint");
 
                     b.Property<Guid>("IdentificadorUnico")
-                        .HasColumnType("char(36)");
+                        .HasColumnType("uuid");
 
                     b.Property<string>("IdentificadorUnicoAmigavel")
                         .IsRequired()
-                        .HasColumnType("longtext");
+                        .HasColumnType("text");
 
                     b.Property<long>("OrganizacaoId")
                         .HasColumnType("bigint");
@@ -1042,31 +1077,33 @@ namespace Retaguarda.Persistencia.MYSQL.Migracoes
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bigint");
 
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
                     b.Property<bool>("Ativo")
-                        .HasColumnType("tinyint(1)");
+                        .HasColumnType("boolean");
 
                     b.Property<DateTime?>("DataAlteracao")
-                        .HasColumnType("datetime(6)");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<DateTime>("DataInsercao")
-                        .HasColumnType("datetime(6)");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Hierarquia")
                         .IsRequired()
                         .HasMaxLength(1000)
-                        .HasColumnType("varchar(1000)");
+                        .HasColumnType("character varying(1000)");
 
                     b.Property<Guid>("IdentificadorUnico")
-                        .HasColumnType("char(36)");
+                        .HasColumnType("uuid");
 
                     b.Property<string>("IdentificadorUnicoAmigavel")
                         .IsRequired()
-                        .HasColumnType("longtext");
+                        .HasColumnType("text");
 
                     b.Property<string>("Nome")
                         .IsRequired()
                         .HasMaxLength(200)
-                        .HasColumnType("varchar(200)");
+                        .HasColumnType("character varying(200)");
 
                     b.Property<long?>("OrganizacaoId")
                         .HasColumnType("bigint");
@@ -1104,30 +1141,32 @@ namespace Retaguarda.Persistencia.MYSQL.Migracoes
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bigint");
 
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
                     b.Property<bool>("Ativo")
-                        .HasColumnType("tinyint(1)");
+                        .HasColumnType("boolean");
 
                     b.Property<DateTime?>("DataAlteracao")
-                        .HasColumnType("datetime(6)");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<DateTime>("DataInsercao")
-                        .HasColumnType("datetime(6)");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<long>("EnderecoId")
                         .HasColumnType("bigint");
 
                     b.Property<bool>("EnderecoPrincipal")
-                        .HasColumnType("tinyint(1)");
+                        .HasColumnType("boolean");
 
                     b.Property<long?>("EnderecoTipoId")
                         .HasColumnType("bigint");
 
                     b.Property<Guid>("IdentificadorUnico")
-                        .HasColumnType("char(36)");
+                        .HasColumnType("uuid");
 
                     b.Property<string>("IdentificadorUnicoAmigavel")
                         .IsRequired()
-                        .HasColumnType("longtext");
+                        .HasColumnType("text");
 
                     b.Property<long?>("OrganizacaoId")
                         .HasColumnType("bigint");
@@ -1161,47 +1200,49 @@ namespace Retaguarda.Persistencia.MYSQL.Migracoes
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bigint");
 
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
                     b.Property<bool>("Ativo")
-                        .HasColumnType("tinyint(1)");
+                        .HasColumnType("boolean");
 
                     b.Property<string>("Cnpj")
                         .IsRequired()
                         .HasMaxLength(14)
-                        .HasColumnType("varchar(14)");
+                        .HasColumnType("character varying(14)");
 
                     b.Property<string>("Codigo")
                         .IsRequired()
                         .HasMaxLength(50)
-                        .HasColumnType("varchar(50)");
+                        .HasColumnType("character varying(50)");
 
                     b.Property<DateTime?>("DataAlteracao")
-                        .HasColumnType("datetime(6)");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<DateTime?>("DataExtincao")
-                        .HasColumnType("datetime(6)");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<DateTime?>("DataFundacao")
-                        .HasColumnType("datetime(6)");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<DateTime>("DataInsercao")
-                        .HasColumnType("datetime(6)");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("HierarquiaCodigo")
                         .IsRequired()
                         .HasMaxLength(600)
-                        .HasColumnType("varchar(600)");
+                        .HasColumnType("character varying(600)");
 
                     b.Property<string>("HierarquiaNome")
                         .IsRequired()
                         .HasMaxLength(1000)
-                        .HasColumnType("varchar(1000)");
+                        .HasColumnType("character varying(1000)");
 
                     b.Property<Guid>("IdentificadorUnico")
-                        .HasColumnType("char(36)");
+                        .HasColumnType("uuid");
 
                     b.Property<string>("IdentificadorUnicoAmigavel")
                         .IsRequired()
-                        .HasColumnType("longtext");
+                        .HasColumnType("text");
 
                     b.Property<short?>("Nivel")
                         .HasColumnType("smallint");
@@ -1209,7 +1250,7 @@ namespace Retaguarda.Persistencia.MYSQL.Migracoes
                     b.Property<string>("Nome")
                         .IsRequired()
                         .HasMaxLength(200)
-                        .HasColumnType("varchar(200)");
+                        .HasColumnType("character varying(200)");
 
                     b.Property<long?>("OrganizacaoId")
                         .HasColumnType("bigint");
@@ -1226,7 +1267,7 @@ namespace Retaguarda.Persistencia.MYSQL.Migracoes
                     b.Property<string>("Sigla")
                         .IsRequired()
                         .HasMaxLength(30)
-                        .HasColumnType("varchar(30)");
+                        .HasColumnType("character varying(30)");
 
                     b.Property<long?>("SituacaoId")
                         .HasColumnType("bigint");
@@ -1244,10 +1285,10 @@ namespace Retaguarda.Persistencia.MYSQL.Migracoes
                         .HasColumnType("bigint");
 
                     b.Property<DateTime?>("ValidoAte")
-                        .HasColumnType("datetime(6)");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<DateTime?>("ValidoDe")
-                        .HasColumnType("datetime(6)");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<long>("Versao")
                         .HasColumnType("bigint");
@@ -1265,30 +1306,32 @@ namespace Retaguarda.Persistencia.MYSQL.Migracoes
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bigint");
 
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
                     b.Property<bool>("Ativo")
-                        .HasColumnType("tinyint(1)");
+                        .HasColumnType("boolean");
 
                     b.Property<DateTime?>("DataAlteracao")
-                        .HasColumnType("datetime(6)");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<DateTime>("DataInsercao")
-                        .HasColumnType("datetime(6)");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<long>("EnderecoId")
                         .HasColumnType("bigint");
 
                     b.Property<bool>("EnderecoPrincipal")
-                        .HasColumnType("tinyint(1)");
+                        .HasColumnType("boolean");
 
                     b.Property<long?>("EnderecoTipoId")
                         .HasColumnType("bigint");
 
                     b.Property<Guid>("IdentificadorUnico")
-                        .HasColumnType("char(36)");
+                        .HasColumnType("uuid");
 
                     b.Property<string>("IdentificadorUnicoAmigavel")
                         .IsRequired()
-                        .HasColumnType("longtext");
+                        .HasColumnType("text");
 
                     b.Property<long?>("OrganizacaoId")
                         .HasColumnType("bigint");
@@ -1319,26 +1362,28 @@ namespace Retaguarda.Persistencia.MYSQL.Migracoes
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bigint");
 
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
                     b.Property<bool>("Ativo")
-                        .HasColumnType("tinyint(1)");
+                        .HasColumnType("boolean");
 
                     b.Property<DateTime?>("DataAlteracao")
-                        .HasColumnType("datetime(6)");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<DateTime>("DataInsercao")
-                        .HasColumnType("datetime(6)");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<Guid>("IdentificadorUnico")
-                        .HasColumnType("char(36)");
+                        .HasColumnType("uuid");
 
                     b.Property<string>("IdentificadorUnicoAmigavel")
                         .IsRequired()
-                        .HasColumnType("longtext");
+                        .HasColumnType("text");
 
                     b.Property<string>("Nome")
                         .IsRequired()
                         .HasMaxLength(200)
-                        .HasColumnType("varchar(200)");
+                        .HasColumnType("character varying(200)");
 
                     b.Property<long?>("OrganizacaoId")
                         .HasColumnType("bigint");
@@ -1365,36 +1410,102 @@ namespace Retaguarda.Persistencia.MYSQL.Migracoes
                     b.ToTable("OrganizacaoUnidadeSetores", (string)null);
                 });
 
+            modelBuilder.Entity("Retaguarda.Dominio.Entidades.OrquestracaoFluxoProcesso", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
+                    b.Property<bool>("Ativo")
+                        .HasColumnType("boolean");
+
+                    b.Property<DateTime?>("DataAlteracao")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime>("DataInsercao")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Descricao")
+                        .IsRequired()
+                        .HasMaxLength(2000)
+                        .HasColumnType("character varying(2000)");
+
+                    b.Property<Guid>("IdentificadorUnico")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("IdentificadorUnicoAmigavel")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Nome")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.Property<long?>("OrganizacaoId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long?>("OrganizacaoUnidadeId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long?>("SetorId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long?>("UsuarioAlteracaoId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long?>("UsuarioInsercaoId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long>("Versao")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("WorkflowDefinitionId")
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.Property<int?>("WorkflowVersion")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("OrquestracaoFluxoProcessos", (string)null);
+                });
+
             modelBuilder.Entity("Retaguarda.Dominio.Entidades.Pais", b =>
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bigint");
 
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
                     b.Property<bool>("Ativo")
-                        .HasColumnType("tinyint(1)");
+                        .HasColumnType("boolean");
 
                     b.Property<string>("Codigo")
                         .IsRequired()
-                        .HasColumnType("longtext");
+                        .HasColumnType("text");
 
                     b.Property<DateTime?>("DataAlteracao")
-                        .HasColumnType("datetime(6)");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<DateTime>("DataInsercao")
-                        .HasColumnType("datetime(6)");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<Guid>("IdentificadorUnico")
-                        .HasColumnType("char(36)");
+                        .HasColumnType("uuid");
 
                     b.Property<string>("IdentificadorUnicoAmigavel")
                         .IsRequired()
-                        .HasColumnType("longtext");
+                        .HasColumnType("text");
 
                     b.Property<string>("Nome")
                         .IsRequired()
                         .HasMaxLength(200)
-                        .HasColumnType("varchar(200)");
+                        .HasColumnType("character varying(200)");
 
                     b.Property<long?>("OrganizacaoId")
                         .HasColumnType("bigint");
@@ -1425,29 +1536,31 @@ namespace Retaguarda.Persistencia.MYSQL.Migracoes
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bigint");
 
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
                     b.Property<bool>("AdministradorDoSistema")
-                        .HasColumnType("tinyint(1)");
+                        .HasColumnType("boolean");
 
                     b.Property<bool>("Ativo")
-                        .HasColumnType("tinyint(1)");
+                        .HasColumnType("boolean");
 
                     b.Property<DateTime?>("DataAlteracao")
-                        .HasColumnType("datetime(6)");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<DateTime>("DataInsercao")
-                        .HasColumnType("datetime(6)");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<Guid>("IdentificadorUnico")
-                        .HasColumnType("char(36)");
+                        .HasColumnType("uuid");
 
                     b.Property<string>("IdentificadorUnicoAmigavel")
                         .IsRequired()
-                        .HasColumnType("longtext");
+                        .HasColumnType("text");
 
                     b.Property<string>("Nome")
                         .IsRequired()
                         .HasMaxLength(200)
-                        .HasColumnType("varchar(200)");
+                        .HasColumnType("character varying(200)");
 
                     b.Property<long?>("OrganizacaoId")
                         .HasColumnType("bigint");
@@ -1480,26 +1593,28 @@ namespace Retaguarda.Persistencia.MYSQL.Migracoes
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bigint");
 
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
                     b.Property<bool>("Ativo")
-                        .HasColumnType("tinyint(1)");
+                        .HasColumnType("boolean");
 
                     b.Property<DateTime?>("DataAlteracao")
-                        .HasColumnType("datetime(6)");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<DateTime>("DataInsercao")
-                        .HasColumnType("datetime(6)");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<Guid>("IdentificadorUnico")
-                        .HasColumnType("char(36)");
+                        .HasColumnType("uuid");
 
                     b.Property<string>("IdentificadorUnicoAmigavel")
                         .IsRequired()
-                        .HasColumnType("longtext");
+                        .HasColumnType("text");
 
                     b.Property<string>("Nome")
                         .IsRequired()
                         .HasMaxLength(200)
-                        .HasColumnType("varchar(200)");
+                        .HasColumnType("character varying(200)");
 
                     b.Property<long?>("OrganizacaoId")
                         .HasColumnType("bigint");
@@ -1538,21 +1653,23 @@ namespace Retaguarda.Persistencia.MYSQL.Migracoes
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bigint");
 
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
                     b.Property<bool>("Ativo")
-                        .HasColumnType("tinyint(1)");
+                        .HasColumnType("boolean");
 
                     b.Property<DateTime?>("DataAlteracao")
-                        .HasColumnType("datetime(6)");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<DateTime>("DataInsercao")
-                        .HasColumnType("datetime(6)");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<Guid>("IdentificadorUnico")
-                        .HasColumnType("char(36)");
+                        .HasColumnType("uuid");
 
                     b.Property<string>("IdentificadorUnicoAmigavel")
                         .IsRequired()
-                        .HasColumnType("longtext");
+                        .HasColumnType("text");
 
                     b.Property<long?>("OrganizacaoId")
                         .HasColumnType("bigint");
@@ -1593,42 +1710,44 @@ namespace Retaguarda.Persistencia.MYSQL.Migracoes
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bigint");
 
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
                     b.Property<bool>("Ativo")
-                        .HasColumnType("tinyint(1)");
+                        .HasColumnType("boolean");
 
                     b.Property<string>("Cpf")
                         .IsRequired()
-                        .HasColumnType("longtext");
+                        .HasColumnType("text");
 
                     b.Property<DateTime?>("DataAlteracao")
-                        .HasColumnType("datetime(6)");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<DateTime>("DataInsercao")
-                        .HasColumnType("datetime(6)");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<DateTime?>("DataNascimento")
-                        .HasColumnType("datetime(6)");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<DateTime?>("DataObito")
-                        .HasColumnType("datetime(6)");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Documento")
                         .HasMaxLength(100)
-                        .HasColumnType("varchar(100)");
+                        .HasColumnType("character varying(100)");
 
                     b.Property<string>("Email")
                         .HasMaxLength(200)
-                        .HasColumnType("varchar(200)");
+                        .HasColumnType("character varying(200)");
 
                     b.Property<long?>("EstadoCivilId")
                         .HasColumnType("bigint");
 
                     b.Property<Guid>("IdentificadorUnico")
-                        .HasColumnType("char(36)");
+                        .HasColumnType("uuid");
 
                     b.Property<string>("IdentificadorUnicoAmigavel")
                         .IsRequired()
-                        .HasColumnType("longtext");
+                        .HasColumnType("text");
 
                     b.Property<long?>("NacionalidadePaisId")
                         .HasColumnType("bigint");
@@ -1639,19 +1758,19 @@ namespace Retaguarda.Persistencia.MYSQL.Migracoes
                     b.Property<string>("Nome")
                         .IsRequired()
                         .HasMaxLength(300)
-                        .HasColumnType("varchar(300)");
+                        .HasColumnType("character varying(300)");
 
                     b.Property<string>("NomeMae")
                         .IsRequired()
-                        .HasColumnType("longtext");
+                        .HasColumnType("text");
 
                     b.Property<string>("NomePai")
                         .IsRequired()
-                        .HasColumnType("longtext");
+                        .HasColumnType("text");
 
                     b.Property<string>("NomeSocial")
                         .IsRequired()
-                        .HasColumnType("longtext");
+                        .HasColumnType("text");
 
                     b.Property<long?>("OrganizacaoId")
                         .HasColumnType("bigint");
@@ -1660,7 +1779,7 @@ namespace Retaguarda.Persistencia.MYSQL.Migracoes
                         .HasColumnType("bigint");
 
                     b.Property<bool>("Pcd")
-                        .HasColumnType("tinyint(1)");
+                        .HasColumnType("boolean");
 
                     b.Property<long?>("SetorId")
                         .HasColumnType("bigint");
@@ -1670,12 +1789,12 @@ namespace Retaguarda.Persistencia.MYSQL.Migracoes
 
                     b.Property<string>("Telefone")
                         .HasMaxLength(50)
-                        .HasColumnType("varchar(50)");
+                        .HasColumnType("character varying(50)");
 
                     b.Property<string>("TipoPessoaChave")
                         .IsRequired()
                         .HasMaxLength(8)
-                        .HasColumnType("varchar(8)");
+                        .HasColumnType("character varying(8)");
 
                     b.Property<long?>("UsuarioAlteracaoId")
                         .HasColumnType("bigint");
@@ -1697,30 +1816,32 @@ namespace Retaguarda.Persistencia.MYSQL.Migracoes
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bigint");
 
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
                     b.Property<bool>("Ativo")
-                        .HasColumnType("tinyint(1)");
+                        .HasColumnType("boolean");
 
                     b.Property<DateTime?>("DataAlteracao")
-                        .HasColumnType("datetime(6)");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<DateTime>("DataInsercao")
-                        .HasColumnType("datetime(6)");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<long>("EnderecoId")
                         .HasColumnType("bigint");
 
                     b.Property<bool>("EnderecoPrincipal")
-                        .HasColumnType("tinyint(1)");
+                        .HasColumnType("boolean");
 
                     b.Property<long?>("EnderecoTipoId")
                         .HasColumnType("bigint");
 
                     b.Property<Guid>("IdentificadorUnico")
-                        .HasColumnType("char(36)");
+                        .HasColumnType("uuid");
 
                     b.Property<string>("IdentificadorUnicoAmigavel")
                         .IsRequired()
-                        .HasColumnType("longtext");
+                        .HasColumnType("text");
 
                     b.Property<long?>("OrganizacaoId")
                         .HasColumnType("bigint");
@@ -1754,24 +1875,26 @@ namespace Retaguarda.Persistencia.MYSQL.Migracoes
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bigint");
 
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
                     b.Property<bool>("Ativo")
-                        .HasColumnType("tinyint(1)");
+                        .HasColumnType("boolean");
 
                     b.Property<DateTime?>("DataAlteracao")
-                        .HasColumnType("datetime(6)");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<DateTime>("DataInsercao")
-                        .HasColumnType("datetime(6)");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<bool>("HabilitarPermissoesNegativas")
-                        .HasColumnType("tinyint(1)");
+                        .HasColumnType("boolean");
 
                     b.Property<Guid>("IdentificadorUnico")
-                        .HasColumnType("char(36)");
+                        .HasColumnType("uuid");
 
                     b.Property<string>("IdentificadorUnicoAmigavel")
                         .IsRequired()
-                        .HasColumnType("longtext");
+                        .HasColumnType("text");
 
                     b.Property<long?>("OrganizacaoId")
                         .HasColumnType("bigint");
@@ -1781,7 +1904,7 @@ namespace Retaguarda.Persistencia.MYSQL.Migracoes
 
                     b.Property<bool>("Padrao")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("tinyint(1)")
+                        .HasColumnType("boolean")
                         .HasDefaultValue(false);
 
                     b.Property<long>("SetorId")
@@ -1814,31 +1937,33 @@ namespace Retaguarda.Persistencia.MYSQL.Migracoes
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bigint");
 
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
                     b.Property<bool>("Ativo")
-                        .HasColumnType("tinyint(1)");
+                        .HasColumnType("boolean");
 
                     b.Property<string>("Codigo")
                         .IsRequired()
                         .HasMaxLength(50)
-                        .HasColumnType("varchar(50)");
+                        .HasColumnType("character varying(50)");
 
                     b.Property<DateTime?>("DataAlteracao")
-                        .HasColumnType("datetime(6)");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<DateTime>("DataInsercao")
-                        .HasColumnType("datetime(6)");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<Guid>("IdentificadorUnico")
-                        .HasColumnType("char(36)");
+                        .HasColumnType("uuid");
 
                     b.Property<string>("IdentificadorUnicoAmigavel")
                         .IsRequired()
-                        .HasColumnType("longtext");
+                        .HasColumnType("text");
 
                     b.Property<string>("Nome")
                         .IsRequired()
                         .HasMaxLength(200)
-                        .HasColumnType("varchar(200)");
+                        .HasColumnType("character varying(200)");
 
                     b.Property<long?>("OrganizacaoId")
                         .HasColumnType("bigint");
@@ -1869,31 +1994,33 @@ namespace Retaguarda.Persistencia.MYSQL.Migracoes
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bigint");
 
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
                     b.Property<bool>("Ativo")
-                        .HasColumnType("tinyint(1)");
+                        .HasColumnType("boolean");
 
                     b.Property<string>("Codigo")
                         .IsRequired()
                         .HasMaxLength(50)
-                        .HasColumnType("varchar(50)");
+                        .HasColumnType("character varying(50)");
 
                     b.Property<DateTime?>("DataAlteracao")
-                        .HasColumnType("datetime(6)");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<DateTime>("DataInsercao")
-                        .HasColumnType("datetime(6)");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<Guid>("IdentificadorUnico")
-                        .HasColumnType("char(36)");
+                        .HasColumnType("uuid");
 
                     b.Property<string>("IdentificadorUnicoAmigavel")
                         .IsRequired()
-                        .HasColumnType("longtext");
+                        .HasColumnType("text");
 
                     b.Property<string>("Nome")
                         .IsRequired()
                         .HasMaxLength(200)
-                        .HasColumnType("varchar(200)");
+                        .HasColumnType("character varying(200)");
 
                     b.Property<long?>("OrganizacaoId")
                         .HasColumnType("bigint");
@@ -1924,31 +2051,33 @@ namespace Retaguarda.Persistencia.MYSQL.Migracoes
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bigint");
 
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
                     b.Property<bool>("Ativo")
-                        .HasColumnType("tinyint(1)");
+                        .HasColumnType("boolean");
 
                     b.Property<string>("Codigo")
                         .IsRequired()
                         .HasMaxLength(50)
-                        .HasColumnType("varchar(50)");
+                        .HasColumnType("character varying(50)");
 
                     b.Property<DateTime?>("DataAlteracao")
-                        .HasColumnType("datetime(6)");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<DateTime>("DataInsercao")
-                        .HasColumnType("datetime(6)");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<Guid>("IdentificadorUnico")
-                        .HasColumnType("char(36)");
+                        .HasColumnType("uuid");
 
                     b.Property<string>("IdentificadorUnicoAmigavel")
                         .IsRequired()
-                        .HasColumnType("longtext");
+                        .HasColumnType("text");
 
                     b.Property<string>("Nome")
                         .IsRequired()
                         .HasMaxLength(200)
-                        .HasColumnType("varchar(200)");
+                        .HasColumnType("character varying(200)");
 
                     b.Property<long?>("OrganizacaoId")
                         .HasColumnType("bigint");
@@ -1979,31 +2108,33 @@ namespace Retaguarda.Persistencia.MYSQL.Migracoes
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bigint");
 
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
                     b.Property<bool>("Ativo")
-                        .HasColumnType("tinyint(1)");
+                        .HasColumnType("boolean");
 
                     b.Property<string>("Codigo")
                         .IsRequired()
                         .HasMaxLength(50)
-                        .HasColumnType("varchar(50)");
+                        .HasColumnType("character varying(50)");
 
                     b.Property<DateTime?>("DataAlteracao")
-                        .HasColumnType("datetime(6)");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<DateTime>("DataInsercao")
-                        .HasColumnType("datetime(6)");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<Guid>("IdentificadorUnico")
-                        .HasColumnType("char(36)");
+                        .HasColumnType("uuid");
 
                     b.Property<string>("IdentificadorUnicoAmigavel")
                         .IsRequired()
-                        .HasColumnType("longtext");
+                        .HasColumnType("text");
 
                     b.Property<string>("Nome")
                         .IsRequired()
                         .HasMaxLength(200)
-                        .HasColumnType("varchar(200)");
+                        .HasColumnType("character varying(200)");
 
                     b.Property<long?>("OrganizacaoId")
                         .HasColumnType("bigint");
@@ -2034,31 +2165,33 @@ namespace Retaguarda.Persistencia.MYSQL.Migracoes
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bigint");
 
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
                     b.Property<bool>("Ativo")
-                        .HasColumnType("tinyint(1)");
+                        .HasColumnType("boolean");
 
                     b.Property<string>("Codigo")
                         .IsRequired()
                         .HasMaxLength(50)
-                        .HasColumnType("varchar(50)");
+                        .HasColumnType("character varying(50)");
 
                     b.Property<DateTime?>("DataAlteracao")
-                        .HasColumnType("datetime(6)");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<DateTime>("DataInsercao")
-                        .HasColumnType("datetime(6)");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<Guid>("IdentificadorUnico")
-                        .HasColumnType("char(36)");
+                        .HasColumnType("uuid");
 
                     b.Property<string>("IdentificadorUnicoAmigavel")
                         .IsRequired()
-                        .HasColumnType("longtext");
+                        .HasColumnType("text");
 
                     b.Property<string>("Nome")
                         .IsRequired()
                         .HasMaxLength(200)
-                        .HasColumnType("varchar(200)");
+                        .HasColumnType("character varying(200)");
 
                     b.Property<long?>("OrganizacaoId")
                         .HasColumnType("bigint");
@@ -2089,31 +2222,33 @@ namespace Retaguarda.Persistencia.MYSQL.Migracoes
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bigint");
 
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
                     b.Property<bool>("Ativo")
-                        .HasColumnType("tinyint(1)");
+                        .HasColumnType("boolean");
 
                     b.Property<string>("Codigo")
                         .IsRequired()
                         .HasMaxLength(50)
-                        .HasColumnType("varchar(50)");
+                        .HasColumnType("character varying(50)");
 
                     b.Property<DateTime?>("DataAlteracao")
-                        .HasColumnType("datetime(6)");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<DateTime>("DataInsercao")
-                        .HasColumnType("datetime(6)");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<Guid>("IdentificadorUnico")
-                        .HasColumnType("char(36)");
+                        .HasColumnType("uuid");
 
                     b.Property<string>("IdentificadorUnicoAmigavel")
                         .IsRequired()
-                        .HasColumnType("longtext");
+                        .HasColumnType("text");
 
                     b.Property<string>("Nome")
                         .IsRequired()
                         .HasMaxLength(200)
-                        .HasColumnType("varchar(200)");
+                        .HasColumnType("character varying(200)");
 
                     b.Property<long?>("OrganizacaoId")
                         .HasColumnType("bigint");
@@ -2144,26 +2279,28 @@ namespace Retaguarda.Persistencia.MYSQL.Migracoes
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bigint");
 
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
                     b.Property<bool>("Ativo")
-                        .HasColumnType("tinyint(1)");
+                        .HasColumnType("boolean");
 
                     b.Property<DateTime?>("DataAlteracao")
-                        .HasColumnType("datetime(6)");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<DateTime>("DataInsercao")
-                        .HasColumnType("datetime(6)");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<Guid>("IdentificadorUnico")
-                        .HasColumnType("char(36)");
+                        .HasColumnType("uuid");
 
                     b.Property<string>("IdentificadorUnicoAmigavel")
                         .IsRequired()
-                        .HasColumnType("longtext");
+                        .HasColumnType("text");
 
                     b.Property<string>("Nome")
                         .IsRequired()
                         .HasMaxLength(200)
-                        .HasColumnType("varchar(200)");
+                        .HasColumnType("character varying(200)");
 
                     b.Property<long?>("OrganizacaoId")
                         .HasColumnType("bigint");
@@ -2180,7 +2317,7 @@ namespace Retaguarda.Persistencia.MYSQL.Migracoes
                     b.Property<string>("Sigla")
                         .IsRequired()
                         .HasMaxLength(8)
-                        .HasColumnType("varchar(8)");
+                        .HasColumnType("character varying(8)");
 
                     b.Property<long?>("UsuarioAlteracaoId")
                         .HasColumnType("bigint");
@@ -2204,29 +2341,31 @@ namespace Retaguarda.Persistencia.MYSQL.Migracoes
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bigint");
 
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
                     b.Property<bool>("Ativo")
-                        .HasColumnType("tinyint(1)");
+                        .HasColumnType("boolean");
 
                     b.Property<DateTime?>("DataAlteracao")
-                        .HasColumnType("datetime(6)");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<DateTime>("DataInsercao")
-                        .HasColumnType("datetime(6)");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Email")
-                        .HasColumnType("longtext");
+                        .HasColumnType("text");
 
                     b.Property<Guid>("IdentificadorUnico")
-                        .HasColumnType("char(36)");
+                        .HasColumnType("uuid");
 
                     b.Property<string>("IdentificadorUnicoAmigavel")
                         .IsRequired()
-                        .HasColumnType("longtext");
+                        .HasColumnType("text");
 
                     b.Property<string>("Nome")
                         .IsRequired()
                         .HasMaxLength(200)
-                        .HasColumnType("varchar(200)");
+                        .HasColumnType("character varying(200)");
 
                     b.Property<long?>("OrganizacaoId")
                         .HasColumnType("bigint");
@@ -2239,7 +2378,7 @@ namespace Retaguarda.Persistencia.MYSQL.Migracoes
 
                     b.Property<string>("SenhaHash")
                         .IsRequired()
-                        .HasColumnType("longtext");
+                        .HasColumnType("text");
 
                     b.Property<long?>("SetorId")
                         .HasColumnType("bigint");
@@ -2255,7 +2394,7 @@ namespace Retaguarda.Persistencia.MYSQL.Migracoes
 
                     b.Property<string>("Username")
                         .IsRequired()
-                        .HasColumnType("longtext");
+                        .HasColumnType("text");
 
                     b.Property<long?>("UsuarioAlteracaoId")
                         .HasColumnType("bigint");
@@ -2281,30 +2420,32 @@ namespace Retaguarda.Persistencia.MYSQL.Migracoes
                         .ValueGeneratedOnAdd()
                         .HasColumnType("bigint");
 
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
                     b.Property<bool>("Ativo")
-                        .HasColumnType("tinyint(1)");
+                        .HasColumnType("boolean");
 
                     b.Property<DateTime?>("DataAlteracao")
-                        .HasColumnType("datetime(6)");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<DateTime>("DataInsercao")
-                        .HasColumnType("datetime(6)");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<long>("EnderecoId")
                         .HasColumnType("bigint");
 
                     b.Property<bool>("EnderecoPrincipal")
-                        .HasColumnType("tinyint(1)");
+                        .HasColumnType("boolean");
 
                     b.Property<long?>("EnderecoTipoId")
                         .HasColumnType("bigint");
 
                     b.Property<Guid>("IdentificadorUnico")
-                        .HasColumnType("char(36)");
+                        .HasColumnType("uuid");
 
                     b.Property<string>("IdentificadorUnicoAmigavel")
                         .IsRequired()
-                        .HasColumnType("longtext");
+                        .HasColumnType("text");
 
                     b.Property<long?>("OrganizacaoId")
                         .HasColumnType("bigint");
