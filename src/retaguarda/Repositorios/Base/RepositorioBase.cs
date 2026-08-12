@@ -1,9 +1,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Retaguarda.Persistencia;
 using Retaguarda.Repositorios.Interfaces;
+using Retaguarda.Dominio.Entidades.Base;
 
 namespace Retaguarda.Repositorios.Base
 {
@@ -11,10 +13,12 @@ namespace Retaguarda.Repositorios.Base
     {
         protected readonly IApplicationDbContext _db;
         protected readonly DbSet<T> _dbSet;
+        protected readonly IHttpContextAccessor _httpContextAccessor;
 
-        public RepositorioBase(IApplicationDbContext db)
+        public RepositorioBase(IApplicationDbContext db, IHttpContextAccessor httpContextAccessor = null)
         {
             _db = db;
+            _httpContextAccessor = httpContextAccessor;
             
             // Find the DbSet<T> property by checking the generic type parameter
             var dbSetProperty = _db.GetType()
@@ -26,12 +30,64 @@ namespace Retaguarda.Repositorios.Base
             
             _dbSet = (DbSet<T>)(dbSetProperty?.GetValue(_db) ?? throw new System.InvalidOperationException($"DbSet for {typeof(T).Name} not found on IApplicationDbContext"));
         }
+        
+        /// <summary>
+        /// Obtém o OrganizacaoId do escopo atual via HttpContext
+        /// </summary>
+        protected long? ObterOrganizacaoIdDoEscopo()
+        {
+            if (_httpContextAccessor?.HttpContext == null) return null;
+            
+            var ctx = _httpContextAccessor.HttpContext;
+            if (ctx.Items.TryGetValue("escopo.organizacaoId", out var orgIdObj) && orgIdObj is long orgId)
+            {
+                return orgId;
+            }
+            return null;
+        }
+        
+        /// <summary>
+        /// Aplica filtro de OrganizacaoId automaticamente para MultilocatarioEntidade
+        /// </summary>
+        protected IQueryable<T> AplicarFiltroMultilocatario(IQueryable<T> query)
+        {
+            // Apenas filtra se T é MultilocatarioEntidade
+            if (!typeof(MultilocatarioEntidade).IsAssignableFrom(typeof(T)))
+                return query;
+            
+            var orgId = ObterOrganizacaoIdDoEscopo();
+            if (!orgId.HasValue)
+                return query; // Se não há escopo definido, retorna sem filtrar
+            
+            return query.Where(e => EF.Property<long?>(e, "OrganizacaoId") == orgId.Value);
+        }
 
-        public virtual async Task<T?> ObterPorIdAsync(long id) => await _dbSet.FindAsync(id);
+        public virtual async Task<T?> ObterPorIdAsync(long id)
+        {
+            var entity = await _dbSet.FindAsync(id);
+            if (entity == null) return null;
+            
+            // Validar acesso multilocatário
+            if (typeof(MultilocatarioEntidade).IsAssignableFrom(typeof(T)))
+            {
+                var orgIdEscopo = ObterOrganizacaoIdDoEscopo();
+                if (orgIdEscopo.HasValue)
+                {
+                    var orgIdEntity = (long?)typeof(T).GetProperty("OrganizacaoId")?.GetValue(entity);
+                    if (orgIdEntity != orgIdEscopo.Value)
+                        return null; // Acesso negado
+                }
+            }
+            
+            return entity;
+        }
 
         public virtual async Task<(List<T> Items, int Total)> ListarAsync(string? nomeFilter, int page, int pageSize, string? sortField, string? sortDir, System.Collections.Generic.IDictionary<string,string>? filtros = null, int? inativo = null)
         {
             var q = _dbSet.AsQueryable();
+            
+            // Aplicar filtro multilocatário PRIMEIRO
+            q = AplicarFiltroMultilocatario(q);
 
             // Try filter by `Ativo` or `Inativo` properties if exist
             var propAtivo = typeof(T).GetProperty("Ativo");

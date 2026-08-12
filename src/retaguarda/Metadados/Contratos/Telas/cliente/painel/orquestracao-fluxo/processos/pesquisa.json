@@ -1,19 +1,20 @@
 {
   "orquestracaoFluxoProcessoPesquisa": {
-    "titulo": "Pesquisa de Processos de Orquestração",
+    "titulo": "Processos de Orquestração de Fluxo",
     "extremidade": "/api/orquestracaoFluxo/processos",
     "filtro": [
       { "campo": "nome", "descricao": "Nome", "tipo": "string", "col": 12 }
     ],
     "tabela": {
       "colunas": [
-        { "campo": "nome", "titulo": "Nome" },
-        { "campo": "descricao", "titulo": "Descrição" },
-        { "campo": "workflowDefinitionId", "titulo": "Workflow ID" }
+        { "campo": "nome", "titulo": "Nome", "visivelTelaPequena": true },
+        { "campo": "descricao", "titulo": "Descrição", "visivelTelaPequena": false },
+        { "campo": "workflowDefinitionId", "titulo": "Workflow ID", "visivelTelaPequena": false }
       ],
       "acoes": [
-        { "tipo": "navegacao", "destino": "/painel/orquestracao-fluxo/processos/editar/{id}", "campo_id": "id", "icone": "pencil" },
-        { "tipo": "confirmacao_delete_ajax", "destino": "/api/orquestracaoFluxo/processos/{id}", "campo_id": "id", "icone": "trash" }
+        { "tipo": "navegacao", "destino": "/painel/orquestracao-fluxo/processos/editar/{id}", "campo_id": "id", "icone": "pencil", "titulo": "Editar dados do processo" },
+        { "tipo": "navegacao", "destino": "/planejadorDeFluxo/?processId={id}", "campo_id": "id", "icone": "diagram-3", "titulo": "Editar fluxo no ElsaStudio" },
+        { "tipo": "confirmacao_delete_ajax", "destino": "/api/orquestracaoFluxo/processos/{id}", "campo_id": "id", "icone": "trash", "titulo": "Excluir processo" }
       ],
       "pagination": { "pageSize": 10 }
     }

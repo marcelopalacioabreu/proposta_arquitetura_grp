@@ -277,6 +277,8 @@ namespace Retaguarda.Persistencia.POSTGRESQL
                 b.Property(x => x.Descricao).HasMaxLength(2000);
                 b.Property(x => x.WorkflowDefinitionId).HasMaxLength(200);
                 b.Property(x => x.WorkflowVersion);
+                b.Property(x => x.WorkflowJson).HasColumnType("text");
+                b.Property(x => x.WorkflowNome).HasMaxLength(500);
             });
         }
 

@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Retaguarda.Servicos.Interfaces;
 using Retaguarda.DTO.Dtos;
 using Retaguarda.Api.Utils;
+using Retaguarda.Servicos;
 
 namespace Retaguarda.Api.Controllers
 {
@@ -12,8 +13,13 @@ namespace Retaguarda.Api.Controllers
     public class OrquestracaoFluxoProcessoController : BaseController
     {
         private readonly IOrquestracaoFluxoProcessoServico _servico;
+        private readonly EscopoEmExecucao _escopo;
 
-        public OrquestracaoFluxoProcessoController(IOrquestracaoFluxoProcessoServico servico) => _servico = servico;
+        public OrquestracaoFluxoProcessoController(IOrquestracaoFluxoProcessoServico servico, EscopoEmExecucao escopo) 
+        { 
+            _servico = servico;
+            _escopo = escopo;
+        }
 
         [HttpGet]
         [Authorize(Policy = "orquestracaoFluxo.visualizar")]
@@ -45,12 +51,48 @@ namespace Retaguarda.Api.Controllers
             return OkData(dto);
         }
 
+        [HttpGet("contexto/atual")]
+        [Authorize(Policy = "orquestracaoFluxo.visualizar")]
+        public IActionResult ObterContextoAtual()
+        {
+            return OkData(new 
+            { 
+                organizacaoId = _escopo.OrganizacaoId,
+                organizacaoUnidadeId = _escopo.OrganizacaoUnidadeId,
+                setorId = _escopo.SetorId
+            });
+        }
+
+        [HttpGet("workflows")]
+        [Authorize(Policy = "orquestracaoFluxo.visualizar")]
+        public IActionResult ListarWorkflows()
+        {
+            // Retorna lista de workflows disponíveis no ElsaStudio
+            // Formato esperado pelo dropdown: [ { id, name } ]
+            // Aqui pode integrar com API do ElsaStudio ou usar cache armazenado
+            var workflows = new List<object>
+            {
+                new { id = "workflow-1", name = "Workflow 1 - Processo Padrão" },
+                new { id = "workflow-2", name = "Workflow 2 - Aprovação Hierárquica" },
+                new { id = "workflow-3", name = "Workflow 3 - Notificação" }
+            };
+            return OkData(workflows);
+        }
+
         [HttpPost]
         [Authorize(Policy = "orquestracaoFluxo.editar")]
         public IActionResult Create([FromBody] CriarDto dto)
         {
             if (!ModelState.IsValid) return BadRequestModelState();
-            var toCreate = new OrquestracaoFluxoProcessoDto { Nome = dto.Nome, Descricao = dto.Descricao, WorkflowDefinitionId = dto.WorkflowDefinitionId, WorkflowVersion = dto.WorkflowVersion };
+            var toCreate = new OrquestracaoFluxoProcessoDto 
+            { 
+                Nome = dto.Nome, 
+                Descricao = dto.Descricao, 
+                WorkflowDefinitionId = dto.WorkflowDefinitionId, 
+                WorkflowVersion = dto.WorkflowVersion,
+                WorkflowJson = dto.WorkflowJson,
+                WorkflowNome = dto.WorkflowNome
+            };
             var o = _servico.CriarAsync(toCreate).Result;
             return CreatedDataAtAction(nameof(Get), new { id = o.Id }, o, "Criado com sucesso");
         }
@@ -78,7 +120,15 @@ namespace Retaguarda.Api.Controllers
             if (!ModelState.IsValid) return BadRequestModelState();
             var existing = _servico.ObterPorIdAsync(id).Result;
             if (existing == null) return NotFoundError("Registro não encontrado");
-            var toUpdate = new OrquestracaoFluxoProcessoDto { Nome = dto.Nome, Descricao = dto.Descricao, WorkflowDefinitionId = dto.WorkflowDefinitionId, WorkflowVersion = dto.WorkflowVersion };
+            var toUpdate = new OrquestracaoFluxoProcessoDto 
+            { 
+                Nome = dto.Nome, 
+                Descricao = dto.Descricao, 
+                WorkflowDefinitionId = dto.WorkflowDefinitionId, 
+                WorkflowVersion = dto.WorkflowVersion,
+                WorkflowJson = dto.WorkflowJson,
+                WorkflowNome = dto.WorkflowNome
+            };
             _servico.UpdateAsync(id, toUpdate).GetAwaiter().GetResult();
             return OkMessage("Atualizado");
         }
@@ -90,6 +140,8 @@ namespace Retaguarda.Api.Controllers
             public string? Descricao { get; set; }
             public string? WorkflowDefinitionId { get; set; }
             public int? WorkflowVersion { get; set; }
+            public string? WorkflowJson { get; set; }
+            public string? WorkflowNome { get; set; }
         }
 
         public class AtualizarDto
@@ -99,6 +151,8 @@ namespace Retaguarda.Api.Controllers
             public string? Descricao { get; set; }
             public string? WorkflowDefinitionId { get; set; }
             public int? WorkflowVersion { get; set; }
+            public string? WorkflowJson { get; set; }
+            public string? WorkflowNome { get; set; }
         }
     }
 }

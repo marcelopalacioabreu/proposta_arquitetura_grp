@@ -12,7 +12,7 @@ using Retaguarda.Persistencia.POSTGRESQL;
 namespace Retaguarda.Persistencia.POSTGRESQL.Migracoes
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20260812151613_InitialCreate")]
+    [Migration("20260812172210_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -1465,6 +1465,13 @@ namespace Retaguarda.Persistencia.POSTGRESQL.Migracoes
                     b.Property<string>("WorkflowDefinitionId")
                         .HasMaxLength(200)
                         .HasColumnType("character varying(200)");
+
+                    b.Property<string>("WorkflowJson")
+                        .HasColumnType("text");
+
+                    b.Property<string>("WorkflowNome")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
 
                     b.Property<int?>("WorkflowVersion")
                         .HasColumnType("integer");

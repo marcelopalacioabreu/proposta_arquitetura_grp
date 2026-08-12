@@ -11,5 +11,11 @@ namespace Retaguarda.Dominio.Entidades
         // Elsa workflow linkage
         public string? WorkflowDefinitionId { get; set; }
         public int? WorkflowVersion { get; set; }
+        
+        // Armazenar JSON do workflow para listagem rápida e contexto
+        public string? WorkflowJson { get; set; }
+        
+        // Nome do workflow no ElsaStudio (por referência/cache)
+        public string? WorkflowNome { get; set; }
     }
 }

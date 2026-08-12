@@ -328,6 +328,8 @@ namespace Retaguarda.Persistencia.POSTGRESQL.Migracoes
                     Descricao = table.Column<string>(type: "character varying(2000)", maxLength: 2000, nullable: false),
                     WorkflowDefinitionId = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: true),
                     WorkflowVersion = table.Column<int>(type: "integer", nullable: true),
+                    WorkflowJson = table.Column<string>(type: "text", nullable: true),
+                    WorkflowNome = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: true),
                     IdentificadorUnico = table.Column<Guid>(type: "uuid", nullable: false),
                     IdentificadorUnicoAmigavel = table.Column<string>(type: "text", nullable: false),
                     DataInsercao = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),

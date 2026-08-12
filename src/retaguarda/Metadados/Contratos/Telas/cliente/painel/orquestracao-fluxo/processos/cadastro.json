@@ -6,9 +6,14 @@
     "itens": [
       { "campo": "nome", "label": "Nome", "tipo": "text", "col": 12, "obrigatorio": true },
       { "campo": "descricao", "label": "Descrição", "tipo": "textarea", "col": 12 },
-      { "campo": "workflowDefinitionId", "label": "Workflow Definition ID", "tipo": "text", "col": 6 },
-      { "campo": "workflowVersion", "label": "Workflow Version", "tipo": "number", "col": 6 },
-      { "campo": "ativo", "label": "Ativo", "tipo": "checkbox", "col": 12 }
+      {
+        "titulo": "Configuração do Fluxo",
+        "columns": 12,
+        "campos": [
+          { "campo": "workflowDefinitionId", "label": "Workflow", "tipo": "select", "url": "/api/orquestracaoFluxo/workflows", "col": 6, "descricao": "Selecione um workflow disponível no ElsaStudio" },
+          { "campo": "workflowVersion", "label": "Versão", "tipo": "number", "col": 6 }
+        ]
+      }
     ]
   }
 }

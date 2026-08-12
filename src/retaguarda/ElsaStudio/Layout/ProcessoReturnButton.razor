@@ -1,0 +1,16 @@
+@* Botão para retornar à tela de dados do processo no GRP *@
+@if (!string.IsNullOrEmpty(ProcessId))
+{
+    <a href="@($"/painel/orquestracao-fluxo/processos/editar/{ProcessId}")" 
+       class="btn btn-sm btn-outline-primary" 
+       title="Voltar para dados do processo" 
+       target="_self">
+        <i class="bi bi-arrow-left"></i>
+        Dados do Processo
+    </a>
+}
+
+@code {
+    [SupplyParameterFromQuery(Name = "processId")]
+    public string? ProcessId { get; set; }
+}

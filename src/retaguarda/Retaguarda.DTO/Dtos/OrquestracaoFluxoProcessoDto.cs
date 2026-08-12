@@ -8,5 +8,9 @@ namespace Retaguarda.DTO.Dtos
         public string? WorkflowDefinitionId { get; set; }
         public int? WorkflowVersion { get; set; }
         public bool Ativo { get; set; } = true;
+        
+        // Novos campos para armazenar workflow JSON e referência
+        public string? WorkflowJson { get; set; }
+        public string? WorkflowNome { get; set; }
     }
 }

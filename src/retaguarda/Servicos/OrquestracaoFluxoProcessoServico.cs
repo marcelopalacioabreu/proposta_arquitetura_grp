@@ -23,7 +23,9 @@ namespace Retaguarda.Servicos
                 Descricao = e.Descricao,
                 WorkflowDefinitionId = e.WorkflowDefinitionId,
                 WorkflowVersion = e.WorkflowVersion,
-                Ativo = e.Ativo
+                Ativo = e.Ativo,
+                WorkflowJson = e.WorkflowJson,
+                WorkflowNome = e.WorkflowNome
             };
         }
 
@@ -35,7 +37,9 @@ namespace Retaguarda.Servicos
                 Descricao = dto.Descricao,
                 WorkflowDefinitionId = dto.WorkflowDefinitionId,
                 WorkflowVersion = dto.WorkflowVersion,
-                Ativo = dto.Ativo
+                Ativo = dto.Ativo,
+                WorkflowJson = dto.WorkflowJson,
+                WorkflowNome = dto.WorkflowNome
             };
         }
 
@@ -46,6 +50,8 @@ namespace Retaguarda.Servicos
             entity.WorkflowDefinitionId = dto.WorkflowDefinitionId;
             entity.WorkflowVersion = dto.WorkflowVersion;
             entity.Ativo = dto.Ativo;
+            entity.WorkflowJson = dto.WorkflowJson;
+            entity.WorkflowNome = dto.WorkflowNome;
         }
     }
 }
