@@ -26,8 +26,15 @@ namespace Retaguarda.Api.Middleware
                     var reqUsuario = context.RequestServices.GetService(typeof(RequisicaoUsuario)) as RequisicaoUsuario;
                     if (usuarioSvc != null && reqUsuario != null)
                     {
-                        var u = await usuarioSvc.ObterPorIdAsync(userId);
-                        reqUsuario.Usuario = u;
+                        try
+                        {
+                            var u = await usuarioSvc.ObterPorIdAsync(userId);
+                            reqUsuario.Usuario = u;
+                        }
+                        catch
+                        {
+                            // Falha silenciosa: não interrompe a requisição se o usuário não puder ser carregado
+                        }
                     }
                 }
             }

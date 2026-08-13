@@ -64,6 +64,19 @@ services.AddAuthentication(Microsoft.AspNetCore.Authentication.JwtBearer.JwtBear
         ValidateAudience = false,
         ValidateLifetime = false
     };
+    // Fallback: read JWT from HttpOnly cookie when no Authorization header is present
+    options.Events = new Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerEvents
+    {
+        OnMessageReceived = context =>
+        {
+            if (string.IsNullOrEmpty(context.Request.Headers["Authorization"].ToString())
+                && context.Request.Cookies.TryGetValue("access_token", out var cookieToken))
+            {
+                context.Token = cookieToken;
+            }
+            return System.Threading.Tasks.Task.CompletedTask;
+        }
+    };
 });
 
 services.AddAuthorization();
@@ -92,12 +105,19 @@ services.AddElsa(elsa => elsa
 services.AddCors(cors => cors.AddDefaultPolicy(policy =>
     policy.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin().WithExposedHeaders("*")));
 
+// Required for [ApiController] + [Authorize] to work correctly in .NET 9
+services.AddControllers();
+
 services.AddRazorPages(options =>
     options.Conventions.ConfigureFilter(new IgnoreAntiforgeryTokenAttribute()));
 
 var app = builder.Build();
 
-if (!app.Environment.IsDevelopment())
+if (app.Environment.IsDevelopment())
+{
+    app.UseDeveloperExceptionPage();
+}
+else
 {
     app.UseExceptionHandler("/Error");
     app.UseHsts();

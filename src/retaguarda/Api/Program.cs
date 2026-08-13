@@ -166,26 +166,25 @@ app.Use(async (context, next) =>
         
         using var httpClient = new HttpClient();
         
-        // Copia o método, headers e cookies da requisição original
+        // Copia o método e headers da requisição original
         var targetRequest = new HttpRequestMessage(
             new HttpMethod(context.Request.Method),
             targetUrl
         );
         
-        // Copia headers, excluindo host
+        // Headers hop-by-hop não devem ser repassados ao backend
+        var hopByHop = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+        {
+            "Host", "Connection", "Keep-Alive", "Transfer-Encoding",
+            "TE", "Trailers", "Upgrade", "Proxy-Authorization", "Proxy-Authenticate"
+        };
+
         foreach (var header in context.Request.Headers)
         {
-            if (!header.Key.Equals("Host", StringComparison.OrdinalIgnoreCase))
+            if (!hopByHop.Contains(header.Key))
             {
                 targetRequest.Headers.TryAddWithoutValidation(header.Key, header.Value.ToArray());
             }
-        }
-        
-        // Copia cookies
-        var cookieHeader = context.Request.Headers["Cookie"].ToString();
-        if (!string.IsNullOrEmpty(cookieHeader))
-        {
-            targetRequest.Headers.TryAddWithoutValidation("Cookie", cookieHeader);
         }
         
         // Copia o corpo se existir
@@ -205,10 +204,16 @@ app.Use(async (context, next) =>
             // Copia status code
             context.Response.StatusCode = (int)response.StatusCode;
             
-            // Copia headers da resposta
+            // Copia headers da resposta, ignorando hop-by-hop
+            var hopByHopResponse = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+            {
+                "Connection", "Keep-Alive", "Transfer-Encoding",
+                "TE", "Trailers", "Upgrade", "Proxy-Authorization", "Proxy-Authenticate"
+            };
             foreach (var header in response.Headers)
             {
-                context.Response.Headers.TryAdd(header.Key, header.Value.ToArray());
+                if (!hopByHopResponse.Contains(header.Key))
+                    context.Response.Headers.TryAdd(header.Key, header.Value.ToArray());
             }
             
             if (response.Content.Headers.ContentType != null)
@@ -224,8 +229,12 @@ app.Use(async (context, next) =>
         }
         catch (Exception ex)
         {
-            context.Response.StatusCode = 502;
-            await context.Response.WriteAsJsonAsync(new { error = "Bad Gateway", message = ex.Message });
+            // Só modifica a resposta se os headers ainda não foram enviados
+            if (!context.Response.HasStarted)
+            {
+                context.Response.StatusCode = 502;
+                await context.Response.WriteAsJsonAsync(new { error = "Bad Gateway", message = ex.Message });
+            }
             return;
         }
     }
