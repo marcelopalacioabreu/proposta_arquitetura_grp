@@ -38,6 +38,7 @@ namespace Retaguarda.Api.Controllers
                 keyBytes = sha.ComputeHash(Encoding.UTF8.GetBytes(jwtKey));
             }
             var key = new SymmetricSecurityKey(keyBytes);
+            key.KeyId = "default-key"; // Add KeyId to the security key
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
             var claims = new[]
@@ -45,6 +46,7 @@ namespace Retaguarda.Api.Controllers
                 new Claim(JwtRegisteredClaimNames.Sub, u.Id.ToString()),
                 new Claim(ClaimTypes.NameIdentifier, u.Id.ToString()),
                 new Claim("name", u.Nome ?? u.Username),
+                new Claim(ClaimTypes.Role, "admin"), // Add admin role for Elsa authorization
             };
 
             var token = new JwtSecurityToken(

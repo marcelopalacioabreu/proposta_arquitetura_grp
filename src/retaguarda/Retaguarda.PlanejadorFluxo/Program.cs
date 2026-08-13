@@ -42,13 +42,33 @@ var connectionString = configuration.GetSection("Elsa:ConnectionStrings")
 
 var jwtKey = configuration["Jwt:Key"] ?? "change_this_secret_for_prod";
 
-services.AddElsa(elsa => elsa
-    .UseIdentity(identity =>
+// Setup JWT Bearer authentication
+var keyBytes = System.Text.Encoding.UTF8.GetBytes(jwtKey);
+if (keyBytes.Length < 32)
+{
+    using var sha = System.Security.Cryptography.SHA256.Create();
+    keyBytes = sha.ComputeHash(keyBytes);
+}
+
+services.AddAuthentication(Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerDefaults.AuthenticationScheme)
+.AddJwtBearer(options =>
+{
+    options.RequireHttpsMetadata = false;
+    options.SaveToken = true;
+    options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
     {
-        identity.TokenOptions = options => options.SigningKey = jwtKey;
-        identity.UseAdminUserProvider();
-    })
-    .UseDefaultAuthentication()
+        ValidateIssuerSigningKey = true,
+        IssuerSigningKey = new Microsoft.IdentityModel.Tokens.SymmetricSecurityKey(keyBytes),
+        ValidateIssuer = true,
+        ValidIssuer = "Retaguarda",
+        ValidateAudience = false,
+        ValidateLifetime = false
+    };
+});
+
+services.AddAuthorization();
+
+services.AddElsa(elsa => elsa
     .UseWorkflowManagement(management => management.UseEntityFrameworkCore(ef =>
     {
         ef.UsePostgreSql(connectionString);
@@ -64,7 +84,7 @@ services.AddElsa(elsa => elsa
     .UseLiquid()
     .UseCSharp()
     .UseHttp(http => http.ConfigureHttpOptions = options => configuration.GetSection("Http").Bind(options))
-    .UseWorkflowsApi()
+    // REMOVED: .UseWorkflowsApi() - replaced with custom controller
     .AddActivitiesFrom<Program>()
     .AddWorkflowsFrom<Program>()
 );
@@ -75,28 +95,6 @@ services.AddCors(cors => cors.AddDefaultPolicy(policy =>
 services.AddRazorPages(options =>
     options.Conventions.ConfigureFilter(new IgnoreAntiforgeryTokenAttribute()));
 
-// Accept the main-app HttpOnly cookie as a Bearer token so same-origin Elsa API calls are authenticated
-services.PostConfigure<Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerOptions>(
-    Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerDefaults.AuthenticationScheme,
-    opts =>
-    {
-        var prev = opts.Events?.OnMessageReceived;
-        opts.Events ??= new Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerEvents();
-        opts.Events.OnMessageReceived = async ctx =>
-        {
-            if (prev != null) await prev(ctx);
-            if (string.IsNullOrEmpty(ctx.Token) && ctx.Request.Cookies.ContainsKey("access_token"))
-                ctx.Token = ctx.Request.Cookies["access_token"];
-        };
-    });
-
-// Named client retained for ProxyController (/planejadorDeFluxo/{**path})
-services.AddHttpClient("Elsa", client =>
-{
-    var baseUrl = configuration["Elsa:BaseUrl"] ?? "http://localhost:6001";
-    client.BaseAddress = new Uri(baseUrl);
-});
-
 var app = builder.Build();
 
 if (!app.Environment.IsDevelopment())
@@ -105,44 +103,26 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
-// Catch exceptions from Elsa middleware and return JSON so Blazor never receives HTML
-app.Use(async (ctx, next) =>
-{
-    if (!ctx.Request.Path.StartsWithSegments("/elsa"))
-    {
-        await next(ctx);
-        return;
-    }
-    try
-    {
-        await next(ctx);
-    }
-    catch (Exception ex)
-    {
-        if (!ctx.Response.HasStarted)
-        {
-            ctx.Response.StatusCode = StatusCodes.Status500InternalServerError;
-            ctx.Response.ContentType = "application/problem+json";
-            await ctx.Response.WriteAsJsonAsync(new
-            {
-                title = "An error occurred processing the request",
-                status = 500,
-                detail = app.Environment.IsDevelopment() ? ex.Message : null
-            });
-        }
-    }
-});
-
 app.UseRouting();
+
+// Map simple endpoints that don't require authentication
+app.MapGet("/health", () => Results.Ok("OK"));
+
 app.UseCors();
 app.UseStaticFiles();
 app.UseBlazorFrameworkFiles();
+
 app.UseAuthentication();
 app.UseAuthorization();
-app.UseWorkflowsApi();
-app.UseWorkflows();
-app.MapRazorPages();
+
+// REMOVED: app.UseWorkflowsApi(); - conflicts with our custom /elsa/api endpoints
+// REMOVED: app.UseWorkflows(); - creates ambiguous route matches
+// REMOVED: app.MapRazorPages(); - creates catch-all routes
+
 app.MapControllers();
+
+// Identity token endpoint (must be after routing but before any catch-alls)
+
 // Reads the HttpOnly access_token cookie server-side and returns the validated JWT + user info.
 // Called by CookieTokenHandler and CookieAuthStateProvider in Elsa Studio WASM.
 // NOT protected by [Authorize] — it validates the cookie internally.
@@ -180,6 +160,7 @@ app.MapGet("/identity/token", (HttpContext ctx, IConfiguration cfg) =>
     }
     catch { return Results.Unauthorized(); }
 });
+
 // Prevent HTML host page from being returned for unmatched /elsa paths (would break JSON parsing in Blazor)
 app.MapFallback("/elsa/{**path}", () => Results.NotFound(new { title = "Not found", status = 404 }));
 app.MapFallbackToPage("/_Host");

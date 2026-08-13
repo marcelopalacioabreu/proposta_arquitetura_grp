@@ -32,6 +32,9 @@ var persistenceProvider = builder.Configuration["Persistence:Provider"] ?? "Post
 // `AddHttpContextAccessor` é necessário para `ApplicationDbContext` e outros helpers.
 builder.Services.AddHttpContextAccessor();
 
+// HttpClient para chamadas entre microsserviços
+builder.Services.AddHttpClient();
+
 // Registro centralizado: persistência (DbContext), repositórios e serviços de domínio
 Retaguarda.Persistencia.Configuracao.RegistrarServices(builder.Services, builder.Configuration);
 Retaguarda.Repositorios.Configuracao.RegistrarServices(builder.Services, builder.Configuration);
@@ -152,9 +155,125 @@ app.UseMiddleware<Retaguarda.Api.Middleware.UsuarioMiddleware>();
 app.UseMiddleware<Retaguarda.Api.Middleware.AtuacaoMiddleware>();
 app.UseAuthorization();
 
+// Reverse proxy para Elsa/PlanejadorFluxo (porta 6001)
+// O frontend envia requisições para /elsa/* e elas são roteadas para o PlanejadorFluxo
+// com os cookies intactos (mesmo domínio: localhost:5000)
+app.Use(async (context, next) =>
+{
+    if (context.Request.Path.StartsWithSegments("/elsa", out var remainingPath))
+    {
+        var targetUrl = $"http://localhost:6001/elsa{remainingPath}{context.Request.QueryString}";
+        
+        using var httpClient = new HttpClient();
+        
+        // Copia o método, headers e cookies da requisição original
+        var targetRequest = new HttpRequestMessage(
+            new HttpMethod(context.Request.Method),
+            targetUrl
+        );
+        
+        // Copia headers, excluindo host
+        foreach (var header in context.Request.Headers)
+        {
+            if (!header.Key.Equals("Host", StringComparison.OrdinalIgnoreCase))
+            {
+                targetRequest.Headers.TryAddWithoutValidation(header.Key, header.Value.ToArray());
+            }
+        }
+        
+        // Copia cookies
+        var cookieHeader = context.Request.Headers["Cookie"].ToString();
+        if (!string.IsNullOrEmpty(cookieHeader))
+        {
+            targetRequest.Headers.TryAddWithoutValidation("Cookie", cookieHeader);
+        }
+        
+        // Copia o corpo se existir
+        if (context.Request.Method != "GET" && context.Request.Method != "HEAD")
+        {
+            targetRequest.Content = new StreamContent(context.Request.Body);
+            if (context.Request.ContentType != null)
+            {
+                targetRequest.Content.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse(context.Request.ContentType);
+            }
+        }
+        
+        try
+        {
+            var response = await httpClient.SendAsync(targetRequest, HttpCompletionOption.ResponseHeadersRead);
+            
+            // Copia status code
+            context.Response.StatusCode = (int)response.StatusCode;
+            
+            // Copia headers da resposta
+            foreach (var header in response.Headers)
+            {
+                context.Response.Headers.TryAdd(header.Key, header.Value.ToArray());
+            }
+            
+            if (response.Content.Headers.ContentType != null)
+            {
+                context.Response.Headers.TryAdd("Content-Type", response.Content.Headers.ContentType.ToString());
+            }
+            
+            // Copia corpo da resposta
+            using var contentStream = await response.Content.ReadAsStreamAsync();
+            await contentStream.CopyToAsync(context.Response.Body);
+            
+            return;
+        }
+        catch (Exception ex)
+        {
+            context.Response.StatusCode = 502;
+            await context.Response.WriteAsJsonAsync(new { error = "Bad Gateway", message = ex.Message });
+            return;
+        }
+    }
+    
+    await next(context);
+});
+
 // Inicializa o banco de dados com o usuário administrador padrão se não existir (conveniência de desenvolvimento)
 Retaguarda.Persistencia.Inicializadores.SeedData.EnsureSeed(app.Services);
 
 app.MapControllers();
+
+// Endpoint para ElsaStudio: lê o HttpOnly cookie access_token e retorna o JWT + informações do usuário
+// Chamado por CookieTokenHandler e CookieAuthStateProvider no Blazor WASM do ElsaStudio
+// NÃO protegido por [Authorize] — valida o cookie internamente
+app.MapGet("/identity/token", (HttpContext ctx, IConfiguration cfg) =>
+{
+    if (!ctx.Request.Cookies.TryGetValue("access_token", out var token))
+        return Results.Unauthorized();
+
+    try
+    {
+        var rawKey = cfg["Jwt:Key"] ?? "change_this_secret_for_prod";
+        var keyBytes = Encoding.UTF8.GetBytes(rawKey);
+        if (keyBytes.Length < 32)
+        {
+            using var sha = SHA256.Create();
+            keyBytes = sha.ComputeHash(keyBytes);
+        }
+        var handler = new System.IdentityModel.Tokens.Jwt.JwtSecurityTokenHandler();
+        var principal = handler.ValidateToken(token,
+            new TokenValidationParameters
+            {
+                ValidateIssuerSigningKey = true,
+                IssuerSigningKey = new SymmetricSecurityKey(keyBytes),
+                ValidateIssuer = false,
+                ValidateAudience = false,
+                ValidateLifetime = true,
+                ClockSkew = TimeSpan.FromMinutes(1)
+            }, out _);
+
+        var name = principal.FindFirst("name")?.Value
+            ?? principal.Identity?.Name
+            ?? "Usuário";
+
+        return Results.Ok(new { token, name });
+    }
+    catch { return Results.Unauthorized(); }
+});
 
 app.Run();

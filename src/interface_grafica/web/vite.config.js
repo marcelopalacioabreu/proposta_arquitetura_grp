@@ -12,15 +12,15 @@ export default defineConfig({
       '/api': 'http://localhost:5000',
       '/auth': 'http://localhost:5000',
       '/meta': 'http://localhost:5000',
-      // Elsa API calls from Blazor WASM arrive here (same-origin) because the /planejadorDeFluxo
-      // proxy below uses changeOrigin:false, making _Host.cshtml generate apiUrl=http://localhost:5173/elsa/api
+      // Elsa API: routed through GRP API (port 5000) reverse proxy
+      // This ensures cookies created by GRP are sent with Elsa requests
       '/elsa': {
-        target: planejadorUrl,
+        target: 'http://localhost:5000',
         changeOrigin: true
       },
-      // Auth check endpoint for CookieAuthStateProvider (cookie forwarded to PlanejadorFluxo)
+      // Auth check endpoint for CookieAuthStateProvider (points to GRP API, NOT PlanejadorFluxo)
       '/identity': {
-        target: planejadorUrl,
+        target: 'http://localhost:5000',
         changeOrigin: true
       },
       // Blazor WASM runtime and package static assets (absolute paths in _Host.cshtml)
