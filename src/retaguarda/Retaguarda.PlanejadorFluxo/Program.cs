@@ -97,7 +97,7 @@ services.AddElsa(elsa => elsa
     .UseLiquid()
     .UseCSharp()
     .UseHttp(http => http.ConfigureHttpOptions = options => configuration.GetSection("Http").Bind(options))
-    // REMOVED: .UseWorkflowsApi() - replaced with custom controller
+    .UseWorkflowsApi()
     .AddActivitiesFrom<Program>()
     .AddWorkflowsFrom<Program>()
 );
@@ -135,9 +135,8 @@ app.UseBlazorFrameworkFiles();
 app.UseAuthentication();
 app.UseAuthorization();
 
-// REMOVED: app.UseWorkflowsApi(); - conflicts with our custom /elsa/api endpoints
-// REMOVED: app.UseWorkflows(); - creates ambiguous route matches
-// REMOVED: app.MapRazorPages(); - creates catch-all routes
+app.UseWorkflowsApi();
+app.UseWorkflows();
 
 app.MapControllers();
 

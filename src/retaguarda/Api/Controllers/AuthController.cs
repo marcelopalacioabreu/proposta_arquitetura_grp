@@ -46,7 +46,8 @@ namespace Retaguarda.Api.Controllers
                 new Claim(JwtRegisteredClaimNames.Sub, u.Id.ToString()),
                 new Claim(ClaimTypes.NameIdentifier, u.Id.ToString()),
                 new Claim("name", u.Nome ?? u.Username),
-                new Claim(ClaimTypes.Role, "admin"), // Add admin role for Elsa authorization
+                new Claim(ClaimTypes.Role, "admin"),
+                new Claim("permissions", "*"), // Elsa 3.x: grants full access to Workflow API
             };
 
             var token = new JwtSecurityToken(
