@@ -175,6 +175,291 @@ dotnet run --urls "http://localhost:6001"
 Elsa Server: `http://localhost:6001/elsa`
 Elsa Studio: `http://localhost:6001/studio`
 
+## Integração com Elsa (Orquestração de Processos)
+
+O projeto utiliza **Elsa Workflows** (via projeto `Retaguarda.PlanejadorFluxo`) para orquestrar processos de negócio. As atividades Elsa têm acesso completo à camada de domínio do Retaguarda (contexto, repositórios, serviços).
+
+### Arquitetura de Integração
+
+```
+┌──────────────────────────────────────┐
+│  Elsa Studio (Designer de Workflows) │
+│  localhost:6001/studio               │
+└──────────────────────────────────────┘
+              ↓
+┌──────────────────────────────────────┐
+│  Servidor Elsa (PlanejadorFluxo)     │
+│  localhost:6001                      │
+│                                      │
+│  • Container DI com dependências:    │
+│    - IApplicationDbContext (Scoped)  │
+│    - Repositórios (Scoped)           │
+│    - Serviços de Domínio (Scoped)    │
+│    - Middleware de Tenant-Aware      │
+└──────────────────────────────────────┘
+              ↓
+┌──────────────────────────────────────┐
+│  Camada Retaguarda                   │
+│  • Persistencia                      │
+│  • Repositorios                      │
+│  • Servicos                          │
+│  • DbContext (PostgreSQL/MySQL)      │
+└──────────────────────────────────────┘
+```
+
+### Exemplo Prático: CriarOrganizacaoAtividade
+
+A atividade [src/retaguarda/Retaguarda.PlanejadorFluxo/Atividades/CriarOrganizacaoAtividade.cs](src/retaguarda/Retaguarda.PlanejadorFluxo/Atividades/CriarOrganizacaoAtividade.cs) demonstra como:
+
+1. **Declarar uma atividade Elsa:**
+
+```csharp
+[Activity("Retaguarda", "Organização", "Cria uma nova organização usando o serviço existente.")]
+public class CriarOrganizacaoAtividade : TenantAwareActivity
+{
+    // Define portas de entrada (Input) e saída (Output)
+    [Input(Description = "Nome da organização a ser criada.")]
+    public Input<string> Nome { get; set; } = default!;
+
+    [Output(Description = "Id da organização criada.")]
+    public Output<long> OrganizacaoId { get; set; } = default!;
+
+    // Método executado pelo Elsa durante o workflow
+    protected override async ValueTask ExecuteAsync(ActivityExecutionContext context)
+    {
+        // ... implementação
+    }
+}
+```
+
+2. **Resolver contexto multilocatário (tenant):**
+
+```csharp
+// Herda de TenantAwareActivity que fornece este método:
+var (orgId, unidadeId, setorId) = ResolveTenant(context);
+
+// ResolveTenant() busca em ordem:
+// 1. Variáveis do workflow (OrganizacaoId, etc)
+// 2. Claims HTTP do usuário (organizacaoId, etc)
+// 3. Valores nulos se não encontrados
+
+logger.LogInformation("Executando em contexto OrgId={OrgId}", orgId);
+```
+
+3. **Injetar e usar dependências:**
+
+```csharp
+// Obter serviço obrigatório (lança exceção se não registrado)
+var logger = context.GetRequiredService<ILogger<CriarOrganizacaoAtividade>>();
+var orgService = context.GetRequiredService<IOrganizacaoServico>();
+
+// Chamar serviço (que automaticamente tem acesso ao IApplicationDbContext)
+var organizacaoDto = new OrganizacaoDto { Nome = "Nova Org" };
+var criada = await orgService.CriarAsync(organizacaoDto);
+
+// Retornar resultado ao workflow
+context.Set(OrganizacaoId, criada.Id);
+```
+
+### Estratégia de Injeção de Dependências
+
+As dependências são registradas em **3 camadas** no [src/retaguarda/Retaguarda.PlanejadorFluxo/Program.cs](src/retaguarda/Retaguarda.PlanejadorFluxo/Program.cs):
+
+#### 1. Registrar DbContext e Repositórios
+
+```powershell
+# Arquivo: src/retaguarda/Retaguarda.PlanejadorFluxo/Program.cs (linhas ~32-34)
+
+Retaguarda.Persistencia.Configuracao.RegistrarServices(builder.Services, builder.Configuration);
+Retaguarda.Repositorios.Configuracao.RegistrarServices(builder.Services, builder.Configuration);
+Retaguarda.Servicos.Configuracao.RegistrarServices(builder.Services, builder.Configuration);
+```
+
+#### 2. Configuração de Persistência
+
+[src/retaguarda/Persistencia/Configuracao.cs](src/retaguarda/Persistencia/Configuracao.cs) registra:
+
+```csharp
+// DbContext concreto (escolhe PostgreSQL ou MySQL por variável de ambiente)
+if (provider.Equals("Postgres", StringComparison.OrdinalIgnoreCase))
+{
+    services.AddDbContext<Retaguarda.Persistencia.POSTGRESQL.ApplicationDbContext>(options =>
+        options.UseNpgsql(connectionString, ...));
+    
+    // Interface de acesso agnóstica
+    services.AddScoped<IApplicationDbContext>(sp =>
+        sp.GetRequiredService<Retaguarda.Persistencia.POSTGRESQL.ApplicationDbContext>());
+}
+```
+
+#### 3. Interface IApplicationDbContext
+
+[src/retaguarda/Persistencia/IApplicationDbContext.cs](src/retaguarda/Persistencia/IApplicationDbContext.cs) fornece:
+
+```csharp
+public interface IApplicationDbContext
+{
+    DbSet<Organizacao> Organizacoes { get; set; }
+    DbSet<OrganizacaoUnidade> OrganizacaoUnidades { get; set; }
+    DbSet<OrganizacaoUnidadeSetor> OrganizacaoUnidadeSetores { get; set; }
+    DbSet<Usuario> Usuarios { get; set; }
+    // ... 40+ DbSets para todas as entidades
+    
+    Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
+}
+```
+
+#### 4. Registro de Repositórios
+
+[src/retaguarda/Repositorios/Configuracao.cs](src/retaguarda/Repositorios/Configuracao.cs) registra todos como **Scoped**:
+
+```csharp
+services.AddScoped<IOrganizacaoRepositorio, OrganizacaoRepositorio>();
+services.AddScoped<IOrquestracaoFluxoProcessoRepositorio, OrquestracaoFluxoProcessoRepositorio>();
+services.AddScoped<IPaisRepositorio, PaisRepositorio>();
+// ... 20+ repositórios
+```
+
+#### 5. Registro de Serviços de Domínio
+
+[src/retaguarda/Servicos/Configuracao.cs](src/retaguarda/Servicos/Configuracao.cs) registra:
+
+```csharp
+services.AddScoped<IOrganizacaoServico, OrganizacaoServico>();
+services.AddScoped<IUsuarioServico, UsuarioServico>();
+services.AddScoped<RequisicaoUsuario>();      // Contexto do usuário
+services.AddScoped<EscopoEmExecucao>();       // Contexto de execução
+// ... 20+ serviços
+```
+
+### Como o Contexto do Retaguarda é Compartilhado
+
+#### Classe Base: TenantAwareActivity
+
+[src/retaguarda/Retaguarda.PlanejadorFluxo/Atividades/TenantAwareActivity.cs](src/retaguarda/Retaguarda.PlanejadorFluxo/Atividades/TenantAwareActivity.cs) implementa:
+
+```csharp
+public abstract class TenantAwareActivity : Activity
+{
+    /// Resolve (OrganizacaoId, OrganizacaoUnidadeId, SetorId) por:
+    /// 1. Variáveis do workflow
+    /// 2. Claims do HttpContext.User
+    /// 3. Valores nulos se não encontrados
+    protected (long? OrganizacaoId, long? OrganizacaoUnidadeId, long? SetorId) 
+        ResolveTenant(ActivityExecutionContext context)
+    {
+        // Implementação que suporta múltiplas versões do Elsa
+        // via reflection para WorkflowInstance.Variables
+        
+        // Se não encontrar em variáveis, busca em claims HTTP
+        var httpAccessor = context.GetService<IHttpContextAccessor>();
+        var orgId = long.TryParse(
+            httpAccessor?.HttpContext?.User?.FindFirst("organizacaoId")?.Value, 
+            out var id) ? id : null;
+        
+        return (orgId, unidadeId, setorId);
+    }
+}
+```
+
+#### Injeção Automática em Serviços
+
+Quando uma atividade injeta um serviço:
+
+```csharp
+var orgService = context.GetRequiredService<IOrganizacaoServico>();
+```
+
+O `IOrganizacaoServico` já possui `IApplicationDbContext` registrado como **Scoped**:
+
+```csharp
+public class OrganizacaoServico : ServicoBase<Organizacao, OrganizacaoDto>, IOrganizacaoServico
+{
+    public OrganizacaoServico(IOrganizacaoRepositorio repositorio) : base(repositorio)
+    {
+        // repositorio já tem IApplicationDbContext injetado
+    }
+
+    public async Task<OrganizacaoDto> CriarAsync(OrganizacaoDto dto)
+    {
+        // Usa repositorio.DbContext para operações de BD
+        var org = new Organizacao { Nome = dto.Nome, ... };
+        await repositorio.AdicionarAsync(org);
+        await repositorio.SalvarAlteracoes();
+        return EntityToDto(org);
+    }
+}
+```
+
+#### Ciclo de Vida Escoped
+
+- **Por Requisição HTTP:** Cada requisição à API cria novo scope
+- **Por Execução de Atividade:** Cada atividade Elsa cria novo scope
+- **Disposição Automática:** Ao final, DbContext é descartado e conexão retorna ao pool
+
+Isso garante:
+- ✅ Isolamento entre execuções
+- ✅ Sem vazamento de estado
+- ✅ Eficiência de conexões
+
+### Descoberta Automática de Atividades
+
+No [src/retaguarda/Retaguarda.PlanejadorFluxo/Program.cs](src/retaguarda/Retaguarda.PlanejadorFluxo/Program.cs) (~linha 78):
+
+```csharp
+services.AddElsa(elsa => elsa
+    // ... configuração de WorkflowManagement, Scheduling, etc
+    .AddActivitiesFrom<Program>()  // ← ESCANEIA assembly para atividades
+    .AddWorkflowsFrom<Program>()   // ← CARREGA workflows definidos
+);
+```
+
+Este comando:
+1. Escaneia o assembly `Retaguarda.PlanejadorFluxo`
+2. Localiza classes que herdam de `Elsa.Workflows.Activity`
+3. Lê atributos `[Activity("categoria", "grupo", "descrição")]`
+4. Registra automaticamente no container DI do Elsa
+5. Torna disponível no Elsa Studio para designer de workflows
+
+### Criando Novas Atividades
+
+Para adicionar uma nova atividade personalizada:
+
+1. **Criar classe em `Atividades/`:**
+
+```csharp
+// Arquivo: src/retaguarda/Retaguarda.PlanejadorFluxo/Atividades/MeuProcessoAtividade.cs
+
+[Activity("Retaguarda", "Processos", "Processa dados customizados")]
+public class MeuProcessoAtividade : TenantAwareActivity
+{
+    [Input(Description = "Dados de entrada")]
+    public Input<string> Entrada { get; set; } = default!;
+
+    [Output(Description = "Resultado do processamento")]
+    public Output<string> Resultado { get; set; } = default!;
+
+    protected override async ValueTask ExecuteAsync(ActivityExecutionContext context)
+    {
+        var logger = context.GetRequiredService<ILogger<MeuProcessoAtividade>>();
+        var (orgId, _, _) = ResolveTenant(context);
+        
+        var entrada = context.Get(Entrada);
+        
+        // Sua lógica aqui
+        var resultado = ProcessarLogica(entrada, orgId);
+        
+        context.Set(Resultado, resultado);
+        await context.CompleteActivityAsync();
+    }
+
+    private string ProcessarLogica(string entrada, long? orgId) { /* ... */ }
+}
+```
+
+2. **Atividade será descoberta automaticamente** na próxima reinicialização do PlanejadorFluxo
+3. **Aparecerá no Elsa Studio** sob a categoria "Retaguarda" > "Processos"
+
 ## Padrão de nomenclatura de migrations
 
 Todas as migrations devem seguir o padrão:
