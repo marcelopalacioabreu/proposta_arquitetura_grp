@@ -1,4 +1,4 @@
-# 🚀 DEPLOYMENT.md - Guia de Deployment em Produção
+# 🚀 Guia de implantação em produção
 
 **Status:** Recomendado implementar ANTES de ir ao ar  
 **Últimas Atualizações:** Baseado em arquitetura documentada  
@@ -8,7 +8,7 @@
 
 ## 📋 Checklist Pré-Deployment
 
-Antes de fazer deploy em produção, confirme:
+Antes de implantar em produção, confirme:
 
 - [ ] Código em branch `main` com todas as features testadas
 - [ ] Testes automatizados passando 100%
@@ -23,7 +23,7 @@ Antes de fazer deploy em produção, confirme:
 
 ---
 
-## 🔑 Variáveis de Ambiente em Produção
+## 🔑 Variáveis de ambiente em produção
 
 ### Obrigatórias
 
@@ -354,7 +354,7 @@ JWT_AUDIENCE=https://seu-dominio.com
 
 ---
 
-## 🚀 Comandos de Deployment
+## 🚀 Comandos de implantação
 
 ### **Opção 1: Docker Compose (Recomendado para Começar)**
 
@@ -475,7 +475,7 @@ resource "azurerm_container_group" "grp" {
 
 ---
 
-## 🔄 Rollback Procedures
+## 🔄 Procedimentos de reversão
 
 ### **Se Docker Compose:**
 
@@ -508,7 +508,7 @@ kubectl rollout undo deployment/api -n grp-prod
 
 ---
 
-## 📊 Pós-Deployment: Verificação
+## 📊 Pós-implantação: Verificação
 
 ```bash
 # 1. Verificar status dos containers
