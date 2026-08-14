@@ -187,6 +187,21 @@ app.Use(async (context, next) =>
             }
         }
         
+        // Adicionar header X-Atuacao com contexto multilocatário (CORREÇÃO 2)
+        // Permite que PlanejadorFluxo saiba qual organização está acessando os workflows
+        var escopo = context.RequestServices.GetService(typeof(EscopoEmExecucao)) as EscopoEmExecucao;
+        if (escopo?.OrganizacaoId.HasValue == true)
+        {
+            var atuacao = new
+            {
+                organizacaoId = escopo.OrganizacaoId,
+                organizacaoUnidadeId = escopo.OrganizacaoUnidadeId,
+                setorId = escopo.SetorId
+            };
+            var atuacaoJson = System.Text.Json.JsonSerializer.Serialize(atuacao);
+            targetRequest.Headers.Add("X-Atuacao", atuacaoJson);
+        }
+        
         // Copia o corpo se existir
         if (context.Request.Method != "GET" && context.Request.Method != "HEAD")
         {

@@ -12,6 +12,7 @@ using Elsa.Extensions;
 using Elsa.Persistence.EFCore.Extensions;
 using Elsa.Persistence.EFCore.Modules.Management;
 using Elsa.Persistence.EFCore.Modules.Runtime;
+using Retaguarda.Servicos;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.WebHost.UseStaticWebAssets();
@@ -81,6 +82,11 @@ services.AddAuthentication(Microsoft.AspNetCore.Authentication.JwtBearer.JwtBear
 
 services.AddAuthorization();
 
+// Registrar EscopoEmExecucao e RequisicaoUsuario como Scoped
+// Necessário para que AtuacaoMiddleware possa preencher contexto de tenant
+services.AddScoped<EscopoEmExecucao>();
+services.AddScoped<Retaguarda.Servicos.RequisicaoUsuario>();
+
 services.AddElsa(elsa => elsa
     .UseWorkflowManagement(management => management.UseEntityFrameworkCore(ef =>
     {
@@ -133,7 +139,19 @@ app.UseStaticFiles();
 app.UseBlazorFrameworkFiles();
 
 app.UseAuthentication();
+
+// Middlewares para resolver contexto multilocatário (tenant)
+// ORDEM CRÍTICA: Executar ANTES de UseAuthorization() e UseWorkflowsApi()
+// 1. UsuarioMiddleware: carrega dados da entidade Usuario do banco
+// 2. AtuacaoMiddleware: extrai OrganizacaoId/UnidadeId/SetorId de cookie ou header X-Atuacao
+// 3. Popula HttpContext.Items e EscopoEmExecucao para uso nas atividades Elsa
+app.UseMiddleware<Retaguarda.PlanejadorFluxo.Middleware.UsuarioMiddleware>();
+app.UseMiddleware<Retaguarda.PlanejadorFluxo.Middleware.AtuacaoMiddleware>();
+
 app.UseAuthorization();
+
+// Middleware para filtrar workflows Elsa por tenant (OrganizacaoId)
+app.UseMiddleware<Retaguarda.PlanejadorFluxo.Middleware.ElsaTenantFilterMiddleware>();
 
 app.UseWorkflowsApi();
 app.UseWorkflows();
