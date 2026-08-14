@@ -86,7 +86,7 @@ Este repositório contém a proposta de arquitetura para o GRP da PJF, com miss�
 3. Automatizar: Pipeline com [INTEGRACAO_CONTINUA.md](INTEGRACAO_CONTINUA.md)
 4. Escalar: Balanceamento de carga, clustering, etc
 
-### **Mantainer/Code Reviewer**
+### **Mantenedor/Revisor de código**
 1. Ler: [CONTRIBUINDO.md](CONTRIBUINDO.md) - Padrões
 2. Usar: Checklist de revisão de código
 3. Referência: [AUTENTICACAO_AUTORIZACAO_CONTEXTO.md](AUTENTICACAO_AUTORIZACAO_CONTEXTO.md) - Arquitetura
