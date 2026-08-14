@@ -6,21 +6,137 @@ Este documento descreve como o projeto implementa **autenticação (authenticati
 
 ## 🔐 O Papel Crítico do Proxy Reverso
 
-### Desenvolvimento vs. Produção
+A arquitetura de **compartilhamento de autenticação, autorização e contexto** entre a API principal e o Elsa depende criticamente de **dois proxies em desenvolvimento** e **um proxy dedicado em produção**, cada um com papel específico:
 
-A arquitetura de **compartilhamento de autenticação, autorização e contexto** entre a API principal e o Elsa depende criticamente de um **proxy reverso** que:
+```
+┌─────────────────────────────────────────────────────────────────────┐
+│ DESENVOLVIMENTO: 2 PROXIES                                          │
+├─────────────────────────────────────────────────────────────────────┤
+│ 1️⃣ VITE PROXY (localhost:5173)                                      │
+│    └─ Redireciona frontend para API + Elsa                          │
+│    └─ Papel: Unificar origins, compartilhar cookies                 │
+│                                                                     │
+│ 2️⃣ API PROXY (localhost:5000)                                       │
+│    └─ Redireciona requisições /elsa/* para Elsa                    │
+│    └─ Papel: Propagar contexto de tenant via headers               │
+├─────────────────────────────────────────────────────────────────────┤
+│ PRODUÇÃO: 1 PROXY DEDICADO (Nginx/HAProxy/APIGateway)              │
+│    └─ Valida JWT, extrai OrganizacaoId, filtra por tenant          │
+└─────────────────────────────────────────────────────────────────────┘
+```
 
-1. **Trata cookies e headers** - Propaga contexto de tenant
-2. **Valida autenticação** - Garante JWT válido em todas as requisições
-3. **Aplica lógica multilocatário** - Filtra requisições por OrganizacaoId
-4. **Isola microsserviços** - Impede acesso cruzado entre orgs
+### Desenvolvimento: 2 Proxies Coordenados
 
-#### Em Desenvolvimento (localhost)
+#### 1️⃣ Proxy Vite (Frontend)
 
-O proxy é **embutido na API principal** como middleware simples:
+**Arquivo:** [src/interface_grafica/web/vite.config.js](src/interface_grafica/web/vite.config.js)
+
+**Papel:** Redirecionar requisições HTTP de localhost:5173 para localhost:5000 (API) e localhost:6001 (Elsa)
+
+**Configurações Necessárias:**
+
+```javascript
+server: {
+  proxy: {
+    // ✅ API endpoints
+    '/api': 'http://localhost:5000',        // Controllers da API
+    '/auth': 'http://localhost:5000',       // Login/logout/verify
+    '/meta': 'http://localhost:5000',       // Metadados
+    
+    // ✅ Elsa APIs (via API proxy)
+    '/elsa': {
+      target: 'http://localhost:5000',      // Vai para API, não direto para Elsa!
+      changeOrigin: true                    // Muda origin header (permite cookies)
+    },
+    
+    // ✅ Verificação de identidade (JWT claim parsing)
+    '/identity': {
+      target: 'http://localhost:5000',
+      changeOrigin: true
+    },
+    
+    // ✅ Elsa Studio - Assets estáticos (_framework, _content, _blazor)
+    '/_framework': { target: 'http://localhost:6001', changeOrigin: true },
+    '/_content': { target: 'http://localhost:6001', changeOrigin: true },
+    '/_blazor': { target: 'http://localhost:6001', changeOrigin: true },
+    
+    // ✅ Elsa Studio - Host page (com X-Forwarded-Prefix header)
+    '/planejadorDeFluxo': {
+      target: 'http://localhost:6001',
+      changeOrigin: false,                  // Mantém Host:localhost:5173
+      rewrite: (path) => path.replace(/^\/planejadorDeFluxo/, ''),
+      headers: {
+        'X-Forwarded-Prefix': '/planejadorDeFluxo'  // Diz ao Elsa o prefixo do proxy
+      }
+    }
+  }
+}
+```
+
+**Por que `changeOrigin` importa:**
+- `changeOrigin: true` → Muda header `Origin: localhost:5173` para `Origin: localhost:5000`
+- Isso permite que cookies criados por localhost:5000 sejam aceitos no navegador
+- Sem isso, o navegador rejeita cookies por violação de SameSite
+
+**Fluxo de Cookies com Vite Proxy:**
+
+```
+Navegador (localhost:5173)
+    ↓
+    └─ GET http://localhost:5173/api/auth/login
+       ↓ (Vite proxy redireciona)
+    API (localhost:5000)
+       └─ Cria cookies: access_token, atuacao
+       └─ Set-Cookie headers na resposta
+    ↓
+Navegador recebe:
+    └─ Set-Cookie: access_token (Domain=localhost, Path=/)
+    └─ Set-Cookie: atuacao (Domain=localhost, Path=/)
+    
+Navegador armazena cookies como "localhost" (aplica a TODOS os ports!)
+    
+Requisição posterior:
+    └─ GET http://localhost:5173/elsa/api/workflows
+    └─ Cookie: access_token, atuacao (navegador adiciona automaticamente)
+       ↓ (Vite proxy redireciona para API, mantém cookies)
+    └─ GET http://localhost:5000/elsa/api/workflows
+       └─ Cookie: access_token, atuacao (mantido pela Vite proxy)
+          ↓ (API proxy redireciona para Elsa)
+       └─ GET http://localhost:6001/elsa/api/workflows
+          └─ Cookie: access_token, atuacao (mantido pela API proxy)
+```
+
+#### 2️⃣ Proxy API (Middleware)
+
+**Arquivo:** [src/retaguarda/Api/Program.cs](src/retaguarda/Api/Program.cs) (linhas ~158-200)
+
+**Papel:** Redirecionar `/elsa/*` para PlanejadorFluxo E propagar contexto de tenant
+
+**Configurações Necessárias:**
 
 ```csharp
-// src/retaguarda/Api/Program.cs (linhas 158-200)
+// Configurar cookies (em appsettings.Development.json ou appsettings.json)
+{
+  "Jwt": {
+    "Key": "change_this_secret_for_prod",
+    "Issuer": "Retaguarda",
+    "Cookie": {
+      "Name": "access_token",
+      // ⚠️ NÃO DEFINA Domain para localhost
+      // Se Domain="localhost:5000" especificamente, cookies NÃO funcionam em localhost:6001!
+      // Deixar vazio = usa domain do servidor (implícito = localhost)
+      // "Domain": "",  
+      
+      "SameSite": "Lax",   // ✅ Necessário para cross-port no mesmo host
+      "Secure": false      // ❌ HTTP em dev, ✅ true em produção
+    }
+  }
+}
+```
+
+**Middleware de Reverse Proxy:**
+
+```csharp
 app.Use(async (context, next) =>
 {
     if (context.Request.Path.StartsWithSegments("/elsa", out var remainingPath))
@@ -30,7 +146,7 @@ app.Use(async (context, next) =>
         using var httpClient = new HttpClient();
         var targetRequest = new HttpRequestMessage(new HttpMethod(context.Request.Method), targetUrl);
         
-        // Copiar headers originais (inclusive cookies)
+        // ✅ Copiar TODOS os headers (incluindo cookies)
         foreach (var header in context.Request.Headers)
         {
             if (!hopByHop.Contains(header.Key))
@@ -41,94 +157,246 @@ app.Use(async (context, next) =>
         var escopo = context.RequestServices.GetService(typeof(EscopoEmExecucao)) as EscopoEmExecucao;
         if (escopo?.OrganizacaoId.HasValue == true)
         {
-            var atuacao = new { organizacaoId = escopo.OrganizacaoId, ... };
+            var atuacao = new { 
+                organizacaoId = escopo.OrganizacaoId,
+                organizacaoUnidadeId = escopo.OrganizacaoUnidadeId,
+                setorId = escopo.SetorId
+            };
             targetRequest.Headers.Add("X-Atuacao", JsonSerializer.Serialize(atuacao));
         }
         
-        // ... enviar request, copiar resposta ...
+        // ✅ Enviar requisição para Elsa e copiar resposta
+        var response = await httpClient.SendAsync(targetRequest);
+        
+        // Copiar response headers (inclusive Set-Cookie se Elsa criar novos cookies)
+        foreach (var header in response.Headers)
+            context.Response.Headers.TryAdd(header.Key, header.Value.ToArray());
+        
+        foreach (var header in response.Content.Headers)
+            context.Response.Headers.TryAdd(header.Key, header.Value.ToArray());
+        
+        context.Response.StatusCode = (int)response.StatusCode;
+        await response.Content.CopyToAsync(context.Response.Body);
+        
+        return;  // Não chamar next() - já lidamos com a requisição
     }
-    else
-    {
-        await next(context);
-    }
+    
+    await next(context);
 });
 ```
 
-**O que está sendo tratado:**
+**DataProtection Compartilhado:**
 
-| Responsabilidade | Como | Por quê |
-|---|---|---|
-| **Roteamento** | `if (Path.StartsWithSegments("/elsa"))` | Direciona `/elsa/*` para `localhost:6001` |
-| **Cookies** | Copia todos os headers (incluindo cookies) | Frontend envia cookies para API, que repassa para Elsa |
-| **Contexto de Tenant** | Lê `EscopoEmExecucao.OrganizacaoId` preenchido por `AtuacaoMiddleware` | Elsa precisa saber qual org está acessando |
-| **Headers Customizados** | Adiciona `X-Atuacao: {"organizacaoId": 1}` | PlanejadorFluxo lê este header para preencher seu contexto |
-| **Falha Silenciosa** | Se Elsa não responder, retorna 502 Bad Gateway | Evita requisições perdidas sem feedback |
-
-#### Em Produção (Servidor ou Containers)
-
-O proxy é **componente separado e dedicado** (Nginx, HAProxy, API Gateway):
-
-```yaml
-# Exemplo: Nginx em Kubernetes
-upstream api {
-    server api-service:5000;
-}
-
-upstream elsa {
-    server elsa-service:6001;
-}
-
-server {
-    listen 443 ssl http2;
-    server_name yourdomain.com;
-    
-    # Validação de tenant CRÍTICA no proxy
-    # 1. Verifica se JWT é válido (JWT verification)
-    # 2. Extrai OrganizacaoId do JWT
-    # 3. Rejeita requisições sem OrganizacaoId
-    
-    location / {
-        proxy_pass http://api;
-        proxy_http_version 1.1;
-        proxy_set_header Connection "";
-        proxy_set_header X-Real-IP $remote_addr;
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-        proxy_set_header X-Forwarded-Proto $scheme;
-        
-        # ✅ SEGURANÇA: Passar apenas headers seguros
-        proxy_pass_request_headers on;
-    }
-    
-    location /elsa/ {
-        # ✅ AUTENTICAÇÃO: Verificar JWT token
-        auth_request /auth/verify;
-        auth_request_set $org_id $upstream_http_x_organization_id;
-        
-        proxy_pass http://elsa;
-        proxy_http_version 1.1;
-        
-        # ✅ CONTEXTO: Propagar OrganizacaoId extraído do JWT
-        proxy_set_header X-Atuacao '{"organizacaoId": $org_id}';
-        proxy_set_header X-Organization-Id $org_id;
-        
-        # ✅ SEGURANÇA: Remover headers sensíveis
-        proxy_set_header Authorization "";  # JWT foi validado, não precisa passar
-        proxy_pass_request_headers off;
-    }
-}
+```csharp
+// Em Program.cs - API
+builder.Services.AddDataProtection()
+    .PersistKeysToFileSystem(
+        new DirectoryInfo(Path.Combine(builder.Environment.ContentRootPath, "..", "..", "data-protection-keys"))
+    )
+    .SetApplicationName("Retaguarda");  // ✅ Nome IGUAL em ambos!
 ```
 
-**Diferenças Críticas:**
+```csharp
+// Em Program.cs - PlanejadorFluxo (Elsa)
+builder.Services.AddDataProtection()
+    .PersistKeysToFileSystem(
+        new DirectoryInfo(Path.Combine(builder.Environment.ContentRootPath, "..", "..", "..", "data-protection-keys"))
+    )
+    .SetApplicationName("Retaguarda");  // ✅ DEVE ser igual à API!
+```
 
-| Aspecto | Desenvolvimento | Produção |
-|---|---|---|
-| **Componente** | Middleware C# na API | Nginx/HAProxy/APIGateway separado |
-| **Validação JWT** | Na API/Elsa (EF Core) | No proxy (antes de rotear) |
-| **Isolamento Tenant** | Confiança no EscopoEmExecucao | Validação rigorosa no proxy + APIs |
-| **HTTPS** | ❌ HTTP simples | ✅ Obrigatório (TLS 1.2+) |
-| **Rate Limiting** | ❌ Nenhum | ✅ Por tenant/IP |
-| **Logging** | Console simples | Centralized (ELK, Splunk, etc) |
-| **Escalabilidade** | 1 instância | Múltiplas instâncias (Load Balancer) |
+**Por que DataProtection compartilhado é crítico:**
+- Cookies `access_token` e `atuacao` são validados usando chaves criptográficas
+- Se API e Elsa não compartilham as mesmas chaves, não conseguem validar cookies um do outro
+- Arquivo `data-protection-keys/key-*.xml` contém essas chaves
+
+---
+
+### 📊 Fluxo de Autenticação (Gráfico de Sequência)
+
+```mermaid
+sequenceDiagram
+    participant Browser
+    participant ViteProxy as Vite Proxy<br/>(localhost:5173)
+    participant API as API<br/>(localhost:5000)
+    participant APIProxy as Reverse Proxy<br/>na API
+    participant Elsa as Elsa/PlanejadorFluxo<br/>(localhost:6001)
+
+    autonumber
+    Browser->>ViteProxy: POST /api/auth/login<br/>user=admin, pass=admin
+    ViteProxy->>API: (redireciona interno)
+    API->>API: AuthController.Login valida credenciais
+    API->>API: Cria JWT token
+    API->>Browser: 200 OK + Set-Cookie: access_token<br/>(HttpOnly, SameSite=Lax)
+    
+    Note over Browser: 🍪 Navegador armazena cookies<br/>Domain: localhost (implícito)<br/>Path: /<br/>Válido para TODOS os ports (localhost:5173,<br/>localhost:5000, localhost:6001)
+    
+    Browser->>ViteProxy: GET /api/organizacoes<br/>Cookie: access_token
+    Note over ViteProxy: ✅ Vite proxy REPASSA cookies
+    ViteProxy->>API: GET /api/organizacoes<br/>Cookie: access_token
+    API->>API: Authentication middleware<br/>lê cookie "access_token"<br/>valida JWT
+    API->>API: AtuacaoMiddleware<br/>lê cookie "atuacao"<br/>preenche EscopoEmExecucao
+    API->>Browser: 200 OK (dados de org 1)
+
+    Browser->>ViteProxy: GET /elsa/api/workflows<br/>Cookie: access_token, atuacao
+    Note over ViteProxy: ✅ Vite proxy REPASSA cookies
+    ViteProxy->>API: GET /elsa/api/workflows<br/>Cookie: access_token, atuacao
+    API->>API: Authentication middleware valida JWT
+    API->>API: AtuacaoMiddleware lê cookie,<br/>preenche EscopoEmExecucao {OrgId: 1}
+    API->>APIProxy: Detecta /elsa, inicia reverse proxy
+    APIProxy->>APIProxy: Lê EscopoEmExecucao.OrganizacaoId
+    APIProxy->>Elsa: GET /elsa/api/workflows<br/>Cookie: access_token, atuacao<br/>Header: X-Atuacao {"organizacaoId": 1}
+    Note over Elsa: ✅ Elsa recebe 2 contextos!<br/>1. Cookies (validados via<br/>   DataProtection compartilhado)<br/>2. Header X-Atuacao
+    
+    Elsa->>Elsa: UsuarioMiddleware valida JWT
+    Elsa->>Elsa: AtuacaoMiddleware<br/>lê header X-Atuacao<br/>preenche EscopoEmExecucao {OrgId: 1}
+    Elsa->>Elsa: ElsaTenantFilterMiddleware<br/>valida OrgId != null
+    Elsa->>Elsa: Workflows filtrados por OrgId=1
+    Elsa->>API: 200 OK (workflows de org 1)
+    APIProxy->>Browser: 200 OK (workflows de org 1)
+```
+
+---
+
+### ⚠️ Configurações que Falham (Troubleshooting)
+
+Quando a autenticação entre Frontend → API → Elsa falha, geralmente é uma dessas razões:
+
+| # | Problema | Sintomas | Solução |
+|---|----------|----------|---------|
+| 1️⃣ | **Cookie criado com Domain específico** | Cookies em localhost:5000, mas não aparecem em localhost:6001 | Não defina `Domain` em `CookieOptions`. Deixar vazio = domain implícito do servidor |
+| 2️⃣ | **SameSite=Strict sem HTTPS** | Cookies não são enviados entre ports diferentes | Use `SameSite=Lax` (permitido) ou `SameSite=None` + `Secure=true` em HTTPS |
+| 3️⃣ | **Secure=true em HTTP** | Navegador rejeita cookies por protocolo inseguro | Em desenvolvimento: `Secure=false`. Em produção: `Secure=true` + HTTPS obrigatório |
+| 4️⃣ | **Vite proxy sem changeOrigin** | CORS error, cookies rejeitados | Configure `changeOrigin: true` para endpoints que criam cookies |
+| 5️⃣ | **DataProtection keys não compartilhadas** | Elsa não consegue validar cookies criados pela API | Ambos devem usar mesma pasta (`data-protection-keys/`) e `.SetApplicationName("Retaguarda")` |
+| 6️⃣ | **Proxy não repassa headers** | Headers como Authorization perdidos entre services | Middleware deve fazer loop em `context.Request.Headers` e copiar todos |
+| 7️⃣ | **Header X-Atuacao não adicionado** | Elsa não sabe qual OrganizacaoId usar | API proxy deve ler `EscopoEmExecucao` e serializar em `X-Atuacao` |
+| 8️⃣ | **Hosts diferentes** | localhost vs 127.0.0.1 vs yourdomain.com | Cookies criados em localhost NÃO funcionam em 127.0.0.1. Use SEMPRE o mesmo host |
+| 9️⃣ | **Port diferente em produção** | Cookies localhost:5000 não funcionam em servidor:5000 | Em produção, usar proxy dedicado (Nginx) que termina SSL e roteia internamente |
+| 🔟 | **Path-based cookies** | Se cookie tem Path=/api, não funciona em /elsa | Deixar Path=/. AtuacaoMiddleware lê de qualquer Path |
+
+---
+
+### 🚀 Passos Práticos para Desenvolvimento
+
+**Pré-requisitos:**
+- ✅ PostgreSQL 14+ rodando em localhost:5432
+- ✅ .NET 9.0 SDK instalado
+- ✅ Node.js 18+ instalado
+- ✅ Pasta `data-protection-keys/` criada no workspace root
+
+**Passo 1: Iniciar API**
+
+```powershell
+cd c:\PROJETOS\proposta_arquitetura_grp\src\retaguarda\Api
+
+dotnet restore
+dotnet build
+
+# Executar migrations (primeira vez)
+dotnet ef database update -p ..\Persistencia --context Retaguarda.Persistencia.POSTGRESQL.ApplicationDbContext
+
+# Iniciar API (escuta em localhost:5000)
+dotnet run --configuration Development
+```
+
+**Verificar:**
+```bash
+curl -I http://localhost:5000/health
+# HTTP/1.1 200 OK
+```
+
+**Passo 2: Iniciar Elsa/PlanejadorFluxo**
+
+```powershell
+cd c:\PROJETOS\proposta_arquitetura_grp\src\retaguarda\Retaguarda.PlanejadorFluxo
+
+dotnet restore
+dotnet build
+
+# Executar migrations (primeira vez)
+dotnet ef database update -p ..\Persistencia
+
+# Iniciar Elsa (escuta em localhost:6001)
+dotnet run --configuration Development
+```
+
+**Verificar:**
+```bash
+curl -I http://localhost:6001/health
+# HTTP/1.1 200 OK
+
+curl -I http://localhost:6001/studio
+# HTTP/1.1 200 OK (Elsa Studio frontend)
+```
+
+**Passo 3: Iniciar Frontend (Vite proxy)**
+
+```powershell
+cd c:\PROJETOS\proposta_arquitetura_grp\src\interface_grafica\web
+
+npm install
+npm run dev
+# Escuta em localhost:5173
+# Proxy ativo: /api → localhost:5000, /elsa → localhost:5000, /_framework → localhost:6001
+```
+
+**Verificar:**
+```bash
+# No navegador:
+# http://localhost:5173
+# 
+# Devtools → Network:
+# POST http://localhost:5173/api/auth/login
+#   → Vite proxy redireciona para localhost:5000/api/auth/login
+#   → Response contém Set-Cookie: access_token, atuacao
+#
+# GET http://localhost:5173/api/organizacoes
+#   → Cookie: access_token, atuacao adicionado automaticamente
+#   → Vai para localhost:5000/api/organizacoes
+```
+
+**Passo 4: Testar Isolamento de Tenant**
+
+```powershell
+# 1. Abrir 2 abas no navegador
+
+# Aba 1 - Organização A (admin user)
+# http://localhost:5173
+# Login: admin/admin
+# Criar workflow no Elsa Studio: /planejadorDeFluxo
+#   Workflow.Name = "WF-ORG-A"
+
+# Aba 2 - Organização B (usuário diferente)
+# http://localhost:5173
+# Logout e login como outro usuário (ex: user2/pass2)
+# Ir para Elsa Studio: /planejadorDeFluxo
+# 
+# ⚠️ VERIFICAR: Workflow "WF-ORG-A" NÃO aparece!
+# ✅ Se isolamento funciona: ElsaTenantFilterMiddleware bloqueia workflows de outra org
+```
+
+**Passo 5: Validar Cookies em DevTools**
+
+```
+Navegador F12 → Application/Storage → Cookies → http://localhost:5173
+
+access_token:
+  Value: eyJhbGc...
+  Domain: localhost
+  Path: /
+  Secure: ❌ (HTTP em dev)
+  HttpOnly: ✅ (não vê conteúdo em console.log)
+  SameSite: Lax ✅
+
+atuacao:
+  Value: {"organizacaoId": 1, ...}
+  Domain: localhost
+  Path: /
+  Secure: ❌ (HTTP em dev)
+  HttpOnly: ✅
+  SameSite: Lax ✅
+```
 
 ---
 
