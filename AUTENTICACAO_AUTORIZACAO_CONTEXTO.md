@@ -400,6 +400,580 @@ atuacao:
 
 ---
 
+## 📋 Tabela Comparativa: Entradas do Proxy (Dev vs Produção)
+
+### Mapeamento de Rotas
+
+| Caminho | Destino (Dev) | Destino (Prod) | Vite Proxy | API Proxy | Nginx | Kong | Notas |
+|---------|---------------|---|---|---|---|---|---|
+| `/api` | `localhost:5000` | `api-backend:5000` (interno) | ✅ | ❌ | ✅ | ✅ | Controllers da API |
+| `/auth` | `localhost:5000` | `api-backend:5000` (interno) | ✅ | ❌ | ✅ | ✅ | Login/logout |
+| `/meta` | `localhost:5000` | `api-backend:5000` (interno) | ✅ | ❌ | ✅ | ✅ | Metadados |
+| `/elsa` | `localhost:5000` | `api-backend:5000` (proxy interno) | ✅ (changeOrigin: true) | ✅ (redireciona para 6001) | ✅ (changeOrigin) | ✅ | Via API proxy (contexto tenant) |
+| `/identity` | `localhost:5000` | `api-backend:5000` (interno) | ✅ (changeOrigin: true) | ❌ | ✅ (changeOrigin) | ✅ | JWT validation |
+| `/_framework` | `localhost:6001` | `elsa:6001` (interno) | ✅ (changeOrigin: true) | ❌ | ✅ | ✅ | Assets estáticos (Blazor) |
+| `/_content` | `localhost:6001` | `elsa:6001` (interno) | ✅ (changeOrigin: true) | ❌ | ✅ | ✅ | Conteúdo Elsa |
+| `/_blazor` | `localhost:6001` | `elsa:6001` (interno) | ✅ (changeOrigin: true) | ❌ | ✅ | ✅ | WebSockets Elsa |
+| `/planejadorDeFluxo` | `localhost:6001` | `elsa:6001` (interno) | ✅ (changeOrigin: false, rewrite) | ❌ | ✅ (rewrite) | ✅ (rewrite) | Elsa Studio host |
+
+### Configurações de Comportamento do Proxy
+
+| Configuração | Dev - Vite | Dev - API Middleware | Produção - Nginx | Produção - Kong | Produção - Docker |
+|---|---|---|---|---|---|
+| **changeOrigin** | true (maioria) | N/A | on | strip_path: false | http-rw-header |
+| **Rewrite de Path** | `/planejadorDeFluxo` → / | N/A | /planejadorDeFluxo ~ /$ | regex rewrite | proxy_redirect |
+| **Headers Customizados** | X-Forwarded-Prefix | X-Atuacao | X-Real-IP, X-Forwarded-* | X-Real-IP, X-Forwarded-* | X-Real-IP, X-Forwarded-* |
+| **Validação JWT** | Não (faz na API) | Não (faz na API) | **SIM** (auth_request) | **SIM** (jwt plugin) | **SIM** (auth endpoint) |
+| **Rate Limiting** | ❌ Nenhum | ❌ Nenhum | ✅ limit_req_zone | ✅ rate-limit plugin | ✅ rate_limit |
+| **Timeouts** | Padrão Node | 5/60/60s | Configurável | Configurável | Configurável |
+| **SSL/TLS** | ❌ HTTP | ❌ HTTP | ✅ TLS 1.2+ obrigatório | ✅ TLS 1.2+ | ✅ TLS 1.2+ |
+| **CORS** | Permissivo | N/A | Restritivo | Restritivo | Restritivo |
+
+---
+
+## 🚀 Configurações de Produção (Nginx, Kong, Docker)
+
+### Opção 1: Nginx em Servidor com SSH
+
+**Arquivo:** `/etc/nginx/sites-available/grp-proxy.conf`
+
+```nginx
+# ============================================
+# UPSTREAM BACKENDS (pode ser Docker interno)
+# ============================================
+upstream api_backend {
+    # Load balancing com verificação de saúde
+    server api-server-1:5000 max_fails=3 fail_timeout=30s;
+    server api-server-2:5000 max_fails=3 fail_timeout=30s;
+    keepalive 32;
+}
+
+upstream elsa_backend {
+    server elsa-server-1:6001 max_fails=3 fail_timeout=30s;
+    server elsa-server-2:6001 max_fails=3 fail_timeout=30s;
+    keepalive 32;
+}
+
+# ============================================
+# CACHE DE JWT (para rate limiting por tenant)
+# ============================================
+map $http_authorization $token_claims {
+    default "";
+    # Extrair org_id do JWT (base64 decode do payload)
+    ~^Bearer\s+[^.]+\.(?<payload>[^.]+) $payload;
+}
+
+# ============================================
+# RATE LIMITING POR TENANT
+# ============================================
+limit_req_zone $http_x_organization_id zone=per_tenant:10m rate=100r/s;
+limit_req_zone $remote_addr zone=per_ip:10m rate=1000r/s;
+
+# ============================================
+# SERVER BLOCK
+# ============================================
+server {
+    listen 443 ssl http2 default_server;
+    server_name api.yourdomain.com;
+    
+    # ============================================
+    # SSL/TLS CONFIGURATION
+    # ============================================
+    ssl_certificate /etc/letsencrypt/live/api.yourdomain.com/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/api.yourdomain.com/privkey.pem;
+    ssl_protocols TLSv1.2 TLSv1.3;
+    ssl_ciphers HIGH:!aNULL:!MD5:!RC4;
+    ssl_prefer_server_ciphers on;
+    ssl_session_cache shared:SSL:10m;
+    ssl_session_timeout 10m;
+    
+    # ============================================
+    # SECURITY HEADERS
+    # ============================================
+    add_header Strict-Transport-Security "max-age=31536000; includeSubDomains" always;
+    add_header X-Content-Type-Options "nosniff" always;
+    add_header X-Frame-Options "DENY" always;
+    add_header X-XSS-Protection "1; mode=block" always;
+    add_header Referrer-Policy "strict-origin-when-cross-origin" always;
+    
+    # ============================================
+    # LOGGING
+    # ============================================
+    access_log /var/log/nginx/grp-api-access.log combined;
+    error_log /var/log/nginx/grp-api-error.log;
+    
+    # ============================================
+    # 📍 API PRINCIPAL - /api, /auth, /meta
+    # ============================================
+    location ~ ^/(api|auth|meta)/ {
+        # ✅ RATE LIMITING: Por tenant + IP global
+        limit_req zone=per_tenant burst=200 nodelay;
+        limit_req zone=per_ip burst=500 nodelay;
+        
+        proxy_pass http://api_backend;
+        proxy_http_version 1.1;
+        proxy_set_header Connection "";
+        
+        # Headers de contexto
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_set_header X-Forwarded-Host $host;
+        proxy_set_header X-Forwarded-Port $server_port;
+        
+        # Timeouts
+        proxy_connect_timeout 5s;
+        proxy_send_timeout 30s;
+        proxy_read_timeout 30s;
+    }
+    
+    # ============================================
+    # 📍 ELSA VIA API PROXY - /elsa/*
+    # ============================================
+    location ~ ^/elsa/ {
+        # ✅ AUTENTICAÇÃO: Verificar JWT antes de rotear
+        auth_request /auth/verify-token;
+        auth_request_set $org_id $upstream_http_x_organization_id;
+        auth_request_set $user_id $upstream_http_x_user_id;
+        
+        # ✅ RATE LIMITING: Restritivo para Elsa
+        limit_req zone=per_tenant burst=50 nodelay;
+        limit_req zone=per_ip burst=100 nodelay;
+        
+        # Primeiro vai para API (que faz reverse proxy para Elsa)
+        proxy_pass http://api_backend;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "upgrade";  # WebSockets
+        
+        # Headers de contexto (copiados para API)
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        
+        # Timeouts maiores para Elsa (workflows podem demorar)
+        proxy_connect_timeout 10s;
+        proxy_send_timeout 300s;
+        proxy_read_timeout 300s;
+        
+        # Buffering
+        proxy_buffering on;
+        proxy_buffer_size 4k;
+        proxy_buffers 24 4k;
+        proxy_busy_buffers_size 8k;
+    }
+    
+    # ============================================
+    # 📍 IDENTITY CHECK - /identity/*
+    # ============================================
+    location ~ ^/identity/ {
+        auth_request /auth/verify-token;
+        
+        proxy_pass http://api_backend;
+        proxy_http_version 1.1;
+        
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        
+        proxy_connect_timeout 5s;
+        proxy_send_timeout 10s;
+        proxy_read_timeout 10s;
+    }
+    
+    # ============================================
+    # 🔐 VERIFICAÇÃO DE JWT (subrequest interna)
+    # ============================================
+    location = /auth/verify-token {
+        internal;  # Apenas acessível via auth_request
+        
+        proxy_pass http://api_backend/api/auth/verify-jwt;
+        proxy_http_version 1.1;
+        proxy_set_header Connection "";
+        
+        # Passar Authorization header para validação
+        proxy_set_header Authorization $http_authorization;
+        
+        # Não passar body (GET request)
+        proxy_pass_request_body off;
+        proxy_set_header Content-Length "";
+        
+        # Timeouts curtos para verificação
+        proxy_connect_timeout 2s;
+        proxy_send_timeout 5s;
+        proxy_read_timeout 5s;
+    }
+    
+    # ============================================
+    # 🏥 HEALTH CHECK
+    # ============================================
+    location /health {
+        access_log off;
+        proxy_pass http://api_backend/health;
+        proxy_http_version 1.1;
+    }
+    
+    # ============================================
+    # 404 DEFAULT
+    # ============================================
+    location / {
+        return 404 "API Gateway - Route not found";
+    }
+}
+
+# ============================================
+# REDIRECT HTTP → HTTPS
+# ============================================
+server {
+    listen 80;
+    server_name api.yourdomain.com;
+    return 301 https://$server_name$request_uri;
+}
+```
+
+**Instalar e ativar:**
+```bash
+# Testar sintaxe
+sudo nginx -t
+
+# Recarregar configuração
+sudo systemctl reload nginx
+
+# Verificar status
+sudo systemctl status nginx
+
+# Ver logs em tempo real
+sudo tail -f /var/log/nginx/grp-api-access.log
+```
+
+---
+
+### Opção 2: Kong API Gateway (Container)
+
+**Arquivo:** `docker-compose.prod-kong.yml`
+
+```yaml
+version: '3.8'
+
+services:
+  # ============================================
+  # PostgreSQL para Kong Database
+  # ============================================
+  kong-db:
+    image: postgres:15-alpine
+    container_name: kong-db
+    environment:
+      POSTGRES_USER: kong
+      POSTGRES_PASSWORD: ${KONG_DB_PASSWORD}
+      POSTGRES_DB: kong
+    volumes:
+      - kong-db-data:/var/lib/postgresql/data
+    networks:
+      - grp-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U kong"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ============================================
+  # KONG API GATEWAY
+  # ============================================
+  kong:
+    image: kong:3.4-alpine
+    container_name: grp-kong
+    depends_on:
+      - kong-db
+    environment:
+      KONG_DATABASE: postgres
+      KONG_PG_HOST: kong-db
+      KONG_PG_USER: kong
+      KONG_PG_PASSWORD: ${KONG_DB_PASSWORD}
+      KONG_PG_DATABASE: kong
+      KONG_PROXY_ACCESS_LOG: /dev/stdout
+      KONG_ADMIN_ACCESS_LOG: /dev/stdout
+      KONG_PROXY_ERROR_LOG: /dev/stderr
+      KONG_ADMIN_ERROR_LOG: /dev/stderr
+      KONG_ADMIN_LISTEN: 0.0.0.0:8001
+    ports:
+      - "80:8000"
+      - "443:8443"
+      - "8001:8001"  # Admin API (apenas acesso interno!)
+    volumes:
+      - ./kong-config.lua:/usr/local/share/lua/5.1/kong/plugins/grp-tenant-filter/handler.lua
+    networks:
+      - grp-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8001/status"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ============================================
+  # KONGA - Admin UI para Kong
+  # ============================================
+  konga:
+    image: pantsel/konga:latest
+    container_name: grp-konga
+    depends_on:
+      - kong
+    environment:
+      NODE_ENV: production
+      DB_ADAPTER: postgres
+      DB_HOST: kong-db
+      DB_USER: kong
+      DB_PASSWORD: ${KONG_DB_PASSWORD}
+      DB_DATABASE: konga
+    ports:
+      - "1337:1337"  # Admin UI (usar firewall para restringir)
+    networks:
+      - grp-network
+
+  # ============================================
+  # API PRINCIPAL
+  # ============================================
+  api:
+    image: grp-api:latest
+    container_name: grp-api
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production
+      ASPNETCORE_URLS: http://+:5000
+      ConnectionStrings__DefaultConnection: ${DB_CONNECTION_STRING}
+      Jwt__Key: ${JWT_KEY}
+    networks:
+      - grp-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/health"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+
+  # ============================================
+  # ELSA
+  # ============================================
+  elsa:
+    image: grp-elsa:latest
+    container_name: grp-elsa
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production
+      ASPNETCORE_URLS: http://+:6001
+      Elsa__ConnectionStrings__DefaultConnection: ${DB_CONNECTION_STRING}
+      Jwt__Key: ${JWT_KEY}
+    networks:
+      - grp-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:6001/health"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+
+volumes:
+  kong-db-data:
+
+networks:
+  grp-network:
+    driver: bridge
+```
+
+**Configurar rotas via Kong Admin API:**
+
+```bash
+# 1. Criar upstream (backend pool) para API
+curl -X POST http://localhost:8001/upstreams \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "api-backend",
+    "healthchecks": {
+      "active": {
+        "healthy": {"interval": 5, "successes": 2},
+        "unhealthy": {"interval": 10, "timeouts": 3, "http_failures": 5},
+        "http_path": "/health"
+      }
+    }
+  }'
+
+# 2. Adicionar targets (instâncias reais)
+curl -X POST http://localhost:8001/upstreams/api-backend/targets \
+  -d "target=api:5000" -d "weight=100"
+
+# 3. Criar serviço de API
+curl -X POST http://localhost:8001/services \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "grp-api-service",
+    "url": "http://api-backend",
+    "retries": 3,
+    "connect_timeout": 5000,
+    "read_timeout": 30000,
+    "write_timeout": 30000
+  }'
+
+# 4. Criar rota para /api
+curl -X POST http://localhost:8001/services/grp-api-service/routes \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "api-route",
+    "paths": ["/api"],
+    "protocols": ["http", "https"],
+    "preserve_host": true
+  }'
+
+# 5. Adicionar rate-limit plugin
+curl -X POST http://localhost:8001/services/grp-api-service/plugins \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "rate-limiting",
+    "config": {
+      "minute": 100,
+      "limit_by": "consumer",
+      "policy": "redis"
+    }
+  }'
+
+# 6. Adicionar JWT plugin (validação)
+curl -X POST http://localhost:8001/services/grp-api-service/plugins \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "jwt",
+    "config": {
+      "key_claim_name": "iss",
+      "secret_is_base64": false,
+      "algorithm": "HS256"
+    }
+  }'
+```
+
+---
+
+### Opção 3: Docker Compose com Nginx (Mais Simples)
+
+**Arquivo:** `docker-compose.prod-simple.yml`
+
+```yaml
+version: '3.8'
+
+services:
+  nginx:
+    image: nginx:latest
+    container_name: grp-nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./ssl:/etc/nginx/ssl:ro
+      - /var/log/nginx:/var/log/nginx
+    depends_on:
+      - api
+      - elsa
+    networks:
+      - grp-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost/health"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+
+  api:
+    image: grp-api:latest
+    container_name: grp-api
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production
+      ASPNETCORE_URLS: http://+:5000
+      ConnectionStrings__DefaultConnection: ${DB_CONNECTION_STRING}
+      Jwt__Key: ${JWT_KEY}
+    networks:
+      - grp-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/health"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+
+  elsa:
+    image: grp-elsa:latest
+    container_name: grp-elsa
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production
+      ASPNETCORE_URLS: http://+:6001
+      Elsa__ConnectionStrings__DefaultConnection: ${DB_CONNECTION_STRING}
+      Jwt__Key: ${JWT_KEY}
+    networks:
+      - grp-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:6001/health"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+
+  postgres:
+    image: postgres:15-alpine
+    container_name: grp-postgres
+    environment:
+      POSTGRES_USER: grp_user
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: grp_banco_01
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    networks:
+      - grp-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U grp_user"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  postgres-data:
+
+networks:
+  grp-network:
+    driver: bridge
+```
+
+**Iniciar:**
+```bash
+# Gerar certificados (Let's Encrypt)
+certbot certonly --standalone -d api.yourdomain.com
+
+# Copiar para pasta ssl/
+mkdir -p ssl
+cp /etc/letsencrypt/live/api.yourdomain.com/fullchain.pem ssl/
+cp /etc/letsencrypt/live/api.yourdomain.com/privkey.pem ssl/
+
+# Iniciar stack
+export JWT_KEY=$(openssl rand -hex 32)
+export DB_PASSWORD=$(openssl rand -base64 32)
+export DB_CONNECTION_STRING="Host=postgres;Port=5432;Database=grp_banco_01;Username=grp_user;Password=$DB_PASSWORD"
+
+docker-compose -f docker-compose.prod-simple.yml up -d
+
+# Logs
+docker-compose -f docker-compose.prod-simple.yml logs -f nginx
+```
+
+---
+
+### Checklist de Migração para Produção
+
+| Passo | Tarefa | Verificação | Status |
+|-------|--------|-------------|--------|
+| 1️⃣ | Gerar certificado SSL/TLS | `curl -I https://api.yourdomain.com` (200 OK) | ⬜ |
+| 2️⃣ | Configurar JWT Key (256-bit) | `echo $JWT_KEY \| wc -c` (65+ chars) | ⬜ |
+| 3️⃣ | Testar conexão DB | `docker exec grp-postgres pg_isready` | ⬜ |
+| 4️⃣ | Executar migrations | `dotnet ef database update` | ⬜ |
+| 5️⃣ | Validar health endpoints | `curl http://api:5000/health` | ⬜ |
+| 6️⃣ | Testar rate limiting | Fazer 101 requests em 1 segundo | ⬜ |
+| 7️⃣ | Validar JWT validation | Requisição sem token deve retornar 401 | ⬜ |
+| 8️⃣ | Testar isolamento tenant | Login em 2 orgs, workflows isolados | ⬜ |
+| 9️⃣ | Monitorar logs | `docker logs grp-nginx \| grep "error"` | ⬜ |
+| 🔟 | Backup automático | Cron job para snapshots DB | ⬜ |
+
+---
+
 ## Visão Geral da Arquitetura
 
 ```
