@@ -1,7 +1,7 @@
-# 🔄 CI-CD.md - Pipeline de Integração e Deploy Contínuos
+# 🔄 INTEGRACAO_CONTINUA.md - Pipeline de Integração e Implantação Contínuos
 
 **Status:** Template - Customizar conforme sua infraestrutura  
-**Objetivo:** Automatizar testes, build, e deploy
+**Objetivo:** Automatizar testes, construção, e implantação
 
 ---
 
@@ -16,29 +16,29 @@
 
 ---
 
-## 🎯 Overview
+## 🚀 Visão Geral
 
 ### **Pipeline Desejado**
 
 ```
-Code Push → Build → Test → Security Scan → Docker Build → 
-  → Dev Deploy → Staging Deploy → Prod Approval → Prod Deploy
+Push de Código → Construção → Teste → Verificação de Segurança → Docker Construção →
+  → Implantação Dev → Implantação Preparação → Aprovação Prod → Implantação Prod
 ```
 
 ### **Componentes**
 
 | Estágio | Objetivo | Tempo |
 |---------|----------|-------|
-| **Build** | Compilar código | 3-5 min |
-| **Test** | Rodar testes unitários | 3-5 min |
+| **Construção** | Compilar código | 3-5 min |
+| **Teste** | Rodar testes unitários | 3-5 min |
 | **SonarQube** | Análise de qualidade | 2-3 min |
-| **Docker Build** | Criar imagens | 5-10 min |
-| **Push Registry** | Enviar para Docker Hub/ACR | 2-3 min |
-| **Deploy Dev** | Deploy automático | 2-3 min |
-| **Deploy Staging** | Deploy automático | 2-3 min |
-| **Deploy Prod** | Requer aprovação manual | on-demand |
+| **Construção Docker** | Criar imagens | 5-10 min |
+| **Push Registro** | Enviar para Docker Hub/ACR | 2-3 min |
+| **Implantação Dev** | Implantação automática | 2-3 min |
+| **Implantação Preparação** | Implantação automática | 2-3 min |
+| **Implantação Prod** | Requer aprovação manual | conforme demanda |
 
-**Total:** ~25-35 minutos (dev→staging), +manual (prod)
+**Total:** ~25-35 minutos (dev→preparação), +manual (prod)
 
 ---
 
@@ -46,13 +46,13 @@ Code Push → Build → Test → Security Scan → Docker Build →
 
 ### **Setup**
 
-1. Ir para: `.github/workflows/`
+1. Ir para: `.github/fluxos/`
 2. Criar arquivos conforme abaixo
 
-### **1. Build e Test (.github/workflows/build-test.yml)**
+### **1. Construção e Teste (.github/fluxos/construcao-teste.yml)**
 
 ```yaml
-name: 🏗️ Build & Test
+name: 🏗️ Construção & Teste
 
 on:
   push:
@@ -67,7 +67,7 @@ env:
 jobs:
   build-api:
     runs-on: ubuntu-latest
-    name: 🔨 Build API
+    name: 🔩 Construir API
 
     steps:
       - uses: actions/checkout@v4
@@ -110,7 +110,7 @@ jobs:
 
   build-elsa:
     runs-on: ubuntu-latest
-    name: 🔨 Build Elsa
+    name: 🔩 Construir Elsa
 
     steps:
       - uses: actions/checkout@v4
@@ -130,7 +130,7 @@ jobs:
 
   build-frontend:
     runs-on: ubuntu-latest
-    name: 🔨 Build Frontend
+    name: 🔩 Construir Frontend
 
     steps:
       - uses: actions/checkout@v4
@@ -161,10 +161,10 @@ jobs:
           path: src/interface_grafica/web/dist/
 ```
 
-### **2. Security Scan (.github/workflows/security.yml)**
+### **2. Verificação de Segurança (.github/fluxos/seguranca.yml)**
 
 ```yaml
-name: 🔒 Security Scan
+name: 🔐 Verificação de Segurança
 
 on:
   push:
@@ -175,7 +175,7 @@ on:
 jobs:
   sonarqube:
     runs-on: ubuntu-latest
-    name: 📊 SonarQube Analysis
+    name: 📋 Análise SonarQube
 
     steps:
       - uses: actions/checkout@v4
@@ -210,7 +210,7 @@ jobs:
 
   dependency-check:
     runs-on: ubuntu-latest
-    name: 🔍 Dependency Check
+    name: 🔍 Verificação de Dependências
 
     steps:
       - uses: actions/checkout@v4
@@ -230,10 +230,10 @@ jobs:
           path: reports/
 ```
 
-### **3. Docker Build & Push (.github/workflows/docker.yml)**
+### **3. Construção e Push do Docker (.github/fluxos/docker.yml)**
 
 ```yaml
-name: 🐳 Docker Build & Push
+name: 🐲 Construção de Imagem Docker & Push
 
 on:
   push:
@@ -246,7 +246,7 @@ env:
 jobs:
   docker-api:
     runs-on: ubuntu-latest
-    name: 🐳 Build API Image
+    name: 🐲 Construir Imagem da API
 
     permissions:
       contents: read
@@ -289,27 +289,27 @@ jobs:
 
   docker-elsa:
     runs-on: ubuntu-latest
-    name: 🐳 Build Elsa Image
+    name: 🐲 Construir Imagem do Elsa
     
     # ... similar ao acima, mas com Dockerfile.elsa
 
   docker-frontend:
     runs-on: ubuntu-latest
-    name: 🐳 Build Frontend Image
+    name: 🐲 Construir Imagem do Frontend
     
     # ... similar ao acima, mas com Dockerfile.frontend
 ```
 
-### **4. Deploy Development (.github/workflows/deploy-dev.yml)**
+### **4. Implantação em Desenvolvimento (.github/fluxos/implantar-dev.yml)**
 
 ```yaml
-name: 🚀 Deploy Dev
+name: 🚀 Implantar em Desenvolvimento
 
 on:
   push:
     branches: [ develop ]
   workflow_run:
-    workflows: [ "🐳 Docker Build & Push" ]
+    workflows: [ "🐲 Construção de Imagem Docker & Push" ]
     types: [ completed ]
 
 jobs:
@@ -337,7 +337,7 @@ jobs:
             docker-compose exec api dotnet ef database update
           EOF
 
-      - name: Health Check
+      - name: Verificação de Saúde
         env:
           DEPLOY_HOST: ${{ secrets.DEV_HOST }}
         run: |
@@ -345,10 +345,10 @@ jobs:
           curl -f http://${{ secrets.DEV_HOST }}/api/health || exit 1
 ```
 
-### **5. Deploy Staging (.github/workflows/deploy-staging.yml)**
+### **5. Implantação em Preparação (.github/fluxos/implantar-preparacao.yml)**
 
 ```yaml
-name: 📦 Deploy Staging
+name: 📋 Implantar em Preparação
 
 on:
   push:
@@ -372,36 +372,36 @@ jobs:
       - name: Run Smoke Tests
         run: |
           npm install --prefix tests/e2e
-          npm run test:staging --prefix tests/e2e
+          npm run test:preparacao --prefix tests/e2e
 ```
 
-### **6. Deploy Production (Manual) (.github/workflows/deploy-prod.yml)**
+### **6. Implantação em Produção (Manual) (.github/fluxos/implantar-prod.yml)**
 
 ```yaml
-name: 🔴 Deploy Production
+name: 🔴 Implantar em Produção
 
 on:
   workflow_dispatch:  # Manual trigger
     inputs:
       version:
-        description: 'Version to deploy (e.g., v1.0.0)'
+        description: 'Versão a implantar (ex: v1.0.0)'
         required: true
         type: string
 
 jobs:
   approval:
     runs-on: ubuntu-latest
-    name: ✋ Approval Gate
+    name: ✋ Porta de Aprovação
 
     steps:
-      - name: Wait for approval
+      - name: Aguardar aprovação
         id: approval
         uses: trstringer/manual-approval@v1
         with:
           secret: ${{ github.TOKEN }}
           approvers: ${{ secrets.PROD_APPROVERS }}  # usuarios,separados,virgula
-          issue-title: 'Deploy ${{ github.event.inputs.version }} to Production'
-          issue-body: 'Please review and approve this production deployment'
+issue-title: 'Implantar ${{ github.event.inputs.version }} em Produção'
+        issue-body: 'Por favor, revise e aprove esta implantação em produção'
 
   deploy:
     runs-on: ubuntu-latest
@@ -595,7 +595,7 @@ DEV_HOST=dev.seu-dominio.com
 DEV_USER=deploy
 DEV_SSH_KEY=<chave-ssh-privada>
 
-STAGING_HOST=staging.seu-dominio.com
+STAGING_HOST=preparacao.seu-dominio.com
 STAGING_USER=deploy
 STAGING_SSH_KEY=<chave-ssh-privada>
 
@@ -626,7 +626,7 @@ cat ~/.ssh/github_actions | xclip   # Linux
 
 ---
 
-## 🔄 Workflows Recomendados
+## 🔄 Fluxos de Trabalho Recomendados
 
 ### **Iniciante**
 
@@ -639,21 +639,21 @@ cat ~/.ssh/github_actions | xclip   # Linux
 ### **Intermediário**
 
 ```
-✅ Build + Test (todas as branches)
-✅ Security Scan (pull requests)
-✅ Docker Build (develop + main)
-✅ Deploy Dev (automático)
-✅ Deploy Staging (automático em main)
-✅ Deploy Prod (manual com aprovação)
+✅ Construção + Teste (todas as ramificações)
+✅ Verificação de Segurança (solicitações de pull)
+✅ Construção Docker (develop + main)
+✅ Implantação Dev (automática)
+✅ Implantação Preparação (automática em main)
+✅ Implantação Prod (manual com aprovação)
 ```
 
 ### **Avançado**
 
 ```
-✅ Build + Test + SonarQube (todas)
-✅ Security Scan (Dependency Check + Trivy)
-✅ Docker Build (multi-arch)
-✅ Deploy Dev/Staging/Prod (completo)
+✅ Construção + Teste + SonarQube (todas)
+✅ Verificação de Segurança (Verificação de Dependências + Trivy)
+✅ Construção Docker (multi-arquíitetura)
+✅ Implantação Dev/Preparação/Prod (completo)
 ✅ Smoke Tests pós-deployment
 ✅ Notificações (Slack, Teams, Email)
 ✅ Rollback automático se falhar

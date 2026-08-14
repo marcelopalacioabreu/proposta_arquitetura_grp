@@ -10,14 +10,14 @@
 
 Antes de implantar em produção, confirme:
 
-- [ ] Código em branch `main` com todas as features testadas
+- [ ] Código em ramificação `main` com todas as funcionalidades testadas
 - [ ] Testes automatizados passando 100%
-- [ ] Migrations criadas e testadas localmente
+- [ ] Migrações criadas e testadas localmente
 - [ ] `.env` production definido com todas as variáveis
 - [ ] JWT Secret gerado e armazenado com segurança
 - [ ] Certificado SSL/TLS obtido (Let's Encrypt ou CA corporativo)
 - [ ] Backup do BD existente (se houver)
-- [ ] Plano de rollback preparado
+- [ ] Plano de revertimento preparado
 - [ ] Time de operação notificado
 - [ ] Janela de manutenção agendada (se necessário)
 
@@ -556,7 +556,7 @@ Veja [PRODUCAO_RUNBOOK.md](PRODUCAO_RUNBOOK.md) para:
 5. [ ] Configurar backups automáticos
 6. [ ] Configurar monitoring (Datadog, New Relic, etc)
 7. [ ] Executar testes de carga
-8. [ ] Fazer deployment in staging
+8. [ ] Fazer implantação em preparação
 9. [ ] Validar com usuários
 10. [ ] Fazer deployment em produção
 

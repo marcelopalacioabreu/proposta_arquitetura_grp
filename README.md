@@ -9,7 +9,7 @@ Este repositório contém a proposta de arquitetura para o GRP da PJF, com miss�
 1. **[DESENVOLVIMENTO_INSTRUCOES.md](DESENVOLVIMENTO_INSTRUCOES.md)** ← **COMECE AQUI**
    - Setup de ambiente local (prerequisites, database, migrations)
    - Como rodar frontend, backend e Elsa
-   - Integração com Elsa Workflows
+   - Integração com Elsa - Fluxos de Trabalho
    - Estratégia de injeção de dependências
    - Contexto multilocatário (tenant)
 
@@ -18,9 +18,9 @@ Este repositório contém a proposta de arquitetura para o GRP da PJF, com miss�
    - Proxy reverso em desenvolvimento (Vite + API middleware)
    - Proxy reverso em produção (Nginx, Kong, Kubernetes)
    - Isolamento de dados multilocatário (4 níveis)
-   - Troubleshooting com 10 problemas comuns
+   - Solução de problemas com 10 cenários comuns
    - Tabelas de mapeamento (dev → prod)
-   - Sequence diagram do fluxo de autenticação
+   - Diagrama de sequência do fluxo de autenticação
 
 ### 🏗️ **Para Arquitetos & DevOps**
 
@@ -30,13 +30,13 @@ Este repositório contém a proposta de arquitetura para o GRP da PJF, com miss�
    - Dockerfiles oficiais (API, Elsa, Frontend)
    - docker-compose.yml para produção
    - Estratégias de implantação (Docker, Kubernetes, Terraform)
-   - Rollback procedures
+   - Procedimentos de revertimento
    - Verificações pós-implantação
 
 4. **[PRODUCAO_RUNBOOK.md](PRODUCAO_RUNBOOK.md)** ← Use operacionalmente
-   - Startup & health checks
+   - Inicialização & verificação de saúde
    - Comandos essenciais (logs, stats, exec)
-   - Debugging de problemas comuns
+   - Depuração de problemas comuns
    - Performance & escalabilidade
    - Backup & disaster recovery
    - Monitoramento & alertas
@@ -46,22 +46,22 @@ Este repositório contém a proposta de arquitetura para o GRP da PJF, com miss�
 
 5. **[CONTRIBUINDO.md](CONTRIBUINDO.md)**
    - Código de conduta
-   - Como começar e fazer fork
-   - Branch strategy (Git Flow)
-   - Workflow de Pull Requests
+   - Como começar e fazer bifurcação
+   - Estratégia de ramificação (Git Flow)
+   - Fluxo de Solicitações de Pull
    - Padrões de código (C#, TypeScript)
-   - Commits com Conventional Commits
-   - Code review checklist
+   - Commits com Commits Convencionais
+   - Checklist de revisão de código
    - Como escrever testes
-   - Documentação de features
+   - Documentação de funcionalidades
 
 ### 🔄 **Para Automação & Pipeline**
 
 6. **[INTEGRACAO_CONTINUA.md](INTEGRACAO_CONTINUA.md)**
    - GitHub Actions, Azure Pipelines, GitLab CI
-   - Workflows de build, test, docker, deploy
-   - Configuração de secrets
-   - Approval gates para produção
+   - Fluxos de construção, teste, docker, implantação
+   - Configuração de segredos
+   - Portas de aprovação para produção
    - 3 níveis de complexidade (iniciante, intermediário, avançado)
 
 ---
@@ -72,25 +72,25 @@ Este repositório contém a proposta de arquitetura para o GRP da PJF, com miss�
 1. Ler: [DESENVOLVIMENTO_INSTRUCOES.md](DESENVOLVIMENTO_INSTRUCOES.md)
 2. Executar: Script `iniciar-em-modo-deselvolvimento.ps1`
 3. Ler: [AUTENTICACAO_AUTORIZACAO_CONTEXTO.md](AUTENTICACAO_AUTORIZACAO_CONTEXTO.md) seção "Desenvolvimento"
-4. Ler: [CONTRIBUINDO.md](CONTRIBUINDO.md) antes de fazer PR
+4. Ler: [CONTRIBUINDO.md](CONTRIBUINDO.md) antes de fazer Solicitação de Pull
 
 ### **Arquiteto de Infraestrutura**
 1. Ler: [IMPLANTACAO.md](IMPLANTACAO.md) - Escolher estratégia
 2. Ler: [PRODUCAO_RUNBOOK.md](PRODUCAO_RUNBOOK.md) - Como operar
 3. Ler: [AUTENTICACAO_AUTORIZACAO_CONTEXTO.md](AUTENTICACAO_AUTORIZACAO_CONTEXTO.md) seção "Produção"
-4. Implementar Dockerfiles e CI/CD via [INTEGRACAO_CONTINUA.md](INTEGRACAO_CONTINUA.md)
+4. Implementar Dockerfiles e Integração Contínua via [INTEGRACAO_CONTINUA.md](INTEGRACAO_CONTINUA.md)
 
 ### **Engenheiro DevOps**
 1. Executar: [IMPLANTACAO.md](IMPLANTACAO.md) - Implantação
 2. Configurar: [PRODUCAO_RUNBOOK.md](PRODUCAO_RUNBOOK.md) - Monitoramento & backups
 3. Automatizar: Pipeline com [INTEGRACAO_CONTINUA.md](INTEGRACAO_CONTINUA.md)
-4. Escalar: Load balancing, clustering, etc
+4. Escalar: Balanceamento de carga, clustering, etc
 
 ### **Mantainer/Code Reviewer**
-1. Ler: [CONTRIBUINDO.md](CONTRIBUINDO.md) - Standards
-2. Usar: Code review checklist
+1. Ler: [CONTRIBUINDO.md](CONTRIBUINDO.md) - Padrões
+2. Usar: Checklist de revisão de código
 3. Referência: [AUTENTICACAO_AUTORIZACAO_CONTEXTO.md](AUTENTICACAO_AUTORIZACAO_CONTEXTO.md) - Arquitetura
-4. Acompanhar: Issues e PRs no GitHub
+4. Acompanhar: Problemas e Solicitações de Pull no GitHub
 
 ---
 
@@ -105,7 +105,7 @@ Este repositório contém a proposta de arquitetura para o GRP da PJF, com miss�
 | Proxy Produção | ✅ Completo | 7/10 |
 | Multi-Tenant | ✅ Completo | 8/10 |
 | **Implantação** | ✅ **NOVO** | **8/10** |
-| **Produção Runbook** | ✅ **NOVO** | **8/10** |
+| **Manual de Produção** | ✅ **NOVO** | **8/10** |
 | **Contribuindo** | ✅ **NOVO** | **9/10** |
 | **Integração Contínua** | ✅ **NOVO** | **8/10** |
 | Performance/Escalabilidade | ⚠️ Parcial | 4/10 |
@@ -116,13 +116,13 @@ Este repositório contém a proposta de arquitetura para o GRP da PJF, com miss�
 
 ## 🚀 Próximos Passos Recomendados
 
-- [ ] Implementar CI/CD (GitHub Actions)
+- [ ] Implementar Integração Contínua (GitHub Actions)
 - [ ] Criar Dockerfiles oficiais
-- [ ] Setup de monitoring (Prometheus + Grafana)
-- [ ] Testes automatizados E2E
+- [ ] Setup de monitoramento (Prometheus + Grafana)
+- [ ] Testes automatizados Ponta a Ponta
 - [ ] Documentação de API (Swagger/OpenAPI)
 - [ ] Estratégia de cache (Redis)
-- [ ] Replicação de BD (HA)
+- [ ] Replicação de BD (Alta Disponibilidade)
 
 ---
 

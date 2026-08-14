@@ -1,4 +1,4 @@
-# 🤝 CONTRIBUTING.md - Guia de Contribuição
+# 🤝 CONTRIBUINDO.md - Guia de Contribuição
 
 **Bem-vindo!** Este guia descreve como contribuir para o projeto **Proposta Arquitetura GRP**.
 
@@ -8,11 +8,11 @@
 
 - [Código de Conduta](#código-de-conduta)
 - [Como Começar](#como-começar)
-- [Branch Strategy](#branch-strategy)
-- [Workflow de PR](#workflow-de-pr)
+- [Estratégia de Ramificação](#estratégia-de-ramificação)
+- [Fluxo de Solicitação de Pull](#fluxo-de-solicitação-de-pull)
 - [Padrões de Código](#padrões-de-código)
 - [Commits e Mensagens](#commits-e-mensagens)
-- [Code Review](#code-review)
+- [Revisão de Código](#revisão-de-código)
 - [Testes](#testes)
 - [Documentação](#documentação)
 
@@ -24,7 +24,7 @@ Esperamos profissionalismo de todos os contribuidores. Comportamentos inaceitáv
 
 - Assédio de qualquer tipo (gênero, orientação, religião, etc)
 - Ataques pessoais ou insultos
-- Spam ou self-promotion excessiva
+- Spam ou auto-promoção excessiva
 - Divulgação de informações privadas de terceiros
 
 **Violações:** Reportar para `arquitetura@dominio.com`
@@ -33,14 +33,14 @@ Esperamos profissionalismo de todos os contribuidores. Comportamentos inaceitáv
 
 ## 🚀 Como Começar
 
-### **1. Fork o Repositório**
+### **1. Bifurcar o Repositório**
 
 ```bash
-# Clone seu fork
+# Clone sua bifurcação
 git clone https://github.com/seu-usuario/proposta_arquitetura_grp.git
 cd proposta_arquitetura_grp
 
-# Adicionar remote upstream (repo oficial)
+# Adicionar remote do repositório oficial
 git remote add upstream https://github.com/seu-org/proposta_arquitetura_grp.git
 ```
 
@@ -79,42 +79,42 @@ git checkout -b docs/descricao-da-doc
 
 ---
 
-## 🌿 Branch Strategy
+## 🌿 Estratégia de Ramificação
 
 Usamos **Git Flow Modificado**:
 
 ```
 main (produção)
-├── v1.0.0, v1.1.0 (releases)
+├── v1.0.0, v1.1.0 (lançamentos)
 │
-develop (próxima release)
-├── feature/nova-funcionalidade
-├── bugfix/correcao-critica
+develop (próximo lançamento)
+├── funcionalidade/nova-funcionalidade
+├── correcao/correcao-critica
 ├── docs/atualizacao-docs
 └── refactor/melhorias-codigo
 ```
 
 ### **Branches**
 
-| Branch | Propósito | Vem de | Merge para |
-|--------|-----------|--------|-----------|
-| `main` | Produção (releases) | `release/x.y.z` | Nunca direto |
-| `develop` | Próxima versão | Features + Bugfixes | `release/x.y.z` → `main` |
-| `feature/*` | Nova feature | `develop` | `develop` (via PR) |
-| `bugfix/*` | Bug crítico | `develop` | `develop` (via PR) |
-| `docs/*` | Documentação | `develop` | `develop` (via PR) |
-| `refactor/*` | Refatoração | `develop` | `develop` (via PR) |
-| `hotfix/*` | Fix urgente em prod | `main` | `main` + `develop` |
+| Ramificação | Propósito | Vem de | Merge para |
+|--------|-----------|--------|----------|
+| `main` | Produção (lançamentos) | `release/x.y.z` | Nunca direto |
+| `develop` | Próxima versão | Funcionalidades + Correções | `release/x.y.z` → `main` |
+| `funcionalidade/*` | Nova funcionalidade | `develop` | `develop` (via SR) |
+| `correcao/*` | Correção crítica | `develop` | `develop` (via SR) |
+| `docs/*` | Documentação | `develop` | `develop` (via SR) |
+| `refactor/*` | Refatoração | `develop` | `develop` (via SR) |
+| `correcao-urgente/*` | Correção urgente em prod | `main` | `main` + `develop` |
 
-### **Exemplo: Hotfix (Bug Crítico em Produção)**
+### **Exemplo: Correção Urgente (Bug Crítico em Produção)**
 
 ```bash
 # Bug encontrado em main v1.0.0
 git checkout main
 git pull origin main
 
-# Criar hotfix
-git checkout -b hotfix/correcao-critica-2024-01
+# Criar correção urgente
+git checkout -b correcao-urgente/correcao-critica-2024-01
 
 # Corrigir, testar, commit
 git commit -m "fix: correção crítica na autenticação"
@@ -131,17 +131,17 @@ git push origin develop
 
 ---
 
-## 🔀 Workflow de PR
+## 🔀 Fluxo de Solicitação de Pull
 
 ### **1. Antes de Começar**
 
 ```bash
-# Verificar se há issues relacionadas
+# Verificar se há problemas/ocorrências relacionadas
 # Procurar em: https://github.com/seu-org/proposta_arquitetura_grp/issues
 
-# Se nenhuma existe e é feature significativa, criar issue primeiro:
+# Se nenhuma existe e é funcionalidade significativa, criar ocorrência primeiro:
 # "Como fazer: [Descrição]" (discussion)
-# "Implementar: [Feature]" (feature request)
+# "Implementar: [Funcionalidade]" (feature request)
 ```
 
 ### **2. Implementar**
@@ -154,7 +154,7 @@ git commit -m "feat: novo controller para X"
 # Testar localmente
 dotnet test
 
-# Push para seu fork
+# Push para sua bifurcação
 git push origin feature/minha-feature
 ```
 
@@ -173,9 +173,9 @@ feat: descrição curta em 50 caracteres
 Explicar o que foi implementado e por quê.
 
 ## Tipo
-- [ ] Bug fix
-- [ ] Nova feature
-- [ ] Breaking change
+- [ ] Correção de bug
+- [ ] Nova funcionalidade
+- [ ] Mudança que quebra compatibilidade
 - [ ] Documentação
 - [ ] Refatoração
 
@@ -197,9 +197,9 @@ Explicar o que foi implementado e por quê.
 Closes #123
 ```
 
-### **4. Code Review**
+### **4. Revisão de Código**
 
-Esperar revisão de **pelo menos 1 reviewer**:
+Esperar revisão de **pelo menos 1 revisor**:
 
 - ✅ Aprovação: Merge permitido
 - 📝 Comentários: Responder e fazer ajustes
@@ -323,7 +323,7 @@ Usamos **Conventional Commits**:
 
 ### **Tipos**
 
-- `feat`: Nova feature
+- `feat`: Nova funcionalidade
 - `fix`: Correção de bug
 - `docs`: Mudanças em documentação
 - `style`: Formatação, sem alteração lógica
@@ -361,9 +361,9 @@ chore(deps): atualizar dotnet para 9.0.1
 
 ---
 
-## 🔍 Code Review
+## 🔍 Revisão de Código
 
-### **Checklist para Reviewers**
+### **Checklist para Revisores**
 
 - [ ] Código segue padrões do projeto?
 - [ ] Testes foram adicionados/atualizados?
@@ -374,7 +374,7 @@ chore(deps): atualizar dotnet para 9.0.1
 - [ ] Sem console.log / Debug.WriteLine?
 - [ ] Sem secrets/passwords no código?
 
-### **Como Revisar**
+### **Como Realizar uma Revisão**
 
 ```markdown
 # Comentário Positivo
@@ -472,7 +472,7 @@ public async Task<PessoaDto?> ObterAsync(long id)
 }
 ```
 
-### **Documentação de Features**
+### **Documentação de Funcionalidades**
 
 Se adicionar feature significativa, atualizar:
 
@@ -485,7 +485,7 @@ Se adicionar feature significativa, atualizar:
 
 ---
 
-## 🐛 Reportando Bugs
+## 🐛 Reportando Problemas
 
 Usar GitHub Issues com template:
 
@@ -520,7 +520,7 @@ O que realmente acontece.
 
 ---
 
-## 💡 Sugestões de Features
+## 💡 Sugestões de Funcionalidades
 
 Usar GitHub Discussions:
 
@@ -540,12 +540,12 @@ Mais informações?
 
 ---
 
-## 🚀 Release Process
+## 🚀 Processo de Lançamento
 
-Apenas maintainers fazem releases:
+Apenas mantedores fazem lançamentos:
 
 ```bash
-# 1. Criar release branch
+# 1. Criar ramificação de lançamento
 git checkout -b release/v1.1.0
 
 # 2. Atualizar versão
@@ -560,8 +560,8 @@ dotnet test
 # 4. Commit final
 git commit -m "chore: versão v1.1.0"
 
-# 5. Tag
-git tag -a v1.1.0 -m "Release v1.1.0"
+# 5. Etiqueta
+git tag -a v1.1.0 -m "Lançamento v1.1.0"
 
 # 6. Merge em main e develop
 git checkout main
@@ -583,5 +583,5 @@ git push origin main develop --tags
 
 ---
 
-**Obrigado por contribuir! 🎉**
+**Obrigado por sua contribuição! 🎉**
 

@@ -122,9 +122,9 @@ DOCUMENTAÇÃO GERAL
 
 ### **PRODUCAO_RUNBOOK.md** ← Operar em Produção
 ```
-✅ Health checks (startup, banco, api, ssl)
+✅ Verificações de Saúde (inicialização, banco, api, ssl)
 ✅ Comandos úteis (logs, stats, exec)
-✅ 10+ troubleshooting (login, workflows, bd, ssl...)
+✅ Solução de problemas com 10+ cenários (login, fluxos de trabalho, bd, ssl...)
 ✅ Performance & escalabilidade
 ✅ Backup automático & restore
 ✅ Monitoring & alertas
@@ -134,17 +134,17 @@ DOCUMENTAÇÃO GERAL
 ### **CONTRIBUTING.md** ← Contribuir com Código
 ```
 ✅ Código de conduta
-✅ Branch strategy (Git Flow)
-✅ Workflow PR completo
+✅ Estratégia de Ramificação (Git Flow)
+✅ Fluxo de Solicitação de Pull completo
 ✅ Padrões C# + TypeScript
 ✅ Conventional Commits
-✅ Code review checklist
+✅ Checklist de revisão de código
 ✅ Testes (xUnit + Jest)
 ```
 
 ### **CI-CD.md** ← Pipeline Automático
 ```
-✅ GitHub Actions (6 workflows YAML)
+✅ GitHub Actions (6 fluxos de trabalho YAML)
 ✅ Azure Pipelines (alternativa)
 ✅ GitLab CI (alternativa)
 ✅ Build → Test → Docker → Deploy
@@ -171,7 +171,7 @@ DOCUMENTAÇÃO GERAL
 - [ ] Setup CI/CD (copy-paste CI-CD.md)
 
 ### **Próximo Sprint**
-- [ ] First deployment em staging
+- [ ] Primeira implantação em preparação
 - [ ] Testar rollback procedures
 - [ ] Implementar backup automático
 
@@ -223,7 +223,7 @@ c:\PROJETOS\proposta_arquitetura_grp\
 
 ### **Contribuição**
 - ❌ Antes: Não existe
-- ✅ Depois: Branch strategy, PR workflow, padrões tudo documentado
+- ✅ Depois: Estratégia de ramificação, fluxo de SRs, padrões tudo documentado
 
 ### **Variáveis de Ambiente**
 - ❌ Antes: Espalhadas em vários arquivos
@@ -238,7 +238,7 @@ c:\PROJETOS\proposta_arquitetura_grp\
 #### **DESENVOLVIMENTO:** ✅ **SIM - 95% confiante**
 - Instruções são claras e detalhadas
 - Exemplos práticos existem
-- Troubleshooting comum está documentado
+- Solução de problemas comum está documentada
 - Script automatizado facilita setup
 
 #### **PRODUÇÃO:** ✅ **SIM - 85% confiante** (antes era 30%!)
@@ -280,7 +280,7 @@ c:\PROJETOS\proposta_arquitetura_grp\
 Uma novo desenvolvedor ou arquiteto consegue agora:
 - ✅ Setup ambiente local rapidamente
 - ✅ Entender arquitetura completamente
-- ✅ Desenvolver novas features
+- ✅ Desenvolver novas funcionalidades
 - ✅ Fazer deploy em produção com segurança
 - ✅ Operar e debugar em produção
 - ✅ Contribuir seguindo padrões

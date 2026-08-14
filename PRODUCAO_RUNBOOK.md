@@ -16,7 +16,7 @@
 
 ---
 
-## 🔧 Startup & Health Checks
+## 🔧 Inicialização & Verificação de Saúde
 
 ### **Status Geral**
 
@@ -32,7 +32,7 @@ docker-compose -f docker-compose.prod.yml ps
 # grp-postgres Up 2 hours (healthy)
 ```
 
-### **Health Checks Detalhados**
+### **Verificação de Saúde Detalhada**
 
 ```bash
 # API
@@ -217,7 +217,7 @@ docker-compose -f docker-compose.prod.yml exec api \
 # Domain deve estar vazio (implícito = mesmo host)
 ```
 
-### **Workflows não Executam / Erro com Elsa**
+### **Fluxos de Trabalho não Executam / Erro com Elsa**
 
 ```bash
 # 1. Verificar saúde do Elsa
