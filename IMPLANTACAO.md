@@ -6,7 +6,7 @@
 
 ---
 
-## 📋 Checklist Pré-Deployment
+## 📋 Checklist Pré-implantação
 
 Antes de implantar em produção, confirme:
 
