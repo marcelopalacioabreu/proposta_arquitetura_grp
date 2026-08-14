@@ -7,7 +7,7 @@ Este repositório contém a proposta de arquitetura para o GRP da PJF, com miss�
 ### 🚀 **Para Começar**
 
 1. **[DESENVOLVIMENTO_INSTRUCOES.md](DESENVOLVIMENTO_INSTRUCOES.md)** ← **COMECE AQUI**
-   - Setup de ambiente local (prerequisites, database, migrations)
+   - Setup de ambiente local (prerequisitos, database, migrations)
    - Como rodar frontend, backend e Elsa
    - Integração com Elsa - Fluxos de Trabalho
    - Estratégia de injeção de dependências
