@@ -2,6 +2,136 @@
 
 Este documento descreve como o projeto implementa **autenticação (authentication)**, **autorização (authorization)** e **contexto de atuação (tenant context)** em modo desenvolvimento e produção, com foco na integração com Elsa.
 
+> ⚠️ **LEITURA RECOMENDADA:** Comece pela seção [**"O Papel Crítico do Proxy Reverso"**](#-o-papel-crítico-do-proxy-reverso) abaixo. A segurança do compartilhamento de autenticação e contexto entre a API e Elsa depende inteiramente de como o proxy é configurado em desenvolvimento e produção.
+
+## 🔐 O Papel Crítico do Proxy Reverso
+
+### Desenvolvimento vs. Produção
+
+A arquitetura de **compartilhamento de autenticação, autorização e contexto** entre a API principal e o Elsa depende criticamente de um **proxy reverso** que:
+
+1. **Trata cookies e headers** - Propaga contexto de tenant
+2. **Valida autenticação** - Garante JWT válido em todas as requisições
+3. **Aplica lógica multilocatário** - Filtra requisições por OrganizacaoId
+4. **Isola microsserviços** - Impede acesso cruzado entre orgs
+
+#### Em Desenvolvimento (localhost)
+
+O proxy é **embutido na API principal** como middleware simples:
+
+```csharp
+// src/retaguarda/Api/Program.cs (linhas 158-200)
+app.Use(async (context, next) =>
+{
+    if (context.Request.Path.StartsWithSegments("/elsa", out var remainingPath))
+    {
+        var targetUrl = $"http://localhost:6001/elsa{remainingPath}{context.Request.QueryString}";
+        
+        using var httpClient = new HttpClient();
+        var targetRequest = new HttpRequestMessage(new HttpMethod(context.Request.Method), targetUrl);
+        
+        // Copiar headers originais (inclusive cookies)
+        foreach (var header in context.Request.Headers)
+        {
+            if (!hopByHop.Contains(header.Key))
+                targetRequest.Headers.TryAddWithoutValidation(header.Key, header.Value.ToArray());
+        }
+        
+        // ✅ CRÍTICO: Adicionar header X-Atuacao com contexto de tenant
+        var escopo = context.RequestServices.GetService(typeof(EscopoEmExecucao)) as EscopoEmExecucao;
+        if (escopo?.OrganizacaoId.HasValue == true)
+        {
+            var atuacao = new { organizacaoId = escopo.OrganizacaoId, ... };
+            targetRequest.Headers.Add("X-Atuacao", JsonSerializer.Serialize(atuacao));
+        }
+        
+        // ... enviar request, copiar resposta ...
+    }
+    else
+    {
+        await next(context);
+    }
+});
+```
+
+**O que está sendo tratado:**
+
+| Responsabilidade | Como | Por quê |
+|---|---|---|
+| **Roteamento** | `if (Path.StartsWithSegments("/elsa"))` | Direciona `/elsa/*` para `localhost:6001` |
+| **Cookies** | Copia todos os headers (incluindo cookies) | Frontend envia cookies para API, que repassa para Elsa |
+| **Contexto de Tenant** | Lê `EscopoEmExecucao.OrganizacaoId` preenchido por `AtuacaoMiddleware` | Elsa precisa saber qual org está acessando |
+| **Headers Customizados** | Adiciona `X-Atuacao: {"organizacaoId": 1}` | PlanejadorFluxo lê este header para preencher seu contexto |
+| **Falha Silenciosa** | Se Elsa não responder, retorna 502 Bad Gateway | Evita requisições perdidas sem feedback |
+
+#### Em Produção (Servidor ou Containers)
+
+O proxy é **componente separado e dedicado** (Nginx, HAProxy, API Gateway):
+
+```yaml
+# Exemplo: Nginx em Kubernetes
+upstream api {
+    server api-service:5000;
+}
+
+upstream elsa {
+    server elsa-service:6001;
+}
+
+server {
+    listen 443 ssl http2;
+    server_name yourdomain.com;
+    
+    # Validação de tenant CRÍTICA no proxy
+    # 1. Verifica se JWT é válido (JWT verification)
+    # 2. Extrai OrganizacaoId do JWT
+    # 3. Rejeita requisições sem OrganizacaoId
+    
+    location / {
+        proxy_pass http://api;
+        proxy_http_version 1.1;
+        proxy_set_header Connection "";
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        
+        # ✅ SEGURANÇA: Passar apenas headers seguros
+        proxy_pass_request_headers on;
+    }
+    
+    location /elsa/ {
+        # ✅ AUTENTICAÇÃO: Verificar JWT token
+        auth_request /auth/verify;
+        auth_request_set $org_id $upstream_http_x_organization_id;
+        
+        proxy_pass http://elsa;
+        proxy_http_version 1.1;
+        
+        # ✅ CONTEXTO: Propagar OrganizacaoId extraído do JWT
+        proxy_set_header X-Atuacao '{"organizacaoId": $org_id}';
+        proxy_set_header X-Organization-Id $org_id;
+        
+        # ✅ SEGURANÇA: Remover headers sensíveis
+        proxy_set_header Authorization "";  # JWT foi validado, não precisa passar
+        proxy_pass_request_headers off;
+    }
+}
+```
+
+**Diferenças Críticas:**
+
+| Aspecto | Desenvolvimento | Produção |
+|---|---|---|
+| **Componente** | Middleware C# na API | Nginx/HAProxy/APIGateway separado |
+| **Validação JWT** | Na API/Elsa (EF Core) | No proxy (antes de rotear) |
+| **Isolamento Tenant** | Confiança no EscopoEmExecucao | Validação rigorosa no proxy + APIs |
+| **HTTPS** | ❌ HTTP simples | ✅ Obrigatório (TLS 1.2+) |
+| **Rate Limiting** | ❌ Nenhum | ✅ Por tenant/IP |
+| **Logging** | Console simples | Centralized (ELK, Splunk, etc) |
+| **Escalabilidade** | 1 instância | Múltiplas instâncias (Load Balancer) |
+
+---
+
 ## Visão Geral da Arquitetura
 
 ```
@@ -198,6 +328,411 @@ public abstract class TenantAwareActivity : Activity
 }
 ```
 
+## Configuração do Proxy Reverso em Produção
+
+### Opção 1: Nginx em Servidor Dedicado
+
+**Arquivo:** `/etc/nginx/sites-available/grp-proxy.conf`
+
+```nginx
+# Validar JWT e extrair OrganizacaoId
+auth_request /auth/verify-token;
+
+upstream api_backend {
+    least_conn;  # Load balancing por menor conexão ativa
+    server api-server-1:5000 max_fails=3 fail_timeout=30s;
+    server api-server-2:5000 max_fails=3 fail_timeout=30s;
+}
+
+upstream elsa_backend {
+    server elsa-server-1:6001;
+    server elsa-server-2:6001;
+}
+
+server {
+    listen 443 ssl http2;
+    server_name yourdomain.com api.yourdomain.com;
+    
+    # Certificado SSL (Let's Encrypt)
+    ssl_certificate /etc/letsencrypt/live/yourdomain.com/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/yourdomain.com/privkey.pem;
+    ssl_protocols TLSv1.2 TLSv1.3;
+    ssl_ciphers HIGH:!aNULL:!MD5;
+    ssl_prefer_server_ciphers on;
+    
+    # Security headers
+    add_header Strict-Transport-Security "max-age=31536000; includeSubDomains" always;
+    add_header X-Content-Type-Options "nosniff" always;
+    add_header X-Frame-Options "DENY" always;
+    add_header X-XSS-Protection "1; mode=block" always;
+    
+    # Rate limiting por tenant
+    limit_req_zone $http_x_organization_id zone=per_tenant:10m rate=100r/s;
+    limit_req zone=per_tenant burst=200 nodelay;
+    
+    # ============================================
+    # API PRINCIPAL
+    # ============================================
+    location / {
+        proxy_pass http://api_backend;
+        proxy_http_version 1.1;
+        proxy_set_header Connection "";
+        
+        # Headers originais
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        
+        # ✅ CONTEXTO: Passar OrganizacaoId extraído do JWT
+        proxy_set_header X-Organization-Id $http_x_organization_id;
+        
+        # Timeouts
+        proxy_connect_timeout 5s;
+        proxy_send_timeout 60s;
+        proxy_read_timeout 60s;
+    }
+    
+    # ============================================
+    # ELSA / PLANEJADOR DE FLUXO
+    # ============================================
+    location /elsa/ {
+        # ✅ AUTENTICAÇÃO: Verificar JWT antes de rotear
+        auth_request /auth/verify-token;
+        auth_request_set $org_id $upstream_http_x_organization_id;
+        auth_request_set $user_id $upstream_http_x_user_id;
+        
+        proxy_pass http://elsa_backend;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "upgrade";  # WebSockets para Elsa Studio
+        
+        # ✅ CONTEXTO: Adicionar header X-Atuacao com OrganizacaoId
+        # Formado como JSON para parsing no PlanejadorFluxo
+        proxy_set_header X-Atuacao '{"organizacaoId": $org_id, "userId": $user_id}';
+        proxy_set_header X-Organization-Id $org_id;
+        proxy_set_header X-User-Id $user_id;
+        
+        # Headers de contexto
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        
+        # ⚠️ SEGURANÇA: NÃO passar Authorization header (JWT já foi validado no proxy)
+        # Assim evitamos que Elsa valide novamente (economia de CPU)
+        # proxy_set_header Authorization "";
+        
+        # Timeouts maiores para Elsa (workflows podem demorar)
+        proxy_connect_timeout 10s;
+        proxy_send_timeout 300s;
+        proxy_read_timeout 300s;
+    }
+    
+    # ============================================
+    # VERIFICAÇÃO DE JWT
+    # ============================================
+    location = /auth/verify-token {
+        internal;  # Apenas acessível internamente pelo nginx
+        
+        proxy_pass http://api_backend/api/auth/verify-jwt;
+        proxy_http_version 1.1;
+        proxy_set_header Connection "";
+        
+        # Passar Authorization header para validação
+        proxy_set_header Authorization $http_authorization;
+        
+        # Se falhar, retornar 401
+        proxy_pass_request_body off;
+        proxy_set_header Content-Length "";
+    }
+    
+    # ============================================
+    # HEALTH CHECK
+    # ============================================
+    location /health {
+        proxy_pass http://api_backend/health;
+        access_log off;
+    }
+}
+
+# Redirect HTTP para HTTPS
+server {
+    listen 80;
+    server_name yourdomain.com *.yourdomain.com;
+    return 301 https://$server_name$request_uri;
+}
+```
+
+**Aplicar:**
+```bash
+sudo nginx -t  # Testar configuração
+sudo systemctl reload nginx
+```
+
+---
+
+### Opção 2: Docker Compose (Desenvolvimento → Produção)
+
+**Arquivo:** `docker-compose.prod.yml`
+
+```yaml
+version: '3.8'
+
+services:
+  # ============================================
+  # NGINX - PROXY REVERSO
+  # ============================================
+  nginx-proxy:
+    image: nginx:latest
+    container_name: grp-nginx-proxy
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./ssl:/etc/nginx/ssl:ro  # Certificados
+      - /var/log/nginx:/var/log/nginx
+    environment:
+      - API_BACKEND=api:5000
+      - ELSA_BACKEND=elsa:6001
+    depends_on:
+      - api
+      - elsa
+    networks:
+      - grp-network
+
+  # ============================================
+  # API PRINCIPAL
+  # ============================================
+  api:
+    image: grp-api:latest
+    container_name: grp-api
+    ports:
+      - "5000:5000"  # Apenas interno (não exposto)
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_URLS=http://+:5000
+      - ConnectionStrings__DefaultConnection=${DB_CONNECTION_STRING}
+      - Jwt__Key=${JWT_KEY}
+      - Jwt__Issuer=GRP
+    depends_on:
+      - postgres
+    networks:
+      - grp-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/health"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+
+  # ============================================
+  # ELSA / PLANEJADOR DE FLUXO
+  # ============================================
+  elsa:
+    image: grp-elsa:latest
+    container_name: grp-elsa
+    ports:
+      - "6001:6001"  # Apenas interno (não exposto)
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_URLS=http://+:6001
+      - Elsa__ConnectionStrings__DefaultConnection=${DB_CONNECTION_STRING}
+      - Jwt__Key=${JWT_KEY}
+    depends_on:
+      - postgres
+    networks:
+      - grp-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:6001/health"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+
+  # ============================================
+  # BANCO DE DADOS (PostgreSQL)
+  # ============================================
+  postgres:
+    image: postgres:15-alpine
+    container_name: grp-postgres
+    environment:
+      - POSTGRES_USER=grp_user
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - POSTGRES_DB=grp_banco_01
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    networks:
+      - grp-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U grp_user"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  postgres-data:
+
+networks:
+  grp-network:
+    driver: bridge
+```
+
+**Executar:**
+```bash
+# Gerar .env com secrets seguros
+export JWT_KEY=$(openssl rand -hex 32)
+export DB_PASSWORD=$(openssl rand -base64 32)
+
+# Iniciar stack
+docker-compose -f docker-compose.prod.yml up -d
+
+# Logs
+docker-compose -f docker-compose.prod.yml logs -f nginx-proxy
+```
+
+---
+
+### Opção 3: Kubernetes (Escalabilidade em Produção)
+
+**Arquivo:** `k8s/ingress.yaml`
+
+```yaml
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: grp-ingress
+  namespace: grp-prod
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+    # ✅ Rate limiting por tenant
+    nginx.ingress.kubernetes.io/limit-rps: "100"
+    nginx.ingress.kubernetes.io/limit-connections: "10"
+    # ✅ Security headers
+    nginx.ingress.kubernetes.io/configuration-snippet: |
+      more_set_headers "X-Frame-Options: DENY";
+      more_set_headers "X-Content-Type-Options: nosniff";
+spec:
+  tls:
+    - hosts:
+        - yourdomain.com
+        - api.yourdomain.com
+      secretName: grp-tls-cert
+  rules:
+    # API Principal
+    - host: api.yourdomain.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: grp-api-service
+                port:
+                  number: 5000
+    
+    # Elsa (com auth e context propagation)
+    - host: api.yourdomain.com
+      http:
+        paths:
+          - path: /elsa
+            pathType: Prefix
+            backend:
+              service:
+                name: grp-elsa-service
+                port:
+                  number: 6001
+---
+
+# ============================================
+# CONFIGMAP - Configuração do Nginx
+# ============================================
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nginx-elsa-config
+  namespace: grp-prod
+data:
+  elsa-upstream.conf: |
+    # ✅ Extrair OrganizacaoId do JWT no header
+    location /elsa/ {
+        # Validar JWT antes de rotear
+        auth_request /auth/verify;
+        auth_request_set $org_id $upstream_http_x_organization_id;
+        
+        # Rotear para Elsa
+        proxy_pass http://grp-elsa-service:6001;
+        
+        # ✅ CONTEXTO: Propagar OrganizacaoId
+        proxy_set_header X-Atuacao '{"organizacaoId": $org_id}';
+        proxy_set_header X-Organization-Id $org_id;
+        
+        # WebSockets support
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "upgrade";
+    }
+
+---
+
+# ============================================
+# SERVICE - API
+# ============================================
+apiVersion: v1
+kind: Service
+metadata:
+  name: grp-api-service
+  namespace: grp-prod
+spec:
+  selector:
+    app: grp-api
+  ports:
+    - protocol: TCP
+      port: 5000
+      targetPort: 5000
+  type: ClusterIP
+
+---
+
+# ============================================
+# SERVICE - ELSA
+# ============================================
+apiVersion: v1
+kind: Service
+metadata:
+  name: grp-elsa-service
+  namespace: grp-prod
+spec:
+  selector:
+    app: grp-elsa
+  ports:
+    - protocol: TCP
+      port: 6001
+      targetPort: 6001
+  type: ClusterIP
+```
+
+**Aplicar:**
+```bash
+kubectl apply -f k8s/ingress.yaml
+kubectl get ingress -n grp-prod
+```
+
+---
+
+### Checklist de Configuração em Produção
+
+| Item | Validação | Comando |
+|---|---|---|
+| **HTTPS** | ✅ TLS 1.2+ | `curl -I https://yourdomain.com` |
+| **JWT Key** | ✅ 256-bit segura | Armazenar em secrets manager |
+| **Rate Limiting** | ✅ 100 req/s por tenant | Monitorar alertas no Prometheus |
+| **Logging Centralizado** | ✅ ELK/Splunk/Datadog | `docker logs grp-nginx-proxy` |
+| **Tenant Isolation** | ✅ Workflows ORG A ≠ ORG B | Testar login cruzado |
+| **Health Checks** | ✅ API + Elsa respondendo | `kubectl get pods` |
+| **Backup BD** | ✅ Automático diário | Verificar snapshots |
+| **Certificado Renovação** | ✅ Automática (cert-manager) | `kubectl get certificate` |
+
 ## Desenvolvimento vs. Produção
 
 ### Desenvolvimento (localhost)
@@ -262,6 +797,12 @@ Elsa__ConnectionStrings__DefaultConnection=<connection-string>
 # CORS
 Cors__AllowedOrigins=https://yourdomain.com
 ```
+
+> **ℹ️ IMPORTANTE:** A segurança em produção depende **criticamente** da configuração correta do proxy reverso. Veja a seção [**Configuração do Proxy Reverso em Produção**](#configuração-do-proxy-reverso-em-produção) acima para:
+> - ✅ Validar JWT no proxy (não na aplicação)
+> - ✅ Extrair e propagar OrganizacaoId via headers
+> - ✅ Isolamento de tenant em camadas múltiplas
+> - ✅ Exemplos Nginx, Docker Compose e Kubernetes
 
 ## Isolamento Multilocatário (Tenant Isolation)
 
