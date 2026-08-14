@@ -324,7 +324,7 @@ docker-compose -f docker-compose.prod.yml logs nginx
 
 ### **Benchmarks Esperados**
 
-| Métrica | Esperado | Alert > |
+| Métrica | Esperado | Alerta > |
 |---------|----------|---------|
 | Response Time (API) | 100-500ms | 2000ms |
 | CPU API | 5-10% | 80% |
