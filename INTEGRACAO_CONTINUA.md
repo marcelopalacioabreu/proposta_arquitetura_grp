@@ -1,4 +1,4 @@
-# 🔄 INTEGRACAO_CONTINUA.md - Pipeline de Integração e Implantação Contínuos
+# 🔄 Pipeline de Integração e Implantação Contínuos
 
 **Status:** Template - Customizar conforme sua infraestrutura  
 **Objetivo:** Automatizar testes, construção, e implantação

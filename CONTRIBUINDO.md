@@ -1,4 +1,4 @@
-# 🤝 CONTRIBUINDO.md - Guia de Contribuição
+# 🤝 Guia de Contribuição
 
 **Bem-vindo!** Este guia descreve como contribuir para o projeto **Proposta Arquitetura GRP**.
 

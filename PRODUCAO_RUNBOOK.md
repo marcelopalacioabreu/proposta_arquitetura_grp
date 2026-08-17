@@ -1,4 +1,4 @@
-# 📘 PRODUCAO_RUNBOOK.md - Operação em Produção
+# 📘 Operação em Produção
 
 **Status:** Use como referência diária  
 **Escopo:** Como operar, debugar e recuperar de falhas em produção  

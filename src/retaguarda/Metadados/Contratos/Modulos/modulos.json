@@ -46,9 +46,9 @@
         { 
           "chave": "catalogos.natureza_juridica", "texto": "Natureza Jurídica", "icone": "briefcase", "url": "/painel/catalogos/natureza-juridica", 
           "permissoes": [ 
-          { "id": "catalogos.naturezaJuridica.visualizar", "texto": "Visualizar" },
-          { "id": "catalogos.naturezaJuridica.editar", "texto": "Criar/Editar" },
-          { "id": "catalogos.naturezaJuridica.excluir", "texto": "Excluir" } 
+          { "id": "catalogos.natureza_juridica.visualizar", "texto": "Visualizar" },
+          { "id": "catalogos.natureza_juridica.editar", "texto": "Criar/Editar" },
+          { "id": "catalogos.natureza_juridica.excluir", "texto": "Excluir" } 
           ], 
           "conflitosCom": [""], 
           "mostrarNoMenu": true 
