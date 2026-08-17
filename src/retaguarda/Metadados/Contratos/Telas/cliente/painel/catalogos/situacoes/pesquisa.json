@@ -2,6 +2,9 @@
   "situacaoPesquisa": {
     "titulo": "Pesquisa de Situações",
     "extremidade": "/api/situacoes",
+    "acoesFormulario": [
+      { "tipo": "navegacao", "destino": "/painel/catalogos/situacoes/editar/new", "campo_id": "id", "icone": "bi-plus", "permissao": "catalogos.situacao.criar" }
+    ],
     "filtro": [
       { "campo": "codigo", "descricao": "Código", "tipo": "string", "col": 3 },
       { "campo": "nome", "descricao": "Nome", "tipo": "string", "col": 6 }
@@ -12,8 +15,8 @@
         { "campo": "nome", "titulo": "Nome" }
       ],
       "acoes": [
-        { "tipo": "navegacao", "destino": "/painel/catalogos/situacoes/editar/{id}", "campo_id": "id", "icone": "pencil" },
-        { "tipo": "confirmacao_delete_ajax", "destino": "/api/situacoes/{id}", "campo_id": "id", "icone": "trash" }
+        { "tipo": "navegacao", "destino": "/painel/catalogos/situacoes/editar/{id}", "campo_id": "id", "icone": "pencil", "permissao": "catalogos.situacao.editar" },
+        { "tipo": "confirmacao_delete_ajax", "destino": "/api/situacoes/{id}", "campo_id": "id", "icone": "trash", "permissao": "catalogos.situacao.deletar", "exibirQuandoAtivo": true }
       ],
       "pagination": { "pageSize": 10 }
     }

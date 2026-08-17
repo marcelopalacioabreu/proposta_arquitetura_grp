@@ -3,6 +3,9 @@
     "tipo": "TELA_PESQUISA",
     "titulo": "Pesquisa de Endereços",
     "extremidade": "/api/enderecos",
+    "acoesFormulario": [
+      { "tipo": "navegacao", "destino": "/painel/enderecos/editar/new", "campo_id": "id", "icone": "bi-plus", "permissao": "enderecos.criar" }
+    ],
     "itens": [
       { "campo": "logradouro", "label": "Logradouro", "tipo": "text", "col": 6 },
       { "campo": "numero", "label": "Número", "tipo": "text", "col": 2 },
@@ -19,7 +22,8 @@
         { "campo": "bairroNome", "titulo": "Bairro" }
       ],
       "acoes": [
-        { "tipo": "navegacao", "destino": "/painel/enderecos/editar/{id}", "icone": "pencil" }
+        { "tipo": "navegacao", "destino": "/painel/enderecos/editar/{id}", "icone": "pencil", "permissao": "enderecos.editar" },
+        { "tipo": "confirmacao_delete_ajax", "destino": "/api/enderecos/{id}", "campo_id": "id", "icone": "trash", "permissao": "enderecos.deletar", "exibirQuandoAtivo": true }
       ],
       "pagination": { "pageSize": 10 }
     }

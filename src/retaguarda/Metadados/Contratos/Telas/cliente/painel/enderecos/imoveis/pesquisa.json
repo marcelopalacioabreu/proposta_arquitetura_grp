@@ -3,11 +3,14 @@
     "tipo": "TELA_PESQUISA",
     "titulo": "Pesquisa de Imóveis",
     "extremidade": "/api/imoveis",
+    "acoesFormulario": [
+      { "tipo": "navegacao", "destino": "/painel/enderecos/imoveis/editar/new", "campo_id": "id", "icone": "bi-plus", "permissao": "enderecos.imoveis.criar" }
+    ],
     "itens": [
       { "campo": "cadastro", "label": "Cadastro", "tipo": "text", "col": 6 },
       { "campo": "logradouroNome", "label": "Logradouro", "tipo": "text", "col": 6 }
     ],
     "filtro": [ { "campo": "cadastro", "descricao": "Cadastro", "tipo": "string" } ],
-    "tabela": { "colunas": [ { "campo": "cadastro", "titulo": "Cadastro" }, { "campo": "Logradouro", "titulo": "Logradouro" } ], "acoes": [ { "tipo": "navegacao", "destino": "/painel/enderecos/imoveis/editar/{id}", "icone": "pencil" } ], "pagination": { "pageSize": 10 } }
+    "tabela": { "colunas": [ { "campo": "cadastro", "titulo": "Cadastro" }, { "campo": "Logradouro", "titulo": "Logradouro" } ], "acoes": [ { "tipo": "navegacao", "destino": "/painel/enderecos/imoveis/editar/{id}", "icone": "pencil", "permissao": "enderecos.imoveis.editar" }, { "tipo": "confirmacao_delete_ajax", "destino": "/api/imoveis/{id}", "campo_id": "id", "icone": "trash", "permissao": "enderecos.imoveis.deletar", "exibirQuandoAtivo": true } ], "pagination": { "pageSize": 10 } }
   }
 }

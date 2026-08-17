@@ -1,8 +1,9 @@
 {
   "tipoUnidadePesquisa": {
     "titulo": "Pesquisa de Tipos de Unidade",
-    "extremidade": "/api/tiposunidade",
-    "filtro": [
+    "extremidade": "/api/tiposunidade",    "acoesFormulario": [
+      { "tipo": "navegacao", "destino": "/painel/catalogos/tipo-unidade/editar/new", "campo_id": "id", "icone": "bi-plus", "permissao": "catalogos.tipoUnidade.criar" }
+    ],    "filtro": [
       { "campo": "codigo", "descricao": "Código", "tipo": "string", "col": 3 },
       { "campo": "nome", "descricao": "Nome", "tipo": "string", "col": 6 }
     ],
@@ -12,8 +13,8 @@
         { "campo": "nome", "titulo": "Nome" }
       ],
       "acoes": [
-        { "tipo": "navegacao", "destino": "/painel/catalogos/tipo-unidade/editar/{id}", "campo_id": "id", "icone": "pencil" },
-        { "tipo": "confirmacao_delete_ajax", "destino": "/api/tiposunidade/{id}", "campo_id": "id", "icone": "trash" }
+        { "tipo": "navegacao", "destino": "/painel/catalogos/tipo-unidade/editar/{id}", "campo_id": "id", "icone": "pencil", "permissao": "catalogos.tipoUnidade.editar" },
+        { "tipo": "confirmacao_delete_ajax", "destino": "/api/tipounidade/{id}", "campo_id": "id", "icone": "trash", "permissao": "catalogos.tipoUnidade.deletar", "exibirQuandoAtivo": true }
       ],
       "pagination": { "pageSize": 10 }
     }

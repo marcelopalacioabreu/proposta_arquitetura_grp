@@ -3,11 +3,14 @@
     "tipo": "TELA_PESQUISA",
     "titulo": "Pesquisa de Logradouros",
     "extremidade": "/api/logradouros",
+    "acoesFormulario": [
+      { "tipo": "navegacao", "destino": "/painel/enderecos/logradouros/editar/new", "campo_id": "id", "icone": "bi-plus", "permissao": "enderecos.logradouros.criar" }
+    ],
     "itens": [
       { "campo": "nome", "label": "Nome", "tipo": "text", "col": 8 },
       { "campo": "bairroNome", "label": "Bairro", "tipo": "text", "col": 4 }
     ],
     "filtro": [ { "campo": "nome", "descricao": "Nome", "tipo": "string" } ],
-    "tabela": { "colunas": [ { "campo": "nome", "titulo": "Nome" }, { "campo": "bairroNome", "titulo": "Bairro" } ], "acoes": [ { "tipo": "navegacao", "destino": "/painel/enderecos/logradouros/editar/{id}", "icone": "pencil" } ], "pagination": { "pageSize": 10 } }
+    "tabela": { "colunas": [ { "campo": "nome", "titulo": "Nome" }, { "campo": "bairroNome", "titulo": "Bairro" } ], "acoes": [ { "tipo": "navegacao", "destino": "/painel/enderecos/logradouros/editar/{id}", "icone": "pencil", "permissao": "enderecos.logradouros.editar" }, { "tipo": "confirmacao_delete_ajax", "destino": "/api/logradouros/{id}", "campo_id": "id", "icone": "trash", "permissao": "enderecos.logradouros.deletar", "exibirQuandoAtivo": true } ], "pagination": { "pageSize": 10 } }
   }
 }

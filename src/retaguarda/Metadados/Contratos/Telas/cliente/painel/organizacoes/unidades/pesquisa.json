@@ -3,6 +3,9 @@
     "tipo": "TELA_PESQUISA",
     "titulo": "Unidades",
     "extremidade": "/api/organizacao_unidades",
+    "acoesFormulario": [
+      { "tipo": "navegacao", "destino": "/painel/organizacoes/unidades/editar/new", "campo_id": "id", "icone": "bi-plus", "permissao": "organizacoes.unidades.criar" }
+    ],
     "camposChaveUrl": ["organizacaoId"] ,
     "urlTela": "organizacoes/{organizacaoId}/unidades",
     "filtro": [
@@ -20,10 +23,10 @@
       ],
       "campos": ["codigo", "nome", "organizacaoId", "created_at"],
       "acoes": [
-        { "tipo": "navegacao", "destino": "/painel/organizacoes/unidades/editar/{id}", "campo_id": "id", "icone": "pencil" },
-        { "tipo": "navegacao", "destino": "/painel/organizacoes/{organizacaoId}/unidades/{id}/setores", "campo_id": "id", "icone": "diagram-3" },
-        { "tipo": "confirmacao_delete_ajax", "destino": "/api/organizacao_unidades/{id}", "campo_id": "id", "icone": "trash" },
-        { "tipo": "confirmacao_post_ajax", "destino": "/api/organizacao_unidades/{id}/restaurar", "campo_id": "id", "icone": "arrow-counterclockwise", "exibirQuandoInativo": true, "mensagem": "Restaurar registro?" }
+        { "tipo": "navegacao", "destino": "/painel/organizacoes/unidades/editar/{id}", "campo_id": "id", "icone": "pencil", "permissao": "organizacoes.unidades.editar" },
+        { "tipo": "navegacao", "destino": "/painel/organizacoes/{organizacaoId}/unidades/{id}/setores", "campo_id": "id", "icone": "diagram-3", "permissao": "organizacoes.unidades.setores.listar" },
+        { "tipo": "confirmacao_delete_ajax", "destino": "/api/organizacao_unidades/{id}", "campo_id": "id", "icone": "trash", "permissao": "organizacoes.unidades.deletar", "exibirQuandoAtivo": true },
+        { "tipo": "confirmacao_post_ajax", "destino": "/api/organizacao_unidades/{id}/restaurar", "campo_id": "id", "icone": "arrow-counterclockwise", "permissao": "organizacoes.unidades.restaurar", "exibirQuandoInativo": true, "mensagem": "Restaurar registro?" }
       ]
     },
     "pagination": { "pageSize": 10 }

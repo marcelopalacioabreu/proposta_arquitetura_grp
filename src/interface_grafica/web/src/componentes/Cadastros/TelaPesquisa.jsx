@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from 'react'
 import api from '../../servicos/api'
+import usePermissoes from '../../servicos/usePermissoes'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import ConfirmModal from '../InterfaceBasica/ModalConfirmacao'
 import modalServico from '../../utils/modalServico'
+import { acaoEstaVisivel, itemEstaAtivo } from '../../utils/validadorAcoes'
 
 /*
   TelaPesquisa - utilitários e responsabilidades isoladas
@@ -115,6 +117,9 @@ export default function TelaPesquisa({ screenKey }){
   const params = useParams()
   const [confirmState, setConfirmState] = useState({ show: false, title: null, message: null, onConfirm: null })
   const [isMobile, setIsMobile] = useState(typeof window !== 'undefined' ? window.innerWidth <= 768 : false)
+  
+  // Carregar permissões do usuário
+  const { temPermissao } = usePermissoes()
 
   useEffect(()=>{
     api.get('/meta/screens', { block: true }).then(r=>{
@@ -190,41 +195,13 @@ export default function TelaPesquisa({ screenKey }){
     return destino.replace(/\{(\w+)\}/g, (m,k) => (pathContext && (k in pathContext) ? pathContext[k] : m))
   }
 
-  // Determine if an action should be visible based on meta flags or query parameters
-  function actionIsVisible(a){
-    try{
-      const qp = new URLSearchParams(location.search)
-      // If explicit flags provided, evaluate them (AND semantics)
-      if (a.exibirQuandoAtivo === true && qp.get('inativo') === '1') return false
-      if (a.exibirQuandoInativo === true && qp.get('inativo') !== '1') return false
-
-      if (a.exibirQuandoQuery){
-        // support simple expressions like 'inativo=1' or multiple joined by '&'
-        const parts = (a.exibirQuandoQuery||'').split('&').map(p=>p.trim()).filter(Boolean)
-        for (const part of parts){
-          const kv = part.split('=')
-          if (kv.length === 2){
-            const key = kv[0]; const val = kv[1]
-            if (qp.get(key) !== val) return false
-          } else {
-            if (!qp.has(part)) return false
-          }
-        }
-      }
-      return true
-    }catch(e){ return true }
+  // Determine if an action should be visible based on permissions and metadata flags
+  function actionIsVisible(a, item = null){
+    return acaoEstaVisivel(a, (perm) => temPermissao(perm), item, query)
   }
 
   function itemIsActive(item){
-    if (!item) return true
-    // consider typical fields that represent active/inactive
-    if (Object.prototype.hasOwnProperty.call(item, 'ativo')){
-      return item.ativo !== false
-    }
-    if (Object.prototype.hasOwnProperty.call(item, 'inativo')){
-      return !(item.inativo === '1' || item.inativo === 1 || item.inativo === true)
-    }
-    return true
+    return itemEstaAtivo(item)
   }
 
   if (!meta) return null
@@ -232,34 +209,89 @@ export default function TelaPesquisa({ screenKey }){
   return (
     <div className="page-wrapper">
       <div className="page-card w-100">
-      <div className="d-flex justify-content-between align-items-center mb-2">
+      <div className="d-flex justify-content-between align-items-center mb-3">
         <h3>{meta.titulo || 'Pesquisa'}</h3>
-        <div>
-          <button
-            className="btn btn-primary btn-icon btn-comando-tela-pesquisa"
-            onClick={()=>{
-              // prefer to build a 'novo' destino using meta.urlTela or camposChaveUrl so parent ids are preserved
-              try{
-                const defaultAction = meta.tabela?.acoes?.find(a=>a.tipo==='navegacao')?.destino || '/painel/organizacoes/editar/{id}'
-                let novoDestino = null
-                if (meta?.urlTela){
-                  // construct route like /painel/{urlTela}/editar/{id}
-                  novoDestino = '/painel/' + meta.urlTela.replace(/^\/+/, '') + '/editar/{id}'
-                }
-                if (!novoDestino) novoDestino = defaultAction
-                // replace placeholders using path/query params
-                const pathParams = construirParametros(query, params, location.pathname, meta)
-                let final = novoDestino.replace(/\{(\w+)\}/g, (m,k) => (pathParams[k] || (k === 'id' ? 'new' : '')))
-                // ensure {id} becomes 'new'
-                final = final.replace('{id}','new')
-                navigate(final)
-              }catch(e){ navigate('/painel/organizacoes/editar/new') }
-            }}
-            title="Novo"
-            aria-label="Novo"
-          >
-            <i className="bi bi-plus" />
-          </button>
+        <div className="d-flex gap-2">
+          {/* Renderizar acoesFormulario com validação de permissões */}
+          {Array.isArray(meta.acoesFormulario) && meta.acoesFormulario.map((acao, idx) => {
+            if (!actionIsVisible(acao)) return null
+            
+            if (acao.tipo === 'navegacao'){
+              return (
+                <button
+                  key={idx}
+                  className="btn btn-primary btn-icon btn-comando-tela-pesquisa"
+                  onClick={() => {
+                    const pathParams = construirParametros(query, params, location.pathname, meta)
+                    const destino = acao.destino.replace(/\{(\w+)\}/g, (m, k) => (pathParams[k] || (k === 'id' ? 'new' : '')))
+                    const final = destino.replace('{id}', 'new')
+                    navigate(final)
+                  }}
+                  title={acao.rótulo || 'Novo'}
+                  aria-label={acao.rótulo || 'Novo'}
+                >
+                  <i className={`bi ${acao.icone || 'bi-plus'}`} />
+                </button>
+              )
+            }
+            
+            if (acao.tipo === 'confirmacao_post_ajax'){
+              return (
+                <button
+                  key={idx}
+                  className="btn btn-secondary btn-icon btn-comando-tela-pesquisa"
+                  onClick={() => setConfirmState({
+                    show: true,
+                    title: acao.rótulo || acao.mensagem || 'Confirmar',
+                    message: acao.mensagem || 'Confirma ação?',
+                    onConfirm: async () => {
+                      try {
+                        const pathParams = construirParametros(query, params, location.pathname, meta)
+                        const destino = acao.destino.replace(/\{(\w+)\}/g, (m, k) => pathParams[k] || '')
+                        await api.post(aplicarContextoNoDestino(destino), null, { block: true })
+                        // Recarregar dados ou executar callback
+                        window.location.reload()
+                      } catch(e) {
+                        console.error('Erro ao executar ação:', e)
+                      }
+                      setConfirmState(s => ({ ...s, show: false }))
+                    }
+                  })}
+                  title={acao.rótulo || 'Ação'}
+                  aria-label={acao.rótulo || 'Ação'}
+                >
+                  <i className={`bi ${acao.icone || 'bi-gear'}`} />
+                </button>
+              )
+            }
+            
+            return null
+          })}
+          
+          {/* Botão "Novo" padrão (fallback) se não houver acoesFormulario */}
+          {(!Array.isArray(meta.acoesFormulario) || meta.acoesFormulario.length === 0) && (
+            <button
+              className="btn btn-primary btn-icon btn-comando-tela-pesquisa"
+              onClick={()=>{
+                try{
+                  const defaultAction = meta.tabela?.acoes?.find(a=>a.tipo==='navegacao')?.destino || '/painel/organizacoes/editar/{id}'
+                  let novoDestino = null
+                  if (meta?.urlTela){
+                    novoDestino = '/painel/' + meta.urlTela.replace(/^\/+/, '') + '/editar/{id}'
+                  }
+                  if (!novoDestino) novoDestino = defaultAction
+                  const pathParams = construirParametros(query, params, location.pathname, meta)
+                  let final = novoDestino.replace(/\{(\w+)\}/g, (m,k) => (pathParams[k] || (k === 'id' ? 'new' : '')))
+                  final = final.replace('{id}','new')
+                  navigate(final)
+                }catch(e){ navigate('/painel/organizacoes/editar/new') }
+              }}
+              title="Novo"
+              aria-label="Novo"
+            >
+              <i className="bi bi-plus" />
+            </button>
+          )}
         </div>
       </div>
 
@@ -378,9 +410,9 @@ export default function TelaPesquisa({ screenKey }){
                 <td>
                       {meta.tabela.acoes.map((a, ai) => (
                         <React.Fragment key={ai}>
-                          {actionIsVisible(a) && a.tipo === 'navegacao' && <button className="btn btn-sm btn-link btn-icon" onClick={()=> navigate(aplicarDestino(aplicarContextoNoDestino(a.destino), it, a.campo_id))}><i className={`bi bi-${a.icone}`}></i></button>}
-                          {actionIsVisible(a) && a.tipo === 'confirmacao_delete_ajax' && itemIsActive(it) && <button className="btn btn-sm btn-link text-danger btn-icon" onClick={()=> setConfirmState({ show: true, title: 'Excluir', message: a.mensagem || 'Confirma exclusão?', onConfirm: async ()=>{ await api.delete(aplicarDestino(aplicarContextoNoDestino(a.destino), it, a.campo_id), { block: true }); setItems(items.filter(x=> x.id !== it.id)); setConfirmState(s=> ({...s, show: false})) } }) }><i className={`bi bi-${a.icone}`}></i></button>}
-                          {actionIsVisible(a) && a.tipo === 'confirmacao_post_ajax' && <button className="btn btn-sm btn-link btn-icon" onClick={()=> setConfirmState({ show: true, title: a.mensagem || 'Confirmar', message: a.mensagem || 'Confirma ação?', onConfirm: async ()=>{ await api.post(aplicarDestino(aplicarContextoNoDestino(a.destino), it, a.campo_id), null, { block: true }); setItems(items.filter(x=> x.id !== it.id)); setConfirmState(s=> ({...s, show: false})) } }) }><i className={`bi bi-${a.icone}`}></i></button>}
+                          {actionIsVisible(a, it) && a.tipo === 'navegacao' && <button className="btn btn-sm btn-link btn-icon" onClick={()=> navigate(aplicarDestino(aplicarContextoNoDestino(a.destino), it, a.campo_id))}><i className={`bi bi-${a.icone}`}></i></button>}
+                          {actionIsVisible(a, it) && a.tipo === 'confirmacao_delete_ajax' && itemIsActive(it) && <button className="btn btn-sm btn-link text-danger btn-icon" onClick={()=> setConfirmState({ show: true, title: 'Excluir', message: a.mensagem || 'Confirma exclusão?', onConfirm: async ()=>{ await api.delete(aplicarDestino(aplicarContextoNoDestino(a.destino), it, a.campo_id), { block: true }); setItems(items.filter(x=> x.id !== it.id)); setConfirmState(s=> ({...s, show: false})) } }) }><i className={`bi bi-${a.icone}`}></i></button>}
+                          {actionIsVisible(a, it) && a.tipo === 'confirmacao_post_ajax' && <button className="btn btn-sm btn-link btn-icon" onClick={()=> setConfirmState({ show: true, title: a.mensagem || 'Confirmar', message: a.mensagem || 'Confirma ação?', onConfirm: async ()=>{ await api.post(aplicarDestino(aplicarContextoNoDestino(a.destino), it, a.campo_id), null, { block: true }); setItems(items.filter(x=> x.id !== it.id)); setConfirmState(s=> ({...s, show: false})) } }) }><i className={`bi bi-${a.icone}`}></i></button>}
                         </React.Fragment>
                       ))}
                 </td>

@@ -3,6 +3,9 @@
     "tipo": "TELA_PESQUISA",
     "titulo": "Pesquisa de Usuários",
     "extremidade": "/api/usuarios",
+    "acoesFormulario": [
+      { "tipo": "navegacao", "destino": "/painel/usuarios/editar/new", "campo_id": "id", "icone": "bi-plus", "permissao": "usuarios.criar" }
+    ],
     "itens": [
       { "campo": "nome", "label": "Nome", "tipo": "text", "col": 6 },
       { "campo": "username", "label": "Usuário", "tipo": "text", "col": 6 }
@@ -18,7 +21,9 @@
         { "campo": "email", "titulo": "E-mail" }
       ],
       "acoes": [
-        { "tipo": "navegacao", "destino": "/painel/usuarios/editar/{id}", "icone": "pencil" }
+        { "tipo": "navegacao", "destino": "/painel/usuarios/editar/{id}", "icone": "pencil", "permissao": "usuarios.editar" },
+        { "tipo": "confirmacao_delete_ajax", "destino": "/api/usuarios/{id}", "campo_id": "id", "icone": "trash", "permissao": "usuarios.deletar", "exibirQuandoAtivo": true },
+        { "tipo": "confirmacao_post_ajax", "destino": "/api/usuarios/{id}/restaurar", "campo_id": "id", "icone": "arrow-counterclockwise", "permissao": "usuarios.restaurar", "exibirQuandoInativo": true, "mensagem": "Restaurar este usuário?" }
       ],
       "pagination": { "pageSize": 10 }
     }

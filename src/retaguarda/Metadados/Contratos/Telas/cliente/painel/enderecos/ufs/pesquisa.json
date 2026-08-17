@@ -3,6 +3,9 @@
     "tipo": "TELA_PESQUISA",
     "titulo": "Pesquisa de UFs",
     "extremidade": "/api/ufs",
+    "acoesFormulario": [
+      { "tipo": "navegacao", "destino": "/painel/enderecos/ufs/editar/new", "campo_id": "id", "icone": "bi-plus", "permissao": "enderecos.ufs.criar" }
+    ],
     "itens": [
       { "campo": "nome", "label": "Nome", "tipo": "text", "col": 6 },
       { "campo": "sigla", "label": "Sigla", "tipo": "text", "col": 6 }
@@ -15,7 +18,7 @@
         { "campo": "nome", "titulo": "Nome" },
         { "campo": "sigla", "titulo": "Sigla" }
       ],
-      "acoes": [ { "tipo": "navegacao", "destino": "/painel/enderecos/ufs/editar/{id}", "icone": "pencil" } ],
+      "acoes": [ { "tipo": "navegacao", "destino": "/painel/enderecos/ufs/editar/{id}", "icone": "pencil", "permissao": "enderecos.ufs.editar" }, { "tipo": "confirmacao_delete_ajax", "destino": "/api/ufs/{id}", "campo_id": "id", "icone": "trash", "permissao": "enderecos.ufs.deletar", "exibirQuandoAtivo": true } ],
       "pagination": { "pageSize": 10 }
     }
   }
