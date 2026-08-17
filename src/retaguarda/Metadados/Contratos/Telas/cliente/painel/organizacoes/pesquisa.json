@@ -3,6 +3,9 @@
     "tipo": "TELA_PESQUISA",
     "titulo": "Organizações",
     "extremidade": "/api/organizacoes",
+    "acoesFormulario": [
+      { "tipo": "navegacao", "destino": "/painel/organizacoes/editar/new", "campo_id": "id", "icone": "bi-plus", "permissao": "organizacoes.editar" }
+    ],
     "filtro": [
       { "campo": "codigo", "descricao": "Código", "tipo": "string", "col": 3 },
       { "campo": "nome", "descricao": "Nome", "tipo": "string", "col": 3 },
