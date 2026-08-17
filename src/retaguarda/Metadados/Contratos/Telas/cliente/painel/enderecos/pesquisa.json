@@ -4,7 +4,7 @@
     "titulo": "Pesquisa de Endereços",
     "extremidade": "/api/enderecos",
     "acoesFormulario": [
-      { "tipo": "navegacao", "destino": "/painel/enderecos/editar/new", "campo_id": "id", "icone": "bi-plus", "permissao": "enderecos.criar" }
+      { "tipo": "navegacao", "destino": "/painel/enderecos/editar/new", "campo_id": "id", "icone": "bi-plus", "permissao": "enderecos.editar" }
     ],
     "itens": [
       { "campo": "logradouro", "label": "Logradouro", "tipo": "text", "col": 6 },
@@ -23,9 +23,11 @@
       ],
       "acoes": [
         { "tipo": "navegacao", "destino": "/painel/enderecos/editar/{id}", "icone": "pencil", "permissao": "enderecos.editar" },
-        { "tipo": "confirmacao_delete_ajax", "destino": "/api/enderecos/{id}", "campo_id": "id", "icone": "trash", "permissao": "enderecos.deletar", "exibirQuandoAtivo": true }
+        { "tipo": "confirmacao_delete_ajax", "destino": "/api/enderecos/{id}", "campo_id": "id", "icone": "trash", "permissao": "enderecos.excluir", "exibirQuandoAtivo": true }
       ],
       "pagination": { "pageSize": 10 }
     }
   }
 }
+
+

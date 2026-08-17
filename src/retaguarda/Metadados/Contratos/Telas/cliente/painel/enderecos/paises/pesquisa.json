@@ -4,12 +4,14 @@
     "titulo": "Pesquisa de Países",
     "extremidade": "/api/paises",
     "acoesFormulario": [
-      { "tipo": "navegacao", "destino": "/painel/enderecos/paises/editar/new", "campo_id": "id", "icone": "bi-plus", "permissao": "enderecos.paises.criar" }
+      { "tipo": "navegacao", "destino": "/painel/enderecos/paises/editar/new", "campo_id": "id", "icone": "bi-plus", "permissao": "enderecos.paises.editar" }
     ],
     "itens": [
       { "campo": "nome", "label": "Nome", "tipo": "text", "col": 12 }
     ],
     "filtro": [ { "campo": "nome", "descricao": "Nome", "tipo": "string" } ],
-    "tabela": { "colunas": [ { "campo": "nome", "titulo": "Nome" } ], "acoes": [ { "tipo": "navegacao", "destino": "/painel/enderecos/paises/editar/{id}", "icone": "pencil", "permissao": "enderecos.paises.editar" }, { "tipo": "confirmacao_delete_ajax", "destino": "/api/paises/{id}", "campo_id": "id", "icone": "trash", "permissao": "enderecos.paises.deletar", "exibirQuandoAtivo": true } ], "pagination": { "pageSize": 10 } }
+    "tabela": { "colunas": [ { "campo": "nome", "titulo": "Nome" } ], "acoes": [ { "tipo": "navegacao", "destino": "/painel/enderecos/paises/editar/{id}", "icone": "pencil", "permissao": "enderecos.paises.editar" }, { "tipo": "confirmacao_delete_ajax", "destino": "/api/paises/{id}", "campo_id": "id", "icone": "trash", "permissao": "enderecos.paises.excluir", "exibirQuandoAtivo": true } ], "pagination": { "pageSize": 10 } }
   }
 }
+
+

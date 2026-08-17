@@ -4,13 +4,15 @@
     "titulo": "Pesquisa de Municípios",
     "extremidade": "/api/municipios",
     "acoesFormulario": [
-      { "tipo": "navegacao", "destino": "/painel/enderecos/municipios/editar/new", "campo_id": "id", "icone": "bi-plus", "permissao": "enderecos.municipios.criar" }
+      { "tipo": "navegacao", "destino": "/painel/enderecos/municipios/editar/new", "campo_id": "id", "icone": "bi-plus", "permissao": "enderecos.municipios.editar" }
     ],
     "itens": [
       { "campo": "nome", "label": "Nome", "tipo": "text", "col": 8 },
       { "campo": "codigoIbge", "label": "Código IBGE", "tipo": "text", "col": 4 }
     ],
     "filtro": [ { "campo": "nome", "descricao": "Nome", "tipo": "string" } ],
-    "tabela": { "colunas": [ { "campo": "nome", "titulo": "Nome" }, { "campo": "codigoIbge", "titulo": "Código IBGE" } ], "acoes": [ { "tipo": "navegacao", "destino": "/painel/enderecos/municipios/editar/{id}", "icone": "pencil", "permissao": "enderecos.municipios.editar" }, { "tipo": "confirmacao_delete_ajax", "destino": "/api/municipios/{id}", "campo_id": "id", "icone": "trash", "permissao": "enderecos.municipios.deletar", "exibirQuandoAtivo": true } ], "pagination": { "pageSize": 10 } }
+    "tabela": { "colunas": [ { "campo": "nome", "titulo": "Nome" }, { "campo": "codigoIbge", "titulo": "Código IBGE" } ], "acoes": [ { "tipo": "navegacao", "destino": "/painel/enderecos/municipios/editar/{id}", "icone": "pencil", "permissao": "enderecos.municipios.editar" }, { "tipo": "confirmacao_delete_ajax", "destino": "/api/municipios/{id}", "campo_id": "id", "icone": "trash", "permissao": "enderecos.municipios.excluir", "exibirQuandoAtivo": true } ], "pagination": { "pageSize": 10 } }
   }
 }
+
+

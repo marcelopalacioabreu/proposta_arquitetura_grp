@@ -4,7 +4,7 @@
     "titulo": "Pesquisa de Bairros",
     "extremidade": "/api/bairros",
     "acoesFormulario": [
-      { "tipo": "navegacao", "destino": "/painel/enderecos/bairros/editar/new", "campo_id": "id", "icone": "bi-plus", "permissao": "enderecos.bairros.criar" }
+      { "tipo": "navegacao", "destino": "/painel/enderecos/bairros/editar/new", "campo_id": "id", "icone": "bi-plus", "permissao": "enderecos.bairros.editar" }
     ],
     "itens": [
       { "campo": "nome", "label": "Nome", "tipo": "text", "col": 6 },
@@ -21,9 +21,11 @@
       ],
       "acoes": [
         { "tipo": "navegacao", "destino": "/painel/enderecos/bairros/editar/{id}", "icone": "pencil", "permissao": "enderecos.bairros.editar" },
-        { "tipo": "confirmacao_delete_ajax", "destino": "/api/bairros/{id}", "campo_id": "id", "icone": "trash", "permissao": "enderecos.bairros.deletar", "exibirQuandoAtivo": true }
+        { "tipo": "confirmacao_delete_ajax", "destino": "/api/bairros/{id}", "campo_id": "id", "icone": "trash", "permissao": "enderecos.bairros.excluir", "exibirQuandoAtivo": true }
       ],
       "pagination": { "pageSize": 10 }
     }
   }
 }
+
+

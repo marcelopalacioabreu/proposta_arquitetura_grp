@@ -4,7 +4,7 @@
     "titulo": "Organizações",
     "extremidade": "/api/organizacoes",
     "acoesFormulario": [
-      { "tipo": "navegacao", "destino": "/painel/organizacoes/editar/new", "campo_id": "id", "icone": "bi-plus", "permissao": "organizacoes.criar" }
+      { "tipo": "navegacao", "destino": "/painel/organizacoes/editar/new", "campo_id": "id", "icone": "bi-plus", "permissao": "organizacoes.editar" }
     ],
     "filtro": [
       { "campo": "codigo", "descricao": "Código", "tipo": "string", "col": 3 },
@@ -23,11 +23,13 @@
       "campos": ["codigo", "nome", "descricao", "created_at"],
       "acoes": [
         { "tipo": "navegacao", "destino": "/painel/organizacoes/editar/{id}", "campo_id": "id", "icone": "pencil", "permissao": "organizacoes.editar" },
-        { "tipo": "navegacao", "destino": "/painel/organizacoes/{id}/unidades", "campo_id": "id", "icone": "grid-3x3-gap", "permissao": "organizacoes.unidades.listar" },
-        { "tipo": "confirmacao_delete_ajax", "destino": "/api/organizacoes/{id}", "campo_id": "id", "icone": "trash", "permissao": "organizacoes.deletar", "exibirQuandoAtivo": true },
-        { "tipo": "confirmacao_post_ajax", "destino": "/api/organizacoes/{id}/restaurar", "campo_id": "id", "icone": "arrow-counterclockwise", "permissao": "organizacoes.restaurar", "exibirQuandoInativo": true, "mensagem": "Restaurar registro?" }
+        { "tipo": "navegacao", "destino": "/painel/organizacoes/{id}/unidades", "campo_id": "id", "icone": "grid-3x3-gap", "permissao": "organizacoes.unidades.visualizar" },
+        { "tipo": "confirmacao_delete_ajax", "destino": "/api/organizacoes/{id}", "campo_id": "id", "icone": "trash", "permissao": "organizacoes.excluir", "exibirQuandoAtivo": true },
+        { "tipo": "confirmacao_post_ajax", "destino": "/api/organizacoes/{id}/restaurar", "campo_id": "id", "icone": "arrow-counterclockwise", "permissao": "organizacoes.editar", "exibirQuandoInativo": true, "mensagem": "Restaurar registro?" }
       ]
     },
     "pagination": { "pageSize": 10 }
   }
 }
+
+

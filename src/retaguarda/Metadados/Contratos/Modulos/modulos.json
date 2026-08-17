@@ -4,14 +4,15 @@
       "grupo": "Automação",
       "itens": [        
         {
-          "chave": "orquestracaoFluxo.processos",
+          "chave": "orquestracao.processos",
           "texto": "Processos de Orquestração",
           "icone": "collection-play",
           "url": "/painel/orquestracao-fluxo/processos",
           "permissoes": [
-            { "id": "orquestracaoFluxo.visualizar", "texto": "Visualizar" },
-            { "id": "orquestracaoFluxo.editar", "texto": "Criar/Editar" },
-            { "id": "orquestracaoFluxo.excluir", "texto": "Excluir" }
+            { "id": "orquestracao.processos.visualizar", "texto": "Visualizar" },
+            { "id": "orquestracao.processos.editar", "texto": "Criar/Editar" },
+            { "id": "orquestracao.processos.editar_fluxo", "texto": "Editar Fluxo" },
+            { "id": "orquestracao.processos.excluir", "texto": "Excluir" }
           ],
           "conflitosCom": [""],
           "mostrarNoMenu": true
@@ -35,9 +36,9 @@
         { 
           "chave": "catalogos.nivelgov", "texto": "Nível de Governo", "icone": "diagram-3", "url": "/painel/catalogos/nivel-governo", 
           "permissoes": [ 
-          { "id": "nivelgov.visualizar", "texto": "Visualizar" },
-          { "id": "nivelgov.editar", "texto": "Criar/Editar" },
-          { "id": "nivelgov.excluir", "texto": "Excluir" } 
+          { "id": "catalogos.nivelGoverno.visualizar", "texto": "Visualizar" },
+          { "id": "catalogos.nivelGoverno.editar", "texto": "Criar/Editar" },
+          { "id": "catalogos.nivelGoverno.excluir", "texto": "Excluir" } 
           ], 
           "conflitosCom": [""], 
           "mostrarNoMenu": true 
@@ -45,9 +46,9 @@
         { 
           "chave": "catalogos.natureza_juridica", "texto": "Natureza Jurídica", "icone": "briefcase", "url": "/painel/catalogos/natureza-juridica", 
           "permissoes": [ 
-          { "id": "natureza.visualizar", "texto": "Visualizar" },
-          { "id": "natureza.editar", "texto": "Criar/Editar" },
-          { "id": "natureza.excluir", "texto": "Excluir" } 
+          { "id": "catalogos.naturezaJuridica.visualizar", "texto": "Visualizar" },
+          { "id": "catalogos.naturezaJuridica.editar", "texto": "Criar/Editar" },
+          { "id": "catalogos.naturezaJuridica.excluir", "texto": "Excluir" } 
           ], 
           "conflitosCom": [""], 
           "mostrarNoMenu": true 
@@ -55,9 +56,9 @@
         { 
           "chave": "catalogos.tipo_unidade", "texto": "Tipo de Unidade", "icone": "grid", "url": "/painel/catalogos/tipo-unidade", 
           "permissoes": [ 
-          { "id": "tipoUnidade.visualizar", "texto": "Visualizar" },
-          { "id": "tipoUnidade.editar", "texto": "Criar/Editar" },
-          { "id": "tipoUnidade.excluir", "texto": "Excluir" } 
+          { "id": "catalogos.tipoUnidade.visualizar", "texto": "Visualizar" },
+          { "id": "catalogos.tipoUnidade.editar", "texto": "Criar/Editar" },
+          { "id": "catalogos.tipoUnidade.excluir", "texto": "Excluir" } 
           ], 
           "conflitosCom": [""], 
           "mostrarNoMenu": true 
@@ -65,9 +66,9 @@
         { 
           "chave": "catalogos.tipo_endereco", "texto": "Tipo de Endereço", "icone": "geo", "url": "/painel/catalogos/tipo-endereco", 
           "permissoes": [ 
-          { "id": "tipoEndereco.visualizar", "texto": "Visualizar" },
-          { "id": "tipoEndereco.editar", "texto": "Criar/Editar" },
-          { "id": "tipoEndereco.excluir", "texto": "Excluir" } 
+          { "id": "catalogos.tipoEndereco.visualizar", "texto": "Visualizar" },
+          { "id": "catalogos.tipoEndereco.editar", "texto": "Criar/Editar" },
+          { "id": "catalogos.tipoEndereco.excluir", "texto": "Excluir" } 
           ], 
           "conflitosCom": [""], 
           "mostrarNoMenu": true 
@@ -75,9 +76,9 @@
         { 
           "chave": "catalogos.tipo_contato", "texto": "Tipo de Contato", "icone": "telephone", "url": "/painel/catalogos/tipo-contato", 
           "permissoes": [ 
-          { "id": "tipoContato.visualizar", "texto": "Visualizar" },
-          { "id": "tipoContato.editar", "texto": "Criar/Editar" },
-          { "id": "tipoContato.excluir", "texto": "Excluir" } 
+          { "id": "catalogos.tipoContato.visualizar", "texto": "Visualizar" },
+          { "id": "catalogos.tipoContato.editar", "texto": "Criar/Editar" },
+          { "id": "catalogos.tipoContato.excluir", "texto": "Excluir" } 
           ], 
           "conflitosCom": [""], 
           "mostrarNoMenu": true 
@@ -85,9 +86,9 @@
         { 
           "chave": "catalogos.documento_tipo", "texto": "Tipo de Documento", "icone": "file-earmark-text", "url": "/painel/catalogos/documento-tipo", 
           "permissoes": [ 
-          { "id": "documentoTipo.visualizar", "texto": "Visualizar" },
-          { "id": "documentoTipo.editar", "texto": "Criar/Editar" },
-          { "id": "documentoTipo.excluir", "texto": "Excluir" } 
+          { "id": "catalogos.documentoTipo.visualizar", "texto": "Visualizar" },
+          { "id": "catalogos.documentoTipo.editar", "texto": "Criar/Editar" },
+          { "id": "catalogos.documentoTipo.excluir", "texto": "Excluir" } 
           ], 
           "conflitosCom": [""], 
           "mostrarNoMenu": true 
@@ -95,9 +96,9 @@
         { 
           "chave": "catalogos.tipo_imovel", "texto": "Tipo de Imóvel", "icone": "house", "url": "/painel/catalogos/tipo-imovel", 
           "permissoes": [ 
-          { "id": "tipoImovel.visualizar", "texto": "Visualizar" },
-          { "id": "tipoImovel.editar", "texto": "Criar/Editar" },
-          { "id": "tipoImovel.excluir", "texto": "Excluir" } 
+          { "id": "catalogos.tipoImovel.visualizar", "texto": "Visualizar" },
+          { "id": "catalogos.tipoImovel.editar", "texto": "Criar/Editar" },
+          { "id": "catalogos.tipoImovel.excluir", "texto": "Excluir" } 
           ], 
           "conflitosCom": [""], 
           "mostrarNoMenu": true 
@@ -105,9 +106,9 @@
         { 
           "chave": "catalogos.situacao", "texto": "Situações", "icone": "exclamation-triangle", "url": "/painel/catalogos/situacoes", 
           "permissoes": [ 
-          { "id": "situacao.visualizar", "texto": "Visualizar" },
-          { "id": "situacao.editar", "texto": "Criar/Editar" },
-          { "id": "situacao.excluir", "texto": "Excluir" } 
+          { "id": "catalogos.situacao.visualizar", "texto": "Visualizar" },
+          { "id": "catalogos.situacao.editar", "texto": "Criar/Editar" },
+          { "id": "catalogos.situacao.excluir", "texto": "Excluir" } 
           ], 
           "conflitosCom": [""], 
           "mostrarNoMenu": true 
@@ -131,19 +132,19 @@
         {
           "chave": "organizacoes.unidades", "texto": "Unidades", "icone": "grid-3x3-gap", "url": "/painel/organizacoes/unidades",
           "permissoes": [
-            { "id": "organizacoes.visualizar", "texto": "Visualizar" },
-            { "id": "organizacoes.editar", "texto": "Criar/Editar" },
-            { "id": "organizacoes.excluir", "texto": "Excluir" }
+            { "id": "organizacoes.unidades.visualizar", "texto": "Visualizar" },
+            { "id": "organizacoes.unidades.editar", "texto": "Criar/Editar" },
+            { "id": "organizacoes.unidades.excluir", "texto": "Excluir" }
           ],
           "conflitosCom": [""],
           "mostrarNoMenu": false
         },
         {
-          "chave": "organizacoes.setores", "texto": "Setores", "icone": "diagram-3-fill", "url": "/painel/organizacoes/setores",
+          "chave": "organizacoes.unidades.setores", "texto": "Setores", "icone": "diagram-3-fill", "url": "/painel/organizacoes/unidades/setores",
           "permissoes": [
-            { "id": "organizacoes.visualizar", "texto": "Visualizar" },
-            { "id": "organizacoes.editar", "texto": "Criar/Editar" },
-            { "id": "organizacoes.excluir", "texto": "Excluir" }
+            { "id": "organizacoes.unidades.setores.visualizar", "texto": "Visualizar" },
+            { "id": "organizacoes.unidades.setores.editar", "texto": "Criar/Editar" },
+            { "id": "organizacoes.unidades.setores.excluir", "texto": "Excluir" }
           ],
           "conflitosCom": [""],
           "mostrarNoMenu": false
@@ -200,9 +201,9 @@
         {
           "chave": "enderecos.ceps", "texto": "CEPs", "icone": "envelope", "url": "/painel/enderecos/ceps",
           "permissoes": [
-            { "id": "ceps.visualizar", "texto": "Visualizar" },
-            { "id": "ceps.editar", "texto": "Criar/Editar" },
-            { "id": "ceps.excluir", "texto": "Excluir" }
+            { "id": "enderecos.ceps.visualizar", "texto": "Visualizar" },
+            { "id": "enderecos.ceps.editar", "texto": "Criar/Editar" },
+            { "id": "enderecos.ceps.excluir", "texto": "Excluir" }
           ],
           "conflitosCom": [""],
           "mostrarNoMenu": true
@@ -210,9 +211,9 @@
         {
           "chave": "enderecos.bairros", "texto": "Bairros", "icone": "geo-alt", "url": "/painel/enderecos/bairros",
           "permissoes": [
-            { "id": "bairros.visualizar", "texto": "Visualizar" },
-            { "id": "bairros.editar", "texto": "Criar/Editar" },
-            { "id": "bairros.excluir", "texto": "Excluir" }
+            { "id": "enderecos.bairros.visualizar", "texto": "Visualizar" },
+            { "id": "enderecos.bairros.editar", "texto": "Criar/Editar" },
+            { "id": "enderecos.bairros.excluir", "texto": "Excluir" }
           ],
           "conflitosCom": [""],
           "mostrarNoMenu": true
@@ -220,9 +221,9 @@
         {
           "chave": "enderecos.logradouros", "texto": "Logradouros", "icone": "map", "url": "/painel/enderecos/logradouros",
           "permissoes": [
-            { "id": "logradouros.visualizar", "texto": "Visualizar" },
-            { "id": "logradouros.editar", "texto": "Criar/Editar" },
-            { "id": "logradouros.excluir", "texto": "Excluir" }
+            { "id": "enderecos.logradouros.visualizar", "texto": "Visualizar" },
+            { "id": "enderecos.logradouros.editar", "texto": "Criar/Editar" },
+            { "id": "enderecos.logradouros.excluir", "texto": "Excluir" }
           ],
           "conflitosCom": [""],
           "mostrarNoMenu": true
@@ -230,9 +231,9 @@
         {
           "chave": "enderecos.municipios", "texto": "Municípios", "icone": "globe2", "url": "/painel/enderecos/municipios",
           "permissoes": [
-            { "id": "municipios.visualizar", "texto": "Visualizar" },
-            { "id": "municipios.editar", "texto": "Criar/Editar" },
-            { "id": "municipios.excluir", "texto": "Excluir" }
+            { "id": "enderecos.municipios.visualizar", "texto": "Visualizar" },
+            { "id": "enderecos.municipios.editar", "texto": "Criar/Editar" },
+            { "id": "enderecos.municipios.excluir", "texto": "Excluir" }
           ],
           "conflitosCom": [""],
           "mostrarNoMenu": true
@@ -240,9 +241,9 @@
         {
           "chave": "enderecos.ufs", "texto": "UFs", "icone": "signpost-split", "url": "/painel/enderecos/ufs",
           "permissoes": [
-            { "id": "ufs.visualizar", "texto": "Visualizar" },
-            { "id": "ufs.editar", "texto": "Criar/Editar" },
-            { "id": "ufs.excluir", "texto": "Excluir" }
+            { "id": "enderecos.ufs.visualizar", "texto": "Visualizar" },
+            { "id": "enderecos.ufs.editar", "texto": "Criar/Editar" },
+            { "id": "enderecos.ufs.excluir", "texto": "Excluir" }
           ],
           "conflitosCom": [""],
           "mostrarNoMenu": true
@@ -250,9 +251,9 @@
         {
           "chave": "enderecos.paises", "texto": "Países", "icone": "globe", "url": "/painel/enderecos/paises",
           "permissoes": [
-            { "id": "paises.visualizar", "texto": "Visualizar" },
-            { "id": "paises.editar", "texto": "Criar/Editar" },
-            { "id": "paises.excluir", "texto": "Excluir" }
+            { "id": "enderecos.paises.visualizar", "texto": "Visualizar" },
+            { "id": "enderecos.paises.editar", "texto": "Criar/Editar" },
+            { "id": "enderecos.paises.excluir", "texto": "Excluir" }
           ],
           "conflitosCom": [""],
           "mostrarNoMenu": true
@@ -260,9 +261,9 @@
         {
           "chave": "enderecos.imoveis", "texto": "Imóveis", "icone": "house-door", "url": "/painel/enderecos/imoveis",
           "permissoes": [
-            { "id": "imoveis.visualizar", "texto": "Visualizar" },
-            { "id": "imoveis.editar", "texto": "Criar/Editar" },
-            { "id": "imoveis.excluir", "texto": "Excluir" }
+            { "id": "enderecos.imoveis.visualizar", "texto": "Visualizar" },
+            { "id": "enderecos.imoveis.editar", "texto": "Criar/Editar" },
+            { "id": "enderecos.imoveis.excluir", "texto": "Excluir" }
           ],
           "conflitosCom": [""],
           "mostrarNoMenu": true

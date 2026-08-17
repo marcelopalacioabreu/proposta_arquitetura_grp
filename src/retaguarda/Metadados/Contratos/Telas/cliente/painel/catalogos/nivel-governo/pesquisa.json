@@ -3,7 +3,7 @@
     "titulo": "Pesquisa de Níveis de Governo",
     "extremidade": "/api/niveisgoverno",
     "acoesFormulario": [
-      { "tipo": "navegacao", "destino": "/painel/catalogos/nivel-governo/editar/new", "campo_id": "id", "icone": "bi-plus", "permissao": "catalogos.nivelGoverno.criar" }
+      { "tipo": "navegacao", "destino": "/painel/catalogos/nivel-governo/editar/new", "campo_id": "id", "icone": "bi-plus", "permissao": "catalogos.nivelGoverno.editar" }
     ],
     "filtro": [
       { "campo": "codigo", "descricao": "Código", "tipo": "string", "col": 3 },
@@ -16,9 +16,11 @@
       ],
       "acoes": [
         { "tipo": "navegacao", "destino": "/painel/catalogos/nivel-governo/editar/{id}", "campo_id": "id", "icone": "pencil", "permissao": "catalogos.nivelGoverno.editar" },
-        { "tipo": "confirmacao_delete_ajax", "destino": "/api/niveisgoverno/{id}", "campo_id": "id", "icone": "trash", "permissao": "catalogos.nivelGoverno.deletar", "exibirQuandoAtivo": true }
+        { "tipo": "confirmacao_delete_ajax", "destino": "/api/niveisgoverno/{id}", "campo_id": "id", "icone": "trash", "permissao": "catalogos.nivelGoverno.excluir", "exibirQuandoAtivo": true }
       ],
       "pagination": { "pageSize": 10 }
     }
   }
 }
+
+

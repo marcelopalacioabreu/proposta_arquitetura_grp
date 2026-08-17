@@ -4,7 +4,7 @@
     "titulo": "Setores da Unidade",
     "extremidade": "/api/organizacao_unidade_setores",
     "acoesFormulario": [
-      { "tipo": "navegacao", "destino": "/painel/organizacoes/unidades/setores/editar/new", "campo_id": "id", "icone": "bi-plus", "permissao": "organizacoes.unidades.setores.criar" }
+      { "tipo": "navegacao", "destino": "/painel/organizacoes/unidades/setores/editar/new", "campo_id": "id", "icone": "bi-plus", "permissao": "organizacoes.unidades.setores.editar" }
     ],
     "camposChaveUrl": ["organizacaoId","organizacaoUnidadeId"] ,
     "urlTela": "organizacoes/{organizacaoId}/unidades/{organizacaoUnidadeId}/setores",
@@ -24,10 +24,12 @@
       "campos": ["codigo", "nome", "organizacaoUnidadeId", "created_at"],
       "acoes": [
         { "tipo": "navegacao", "destino": "/painel/organizacoes/{organizacaoId}/unidades/{organizacaoUnidadeId}/setores/editar/{id}", "campo_id": "id", "icone": "pencil", "permissao": "organizacoes.unidades.setores.editar" },
-        { "tipo": "confirmacao_delete_ajax", "destino": "/api/organizacao_unidade_setores/{id}", "campo_id": "id", "icone": "trash", "permissao": "organizacoes.unidades.setores.deletar", "exibirQuandoAtivo": true },
-        { "tipo": "confirmacao_post_ajax", "destino": "/api/organizacao_unidade_setores/{id}/restaurar", "campo_id": "id", "icone": "arrow-counterclockwise", "permissao": "organizacoes.unidades.setores.restaurar", "exibirQuandoInativo": true, "mensagem": "Restaurar registro?" }
+        { "tipo": "confirmacao_delete_ajax", "destino": "/api/organizacao_unidade_setores/{id}", "campo_id": "id", "icone": "trash", "permissao": "organizacoes.unidades.setores.excluir", "exibirQuandoAtivo": true },
+        { "tipo": "confirmacao_post_ajax", "destino": "/api/organizacao_unidade_setores/{id}/restaurar", "campo_id": "id", "icone": "arrow-counterclockwise", "permissao": "organizacoes.unidades.setores.editar", "exibirQuandoInativo": true, "mensagem": "Restaurar registro?" }
       ]
     },
     "pagination": { "pageSize": 10 }
   }
 }
+
+

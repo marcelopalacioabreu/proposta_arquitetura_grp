@@ -4,7 +4,7 @@
     "titulo": "Pesquisa de Pessoas",
     "extremidade": "/api/pessoas",
     "acoesFormulario": [
-      { "tipo": "navegacao", "destino": "/painel/pessoas/editar/new", "campo_id": "id", "icone": "bi-plus", "permissao": "pessoas.criar" }
+      { "tipo": "navegacao", "destino": "/painel/pessoas/editar/new", "campo_id": "id", "icone": "bi-plus", "permissao": "pessoas.editar" }
     ],
     "itens": [
       { "campo": "nome", "label": "Nome", "tipo": "text", "col": 6 },
@@ -23,10 +23,12 @@
       ],
       "acoes": [
         { "tipo": "navegacao", "destino": "/painel/pessoas/editar/{id}", "icone": "pencil", "permissao": "pessoas.editar" },
-        { "tipo": "confirmacao_delete_ajax", "destino": "/api/pessoas/{id}", "campo_id": "id", "icone": "trash", "permissao": "pessoas.deletar", "exibirQuandoAtivo": true },
-        { "tipo": "confirmacao_post_ajax", "destino": "/api/pessoas/{id}/restaurar", "campo_id": "id", "icone": "arrow-counterclockwise", "permissao": "pessoas.restaurar", "exibirQuandoInativo": true, "mensagem": "Restaurar esta pessoa?" }
+        { "tipo": "confirmacao_delete_ajax", "destino": "/api/pessoas/{id}", "campo_id": "id", "icone": "trash", "permissao": "pessoas.excluir", "exibirQuandoAtivo": true },
+        { "tipo": "confirmacao_post_ajax", "destino": "/api/pessoas/{id}/restaurar", "campo_id": "id", "icone": "arrow-counterclockwise", "permissao": "pessoas.editar", "exibirQuandoInativo": true, "mensagem": "Restaurar esta pessoa?" }
       ],
       "pagination": { "pageSize": 10 }
     }
   }
 }
+
+

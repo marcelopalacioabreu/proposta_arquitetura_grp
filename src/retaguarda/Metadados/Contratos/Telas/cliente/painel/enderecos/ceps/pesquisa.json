@@ -4,13 +4,15 @@
     "titulo": "Pesquisa de CEPs",
     "extremidade": "/api/ceps",
     "acoesFormulario": [
-      { "tipo": "navegacao", "destino": "/painel/enderecos/ceps/editar/new", "campo_id": "id", "icone": "bi-plus", "permissao": "enderecos.ceps.criar" }
+      { "tipo": "navegacao", "destino": "/painel/enderecos/ceps/editar/new", "campo_id": "id", "icone": "bi-plus", "permissao": "enderecos.ceps.editar" }
     ],
     "itens": [
       { "campo": "codigo", "label": "CEP", "tipo": "text", "col": 4 },
       { "campo": "imovelCadastro", "label": "Imóvel", "tipo": "text", "col": 8 }
     ],
     "filtro": [ { "campo": "codigo", "descricao": "CEP", "tipo": "string" } ],
-    "tabela": { "colunas": [ { "campo": "codigo", "titulo": "CEP" }, { "campo": "Imovel", "titulo": "Imóvel" } ], "acoes": [ { "tipo": "navegacao", "destino": "/painel/enderecos/ceps/editar/{id}", "icone": "pencil", "permissao": "enderecos.ceps.editar" }, { "tipo": "confirmacao_delete_ajax", "destino": "/api/ceps/{id}", "campo_id": "id", "icone": "trash", "permissao": "enderecos.ceps.deletar", "exibirQuandoAtivo": true } ], "pagination": { "pageSize": 10 } }
+    "tabela": { "colunas": [ { "campo": "codigo", "titulo": "CEP" }, { "campo": "Imovel", "titulo": "Imóvel" } ], "acoes": [ { "tipo": "navegacao", "destino": "/painel/enderecos/ceps/editar/{id}", "icone": "pencil", "permissao": "enderecos.ceps.editar" }, { "tipo": "confirmacao_delete_ajax", "destino": "/api/ceps/{id}", "campo_id": "id", "icone": "trash", "permissao": "enderecos.ceps.excluir", "exibirQuandoAtivo": true } ], "pagination": { "pageSize": 10 } }
   }
 }
+
+

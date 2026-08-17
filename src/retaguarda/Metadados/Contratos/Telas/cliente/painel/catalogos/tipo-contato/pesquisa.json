@@ -3,7 +3,7 @@
     "titulo": "Pesquisa de Tipos de Contato",
     "extremidade": "/api/tiposcontato",
     "acoesFormulario": [
-      { "tipo": "navegacao", "destino": "/painel/catalogos/tipo-contato/editar/new", "campo_id": "id", "icone": "bi-plus", "permissao": "catalogos.tipoContato.criar" }
+      { "tipo": "navegacao", "destino": "/painel/catalogos/tipo-contato/editar/new", "campo_id": "id", "icone": "bi-plus", "permissao": "catalogos.tipoContato.editar" }
     ],
     "filtro": [
       { "campo": "codigo", "descricao": "Código", "tipo": "string", "col": 3 },
@@ -16,9 +16,11 @@
       ],
       "acoes": [
         { "tipo": "navegacao", "destino": "/painel/catalogos/tipo-contato/editar/{id}", "campo_id": "id", "icone": "pencil", "permissao": "catalogos.tipoContato.editar" },
-        { "tipo": "confirmacao_delete_ajax", "destino": "/api/tiposcontato/{id}", "campo_id": "id", "icone": "trash", "permissao": "catalogos.tipoContato.deletar", "exibirQuandoAtivo": true }
+        { "tipo": "confirmacao_delete_ajax", "destino": "/api/tiposcontato/{id}", "campo_id": "id", "icone": "trash", "permissao": "catalogos.tipoContato.excluir", "exibirQuandoAtivo": true }
       ],
       "pagination": { "pageSize": 10 }
     }
   }
 }
+
+
