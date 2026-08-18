@@ -1,7 +1,8 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useRef } from 'react'
 import api from '../../servicos/api'
 import { useParams, useNavigate, useLocation } from 'react-router-dom'
 import PermissoesModulos from './PermissoesModulos'
+import SubtabelaCadastro from './SubtabelaCadastro'
 
 function SelectField({ name, value, error, fieldConfig, meta }){
   const [options, setOptions] = useState([])
@@ -53,10 +54,12 @@ export default function TelaCadastro({ screenKey, closeModal }){
   const [meta, setMeta] = useState(null)
   const [model, setModel] = useState({})
   const [errors, setErrors] = useState({})
+  const [subcadastrosData, setSubcadastrosData] = useState({})
   const params = useParams()
   const navigate = useNavigate()
   const location = useLocation()
   const [submitting, setSubmitting] = useState(false)
+  const subcadastrosRef = useRef({})
 
   function obterEndpointCadastro(metaObj){
     if (!metaObj) return null
@@ -95,6 +98,16 @@ export default function TelaCadastro({ screenKey, closeModal }){
 
       // also coerce any remaining 'on' strings to true to be safe
       Object.keys(obj).forEach(k => { if (obj[k] === 'on') obj[k] = true })
+
+      // Agregar dados dos subcadastros na submissão
+      if (meta && Array.isArray(meta.subcadastros)){
+        meta.subcadastros.forEach(sub => {
+          if (sub.campoArmazenamento && subcadastrosRef.current[sub.nome]){
+            const dados = subcadastrosRef.current[sub.nome]
+            obj[sub.campoArmazenamento] = dados
+          }
+        })
+      }
 
       return obj
   }
@@ -214,6 +227,28 @@ export default function TelaCadastro({ screenKey, closeModal }){
     )
   }
 
+  function renderSubcadastro(sub, key){
+    if (!sub.nome) return null
+    
+    const valorCarregado = getFieldValue(model, sub.campoArmazenamento) || []
+    
+    return (
+      <div key={key} className="col-12">
+        <SubtabelaCadastro
+          nome={sub.nome}
+          titulo={sub.titulo}
+          definicao={sub}
+          valor={valorCarregado}
+          meta={meta}
+          onDadosAlterados={(dados) => {
+            subcadastrosRef.current[sub.nome] = dados
+            setSubcadastrosData({...subcadastrosData, [sub.nome]: dados})
+          }}
+        />
+      </div>
+    )
+  }
+
   if (!meta || !Array.isArray(meta.itens)) return null
 
   // Collect hidden fields to render as bare inputs at the top of the form
@@ -292,6 +327,9 @@ export default function TelaCadastro({ screenKey, closeModal }){
           const c = it
           return renderCampo(c, `single-${idx}`)
         })}
+
+        {/* Renderizar subcadastros */}
+        {meta.subcadastros && meta.subcadastros.map((sub, idx) => renderSubcadastro(sub, `subcadastro-${idx}`))}
 
         {/* Debug panel - temporary: show model and resolved admin flag */}
         {/*

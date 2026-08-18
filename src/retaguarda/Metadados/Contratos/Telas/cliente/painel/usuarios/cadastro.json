@@ -23,9 +23,46 @@
         "campos": [
           { "campo": "organizacaoId", "label": "Organização", "tipo": "select", "url": "/api/organizacoes", "col": 4 },
           { "campo": "organizacaoUnidadeId", "label": "Unidade", "tipo": "select", "url": "/api/organizacao_unidades", "col": 4 },
-          { "campo": "setorIds", "label": "Setores (múltiplo)", "tipo": "multiselect", "url": "/api/setores", "col": 4 },
           { "campo": "perfilIds", "label": "Perfis (múltiplo)", "tipo": "multiselect", "url": "/api/perfis", "col": 4 }
         ]
+      }
+    ],
+    "subcadastros": [
+      {
+        "nome": "atuacao",
+        "titulo": "Atuação em Setores e Unidades",
+        "endpoint": "/api/organizacao_unidade_setores",
+        "chaveLocal": "id",
+        "campoArmazenamento": "atuacoes",
+        "colunas": [
+          {
+            "campo": "organizacaoUnidadeId",
+            "label": "Unidade",
+            "tipo": "select",
+            "endpoint": "/api/organizacao_unidades",
+            "col": 5
+          },
+          {
+            "campo": "setorId",
+            "label": "Setor",
+            "tipo": "select",
+            "endpoint": "/api/setores",
+            "col": 5
+          },
+          {
+            "campo": "ehPadrao",
+            "label": "Padrão",
+            "tipo": "checkbox",
+            "col": 2
+          }
+        ],
+        "selecao": {
+          "campo": "ehPadrao",
+          "label": "Definir como padrão",
+          "singleSelecao": true,
+          "mergeNoPrincipal": false
+        },
+        "maxLinhas": null
       }
     ]
   }
