@@ -2,53 +2,8 @@ import React, { useEffect, useState, useRef } from 'react'
 import api from '../../servicos/api'
 import { useParams, useNavigate, useLocation } from 'react-router-dom'
 import PermissoesModulos from './PermissoesModulos'
+import SelectPesquisavel from './SelectPesquisavel'
 import SubtabelaCadastro from './SubtabelaCadastro'
-
-function SelectField({ name, value, error, fieldConfig, meta }){
-  const [options, setOptions] = useState([])
-  const location = useLocation()
-  const params = useParams()
-
-  useEffect(()=>{
-    let rawEndpoint = fieldConfig?.extremidadeOpcoes || fieldConfig?.optionsEndpoint || fieldConfig?.endpoint || null
-    if (!rawEndpoint && meta && (meta.extremidadeOpcoes || meta.options)) rawEndpoint = (meta.extremidadeOpcoes && meta.extremidadeOpcoes[name]) || (meta.options && meta.options[name])
-    if (!rawEndpoint){ setOptions([]); return }
-
-    const ctx = { ...(params || {}) }
-    const sp = new URLSearchParams(location.search)
-    for (const [k,v] of sp.entries()) if (!(k in ctx)) ctx[k] = v
-
-    const [pathPart, qsPart] = rawEndpoint.split('?')
-    const finalPath = pathPart.replace(/\{(\w+)\}/g, (_, key) => ctx[key] ?? '')
-
-    const reqParams = {}
-    if (qsPart){
-      qsPart.split('&').forEach(pair => {
-        const [k,v] = pair.split('=')
-        if (!k) return
-        const replaced = (v || '').replace(/\{(\w+)\}/g, (_, key) => ctx[key] ?? '')
-        if (replaced !== '') reqParams[k] = replaced
-      })
-    }
-    if (!('pageSize' in reqParams)) reqParams.pageSize = 1000
-
-    api.get(finalPath, { params: reqParams, block: true }).then(r=>{
-      const env = r.envelope || {}
-      let items = []
-      if (env.items) items = env.items
-      else if (Array.isArray(r.data)) items = r.data
-      else if (r.data) items = [r.data]
-      setOptions(items)
-    }).catch(()=> setOptions([]))
-  },[name, location.search, fieldConfig, meta])
-
-  return (
-    <select name={name} defaultValue={value || ''} className={`form-select ${error ? 'is-invalid' : ''}`} disabled={fieldConfig && fieldConfig._disabled === true}>
-      <option value="">-- selecione --</option>
-      {options.map(o => (<option key={o.id} value={o.id}>{o.nome || o.Nome || o.id}</option>))}
-    </select>
-  )
-}
 
 export default function TelaCadastro({ screenKey, closeModal }){
   const [meta, setMeta] = useState(null)
@@ -218,7 +173,7 @@ export default function TelaCadastro({ screenKey, closeModal }){
               <div className="form-control-plaintext">{camposChaveValores[c.campo] || '—'}</div>
             </>
           ) : (
-            <SelectField name={c.campo} value={valor} error={erro} fieldConfig={c} meta={meta} />
+            <SelectPesquisavel name={c.campo} value={valor} error={erro} fieldConfig={c} meta={meta} />
           )
         ) : (
           <input name={c.campo} defaultValue={valor || ''} className={`form-control ${erro ? 'is-invalid' : ''}`} />

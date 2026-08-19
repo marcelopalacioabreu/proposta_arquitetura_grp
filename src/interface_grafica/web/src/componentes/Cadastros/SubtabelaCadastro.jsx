@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useCallback } from 'react'
 import api from '../../servicos/api'
+import SelectPesquisavel from './SelectPesquisavel'
 
 /**
  * Componente genérico de subtabela para subcadastros associados
@@ -23,32 +24,7 @@ export default function SubtabelaCadastro({
   const [linhas, setLinhas] = useState(valor || [])
   const [linhaEmEdicao, setLinhaEmEdicao] = useState(null)
   const [novaLinha, setNovaLinha] = useState({})
-  const [opcoes, setOpcoes] = useState({})
   const [erros, setErros] = useState({})
-
-  // Carregar opções para campos select
-  useEffect(() => {
-    if (!definicao?.colunas) return
-
-    const carregarOpcoes = async () => {
-      const opts = {}
-      for (const col of definicao.colunas) {
-        if (col.tipo === 'select' && (col.enumeracao || col.endpoint)) {
-          try {
-            const endpoint = col.endpoint || col.enumeracao
-            const resposta = await api.get(endpoint, { block: true })
-            opts[col.campo] = resposta.data?.items || resposta.data || []
-          } catch (e) {
-            console.error(`Erro ao carregar opções para ${col.campo}`, e)
-            opts[col.campo] = []
-          }
-        }
-      }
-      setOpcoes(opts)
-    }
-
-    carregarOpcoes()
-  }, [definicao])
 
   // Notificar componente pai quando dados são alterados
   useEffect(() => {
@@ -121,18 +97,14 @@ export default function SubtabelaCadastro({
         )
       case 'select':
         return (
-          <select
+          <SelectPesquisavel
+            name={col.campo}
             value={valor || ''}
-            onChange={(e) => onChange(e.target.value)}
-            className={`form-select form-select-sm ${erro ? 'is-invalid' : ''}`}
-          >
-            <option value="">-- selecione --</option>
-            {(opcoes[col.campo] || []).map(o => (
-              <option key={o.id || o.value} value={o.id || o.value}>
-                {o.nome || o.nome || o.label || o.id}
-              </option>
-            ))}
-          </select>
+            fieldConfig={col}
+            meta={meta}
+            error={erro}
+            onChange={onChange}
+          />
         )
       case 'date':
         return (
