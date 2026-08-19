@@ -166,7 +166,7 @@ export default function SelectPesquisavel({
       return item[fieldConfig.optionLabel] || ''
     }
 
-    // Ordem de preferência comum
+    // Ordem de preferência comum (inclui descricao para enumerações)
     return item.nome || 
            item.Nome ||
            item.name ||
@@ -184,7 +184,7 @@ export default function SelectPesquisavel({
            ''
   }
 
-  // Extrair ID da opção
+  // Extrair ID da opção (suporta chave para enumerações)
   const extrairId = (item) => {
     if (!item) return ''
     
@@ -192,7 +192,8 @@ export default function SelectPesquisavel({
       return item[fieldConfig.optionId]
     }
 
-    return item.id || item.Id || item.value || ''
+    // Para enumerações, chave é o ID; para outros, é id
+    return item.chave || item.id || item.Id || item.value || ''
   }
 
   const handleChange = (e) => {
