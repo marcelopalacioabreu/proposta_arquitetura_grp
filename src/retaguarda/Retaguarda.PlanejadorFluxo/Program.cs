@@ -202,4 +202,4 @@ app.MapGet("/identity/token", (HttpContext ctx, IConfiguration cfg) =>
 app.MapFallback("/elsa/{**path}", () => Results.NotFound(new { title = "Not found", status = 404 }));
 app.MapFallbackToPage("/_Host");
 
-app.Run();
+app.Run("http://0.0.0.0:6001");

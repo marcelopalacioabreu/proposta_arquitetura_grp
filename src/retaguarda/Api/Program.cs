@@ -300,4 +300,4 @@ app.MapGet("/identity/token", (HttpContext ctx, IConfiguration cfg) =>
     catch { return Results.Unauthorized(); }
 });
 
-app.Run();
+app.Run("http://0.0.0.0:5000");
