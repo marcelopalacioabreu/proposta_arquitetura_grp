@@ -25,7 +25,7 @@ namespace Retaguarda.Api.Controllers
         }
 
         [HttpGet]
-        [Authorize(Policy = "orquestracaoFluxo.visualizar")]
+        [Authorize(Policy = "orquestracao.processos.visualizar")]
         public IActionResult GetAll([FromQuery] string? nome, [FromQuery] int page = 1, [FromQuery] int pageSize = 10, [FromQuery] string? sortField = null, [FromQuery] string? sortDir = null,
             [FromQuery] string? campo = null, [FromQuery] string? operador = null, [FromQuery] string? valor = null, [FromQuery(Name = "valor_de")] string? valorDe = null, [FromQuery(Name = "valor_ate")] string? valorAte = null, [FromQuery] int? inativo = null)
         {
@@ -46,7 +46,7 @@ namespace Retaguarda.Api.Controllers
         }
 
         [HttpGet("{id}")]
-        [Authorize(Policy = "orquestracaoFluxo.visualizar")]
+        [Authorize(Policy = "orquestracao.processos.visualizar")]
         public IActionResult Get(long id)
         {
             var dto = _servico.ObterPorIdAsync(id).Result;
@@ -55,7 +55,7 @@ namespace Retaguarda.Api.Controllers
         }
 
         [HttpGet("contexto/atual")]
-        [Authorize(Policy = "orquestracaoFluxo.visualizar")]
+        [Authorize(Policy = "orquestracao.processos.visualizar")]
         public IActionResult ObterContextoAtual()
         {
             return OkData(new 
@@ -67,7 +67,7 @@ namespace Retaguarda.Api.Controllers
         }
 
         [HttpGet("workflows")]
-        [Authorize(Policy = "orquestracaoFluxo.visualizar")]
+        [Authorize(Policy = "orquestracao.processos.visualizar")]
         public async Task<IActionResult> ListarWorkflows()
         {
             try
@@ -104,7 +104,7 @@ namespace Retaguarda.Api.Controllers
         }
 
         [HttpPost]
-        [Authorize(Policy = "orquestracaoFluxo.editar")]
+        [Authorize(Policy = "orquestracao.processos.editar")]
         public IActionResult Create([FromBody] CriarDto dto)
         {
             if (!ModelState.IsValid) return BadRequestModelState();
@@ -122,7 +122,7 @@ namespace Retaguarda.Api.Controllers
         }
 
         [HttpDelete("{id}")]
-        [Authorize(Policy = "orquestracaoFluxo.excluir")]
+        [Authorize(Policy = "orquestracao.processos.excluir")]
         public IActionResult Delete(long id)
         {
             _servico.DeleteAsync(id).GetAwaiter().GetResult();
@@ -130,7 +130,7 @@ namespace Retaguarda.Api.Controllers
         }
 
         [HttpPost("{id}/restaurar")]
-        [Authorize(Policy = "orquestracaoFluxo.editar")]
+        [Authorize(Policy = "orquestracao.processos.editar")]
         public IActionResult Restaurar(long id)
         {
             _servico.RestaurarAsync(id).GetAwaiter().GetResult();
@@ -138,7 +138,7 @@ namespace Retaguarda.Api.Controllers
         }
 
         [HttpPut("{id}")]
-        [Authorize(Policy = "orquestracaoFluxo.editar")]
+        [Authorize(Policy = "orquestracao.processos.editar")]
         public IActionResult Update(long id, [FromBody] AtualizarDto dto)
         {
             if (!ModelState.IsValid) return BadRequestModelState();

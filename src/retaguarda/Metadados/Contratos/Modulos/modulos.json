@@ -34,7 +34,7 @@
       "grupo": "Definições",
       "itens": [
         { 
-          "chave": "catalogos.nivelgov", "texto": "Nível de Governo", "icone": "diagram-3", "url": "/painel/catalogos/nivel-governo", 
+          "chave": "catalogos.nivelGoverno.nivelgov", "texto": "Nível de Governo", "icone": "diagram-3", "url": "/painel/catalogos/nivel-governo", 
           "permissoes": [ 
           { "id": "catalogos.nivelGoverno.visualizar", "texto": "Visualizar" },
           { "id": "catalogos.nivelGoverno.editar", "texto": "Criar/Editar" },
@@ -54,7 +54,7 @@
           "mostrarNoMenu": true 
         },
         { 
-          "chave": "catalogos.tipo_unidade", "texto": "Tipo de Unidade", "icone": "grid", "url": "/painel/catalogos/tipo-unidade", 
+          "chave": "catalogos.tipoUnidade", "texto": "Tipo de Unidade", "icone": "grid", "url": "/painel/catalogos/tipo-unidade", 
           "permissoes": [ 
           { "id": "catalogos.tipoUnidade.visualizar", "texto": "Visualizar" },
           { "id": "catalogos.tipoUnidade.editar", "texto": "Criar/Editar" },
@@ -64,7 +64,7 @@
           "mostrarNoMenu": true 
         },
         { 
-          "chave": "catalogos.tipo_endereco", "texto": "Tipo de Endereço", "icone": "geo", "url": "/painel/catalogos/tipo-endereco", 
+          "chave": "catalogos.tipoEndereco", "texto": "Tipo de Endereço", "icone": "geo", "url": "/painel/catalogos/tipo-endereco", 
           "permissoes": [ 
           { "id": "catalogos.tipoEndereco.visualizar", "texto": "Visualizar" },
           { "id": "catalogos.tipoEndereco.editar", "texto": "Criar/Editar" },
@@ -74,7 +74,7 @@
           "mostrarNoMenu": true 
         },
         { 
-          "chave": "catalogos.tipo_contato", "texto": "Tipo de Contato", "icone": "telephone", "url": "/painel/catalogos/tipo-contato", 
+          "chave": "catalogos.tipoContato", "texto": "Tipo de Contato", "icone": "telephone", "url": "/painel/catalogos/tipo-contato", 
           "permissoes": [ 
           { "id": "catalogos.tipoContato.visualizar", "texto": "Visualizar" },
           { "id": "catalogos.tipoContato.editar", "texto": "Criar/Editar" },
@@ -84,7 +84,7 @@
           "mostrarNoMenu": true 
         },
         { 
-          "chave": "catalogos.documento_tipo", "texto": "Tipo de Documento", "icone": "file-earmark-text", "url": "/painel/catalogos/documento-tipo", 
+          "chave": "catalogos.documentoTipo", "texto": "Tipo de Documento", "icone": "file-earmark-text", "url": "/painel/catalogos/documento-tipo", 
           "permissoes": [ 
           { "id": "catalogos.documentoTipo.visualizar", "texto": "Visualizar" },
           { "id": "catalogos.documentoTipo.editar", "texto": "Criar/Editar" },
@@ -94,7 +94,7 @@
           "mostrarNoMenu": true 
         },
         { 
-          "chave": "catalogos.tipo_imovel", "texto": "Tipo de Imóvel", "icone": "house", "url": "/painel/catalogos/tipo-imovel", 
+          "chave": "catalogos.tipoImovel", "texto": "Tipo de Imóvel", "icone": "house", "url": "/painel/catalogos/tipo-imovel", 
           "permissoes": [ 
           { "id": "catalogos.tipoImovel.visualizar", "texto": "Visualizar" },
           { "id": "catalogos.tipoImovel.editar", "texto": "Criar/Editar" },

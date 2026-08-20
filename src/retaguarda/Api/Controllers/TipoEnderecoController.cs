@@ -18,7 +18,7 @@ namespace Retaguarda.Api.Controllers
         }
 
         [HttpGet]
-        [Authorize(Policy = "tipoEndereco.visualizar")]
+        [Authorize(Policy = "catalogos.tipoEndereco.visualizar")]
         public IActionResult GetAll([FromQuery] PesquisaParametrosDto parametros, [FromQuery] int? page = null, [FromQuery] int? pageSize = null, [FromQuery] string? sortField = null, [FromQuery] string? sortDir = null, [FromQuery] string? campo = null, [FromQuery] string? operador = null, [FromQuery] string? valor = null, [FromQuery(Name = "valor_de")] string? valorDe = null, [FromQuery(Name = "valor_ate")] string? valorAte = null)
         {
             parametros = NormalizarPesquisaParametros(parametros, page, pageSize, sortField, sortDir, campo, operador, valor, valorDe, valorAte);
@@ -27,7 +27,7 @@ namespace Retaguarda.Api.Controllers
         }
 
         [HttpGet("{id}")]
-        [Authorize(Policy = "tipoEndereco.visualizar")]
+        [Authorize(Policy = "catalogos.tipoEndereco.visualizar")]
         public IActionResult Get(long id)
         {
             var e = _servico.ObterPorIdAsync(id).Result;
@@ -36,7 +36,7 @@ namespace Retaguarda.Api.Controllers
         }
 
         [HttpPost]
-        [Authorize(Policy = "tipoEndereco.editar")]
+        [Authorize(Policy = "catalogos.tipoEndereco.editar")]
         public IActionResult Create([FromBody] TipoEnderecoDto dto)
         {
             if (!ModelState.IsValid) return BadRequestModelState();
@@ -45,7 +45,7 @@ namespace Retaguarda.Api.Controllers
         }
 
         [HttpDelete("{id}")]
-        [Authorize(Policy = "tipoEndereco.excluir")]
+        [Authorize(Policy = "catalogos.tipoEndereco.excluir")]
         public IActionResult Delete(long id)
         {
             _servico.DeleteAsync(id).GetAwaiter().GetResult();
@@ -53,7 +53,7 @@ namespace Retaguarda.Api.Controllers
         }
 
         [HttpPut("{id}")]
-        [Authorize(Policy = "tipoEndereco.editar")]
+        [Authorize(Policy = "catalogos.tipoEndereco.editar")]
         public IActionResult Update(long id, [FromBody] TipoEnderecoDto dto)
         {
             if (!ModelState.IsValid) return BadRequestModelState();
