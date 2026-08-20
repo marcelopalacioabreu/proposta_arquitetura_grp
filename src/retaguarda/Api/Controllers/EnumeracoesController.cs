@@ -27,7 +27,8 @@ namespace Retaguarda.Api.Controllers
             if (items == null)
                 return NotFoundError($"Enumeração '{nome}' não encontrada");
 
-            return OkList(items);
+            // Retornar no formato esperado: { items: [...] }
+            return OkData(new { items = items });
         }
 
         /// <summary>
@@ -79,3 +80,4 @@ namespace Retaguarda.Api.Controllers
         }
     }
 }
+
