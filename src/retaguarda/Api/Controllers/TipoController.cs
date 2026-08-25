@@ -43,7 +43,7 @@ namespace Retaguarda.Api.Controllers
         }
 
         [HttpPost]
-        [Authorize(Policy = "tipos.editar")]
+        [Authorize(Policy = "catalogos.tipos.editar")]
         public async Task<IActionResult> Create([FromBody] TipoDto dto)
         {
             if (string.IsNullOrWhiteSpace(dto.Nome))
@@ -56,7 +56,7 @@ namespace Retaguarda.Api.Controllers
         }
 
         [HttpPut("{id}")]
-        [Authorize(Policy = "tipos.editar")]
+        [Authorize(Policy = "catalogos.tipos.editar")]
         public async Task<IActionResult> Update(long id, [FromBody] TipoDto dto)
         {
             var existing = await _servico.ObterPorIdAsync(id);
@@ -67,7 +67,7 @@ namespace Retaguarda.Api.Controllers
         }
 
         [HttpDelete("{id}")]
-        [Authorize(Policy = "tipos.excluir")]
+        [Authorize(Policy = "catalogos.tipos.excluir")]
         public async Task<IActionResult> Delete(long id)
         {
             var existing = await _servico.ObterPorIdAsync(id);
