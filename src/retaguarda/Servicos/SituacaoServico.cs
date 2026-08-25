@@ -24,6 +24,8 @@ namespace Retaguarda.Servicos
                 Id = e.Id,
                 Codigo = e.Codigo,
                 Nome = e.Nome,
+                Contexto = e.Contexto,
+                Descricao = e.Descricao,
                 Ativo = e.Ativo
             };
         }
@@ -34,6 +36,8 @@ namespace Retaguarda.Servicos
             {
                 Codigo = dto.Codigo,
                 Nome = dto.Nome,
+                Contexto = dto.Contexto,
+                Descricao = dto.Descricao,
                 Ativo = dto.Ativo
             };
         }
@@ -42,6 +46,8 @@ namespace Retaguarda.Servicos
         {
             entity.Codigo = dto.Codigo;
             entity.Nome = dto.Nome;
+            entity.Contexto = dto.Contexto;
+            entity.Descricao = dto.Descricao;
             entity.Ativo = dto.Ativo;
         }
     }

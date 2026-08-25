@@ -54,61 +54,21 @@
           "mostrarNoMenu": true 
         },
         { 
-          "chave": "catalogos.tipoUnidade", "texto": "Tipo de Unidade", "icone": "grid", "url": "/painel/catalogos/tipo-unidade", 
+          "chave": "catalogos.tipos", "texto": "Tipos", "icone": "tags", "url": "/painel/catalogos/tipos", 
           "permissoes": [ 
-          { "id": "catalogos.tipoUnidade.visualizar", "texto": "Visualizar" },
-          { "id": "catalogos.tipoUnidade.editar", "texto": "Criar/Editar" },
-          { "id": "catalogos.tipoUnidade.excluir", "texto": "Excluir" } 
+          { "id": "catalogos.tipos.visualizar", "texto": "Visualizar" },
+          { "id": "catalogos.tipos.editar", "texto": "Criar/Editar" },
+          { "id": "catalogos.tipos.excluir", "texto": "Excluir" } 
           ], 
           "conflitosCom": [""], 
           "mostrarNoMenu": true 
         },
         { 
-          "chave": "catalogos.tipoEndereco", "texto": "Tipo de Endereço", "icone": "geo", "url": "/painel/catalogos/tipo-endereco", 
+          "chave": "catalogos.situacoes", "texto": "Situações", "icone": "exclamation-triangle", "url": "/painel/catalogos/situacoes", 
           "permissoes": [ 
-          { "id": "catalogos.tipoEndereco.visualizar", "texto": "Visualizar" },
-          { "id": "catalogos.tipoEndereco.editar", "texto": "Criar/Editar" },
-          { "id": "catalogos.tipoEndereco.excluir", "texto": "Excluir" } 
-          ], 
-          "conflitosCom": [""], 
-          "mostrarNoMenu": true 
-        },
-        { 
-          "chave": "catalogos.tipoContato", "texto": "Tipo de Contato", "icone": "telephone", "url": "/painel/catalogos/tipo-contato", 
-          "permissoes": [ 
-          { "id": "catalogos.tipoContato.visualizar", "texto": "Visualizar" },
-          { "id": "catalogos.tipoContato.editar", "texto": "Criar/Editar" },
-          { "id": "catalogos.tipoContato.excluir", "texto": "Excluir" } 
-          ], 
-          "conflitosCom": [""], 
-          "mostrarNoMenu": true 
-        },
-        { 
-          "chave": "catalogos.documentoTipo", "texto": "Tipo de Documento", "icone": "file-earmark-text", "url": "/painel/catalogos/documento-tipo", 
-          "permissoes": [ 
-          { "id": "catalogos.documentoTipo.visualizar", "texto": "Visualizar" },
-          { "id": "catalogos.documentoTipo.editar", "texto": "Criar/Editar" },
-          { "id": "catalogos.documentoTipo.excluir", "texto": "Excluir" } 
-          ], 
-          "conflitosCom": [""], 
-          "mostrarNoMenu": true 
-        },
-        { 
-          "chave": "catalogos.tipoImovel", "texto": "Tipo de Imóvel", "icone": "house", "url": "/painel/catalogos/tipo-imovel", 
-          "permissoes": [ 
-          { "id": "catalogos.tipoImovel.visualizar", "texto": "Visualizar" },
-          { "id": "catalogos.tipoImovel.editar", "texto": "Criar/Editar" },
-          { "id": "catalogos.tipoImovel.excluir", "texto": "Excluir" } 
-          ], 
-          "conflitosCom": [""], 
-          "mostrarNoMenu": true 
-        },
-        { 
-          "chave": "catalogos.situacao", "texto": "Situações", "icone": "exclamation-triangle", "url": "/painel/catalogos/situacoes", 
-          "permissoes": [ 
-          { "id": "catalogos.situacao.visualizar", "texto": "Visualizar" },
-          { "id": "catalogos.situacao.editar", "texto": "Criar/Editar" },
-          { "id": "catalogos.situacao.excluir", "texto": "Excluir" } 
+          { "id": "catalogos.situacoes.visualizar", "texto": "Visualizar" },
+          { "id": "catalogos.situacoes.editar", "texto": "Criar/Editar" },
+          { "id": "catalogos.situacoes.excluir", "texto": "Excluir" } 
           ], 
           "conflitosCom": [""], 
           "mostrarNoMenu": true 

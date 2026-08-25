@@ -7,12 +7,16 @@
     ],
     "filtro": [
       { "campo": "codigo", "descricao": "Código", "tipo": "string", "col": 3 },
-      { "campo": "nome", "descricao": "Nome", "tipo": "string", "col": 6 }
+      { "campo": "nome", "descricao": "Nome", "tipo": "string", "col": 6 },
+      { "campo": "contexto", "descricao": "Contexto", "tipo": "select", "col": 3, "opcoes": [
+        { "valor": "IMOVEL", "descricao": "Imóvel" }
+      ]}
     ],
     "tabela": {
       "colunas": [
         { "campo": "codigo", "titulo": "Código" },
-        { "campo": "nome", "titulo": "Nome" }
+        { "campo": "nome", "titulo": "Nome" },
+        { "campo": "contexto", "titulo": "Contexto" }
       ],
       "acoes": [
         { "tipo": "navegacao", "destino": "/painel/catalogos/situacoes/editar/{id}", "campo_id": "id", "icone": "pencil", "permissao": "catalogos.situacao.editar" },

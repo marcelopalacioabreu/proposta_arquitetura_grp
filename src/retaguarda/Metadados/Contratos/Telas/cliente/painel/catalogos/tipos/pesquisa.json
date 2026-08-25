@@ -1,0 +1,32 @@
+{
+  "tiposPesquisa": {
+    "titulo": "Pesquisa de Tipos",
+    "extremidade": "/api/tipos",
+    "acoesFormulario": [
+      { "tipo": "navegacao", "destino": "/painel/catalogos/tipos/editar/new", "campo_id": "id", "icone": "bi-plus", "permissao": "catalogos.tipos.editar" }
+    ],
+    "filtro": [
+      { "campo": "codigo", "descricao": "Código", "tipo": "string", "col": 3 },
+      { "campo": "nome", "descricao": "Nome", "tipo": "string", "col": 6 },
+      { "campo": "contexto", "descricao": "Contexto", "tipo": "select", "col": 3, "opcoes": [
+        { "valor": "ENDERECO", "descricao": "Endereço" },
+        { "valor": "CONTATO", "descricao": "Contato" },
+        { "valor": "UNIDADE", "descricao": "Unidade" },
+        { "valor": "IMOVEL", "descricao": "Imóvel" },
+        { "valor": "DOCUMENTO", "descricao": "Documento" }
+      ]}
+    ],
+    "tabela": {
+      "colunas": [
+        { "campo": "codigo", "titulo": "Código" },
+        { "campo": "nome", "titulo": "Nome" },
+        { "campo": "contexto", "titulo": "Contexto" }
+      ],
+      "acoes": [
+        { "tipo": "navegacao", "destino": "/painel/catalogos/tipos/editar/{id}", "campo_id": "id", "icone": "pencil", "permissao": "catalogos.tipos.editar" },
+        { "tipo": "confirmacao_delete_ajax", "destino": "/api/tipos/{id}", "campo_id": "id", "icone": "trash", "permissao": "catalogos.tipos.excluir", "exibirQuandoAtivo": true }
+      ],
+      "pagination": { "pageSize": 10 }
+    }
+  }
+}
