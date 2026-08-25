@@ -18,7 +18,6 @@ namespace Retaguarda.Persistencia
         DbSet<Perfil> Perfis { get; set; }
         DbSet<PerfilUsuario> PerfilUsuarios { get; set; }
         DbSet<PerfilPermissao> PerfilPermissoes { get; set; }
-        DbSet<SituacaoContexto> SituacaoContextos { get; set; }
         DbSet<Tipo> Tipos { get; set; }
 
         DbSet<Pais> Paises { get; set; }
@@ -35,7 +34,6 @@ namespace Retaguarda.Persistencia
         DbSet<Situacao> Situacoes { get; set; }
         DbSet<Contato> Contatos { get; set; }
         DbSet<Documento> Documentos { get; set; }
-        DbSet<SituacaoImovel> SituacoesImovel { get; set; }
 
         DbSet<OrquestracaoFluxoProcesso> OrquestracaoFluxoProcessos { get; set; }
 

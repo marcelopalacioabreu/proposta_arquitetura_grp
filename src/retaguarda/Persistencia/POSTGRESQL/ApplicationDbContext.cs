@@ -24,7 +24,6 @@ namespace Retaguarda.Persistencia.POSTGRESQL
         public DbSet<Perfil> Perfis { get; set; } = null!;
         public DbSet<PerfilUsuario> PerfilUsuarios { get; set; } = null!;
         public DbSet<PerfilPermissao> PerfilPermissoes { get; set; } = null!;
-        public DbSet<SituacaoContexto> SituacaoContextos { get; set; } = null!;
         public DbSet<Tipo> Tipos { get; set; } = null!;
         public DbSet<SetorUsuario> SetorUsuarios { get; set; } = null!;
         // Address related
@@ -42,7 +41,6 @@ namespace Retaguarda.Persistencia.POSTGRESQL
         public DbSet<Situacao> Situacoes { get; set; } = null!;
         public DbSet<Contato> Contatos { get; set; } = null!;
         public DbSet<Documento> Documentos { get; set; } = null!;
-        public DbSet<SituacaoImovel> SituacoesImovel { get; set; } = null!;
 
         public DbSet<OrquestracaoFluxoProcesso> OrquestracaoFluxoProcessos { get; set; } = null!;
 
@@ -241,8 +239,7 @@ namespace Retaguarda.Persistencia.POSTGRESQL
             // catalogs and relation tables
             modelBuilder.Entity<NivelGoverno>(b => { b.ToTable("NiveisGoverno"); b.HasKey(x=>x.Id); b.Property(x=>x.Codigo).HasMaxLength(50); b.Property(x=>x.Nome).HasMaxLength(200); });
             modelBuilder.Entity<NaturezaJuridica>(b => { b.ToTable("NaturezasJuridicas"); b.HasKey(x=>x.Id); b.Property(x=>x.Codigo).HasMaxLength(50); b.Property(x=>x.Nome).HasMaxLength(200); });
-            modelBuilder.Entity<Situacao>(b => { b.ToTable("Situacoes"); b.HasKey(x=>x.Id); b.Property(x=>x.Codigo).HasMaxLength(50); b.Property(x=>x.Nome).HasMaxLength(200); b.Property(x=>x.Descricao).HasMaxLength(2000); });
-            modelBuilder.Entity<SituacaoContexto>(b => { b.ToTable("SituacaoContextos"); b.HasKey(x=>x.Id); b.Property(x=>x.Nome).HasMaxLength(200); b.Property(x=>x.Descricao).HasMaxLength(2000); });
+            modelBuilder.Entity<Situacao>(b => { b.ToTable("Situacoes"); b.HasKey(x=>x.Id); b.Property(x=>x.Codigo).IsRequired().HasMaxLength(50); b.Property(x=>x.Nome).IsRequired().HasMaxLength(200); b.Property(x=>x.Contexto).IsRequired().HasMaxLength(50); b.Property(x=>x.Descricao).HasMaxLength(2000); b.HasIndex(x => new { x.OrganizacaoId, x.Contexto, x.Ativo }).HasName("idx_Situacoes_Contexto_Ativo"); b.HasIndex(x => new { x.Codigo, x.Contexto, x.OrganizacaoId }).IsUnique().HasName("idx_Situacoes_Codigo_Contexto_Unico"); });
             modelBuilder.Entity<Tipo>(b => 
             { 
                 b.ToTable("Tipos"); 
@@ -257,7 +254,6 @@ namespace Retaguarda.Persistencia.POSTGRESQL
             });
             modelBuilder.Entity<Contato>(b => { b.ToTable("Contatos"); b.HasKey(x=>x.Id); b.Property(x=>x.Nome).HasMaxLength(200); b.Property(x=>x.ContatoValor).HasMaxLength(500); });
             modelBuilder.Entity<Documento>(b => { b.ToTable("Documentos"); b.HasKey(x=>x.Id); b.Property(x=>x.Numero).HasMaxLength(200); b.Property(x=>x.Digito).HasMaxLength(20); b.Property(x=>x.OrgaoEmissor).HasMaxLength(100); b.Property(x=>x.UfEmissor).HasMaxLength(8); b.Property(x=>x.Observacao).HasMaxLength(1000); });
-            modelBuilder.Entity<SituacaoImovel>(b => { b.ToTable("SituacaoImovel"); b.HasKey(x=>x.Id); b.Property(x=>x.Codigo).HasMaxLength(50); b.Property(x=>x.Nome).HasMaxLength(200); });
 
             modelBuilder.Entity<OrganizacaoEndereco>(b=>{ b.ToTable("OrganizacaoEnderecos"); b.HasKey(x=>x.Id); b.Property(x=>x.EnderecoPrincipal).IsRequired(); });
             modelBuilder.Entity<OrganizacaoUnidadeEndereco>(b=>{ b.ToTable("OrganizacaoUnidadeEnderecos"); b.HasKey(x=>x.Id); b.Property(x=>x.EnderecoPrincipal).IsRequired(); });
