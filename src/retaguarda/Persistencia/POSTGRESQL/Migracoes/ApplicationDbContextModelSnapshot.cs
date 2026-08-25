@@ -311,6 +311,9 @@ namespace Retaguarda.Persistencia.POSTGRESQL.Migracoes
                         .HasMaxLength(100)
                         .HasColumnType("character varying(100)");
 
+                    b.Property<long?>("PessoaId")
+                        .HasColumnType("bigint");
+
                     b.Property<bool>("Principal")
                         .HasColumnType("boolean");
 
@@ -834,6 +837,9 @@ namespace Retaguarda.Persistencia.POSTGRESQL.Migracoes
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<long?>("NivelGovernoId")
+                        .HasColumnType("bigint");
+
                     b.Property<string>("Nome")
                         .IsRequired()
                         .HasMaxLength(200)
@@ -1107,6 +1113,9 @@ namespace Retaguarda.Persistencia.POSTGRESQL.Migracoes
                     b.Property<long?>("OrganizacaoUnidadeId")
                         .HasColumnType("bigint");
 
+                    b.Property<long?>("ResponsavelId")
+                        .HasColumnType("bigint");
+
                     b.Property<long?>("SetorId")
                         .HasColumnType("bigint");
 
@@ -1114,6 +1123,9 @@ namespace Retaguarda.Persistencia.POSTGRESQL.Migracoes
                         .IsRequired()
                         .HasMaxLength(30)
                         .HasColumnType("character varying(30)");
+
+                    b.Property<long?>("SituacaoId")
+                        .HasColumnType("bigint");
 
                     b.Property<long?>("UnidadePaiId")
                         .HasColumnType("bigint");
@@ -1567,6 +1579,9 @@ namespace Retaguarda.Persistencia.POSTGRESQL.Migracoes
                     b.Property<string>("IdentificadorUnicoAmigavel")
                         .IsRequired()
                         .HasColumnType("text");
+
+                    b.Property<long?>("NaturezaJuridicaId")
+                        .HasColumnType("bigint");
 
                     b.Property<long?>("OrganizacaoId")
                         .HasColumnType("bigint");

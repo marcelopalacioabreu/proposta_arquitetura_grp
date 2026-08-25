@@ -6,6 +6,7 @@ namespace Retaguarda.Dominio.Entidades
     public class Documento : MultilocatarioEntidade
     {
         public long? DocumentoTipoId { get; set; }
+        public long? PessoaId { get; set; } // FK para Pessoa - quem é o titular do documento
         public string Numero { get; set; } = string.Empty;
         public string Digito { get; set; } = string.Empty;
         public string OrgaoEmissor { get; set; } = string.Empty;

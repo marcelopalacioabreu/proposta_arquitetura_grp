@@ -11,5 +11,7 @@ namespace Retaguarda.Dominio.Entidades
         public string HierarquiaCodigo { get; set; } = string.Empty;
         public string HierarquiaNome { get; set; } = string.Empty;
         public long? Nivel { get; set; }
+        public long? ResponsavelId { get; set; }
+        public long? SituacaoId { get; set; }
     }
 }

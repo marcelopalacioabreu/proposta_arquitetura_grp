@@ -11,5 +11,7 @@ namespace Retaguarda.Dominio.Entidades
     public class Pessoa : MultilocatarioEntidade
     {
         public TipoPessoa TipoPessoa { get; set; }
+        public long? SetorId { get; set; }
+        public long? NaturezaJuridicaId { get; set; } // FK para NaturezaJuridica (apenas para PessoaJuridica)
     }
 }
