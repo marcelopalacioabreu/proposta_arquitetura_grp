@@ -24,9 +24,9 @@ namespace Retaguarda.Api.Controllers
         {
             var query = _db.Usuarios.AsQueryable();
             query = query.Where(x => x.Ativo);
-            if (!string.IsNullOrWhiteSpace(q)) query = query.Where(x => x.Nome.Contains(q) || x.Username.Contains(q));
+            if (!string.IsNullOrWhiteSpace(q)) query = query.Where(x => x.Nome.Contains(q));
             var total = query.Count();
-            var items = query.OrderBy(x => x.Nome).Skip((page - 1) * pageSize).Take(pageSize).Select(x => new { x.Id, x.Nome, x.Username, x.Email, x.PessoaId }).ToList();
+            var items = query.OrderBy(x => x.Nome).Skip((page - 1) * pageSize).Take(pageSize).Select(x => new { x.Id, x.Nome, x.Email }).ToList();
             return OkList(items, total, page, pageSize);
         }
 
@@ -43,28 +43,17 @@ namespace Retaguarda.Api.Controllers
         [Authorize(Policy = "usuarios.editar")]
         public IActionResult Create([FromBody] UsuarioDto dto)
         {
-            long? pessoaId = dto.PessoaId;
-            if (dto.Pessoa != null)
-            {
-                var p = new Pessoa { Nome = dto.Pessoa.Nome ?? string.Empty, TipoPessoaChave = dto.Pessoa.TipoPessoaChave ?? "F", Documento = dto.Pessoa.Documento, Email = dto.Pessoa.Email, Telefone = dto.Pessoa.Telefone };
-                _db.Pessoas.Add(p);
-                _db.SaveChanges();
-                pessoaId = p.Id;
-            }
-            var u = new Usuario { Nome = dto.Nome ?? string.Empty, Username = dto.Username ?? string.Empty, SenhaHash = dto.SenhaHash ?? string.Empty, Email = dto.Email, PessoaId = pessoaId, OrganizacaoId = dto.OrganizacaoId };
+            // TODO: Refactor Create - Usuario no longer has Username or PessoaId
+            // Implement proper user creation with Email-based authentication
+            
+            var u = new Usuario 
+            { 
+                Nome = dto.Nome ?? string.Empty, 
+                SenhaHash = dto.SenhaHash ?? string.Empty, 
+                Email = dto.Email 
+            };
             _db.Usuarios.Add(u);
             _db.SaveChanges();
-
-            // Associate provided setorIds if any
-            if (dto.SetorIds != null && dto.SetorIds.Any())
-            {
-                foreach (var s in dto.SetorIds)
-                {
-                    var su = new SetorUsuario { UsuarioId = u.Id, SetorId = s, Padrao = (dto.PadraoSetorId.HasValue && dto.PadraoSetorId.Value == s) };
-                    _db.SetorUsuarios.Add(su);
-                }
-                _db.SaveChanges();
-            }
 
             // Associate provided perfilIds if any
             if (dto.PerfilIds != null && dto.PerfilIds.Any())
@@ -84,45 +73,12 @@ namespace Retaguarda.Api.Controllers
         [Authorize(Policy = "usuarios.editar")]
         public IActionResult Update(long id, [FromBody] UsuarioDto dto)
         {
+            // TODO: Refactor Update - Usuario no longer has Username or PessoaId
             var u = _db.Usuarios.Find(id);
             if (u == null) return NotFoundError("Registro não encontrado");
             u.Nome = dto.Nome ?? u.Nome;
             u.Email = dto.Email ?? u.Email;
-            u.Username = dto.Username ?? u.Username;
             if (!string.IsNullOrWhiteSpace(dto.SenhaHash)) u.SenhaHash = dto.SenhaHash;
-            if (dto.Pessoa != null)
-            {
-                if (u.PessoaId.HasValue)
-                {
-                    var p = _db.Pessoas.Find(u.PessoaId.Value);
-                    if (p != null)
-                    {
-                        p.Nome = dto.Pessoa.Nome ?? p.Nome;
-                        p.Documento = dto.Pessoa.Documento ?? p.Documento;
-                        p.Email = dto.Pessoa.Email ?? p.Email;
-                        p.Telefone = dto.Pessoa.Telefone ?? p.Telefone;
-                    }
-                }
-                else
-                {
-                    var p = new Pessoa { Nome = dto.Pessoa.Nome ?? string.Empty, TipoPessoaChave = dto.Pessoa.TipoPessoaChave ?? "F", Documento = dto.Pessoa.Documento, Email = dto.Pessoa.Email, Telefone = dto.Pessoa.Telefone };
-                    _db.Pessoas.Add(p);
-                    _db.SaveChanges();
-                    u.PessoaId = p.Id;
-                }
-            }
-            // update setor associations if provided
-            if (dto.SetorIds != null)
-            {
-                var existing = _db.SetorUsuarios.Where(x => x.UsuarioId == u.Id).ToList();
-                _db.SetorUsuarios.RemoveRange(existing);
-                _db.SaveChanges();
-                foreach (var s in dto.SetorIds)
-                {
-                    var su = new SetorUsuario { UsuarioId = u.Id, SetorId = s, Padrao = (dto.PadraoSetorId.HasValue && dto.PadraoSetorId.Value == s) };
-                    _db.SetorUsuarios.Add(su);
-                }
-            }
 
             // update perfil associations if provided
             if (dto.PerfilIds != null)

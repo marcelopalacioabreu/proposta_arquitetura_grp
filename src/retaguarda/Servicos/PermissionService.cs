@@ -20,7 +20,7 @@ namespace Retaguarda.Servicos
         {
             var perfilIds = await _db.PerfilUsuarios.Where(pu => pu.UsuarioId == userId).Select(pu => pu.PerfilId).ToListAsync();
             if (!perfilIds.Any()) return new List<string>();
-            var perms = await _db.PerfilPermissoes.Where(pp => perfilIds.Contains(pp.PerfilId)).Select(pp => pp.Nome).ToListAsync();
+            var perms = await _db.PerfilPermissoes.Where(pp => perfilIds.Contains(pp.PerfilId)).Select(pp => pp.Chave).ToListAsync();
             return perms.Distinct().ToList();
         }
 

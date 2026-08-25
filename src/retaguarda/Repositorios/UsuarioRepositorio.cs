@@ -20,10 +20,10 @@ namespace Retaguarda.Repositorios
             return await _db.Usuarios.FindAsync(id);
         }
 
-        public async Task<Usuario?> ObterPorUsernameAsync(string username)
-        {
-            return await _db.Usuarios.FirstOrDefaultAsync(u => u.Username == username);
-        }
+        //public async Task<Usuario?> ObterPorUsernameAsync(string username)
+        //{
+        //    return await _db.Usuarios.FirstOrDefaultAsync(u => u.Username == username);
+        //}
 
         public async Task<Usuario> AdicionarAsync(Usuario usuario)
         {

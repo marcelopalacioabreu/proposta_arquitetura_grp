@@ -13,11 +13,14 @@ namespace Retaguarda.Persistencia
         DbSet<OrganizacaoUnidadeSetor> OrganizacaoUnidadeSetores { get; set; }
         DbSet<Usuario> Usuarios { get; set; }
         DbSet<Pessoa> Pessoas { get; set; }
+        DbSet<PessoaFisica> PessoasFisicas { get; set; }
+        DbSet<PessoaJuridica> PessoasJuridicas { get; set; }
         DbSet<Perfil> Perfis { get; set; }
         DbSet<PerfilUsuario> PerfilUsuarios { get; set; }
         DbSet<PerfilPermissao> PerfilPermissoes { get; set; }
-        DbSet<SetorUsuario> SetorUsuarios { get; set; }
-        DbSet<Funcao> Funcoes { get; set; }
+        DbSet<SituacaoContexto> SituacaoContextos { get; set; }
+        DbSet<TipoContexto> TipoContextos { get; set; }
+        DbSet<Tipo> Tipos { get; set; }
 
         DbSet<Pais> Paises { get; set; }
         DbSet<Uf> Ufs { get; set; }

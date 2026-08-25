@@ -25,9 +25,16 @@ namespace Retaguarda.Api.Controllers
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginRequest req)
         {
-            // Validate against user store
-            var u = await _usuarioServico.AutenticarAsync(req.Username, req.Password);
-            if (u == null) return UnauthorizedError("Credenciais inválidas");
+            // Validate email + password against user store
+            if (string.IsNullOrWhiteSpace(req.Email) || string.IsNullOrWhiteSpace(req.Password))
+                return UnauthorizedError("Email e senha são obrigatórios");
+
+            var db = HttpContext.RequestServices.GetService(typeof(Retaguarda.Persistencia.IApplicationDbContext)) as Retaguarda.Persistencia.IApplicationDbContext;
+            if (db == null) return Error("Serviço de banco de dados indisponível");
+
+            var u = await db.Usuarios.FirstOrDefaultAsync(x => x.Email == req.Email && x.Ativo);
+            if (u == null || !Retaguarda.Servicos.Util.PasswordHasher.Verify(req.Password, u.SenhaHash))
+                return UnauthorizedError("Credenciais inválidas");
 
             var jwtKey = _config["Jwt:Key"] ?? "change_this_secret_for_prod";
             var jwtIssuer = _config["Jwt:Issuer"] ?? "Retaguarda";
@@ -38,16 +45,17 @@ namespace Retaguarda.Api.Controllers
                 keyBytes = sha.ComputeHash(Encoding.UTF8.GetBytes(jwtKey));
             }
             var key = new SymmetricSecurityKey(keyBytes);
-            key.KeyId = "default-key"; // Add KeyId to the security key
+            key.KeyId = "default-key";
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
             var claims = new[]
             {
                 new Claim(JwtRegisteredClaimNames.Sub, u.Id.ToString()),
                 new Claim(ClaimTypes.NameIdentifier, u.Id.ToString()),
-                new Claim("name", u.Nome ?? u.Username),
-                new Claim(ClaimTypes.Role, "admin"),
-                new Claim("permissions", "*"), // Elsa 3.x: grants full access to Workflow API
+                new Claim("name", u.Nome),
+                new Claim(ClaimTypes.Email, u.Email),
+                new Claim(ClaimTypes.Role, "user"),
+                new Claim("permissions", "*"),
             };
 
             var token = new JwtSecurityToken(
@@ -61,8 +69,6 @@ namespace Retaguarda.Api.Controllers
 
             if (req.AsCookie)
             {
-                // Cookie configuration is configurable via configuration keys:
-                // Jwt:Cookie:Name, Jwt:Cookie:Domain, Jwt:Cookie:SameSite, Jwt:Cookie:Secure
                 var cookieName = _config["Jwt:Cookie:Name"] ?? "access_token";
                 var cookieDomain = _config["Jwt:Cookie:Domain"];
                 var sameSiteCfg = _config["Jwt:Cookie:SameSite"] ?? "Lax";
@@ -78,56 +84,6 @@ namespace Retaguarda.Api.Controllers
                 if (!string.IsNullOrEmpty(cookieDomain)) cookieOptions.Domain = cookieDomain;
 
                 Response.Cookies.Append(cookieName, tokenString, cookieOptions);
-                // Ensure user's UltimoAcesso fields are populated when missing, using user's default setor if available
-                try
-                {
-                    var db = HttpContext.RequestServices.GetService(typeof(Retaguarda.Persistencia.IApplicationDbContext)) as Retaguarda.Persistencia.IApplicationDbContext;
-                    if (db != null)
-                    {
-                        long? setorId = u.UltimoAcessoSetorId;
-                        if (!setorId.HasValue)
-                        {
-                            if (u.SetorId.HasValue) setorId = u.SetorId;
-                            else
-                            {
-                                var su = db.SetorUsuarios.Where(x => x.UsuarioId == u.Id && x.Ativo).OrderBy(x => x.Id).FirstOrDefault();
-                                if (su != null) setorId = su.SetorId;
-                            }
-                        }
-
-                        long? orgId = u.UltimoAcessoOrganizacaoId ?? u.OrganizacaoId;
-                        long? unidadeId = u.UltimoAcessoOrganizacaoUnidadeId ?? u.OrganizacaoUnidadeId;
-
-                        if (setorId.HasValue)
-                        {
-                            var setorEnt = db.OrganizacaoSetores.FirstOrDefault(s => s.Id == setorId.Value);
-                            if (setorEnt != null)
-                            {
-                                orgId = orgId ?? setorEnt.OrganizacaoId;
-                                unidadeId = unidadeId ?? setorEnt.OrganizacaoUnidadeId;
-                            }
-                        }
-
-                        // update if any UltimoAcesso is missing
-                        if (!u.UltimoAcessoOrganizacaoId.HasValue || !u.UltimoAcessoOrganizacaoUnidadeId.HasValue || !u.UltimoAcessoSetorId.HasValue)
-                        {
-                            var updated = await _usuarioServico.AtualizarUltimoAcessoAsync(u.Id, orgId, unidadeId, setorId);
-                            if (updated != null)
-                            {
-                                // set atuacao cookie for browser clients
-                                var cookieVal = System.Text.Json.JsonSerializer.Serialize(new { organizacaoId = updated.UltimoAcessoOrganizacaoId, organizacaoUnidadeId = updated.UltimoAcessoOrganizacaoUnidadeId, setorId = updated.UltimoAcessoSetorId });
-                                Response.Cookies.Append("atuacao", cookieVal, new CookieOptions { HttpOnly = true, SameSite = SameSiteMode.Lax });
-                            }
-                        }
-                    }
-                }
-                catch
-                {
-                    // swallow errors to avoid breaking login
-                }
-                // Return a successful envelope without a message so the frontend
-                // doesn't show a notification on every automatic login flow.
-                // return OkMessage("Autenticado");
                 return OkData(null);
             }
 
@@ -136,7 +92,7 @@ namespace Retaguarda.Api.Controllers
 
         public class LoginRequest
         {
-            public string Username { get; set; } = string.Empty;
+            public string Email { get; set; } = string.Empty;
             public string Password { get; set; } = string.Empty;
             public bool AsCookie { get; set; } = true;
         }
@@ -165,11 +121,11 @@ namespace Retaguarda.Api.Controllers
                 {
                     var perfis = db.Perfis.Where(p => pu.Contains(p.Id)).Include(p => p.Permissoes).ToList();
                     isAdmin = perfis.Any(p => p.AdministradorDoSistema);
-                    permissoes = perfis.SelectMany(p => p.Permissoes.Select(pp => pp.Nome)).Distinct().ToList();
+                    permissoes = perfis.SelectMany(p => p.Permissoes.Select(pp => pp.Chave)).Distinct().ToList();
                 }
             }
 
-            return OkData(new { id = u.Id, nome = u.Nome, username = u.Username, email = u.Email, administrador = isAdmin, permissoes });
+            return OkData(new { id = u.Id, nome = u.Nome, email = u.Email, administrador = isAdmin, permissoes });
         }
 
         [HttpPost("logout")]

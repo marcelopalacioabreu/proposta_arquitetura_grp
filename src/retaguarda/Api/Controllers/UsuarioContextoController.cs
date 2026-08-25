@@ -57,8 +57,9 @@ namespace Retaguarda.Api.Controllers
 
             if (!isAdmin)
             {
-                var allowed = await _db.SetorUsuarios.AnyAsync(su => su.UsuarioId == u.Id && su.SetorId == req.SetorId.Value && su.Ativo);
-                if (!allowed) return UnauthorizedError("Usuário não tem permissão para atuar nesse setor");
+                // TODO: SetorUsuario has been removed - implement new sector authorization logic
+                // var allowed = await _db.SetorUsuarios.AnyAsync(su => su.UsuarioId == u.Id && su.SetorId == req.SetorId.Value && su.Ativo);
+                // if (!allowed) return UnauthorizedError("Usuário não tem permissão para atuar nesse setor");
             }
 
             var updated = await _usuarioServico.AtualizarUltimoAcessoAsync(u.Id, req.OrganizacaoId, req.OrganizacaoUnidadeId, req.SetorId);
@@ -99,11 +100,14 @@ namespace Retaguarda.Api.Controllers
             }
 
             // Non-admin: return sectors linked to user
-            var setoresUsuario = await _db.SetorUsuarios.Where(su => su.UsuarioId == u.Id && su.Ativo).Include(su => su.Setor).ToListAsync();
-            var setoresList = setoresUsuario.Select(su => new { id = su.SetorId, nome = su.Setor?.Nome, organizacaoId = su.Setor?.OrganizacaoId, organizacaoUnidadeId = su.Setor?.OrganizacaoUnidadeId }).ToList();
+            // TODO: SetorUsuario has been removed - implement new sector linking logic
+            var setoresList = new List<object>();
+            // var setoresUsuario = await _db.SetorUsuarios.Where(su => su.UsuarioId == u.Id && su.Ativo).Include(su => su.Setor).ToListAsync();
+            // var setoresList = setoresUsuario.Select(su => new { id = su.SetorId, nome = su.Setor?.Nome, organizacaoId = su.Setor?.OrganizacaoId, organizacaoUnidadeId = su.Setor?.OrganizacaoUnidadeId }).ToList();
             // derive unique unidades and organizacoes
-            var unidadesIds = setoresList.Where(s => s.organizacaoUnidadeId.HasValue).Select(s => s.organizacaoUnidadeId!.Value).Distinct().ToList();
-            var orgIds = setoresList.Where(s => s.organizacaoId.HasValue).Select(s => s.organizacaoId!.Value).Distinct().ToList();
+            var setoresIdList = new List<long>();
+            var unidadesIds = setoresIdList.Where(s => true).Distinct().ToList();
+            var orgIds = setoresIdList.Where(s => true).Distinct().ToList();
             var unidades = await _db.OrganizacaoUnidades.Where(u2 => unidadesIds.Contains(u2.Id)).Select(u2 => new { id = u2.Id, nome = u2.Nome, organizacaoId = u2.OrganizacaoId }).ToListAsync();
             var orgs = await _db.Organizacoes.Where(o => orgIds.Contains(o.Id)).Select(o => new { id = o.Id, nome = o.Nome }).ToListAsync();
 

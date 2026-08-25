@@ -31,6 +31,16 @@ namespace Retaguarda.Servicos
             services.AddScoped<Interfaces.ILogradouroServico, LogradouroServico>();
             services.AddScoped<Interfaces.IImovelServico, ImovelServico>();
             services.AddScoped<Interfaces.IPessoaServico, PessoaServico>();
+            services.AddScoped<Interfaces.IPessoaFisicaServico>(sp =>
+            {
+                var pessoaRepo = sp.GetRequiredService<Repositorios.Interfaces.IPessoaRepositorio>();
+                return new PessoaFisicaServico(pessoaRepo);
+            });
+            services.AddScoped<Interfaces.IPessoaJuridicaServico>(sp =>
+            {
+                var pessoaRepo = sp.GetRequiredService<Repositorios.Interfaces.IPessoaRepositorio>();
+                return new PessoaJuridicaServico(pessoaRepo);
+            });
             services.AddScoped<Interfaces.IEnderecoServico, EnderecoServico>();
             services.AddScoped<Interfaces.IOrganizacaoUnidadeServico, OrganizacaoUnidadeServico>();
             services.AddScoped<Interfaces.IOrganizacaoUnidadeSetorServico, OrganizacaoUnidadeSetorServico>();

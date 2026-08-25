@@ -17,71 +17,28 @@ namespace Retaguarda.Servicos
             _repositorioConcrete = repositorio;
         }
 
+        // TODO: PessoaServico needs refactoring - Pessoa is now abstract base class
+        // Operations should be performed on PessoaFisica or PessoaJuridica directly
         protected override PessoaDto ToDto(Pessoa e)
         {
             return new PessoaDto
             {
                 Id = e.Id,
-                Nome = e.Nome,
-                NomeSocial = e.NomeSocial,
-                Cpf = e.Cpf,
-                DataNascimento = e.DataNascimento,
-                SexoId = e.SexoId,
-                EstadoCivilId = e.EstadoCivilId,
-                NacionalidadePaisId = e.NacionalidadePaisId,
-                NaturalidadeMunicipioId = e.NaturalidadeMunicipioId,
-                NomeMae = e.NomeMae,
-                NomePai = e.NomePai,
-                Pcd = e.Pcd,
-                DataObito = e.DataObito,
-                TipoPessoaChave = e.TipoPessoaChave,
-                Documento = e.Documento,
-                Telefone = e.Telefone,
+                TipoPessoa = (int)e.TipoPessoa,
                 Ativo = e.Ativo
             };
         }
 
         protected override Pessoa FromDto(PessoaDto dto)
         {
-            return new Pessoa
-            {
-                Nome = dto.Nome,
-                NomeSocial = dto.NomeSocial,
-                Cpf = dto.Cpf,
-                DataNascimento = dto.DataNascimento,
-                SexoId = dto.SexoId,
-                EstadoCivilId = dto.EstadoCivilId,
-                NacionalidadePaisId = dto.NacionalidadePaisId,
-                NaturalidadeMunicipioId = dto.NaturalidadeMunicipioId,
-                NomeMae = dto.NomeMae,
-                NomePai = dto.NomePai,
-                Pcd = dto.Pcd,
-                DataObito = dto.DataObito,
-                TipoPessoaChave = dto.TipoPessoaChave,
-                Documento = dto.Documento,
-                Telefone = dto.Telefone,
-                Ativo = dto.Ativo
-            };
+            // Cannot instantiate abstract class
+            throw new System.NotImplementedException("Use PessoaFisicaServico or PessoaJuridicaServico instead");
         }
 
         protected override void UpdateEntityFromDto(Pessoa entity, PessoaDto dto)
         {
-            entity.Nome = dto.Nome;
-            entity.NomeSocial = dto.NomeSocial;
-            entity.Cpf = dto.Cpf;
-            entity.DataNascimento = dto.DataNascimento;
-            entity.SexoId = dto.SexoId;
-            entity.EstadoCivilId = dto.EstadoCivilId;
-            entity.NacionalidadePaisId = dto.NacionalidadePaisId;
-            entity.NaturalidadeMunicipioId = dto.NaturalidadeMunicipioId;
-            entity.NomeMae = dto.NomeMae;
-            entity.NomePai = dto.NomePai;
-            entity.Pcd = dto.Pcd;
-            entity.DataObito = dto.DataObito;
-            entity.TipoPessoaChave = dto.TipoPessoaChave;
-            entity.Documento = dto.Documento;
-            entity.Telefone = dto.Telefone;
-            entity.Ativo = dto.Ativo;
+            // Cannot update abstract base class directly
+            throw new System.NotImplementedException("Use PessoaFisicaServico or PessoaJuridicaServico instead");
         }
     }
 }

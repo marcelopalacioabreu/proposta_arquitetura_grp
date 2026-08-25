@@ -40,7 +40,7 @@ namespace Retaguarda.Api.Controllers
                 System.Console.WriteLine($"PerfilController.Get requested id={id} -> returned Perfil.Id={p.Id} AdministradorDoSistema={p.AdministradorDoSistema}");
             }
             catch { /* ignore logging errors */ }
-            var permissoes = _db.PerfilPermissoes.Where(x => x.PerfilId == id && x.Ativo).Select(x => x.Nome).ToList();
+            var permissoes = _db.PerfilPermissoes.Where(x => x.PerfilId == id && x.Ativo).Select(x => x.Chave).ToList();
             return OkData(new { perfil = p, permissoes });
         }
 
@@ -56,7 +56,7 @@ namespace Retaguarda.Api.Controllers
             {
                 foreach (var chave in dto.Permissoes.Distinct())
                 {
-                    var pp = new PerfilPermissao { PerfilId = perfil.Id, Nome = chave };
+                    var pp = new PerfilPermissao { PerfilId = perfil.Id, Chave = chave };
                     _db.PerfilPermissoes.Add(pp);
                 }
                 _db.SaveChanges();
@@ -81,7 +81,7 @@ namespace Retaguarda.Api.Controllers
                 _db.SaveChanges();
                 foreach (var chave in dto.Permissoes.Distinct())
                 {
-                    var pp = new PerfilPermissao { PerfilId = id, Nome = chave };
+                    var pp = new PerfilPermissao { PerfilId = id, Chave = chave };
                     _db.PerfilPermissoes.Add(pp);
                 }
             }
