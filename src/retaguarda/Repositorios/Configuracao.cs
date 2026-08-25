@@ -17,12 +17,8 @@ namespace Retaguarda.Repositorios
             services.AddScoped<Interfaces.IUfRepositorio, UfRepositorio>();
             services.AddScoped<Interfaces.IMunicipioRepositorio, MunicipioRepositorio>();
             services.AddScoped<Interfaces.IBairroRepositorio, BairroRepositorio>();
-            services.AddScoped<Interfaces.ITipoUnidadeRepositorio, TipoUnidadeRepositorio>();
+            services.AddScoped<Interfaces.ITipoRepositorio, TipoRepositorio>();
             services.AddScoped<Interfaces.IPerfilRepositorio, PerfilRepositorio>();
-            services.AddScoped<Interfaces.IDocumentoTipoRepositorio, DocumentoTipoRepositorio>();
-            services.AddScoped<Interfaces.ITipoContatoRepositorio, TipoContatoRepositorio>();
-            services.AddScoped<Interfaces.ITipoEnderecoRepositorio, TipoEnderecoRepositorio>();
-            services.AddScoped<Interfaces.ITipoImovelRepositorio, TipoImovelRepositorio>();
             services.AddScoped<Interfaces.INaturezaJuridicaRepositorio, NaturezaJuridicaRepositorio>();
             services.AddScoped<Interfaces.INivelGovernoRepositorio, NivelGovernoRepositorio>();
             services.AddScoped<Interfaces.ISituacaoRepositorio, SituacaoRepositorio>();

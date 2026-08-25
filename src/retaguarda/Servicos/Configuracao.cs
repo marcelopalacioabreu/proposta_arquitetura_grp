@@ -18,12 +18,8 @@ namespace Retaguarda.Servicos
             services.AddScoped<Interfaces.IUfServico, UfServico>();
             services.AddScoped<Interfaces.IMunicipioServico, MunicipioServico>();
             services.AddScoped<Interfaces.IBairroServico, BairroServico>();
-            services.AddScoped<Interfaces.ITipoUnidadeServico, TipoUnidadeServico>();
+            services.AddScoped<Interfaces.ITipoServico, TipoServico>();
             services.AddScoped<Interfaces.IPerfilServico, PerfilServico>();
-            services.AddScoped<Interfaces.IDocumentoTipoServico, DocumentoTipoServico>();
-            services.AddScoped<Interfaces.ITipoContatoServico, TipoContatoServico>();
-            services.AddScoped<Interfaces.ITipoEnderecoServico, TipoEnderecoServico>();
-            services.AddScoped<Interfaces.ITipoImovelServico, TipoImovelServico>();
             services.AddScoped<Interfaces.INaturezaJuridicaServico, NaturezaJuridicaServico>();
             services.AddScoped<Interfaces.INivelGovernoServico, NivelGovernoServico>();
             services.AddScoped<Interfaces.ISituacaoServico, SituacaoServico>();

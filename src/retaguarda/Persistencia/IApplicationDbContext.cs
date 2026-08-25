@@ -19,7 +19,6 @@ namespace Retaguarda.Persistencia
         DbSet<PerfilUsuario> PerfilUsuarios { get; set; }
         DbSet<PerfilPermissao> PerfilPermissoes { get; set; }
         DbSet<SituacaoContexto> SituacaoContextos { get; set; }
-        DbSet<TipoContexto> TipoContextos { get; set; }
         DbSet<Tipo> Tipos { get; set; }
 
         DbSet<Pais> Paises { get; set; }
@@ -32,15 +31,10 @@ namespace Retaguarda.Persistencia
         DbSet<Endereco> Enderecos { get; set; }
 
         DbSet<NivelGoverno> NiveisGoverno { get; set; }
-        DbSet<TipoUnidade> TiposUnidade { get; set; }
         DbSet<NaturezaJuridica> NaturezasJuridicas { get; set; }
         DbSet<Situacao> Situacoes { get; set; }
-        DbSet<TipoEndereco> TiposEndereco { get; set; }
-        DbSet<TipoContato> TiposContato { get; set; }
         DbSet<Contato> Contatos { get; set; }
-        DbSet<DocumentoTipo> DocumentoTipos { get; set; }
         DbSet<Documento> Documentos { get; set; }
-        DbSet<TipoImovel> TiposImovel { get; set; }
         DbSet<SituacaoImovel> SituacoesImovel { get; set; }
 
         DbSet<OrquestracaoFluxoProcesso> OrquestracaoFluxoProcessos { get; set; }

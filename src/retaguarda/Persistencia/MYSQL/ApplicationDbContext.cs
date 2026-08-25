@@ -25,7 +25,6 @@ namespace Retaguarda.Persistencia.MYSQL
         public DbSet<PerfilUsuario> PerfilUsuarios { get; set; } = null!;
         public DbSet<PerfilPermissao> PerfilPermissoes { get; set; } = null!;
         public DbSet<SituacaoContexto> SituacaoContextos { get; set; } = null!;
-        public DbSet<TipoContexto> TipoContextos { get; set; } = null!;
         public DbSet<Tipo> Tipos { get; set; } = null!;
         // Address related
         public DbSet<Pais> Paises { get; set; } = null!;
@@ -38,15 +37,10 @@ namespace Retaguarda.Persistencia.MYSQL
         public DbSet<Endereco> Enderecos { get; set; } = null!;
         // New catalog and relation entities
         public DbSet<NivelGoverno> NiveisGoverno { get; set; } = null!;
-        public DbSet<TipoUnidade> TiposUnidade { get; set; } = null!;
         public DbSet<NaturezaJuridica> NaturezasJuridicas { get; set; } = null!;
         public DbSet<Situacao> Situacoes { get; set; } = null!;
-        public DbSet<TipoEndereco> TiposEndereco { get; set; } = null!;
-        public DbSet<TipoContato> TiposContato { get; set; } = null!;
         public DbSet<Contato> Contatos { get; set; } = null!;
-        public DbSet<DocumentoTipo> DocumentoTipos { get; set; } = null!;
         public DbSet<Documento> Documentos { get; set; } = null!;
-        public DbSet<TipoImovel> TiposImovel { get; set; } = null!;
         public DbSet<SituacaoImovel> SituacoesImovel { get; set; } = null!;
 
         public DbSet<OrquestracaoFluxoProcesso> OrquestracaoFluxoProcessos { get; set; } = null!;
@@ -235,18 +229,23 @@ namespace Retaguarda.Persistencia.MYSQL
 
             // catalogs and relation tables
             modelBuilder.Entity<NivelGoverno>(b => { b.ToTable("NiveisGoverno"); b.HasKey(x=>x.Id); b.Property(x=>x.Codigo).HasMaxLength(50); b.Property(x=>x.Nome).HasMaxLength(200); });
-            modelBuilder.Entity<TipoUnidade>(b => { b.ToTable("TipoUnidade"); b.HasKey(x=>x.Id); b.Property(x=>x.Codigo).HasMaxLength(50); b.Property(x=>x.Nome).HasMaxLength(200); });
             modelBuilder.Entity<NaturezaJuridica>(b => { b.ToTable("NaturezasJuridicas"); b.HasKey(x=>x.Id); b.Property(x=>x.Codigo).HasMaxLength(50); b.Property(x=>x.Nome).HasMaxLength(200); });
             modelBuilder.Entity<Situacao>(b => { b.ToTable("Situacoes"); b.HasKey(x=>x.Id); b.Property(x=>x.Codigo).HasMaxLength(50); b.Property(x=>x.Nome).HasMaxLength(200); b.Property(x=>x.Descricao).HasMaxLength(2000); });
             modelBuilder.Entity<SituacaoContexto>(b => { b.ToTable("SituacaoContextos"); b.HasKey(x=>x.Id); b.Property(x=>x.Nome).HasMaxLength(200); b.Property(x=>x.Descricao).HasMaxLength(2000); });
-            modelBuilder.Entity<TipoContexto>(b => { b.ToTable("TipoContextos"); b.HasKey(x=>x.Id); b.Property(x=>x.Codigo).HasMaxLength(50); b.Property(x=>x.Nome).HasMaxLength(200); });
-            modelBuilder.Entity<Tipo>(b => { b.ToTable("Tipos"); b.HasKey(x=>x.Id); b.Property(x=>x.Codigo).HasMaxLength(50); b.Property(x=>x.Nome).HasMaxLength(200); });
-            modelBuilder.Entity<TipoEndereco>(b => { b.ToTable("TipoEnderecos"); b.HasKey(x=>x.Id); b.Property(x=>x.Codigo).HasMaxLength(50); b.Property(x=>x.Nome).HasMaxLength(200); });
-            modelBuilder.Entity<TipoContato>(b => { b.ToTable("TipoContatos"); b.HasKey(x=>x.Id); b.Property(x=>x.Codigo).HasMaxLength(50); b.Property(x=>x.Nome).HasMaxLength(200); });
+            modelBuilder.Entity<Tipo>(b => 
+            { 
+                b.ToTable("Tipos"); 
+                b.HasKey(x=>x.Id); 
+                b.Property(x=>x.Codigo).IsRequired().HasMaxLength(50); 
+                b.Property(x=>x.Nome).IsRequired().HasMaxLength(200); 
+                b.Property(x=>x.Contexto).IsRequired().HasMaxLength(50);
+                b.Property(x=>x.Descricao).HasMaxLength(2000); 
+                // Índices para performance
+                b.HasIndex(x => new { x.OrganizacaoId, x.Contexto, x.Ativo }).HasName("idx_Tipos_Contexto_Ativo");
+                b.HasIndex(x => new { x.Codigo, x.Contexto, x.OrganizacaoId }).IsUnique().HasName("idx_Tipos_Codigo_Contexto_Unico");
+            });
             modelBuilder.Entity<Contato>(b => { b.ToTable("Contatos"); b.HasKey(x=>x.Id); b.Property(x=>x.Nome).HasMaxLength(200); b.Property(x=>x.ContatoValor).HasMaxLength(500); });
-            modelBuilder.Entity<DocumentoTipo>(b => { b.ToTable("DocumentoTipos"); b.HasKey(x=>x.Id); b.Property(x=>x.Codigo).HasMaxLength(50); b.Property(x=>x.Nome).HasMaxLength(200); });
             modelBuilder.Entity<Documento>(b => { b.ToTable("Documentos"); b.HasKey(x=>x.Id); b.Property(x=>x.Numero).HasMaxLength(200); b.Property(x=>x.Digito).HasMaxLength(20); b.Property(x=>x.OrgaoEmissor).HasMaxLength(100); b.Property(x=>x.UfEmissor).HasMaxLength(8); b.Property(x=>x.Observacao).HasMaxLength(1000); });
-            modelBuilder.Entity<TipoImovel>(b => { b.ToTable("TipoImovel"); b.HasKey(x=>x.Id); b.Property(x=>x.Codigo).HasMaxLength(50); b.Property(x=>x.Nome).HasMaxLength(200); });
             modelBuilder.Entity<SituacaoImovel>(b => { b.ToTable("SituacaoImovel"); b.HasKey(x=>x.Id); b.Property(x=>x.Codigo).HasMaxLength(50); b.Property(x=>x.Nome).HasMaxLength(200); });
 
             modelBuilder.Entity<OrganizacaoEndereco>(b=>{ b.ToTable("OrganizacaoEnderecos"); b.HasKey(x=>x.Id); b.Property(x=>x.EnderecoPrincipal).IsRequired(); });

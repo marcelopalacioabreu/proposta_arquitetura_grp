@@ -7,9 +7,9 @@ using Retaguarda.Repositorios.Base;
 
 namespace Retaguarda.Repositorios
 {
-    public class TipoUnidadeRepositorio : RepositorioBase<TipoUnidade>, ITipoUnidadeRepositorio
+    public class TipoRepositorio : RepositorioBase<Tipo>, ITipoRepositorio
     {
-        public TipoUnidadeRepositorio(IApplicationDbContext db) : base(db)
+        public TipoRepositorio(IApplicationDbContext db) : base(db)
         {
         }
     }
