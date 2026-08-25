@@ -25,14 +25,16 @@ namespace Retaguarda.Api.Controllers
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginRequest req)
         {
-            // Validate email + password against user store
-            if (string.IsNullOrWhiteSpace(req.Email) || string.IsNullOrWhiteSpace(req.Password))
-                return UnauthorizedError("Email e senha são obrigatórios");
+            // Validate email/username + password against user store
+            var emailOrUsername = req.Email ?? req.Username;
+            if (string.IsNullOrWhiteSpace(emailOrUsername) || string.IsNullOrWhiteSpace(req.Password))
+                return UnauthorizedError("Email/username e senha são obrigatórios");
 
             var db = HttpContext.RequestServices.GetService(typeof(Retaguarda.Persistencia.IApplicationDbContext)) as Retaguarda.Persistencia.IApplicationDbContext;
             if (db == null) return Error("Serviço de banco de dados indisponível");
 
-            var u = await db.Usuarios.FirstOrDefaultAsync(x => x.Email == req.Email && x.Ativo);
+            // Try email first, then fall back to username (Nome)
+            var u = await db.Usuarios.FirstOrDefaultAsync(x => (x.Email == emailOrUsername || x.Nome == emailOrUsername) && x.Ativo);
             if (u == null || !Retaguarda.Servicos.Util.PasswordHasher.Verify(req.Password, u.SenhaHash))
                 return UnauthorizedError("Credenciais inválidas");
 
@@ -92,7 +94,8 @@ namespace Retaguarda.Api.Controllers
 
         public class LoginRequest
         {
-            public string Email { get; set; } = string.Empty;
+            public string? Email { get; set; }
+            public string? Username { get; set; }
             public string Password { get; set; } = string.Empty;
             public bool AsCookie { get; set; } = true;
         }
