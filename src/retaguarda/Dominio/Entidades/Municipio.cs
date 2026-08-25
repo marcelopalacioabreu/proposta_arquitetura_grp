@@ -8,6 +8,7 @@ namespace Retaguarda.Dominio.Entidades
         public string CodigoIbge { get; set; } = string.Empty;
 
         public long UfId { get; set; }
+        public long? CepId { get; set; }
         public Uf? Uf { get; set; }
     }
 }

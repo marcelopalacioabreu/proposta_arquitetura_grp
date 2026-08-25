@@ -13,5 +13,6 @@ namespace Retaguarda.Dominio.Entidades
         public string Anotacoes { get; set; } = string.Empty;
         public string InscricaoEstadual { get; set; } = string.Empty;
         public string InscricaoMunicipal { get; set; } = string.Empty;
+        public long? SituacaoId { get; set; }
     }
 }
