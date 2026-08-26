@@ -139,6 +139,18 @@ namespace Retaguarda.Persistencia.POSTGRESQL
             modelBuilder.Entity<PessoaFisica>(b =>
             {
                 b.ToTable("Pessoas");
+                b.Property(x => x.Sexo)
+                .HasConversion(
+                    v => v.Chave,
+                    v => Sexo.ObterPorChave(v)
+                )
+                .IsRequired();
+                b.Property(x => x.EstadoCivil)
+                .HasConversion(
+                    v => v.Chave,
+                    v => EstadoCivil.ObterPorChave(v)
+                )
+                .IsRequired();
                 b.Property(x => x.Nome).IsRequired().HasMaxLength(300);
                 b.Property(x => x.NomeSocial).HasMaxLength(300);
                 b.Property(x => x.Cpf).HasMaxLength(14);
