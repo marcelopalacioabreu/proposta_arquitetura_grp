@@ -22,120 +22,6 @@ namespace Retaguarda.Persistencia.POSTGRESQL.Migracoes
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("Retaguarda.Dominio.Entidades.Bairro", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
-
-                    b.Property<bool>("Ativo")
-                        .HasColumnType("boolean");
-
-                    b.Property<DateTime?>("DataAlteracao")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<DateTime>("DataInsercao")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<Guid>("IdentificadorUnico")
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("IdentificadorUnicoAmigavel")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<long>("MunicipioId")
-                        .HasColumnType("bigint");
-
-                    b.Property<string>("Nome")
-                        .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("character varying(200)");
-
-                    b.Property<long?>("OrganizacaoId")
-                        .HasColumnType("bigint");
-
-                    b.Property<long?>("OrganizacaoUnidadeId")
-                        .HasColumnType("bigint");
-
-                    b.Property<long?>("SetorId")
-                        .HasColumnType("bigint");
-
-                    b.Property<long?>("UsuarioAlteracaoId")
-                        .HasColumnType("bigint");
-
-                    b.Property<long?>("UsuarioInsercaoId")
-                        .HasColumnType("bigint");
-
-                    b.Property<long>("Versao")
-                        .HasColumnType("bigint");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("MunicipioId");
-
-                    b.ToTable("Bairros", (string)null);
-                });
-
-            modelBuilder.Entity("Retaguarda.Dominio.Entidades.Cep", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
-
-                    b.Property<bool>("Ativo")
-                        .HasColumnType("boolean");
-
-                    b.Property<string>("Codigo")
-                        .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("character varying(20)");
-
-                    b.Property<DateTime?>("DataAlteracao")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<DateTime>("DataInsercao")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<Guid>("IdentificadorUnico")
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("IdentificadorUnicoAmigavel")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<long?>("ImovelId")
-                        .HasColumnType("bigint");
-
-                    b.Property<long?>("OrganizacaoId")
-                        .HasColumnType("bigint");
-
-                    b.Property<long?>("OrganizacaoUnidadeId")
-                        .HasColumnType("bigint");
-
-                    b.Property<long?>("SetorId")
-                        .HasColumnType("bigint");
-
-                    b.Property<long?>("UsuarioAlteracaoId")
-                        .HasColumnType("bigint");
-
-                    b.Property<long?>("UsuarioInsercaoId")
-                        .HasColumnType("bigint");
-
-                    b.Property<long>("Versao")
-                        .HasColumnType("bigint");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ImovelId");
-
-                    b.ToTable("Ceps", (string)null);
-                });
-
             modelBuilder.Entity("Retaguarda.Dominio.Entidades.Contato", b =>
                 {
                     b.Property<long>("Id")
@@ -457,9 +343,6 @@ namespace Retaguarda.Persistencia.POSTGRESQL.Migracoes
                     b.Property<long?>("UsuarioAlteracaoId")
                         .HasColumnType("bigint");
 
-                    b.Property<long>("UsuarioId")
-                        .HasColumnType("bigint");
-
                     b.Property<long?>("UsuarioInsercaoId")
                         .HasColumnType("bigint");
 
@@ -468,14 +351,22 @@ namespace Retaguarda.Persistencia.POSTGRESQL.Migracoes
 
                     b.HasKey("Id");
 
+                    b.HasIndex("BairroId");
+
                     b.HasIndex("CepId");
 
-                    b.HasIndex("UsuarioId");
+                    b.HasIndex("LogradouroId");
+
+                    b.HasIndex("MunicipioId");
+
+                    b.HasIndex("PaisId");
+
+                    b.HasIndex("UfId");
 
                     b.ToTable("Enderecos", (string)null);
                 });
 
-            modelBuilder.Entity("Retaguarda.Dominio.Entidades.Imovel", b =>
+            modelBuilder.Entity("Retaguarda.Dominio.Entidades.EnderecoBairro", b =>
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
@@ -485,19 +376,6 @@ namespace Retaguarda.Persistencia.POSTGRESQL.Migracoes
 
                     b.Property<bool>("Ativo")
                         .HasColumnType("boolean");
-
-                    b.Property<string>("Cadastro")
-                        .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("character varying(200)");
-
-                    b.Property<long?>("CepId")
-                        .HasColumnType("bigint");
-
-                    b.Property<string>("Complemento")
-                        .IsRequired()
-                        .HasMaxLength(500)
-                        .HasColumnType("character varying(500)");
 
                     b.Property<DateTime?>("DataAlteracao")
                         .HasColumnType("timestamp with time zone");
@@ -512,24 +390,13 @@ namespace Retaguarda.Persistencia.POSTGRESQL.Migracoes
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("InscricaoImobiliaria")
+                    b.Property<long>("MunicipioId")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("Nome")
                         .IsRequired()
                         .HasMaxLength(200)
                         .HasColumnType("character varying(200)");
-
-                    b.Property<double?>("Latitude")
-                        .HasColumnType("double precision");
-
-                    b.Property<long?>("LogradouroId")
-                        .HasColumnType("bigint");
-
-                    b.Property<double?>("Longitude")
-                        .HasColumnType("double precision");
-
-                    b.Property<string>("Numero")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)");
 
                     b.Property<long?>("OrganizacaoId")
                         .HasColumnType("bigint");
@@ -538,12 +405,6 @@ namespace Retaguarda.Persistencia.POSTGRESQL.Migracoes
                         .HasColumnType("bigint");
 
                     b.Property<long?>("SetorId")
-                        .HasColumnType("bigint");
-
-                    b.Property<long?>("SituacaoId")
-                        .HasColumnType("bigint");
-
-                    b.Property<long?>("TipoImovelId")
                         .HasColumnType("bigint");
 
                     b.Property<long?>("UsuarioAlteracaoId")
@@ -557,14 +418,69 @@ namespace Retaguarda.Persistencia.POSTGRESQL.Migracoes
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CepId");
+                    b.HasIndex("MunicipioId");
+
+                    b.ToTable("EnderecoBairros", (string)null);
+                });
+
+            modelBuilder.Entity("Retaguarda.Dominio.Entidades.EnderecoCEP", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
+                    b.Property<bool>("Ativo")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("Codigo")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)");
+
+                    b.Property<DateTime?>("DataAlteracao")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime>("DataInsercao")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("IdentificadorUnico")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("IdentificadorUnicoAmigavel")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<long>("LogradouroId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long?>("OrganizacaoId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long?>("OrganizacaoUnidadeId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long?>("SetorId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long?>("UsuarioAlteracaoId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long?>("UsuarioInsercaoId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long>("Versao")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id");
 
                     b.HasIndex("LogradouroId");
 
-                    b.ToTable("Imoveis", (string)null);
+                    b.ToTable("EnderecoCEPs", (string)null);
                 });
 
-            modelBuilder.Entity("Retaguarda.Dominio.Entidades.Logradouro", b =>
+            modelBuilder.Entity("Retaguarda.Dominio.Entidades.EnderecoLogradouro", b =>
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
@@ -622,10 +538,10 @@ namespace Retaguarda.Persistencia.POSTGRESQL.Migracoes
 
                     b.HasIndex("BairroId");
 
-                    b.ToTable("Logradouros", (string)null);
+                    b.ToTable("EnderecoLogradouros", (string)null);
                 });
 
-            modelBuilder.Entity("Retaguarda.Dominio.Entidades.Municipio", b =>
+            modelBuilder.Entity("Retaguarda.Dominio.Entidades.EnderecoMunicipio", b =>
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
@@ -686,7 +602,199 @@ namespace Retaguarda.Persistencia.POSTGRESQL.Migracoes
 
                     b.HasIndex("UfId");
 
-                    b.ToTable("Municipios", (string)null);
+                    b.ToTable("EnderecoMunicipios", (string)null);
+                });
+
+            modelBuilder.Entity("Retaguarda.Dominio.Entidades.EnderecoPais", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
+                    b.Property<bool>("Ativo")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("Codigo")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime?>("DataAlteracao")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime>("DataInsercao")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("IdentificadorUnico")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("IdentificadorUnicoAmigavel")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Nome")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.Property<long?>("OrganizacaoId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long?>("OrganizacaoUnidadeId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long?>("SetorId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long?>("UsuarioAlteracaoId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long?>("UsuarioInsercaoId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long>("Versao")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("EnderecoPaises", (string)null);
+                });
+
+            modelBuilder.Entity("Retaguarda.Dominio.Entidades.EnderecoUF", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
+                    b.Property<bool>("Ativo")
+                        .HasColumnType("boolean");
+
+                    b.Property<DateTime?>("DataAlteracao")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime>("DataInsercao")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("IdentificadorUnico")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("IdentificadorUnicoAmigavel")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Nome")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.Property<long?>("OrganizacaoId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long?>("OrganizacaoUnidadeId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long>("PaisId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long?>("SetorId")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("Sigla")
+                        .IsRequired()
+                        .HasMaxLength(8)
+                        .HasColumnType("character varying(8)");
+
+                    b.Property<long?>("UsuarioAlteracaoId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long?>("UsuarioInsercaoId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long>("Versao")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PaisId");
+
+                    b.ToTable("EnderecoUFs", (string)null);
+                });
+
+            modelBuilder.Entity("Retaguarda.Dominio.Entidades.Imovel", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
+                    b.Property<bool>("Ativo")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("Cadastro")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.Property<DateTime?>("DataAlteracao")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime>("DataInsercao")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<long?>("EnderecoId")
+                        .HasColumnType("bigint");
+
+                    b.Property<Guid>("IdentificadorUnico")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("IdentificadorUnicoAmigavel")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("InscricaoImobiliaria")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.Property<double?>("Latitude")
+                        .HasColumnType("double precision");
+
+                    b.Property<double?>("Longitude")
+                        .HasColumnType("double precision");
+
+                    b.Property<long?>("OrganizacaoId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long?>("OrganizacaoUnidadeId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long?>("SetorId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long?>("SituacaoId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long?>("TipoImovelId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long?>("UsuarioAlteracaoId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long?>("UsuarioInsercaoId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long>("Versao")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("EnderecoId");
+
+                    b.ToTable("Imoveis", (string)null);
                 });
 
             modelBuilder.Entity("Retaguarda.Dominio.Entidades.NaturezaJuridica", b =>
@@ -825,11 +933,6 @@ namespace Retaguarda.Persistencia.POSTGRESQL.Migracoes
                     b.Property<DateTime>("DataInsercao")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<string>("HierarquiaCodigo")
-                        .IsRequired()
-                        .HasMaxLength(600)
-                        .HasColumnType("character varying(600)");
-
                     b.Property<Guid>("IdentificadorUnico")
                         .HasColumnType("uuid");
 
@@ -837,7 +940,7 @@ namespace Retaguarda.Persistencia.POSTGRESQL.Migracoes
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<long?>("NivelGovernoId")
+                    b.Property<long?>("Nivel")
                         .HasColumnType("bigint");
 
                     b.Property<string>("Nome")
@@ -855,6 +958,9 @@ namespace Retaguarda.Persistencia.POSTGRESQL.Migracoes
                         .HasColumnType("bigint");
 
                     b.Property<long?>("OrganizacaoUnidadeId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long?>("PessoaId")
                         .HasColumnType("bigint");
 
                     b.Property<long?>("ResponsavelId")
@@ -1082,16 +1188,6 @@ namespace Retaguarda.Persistencia.POSTGRESQL.Migracoes
                     b.Property<DateTime>("DataInsercao")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<string>("HierarquiaCodigo")
-                        .IsRequired()
-                        .HasMaxLength(600)
-                        .HasColumnType("character varying(600)");
-
-                    b.Property<string>("HierarquiaNome")
-                        .IsRequired()
-                        .HasMaxLength(1000)
-                        .HasColumnType("character varying(1000)");
-
                     b.Property<Guid>("IdentificadorUnico")
                         .HasColumnType("uuid");
 
@@ -1111,6 +1207,9 @@ namespace Retaguarda.Persistencia.POSTGRESQL.Migracoes
                         .HasColumnType("bigint");
 
                     b.Property<long?>("OrganizacaoUnidadeId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long?>("PessoaId")
                         .HasColumnType("bigint");
 
                     b.Property<long?>("ResponsavelId")
@@ -1325,62 +1424,6 @@ namespace Retaguarda.Persistencia.POSTGRESQL.Migracoes
                     b.ToTable("OrquestracaoFluxoProcessos", (string)null);
                 });
 
-            modelBuilder.Entity("Retaguarda.Dominio.Entidades.Pais", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
-
-                    b.Property<bool>("Ativo")
-                        .HasColumnType("boolean");
-
-                    b.Property<string>("Codigo")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<DateTime?>("DataAlteracao")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<DateTime>("DataInsercao")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<Guid>("IdentificadorUnico")
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("IdentificadorUnicoAmigavel")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("Nome")
-                        .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("character varying(200)");
-
-                    b.Property<long?>("OrganizacaoId")
-                        .HasColumnType("bigint");
-
-                    b.Property<long?>("OrganizacaoUnidadeId")
-                        .HasColumnType("bigint");
-
-                    b.Property<long?>("SetorId")
-                        .HasColumnType("bigint");
-
-                    b.Property<long?>("UsuarioAlteracaoId")
-                        .HasColumnType("bigint");
-
-                    b.Property<long?>("UsuarioInsercaoId")
-                        .HasColumnType("bigint");
-
-                    b.Property<long>("Versao")
-                        .HasColumnType("bigint");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Paises", (string)null);
-                });
-
             modelBuilder.Entity("Retaguarda.Dominio.Entidades.Perfil", b =>
                 {
                     b.Property<long>("Id")
@@ -1580,9 +1623,6 @@ namespace Retaguarda.Persistencia.POSTGRESQL.Migracoes
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<long?>("NaturezaJuridicaId")
-                        .HasColumnType("bigint");
-
                     b.Property<long?>("OrganizacaoId")
                         .HasColumnType("bigint");
 
@@ -1592,8 +1632,9 @@ namespace Retaguarda.Persistencia.POSTGRESQL.Migracoes
                     b.Property<long?>("SetorId")
                         .HasColumnType("bigint");
 
-                    b.Property<int>("TipoPessoa")
-                        .HasColumnType("integer");
+                    b.Property<string>("TipoPessoa")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.Property<long?>("UsuarioAlteracaoId")
                         .HasColumnType("bigint");
@@ -1668,6 +1709,8 @@ namespace Retaguarda.Persistencia.POSTGRESQL.Migracoes
                         .HasColumnType("bigint");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("PessoaId");
 
                     b.ToTable("PessoaEnderecos", (string)null);
                 });
@@ -1852,9 +1895,6 @@ namespace Retaguarda.Persistencia.POSTGRESQL.Migracoes
                         .HasMaxLength(200)
                         .HasColumnType("character varying(200)");
 
-                    b.Property<int?>("Ordem")
-                        .HasColumnType("integer");
-
                     b.Property<long?>("OrganizacaoId")
                         .HasColumnType("bigint");
 
@@ -1883,68 +1923,6 @@ namespace Retaguarda.Persistencia.POSTGRESQL.Migracoes
                         .HasDatabaseName("idx_Tipos_Contexto_Ativo");
 
                     b.ToTable("Tipos", (string)null);
-                });
-
-            modelBuilder.Entity("Retaguarda.Dominio.Entidades.Uf", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
-
-                    b.Property<bool>("Ativo")
-                        .HasColumnType("boolean");
-
-                    b.Property<DateTime?>("DataAlteracao")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<DateTime>("DataInsercao")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<Guid>("IdentificadorUnico")
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("IdentificadorUnicoAmigavel")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("Nome")
-                        .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("character varying(200)");
-
-                    b.Property<long?>("OrganizacaoId")
-                        .HasColumnType("bigint");
-
-                    b.Property<long?>("OrganizacaoUnidadeId")
-                        .HasColumnType("bigint");
-
-                    b.Property<long>("PaisId")
-                        .HasColumnType("bigint");
-
-                    b.Property<long?>("SetorId")
-                        .HasColumnType("bigint");
-
-                    b.Property<string>("Sigla")
-                        .IsRequired()
-                        .HasMaxLength(8)
-                        .HasColumnType("character varying(8)");
-
-                    b.Property<long?>("UsuarioAlteracaoId")
-                        .HasColumnType("bigint");
-
-                    b.Property<long?>("UsuarioInsercaoId")
-                        .HasColumnType("bigint");
-
-                    b.Property<long>("Versao")
-                        .HasColumnType("bigint");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("PaisId");
-
-                    b.ToTable("Ufs", (string)null);
                 });
 
             modelBuilder.Entity("Retaguarda.Dominio.Entidades.Usuario", b =>
@@ -2094,8 +2072,9 @@ namespace Retaguarda.Persistencia.POSTGRESQL.Migracoes
                     b.Property<DateTime?>("DataObito")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<int?>("EstadoCivil")
-                        .HasColumnType("integer");
+                    b.Property<string>("EstadoCivil")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.Property<string>("Nome")
                         .IsRequired()
@@ -2120,8 +2099,9 @@ namespace Retaguarda.Persistencia.POSTGRESQL.Migracoes
                     b.Property<bool>("Pcd")
                         .HasColumnType("boolean");
 
-                    b.Property<int?>("Sexo")
-                        .HasColumnType("integer");
+                    b.Property<string>("Sexo")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.ToTable("Pessoas", (string)null);
 
@@ -2176,9 +2156,50 @@ namespace Retaguarda.Persistencia.POSTGRESQL.Migracoes
                     b.HasDiscriminator().HasValue(2);
                 });
 
-            modelBuilder.Entity("Retaguarda.Dominio.Entidades.Bairro", b =>
+            modelBuilder.Entity("Retaguarda.Dominio.Entidades.Endereco", b =>
                 {
-                    b.HasOne("Retaguarda.Dominio.Entidades.Municipio", "Municipio")
+                    b.HasOne("Retaguarda.Dominio.Entidades.EnderecoBairro", "Bairro")
+                        .WithMany()
+                        .HasForeignKey("BairroId");
+
+                    b.HasOne("Retaguarda.Dominio.Entidades.EnderecoCEP", "Cep")
+                        .WithMany()
+                        .HasForeignKey("CepId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Retaguarda.Dominio.Entidades.EnderecoLogradouro", "Logradouro")
+                        .WithMany()
+                        .HasForeignKey("LogradouroId");
+
+                    b.HasOne("Retaguarda.Dominio.Entidades.EnderecoMunicipio", "Municipio")
+                        .WithMany()
+                        .HasForeignKey("MunicipioId");
+
+                    b.HasOne("Retaguarda.Dominio.Entidades.EnderecoPais", "Pais")
+                        .WithMany()
+                        .HasForeignKey("PaisId");
+
+                    b.HasOne("Retaguarda.Dominio.Entidades.EnderecoUF", "Uf")
+                        .WithMany()
+                        .HasForeignKey("UfId");
+
+                    b.Navigation("Bairro");
+
+                    b.Navigation("Cep");
+
+                    b.Navigation("Logradouro");
+
+                    b.Navigation("Municipio");
+
+                    b.Navigation("Pais");
+
+                    b.Navigation("Uf");
+                });
+
+            modelBuilder.Entity("Retaguarda.Dominio.Entidades.EnderecoBairro", b =>
+                {
+                    b.HasOne("Retaguarda.Dominio.Entidades.EnderecoMunicipio", "Municipio")
                         .WithMany()
                         .HasForeignKey("MunicipioId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -2187,55 +2208,20 @@ namespace Retaguarda.Persistencia.POSTGRESQL.Migracoes
                     b.Navigation("Municipio");
                 });
 
-            modelBuilder.Entity("Retaguarda.Dominio.Entidades.Cep", b =>
+            modelBuilder.Entity("Retaguarda.Dominio.Entidades.EnderecoCEP", b =>
                 {
-                    b.HasOne("Retaguarda.Dominio.Entidades.Imovel", "Imovel")
-                        .WithMany()
-                        .HasForeignKey("ImovelId")
-                        .OnDelete(DeleteBehavior.SetNull);
-
-                    b.Navigation("Imovel");
-                });
-
-            modelBuilder.Entity("Retaguarda.Dominio.Entidades.Endereco", b =>
-                {
-                    b.HasOne("Retaguarda.Dominio.Entidades.Cep", "Cep")
-                        .WithMany()
-                        .HasForeignKey("CepId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Retaguarda.Dominio.Entidades.Usuario", "Usuario")
-                        .WithMany()
-                        .HasForeignKey("UsuarioId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Cep");
-
-                    b.Navigation("Usuario");
-                });
-
-            modelBuilder.Entity("Retaguarda.Dominio.Entidades.Imovel", b =>
-                {
-                    b.HasOne("Retaguarda.Dominio.Entidades.Cep", "Cep")
-                        .WithMany()
-                        .HasForeignKey("CepId")
-                        .OnDelete(DeleteBehavior.SetNull);
-
-                    b.HasOne("Retaguarda.Dominio.Entidades.Logradouro", "Logradouro")
+                    b.HasOne("Retaguarda.Dominio.Entidades.EnderecoLogradouro", "Logradouro")
                         .WithMany()
                         .HasForeignKey("LogradouroId")
-                        .OnDelete(DeleteBehavior.SetNull);
-
-                    b.Navigation("Cep");
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Logradouro");
                 });
 
-            modelBuilder.Entity("Retaguarda.Dominio.Entidades.Logradouro", b =>
+            modelBuilder.Entity("Retaguarda.Dominio.Entidades.EnderecoLogradouro", b =>
                 {
-                    b.HasOne("Retaguarda.Dominio.Entidades.Bairro", "Bairro")
+                    b.HasOne("Retaguarda.Dominio.Entidades.EnderecoBairro", "Bairro")
                         .WithMany()
                         .HasForeignKey("BairroId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -2244,15 +2230,35 @@ namespace Retaguarda.Persistencia.POSTGRESQL.Migracoes
                     b.Navigation("Bairro");
                 });
 
-            modelBuilder.Entity("Retaguarda.Dominio.Entidades.Municipio", b =>
+            modelBuilder.Entity("Retaguarda.Dominio.Entidades.EnderecoMunicipio", b =>
                 {
-                    b.HasOne("Retaguarda.Dominio.Entidades.Uf", "Uf")
+                    b.HasOne("Retaguarda.Dominio.Entidades.EnderecoUF", "Uf")
                         .WithMany()
                         .HasForeignKey("UfId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Uf");
+                });
+
+            modelBuilder.Entity("Retaguarda.Dominio.Entidades.EnderecoUF", b =>
+                {
+                    b.HasOne("Retaguarda.Dominio.Entidades.EnderecoPais", "Pais")
+                        .WithMany()
+                        .HasForeignKey("PaisId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Pais");
+                });
+
+            modelBuilder.Entity("Retaguarda.Dominio.Entidades.Imovel", b =>
+                {
+                    b.HasOne("Retaguarda.Dominio.Entidades.Endereco", "Endereco")
+                        .WithMany()
+                        .HasForeignKey("EnderecoId");
+
+                    b.Navigation("Endereco");
                 });
 
             modelBuilder.Entity("Retaguarda.Dominio.Entidades.OrganizacaoUnidadeSetor", b =>
@@ -2295,6 +2301,15 @@ namespace Retaguarda.Persistencia.POSTGRESQL.Migracoes
                     b.Navigation("Usuario");
                 });
 
+            modelBuilder.Entity("Retaguarda.Dominio.Entidades.PessoaEndereco", b =>
+                {
+                    b.HasOne("Retaguarda.Dominio.Entidades.Pessoa", null)
+                        .WithMany("Enderecos")
+                        .HasForeignKey("PessoaId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("Retaguarda.Dominio.Entidades.SetorUsuario", b =>
                 {
                     b.HasOne("Retaguarda.Dominio.Entidades.OrganizacaoSetor", "Setor")
@@ -2314,20 +2329,14 @@ namespace Retaguarda.Persistencia.POSTGRESQL.Migracoes
                     b.Navigation("Usuario");
                 });
 
-            modelBuilder.Entity("Retaguarda.Dominio.Entidades.Uf", b =>
-                {
-                    b.HasOne("Retaguarda.Dominio.Entidades.Pais", "Pais")
-                        .WithMany()
-                        .HasForeignKey("PaisId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Pais");
-                });
-
             modelBuilder.Entity("Retaguarda.Dominio.Entidades.Perfil", b =>
                 {
                     b.Navigation("Permissoes");
+                });
+
+            modelBuilder.Entity("Retaguarda.Dominio.Entidades.Pessoa", b =>
+                {
+                    b.Navigation("Enderecos");
                 });
 #pragma warning restore 612, 618
         }
