@@ -2,11 +2,9 @@ using Retaguarda.Dominio.Entidades.Base;
 
 namespace Retaguarda.Dominio.Entidades
 {
-    public class Bairro : MultilocatarioEntidade
+    public class EnderecoPais : MultilocatarioEntidade
     {
         public string Nome { get; set; } = string.Empty;
-
-        public long MunicipioId { get; set; }
-        public Municipio? Municipio { get; set; }
+        public string Codigo { get; set; } = string.Empty; // ISO code
     }
 }

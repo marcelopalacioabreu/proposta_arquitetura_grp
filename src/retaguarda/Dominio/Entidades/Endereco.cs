@@ -14,6 +14,6 @@ namespace Retaguarda.Dominio.Entidades
         public string Complemento { get; set; } = string.Empty;
 
         public Usuario? Usuario { get; set; }
-        public Cep? Cep { get; set; }
+        public EnderecoCEP? Cep { get; set; }
     }
 }

@@ -8,10 +8,9 @@ namespace Retaguarda.Dominio.Entidades
         public string Codigo { get; set; } = string.Empty;
         public string Sigla { get; set; } = string.Empty;
         public long? UnidadePaiId { get; set; }
-        public string HierarquiaCodigo { get; set; } = string.Empty;
-        public string HierarquiaNome { get; set; } = string.Empty;
         public long? Nivel { get; set; }
-        public long? ResponsavelId { get; set; }
+        public long? ResponsavelId { get; set; } /*Pessoa responsável pela unidade*/
+        public long? PessoaId { get; set; }/* Pessoa jurídica da organização */
         public long? SituacaoId { get; set; }
     }
 }
