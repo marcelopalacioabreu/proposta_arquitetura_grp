@@ -1,22 +1,9 @@
 using System;
 using Retaguarda.Dominio.Entidades.Base;
+using Retaguarda.Dominio.Entidades.Enumeracoes;
 
 namespace Retaguarda.Dominio.Entidades
 {
-    public enum Sexo
-    {
-        FEMININO = 1,
-        MASCULINO = 2
-    }
-
-    public enum EstadoCivil
-    {
-        SOLTEIRA = 1,
-        CASADA = 2,
-        DIVORCIADA = 3,
-        VIÚVA = 4,
-        UNIÃO_ESTÁVEL = 5
-    }
 
     public class PessoaFisica : Pessoa
     {
