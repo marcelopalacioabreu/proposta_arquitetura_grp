@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Retaguarda.Dominio.Entidades;
 using Retaguarda.Dominio.Entidades.Base;
+using Retaguarda.Dominio.Entidades.Enumeracoes;
 using System.Threading;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.AspNetCore.Http;
@@ -123,7 +124,12 @@ namespace Retaguarda.Persistencia.POSTGRESQL
             {
                 b.ToTable("Pessoas");
                 b.HasKey(x => x.Id);
-                b.Property(x => x.TipoPessoa).IsRequired();
+                b.Property(x => x.TipoPessoa)
+                .HasConversion(
+                    v => v.Chave,
+                    v => PessoaTipo.ObterPorChave(v)
+                )
+                .IsRequired();
                 b.HasDiscriminator<int>("Discriminator")
                     .HasValue<Pessoa>(0)
                     .HasValue<PessoaFisica>(1)
