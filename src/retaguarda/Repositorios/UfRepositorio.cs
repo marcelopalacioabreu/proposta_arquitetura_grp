@@ -7,7 +7,7 @@ using Retaguarda.Repositorios.Base;
 
 namespace Retaguarda.Repositorios
 {
-    public class UfRepositorio : RepositorioBase<Uf>, IUfRepositorio
+    public class UfRepositorio : RepositorioBase<EnderecoUF>, IUfRepositorio
     {
         public UfRepositorio(IApplicationDbContext db) : base(db)
         {

@@ -24,21 +24,21 @@ namespace Retaguarda.Servicos
             return new PessoaDto
             {
                 Id = e.Id,
-                TipoPessoa = (int)e.TipoPessoa,
+                TipoPessoa = e.TipoPessoa.Chave,
                 Ativo = e.Ativo
             };
         }
 
         protected override Pessoa FromDto(PessoaDto dto)
         {
-            // Cannot instantiate abstract class
-            throw new System.NotImplementedException("Use PessoaFisicaServico or PessoaJuridicaServico instead");
+            // Nao instancia a classe abstrata diretamente
+            throw new System.NotImplementedException("Use PessoaFisicaServico ou PessoaJuridicaServico");
         }
 
         protected override void UpdateEntityFromDto(Pessoa entity, PessoaDto dto)
         {
-            // Cannot update abstract base class directly
-            throw new System.NotImplementedException("Use PessoaFisicaServico or PessoaJuridicaServico instead");
+            // Nao atualiza a classe abstrata diretamente
+            throw new System.NotImplementedException("Use PessoaFisicaServico ou PessoaJuridicaServico");
         }
     }
 }

@@ -8,7 +8,7 @@ using Retaguarda.DTO.Dtos;
 
 namespace Retaguarda.Servicos
 {
-    public class CepServico : ServicoBase<Cep, CepDto>, ICepServico
+    public class CepServico : ServicoBase<EnderecoCEP, CepDto>, ICepServico
     {
         private readonly ICepRepositorio _repositorioConcrete;
 
@@ -17,31 +17,29 @@ namespace Retaguarda.Servicos
             _repositorioConcrete = repositorio;
         }
 
-        protected override CepDto ToDto(Cep e)
+        protected override CepDto ToDto(EnderecoCEP e)
         {
             return new CepDto
             {
                 Id = e.Id,
                 Codigo = e.Codigo,
-                ImovelId = e.ImovelId,
                 Ativo = e.Ativo
             };
         }
 
-        protected override Cep FromDto(CepDto dto)
+        protected override EnderecoCEP FromDto(CepDto dto)
         {
-            return new Cep
+            return new EnderecoCEP
             {
+                Id = dto.Id,
                 Codigo = dto.Codigo,
-                ImovelId = dto.ImovelId,
                 Ativo = dto.Ativo
             };
         }
 
-        protected override void UpdateEntityFromDto(Cep entity, CepDto dto)
+        protected override void UpdateEntityFromDto(EnderecoCEP entity, CepDto dto)
         {
             entity.Codigo = dto.Codigo;
-            entity.ImovelId = dto.ImovelId;
             entity.Ativo = dto.Ativo;
         }
     }

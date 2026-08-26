@@ -26,8 +26,6 @@ namespace Retaguarda.Servicos
                 Codigo = e.Codigo,
                 Sigla = e.Sigla,
                 UnidadePaiId = e.UnidadePaiId,
-                HierarquiaCodigo = e.HierarquiaCodigo,
-                HierarquiaNome = e.HierarquiaNome,
                 Nivel = e.Nivel,
                 Ativo = e.Ativo
             };
@@ -41,8 +39,6 @@ namespace Retaguarda.Servicos
                 Codigo = dto.Codigo,
                 Sigla = dto.Sigla,
                 UnidadePaiId = dto.UnidadePaiId,
-                HierarquiaCodigo = dto.HierarquiaCodigo,
-                HierarquiaNome = dto.HierarquiaNome,
                 Nivel = dto.Nivel,
                 Ativo = dto.Ativo
             };
@@ -54,8 +50,6 @@ namespace Retaguarda.Servicos
             entity.Codigo = dto.Codigo;
             entity.Sigla = dto.Sigla;
             entity.UnidadePaiId = dto.UnidadePaiId;
-            entity.HierarquiaCodigo = dto.HierarquiaCodigo;
-            entity.HierarquiaNome = dto.HierarquiaNome;
             entity.Nivel = dto.Nivel;
             entity.Ativo = dto.Ativo;
         }

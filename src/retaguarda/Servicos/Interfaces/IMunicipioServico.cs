@@ -3,7 +3,7 @@ using Retaguarda.Servicos.Interfaces;
 
 namespace Retaguarda.Servicos.Interfaces
 {
-    public interface IMunicipioServico : IServicoBase<MunicipioDto>
+    public interface IMunicipioServico : IServicoBase<EnderecoMunicipioDto>
     {
         // Additional municipio-specific service methods can be added here.
     }

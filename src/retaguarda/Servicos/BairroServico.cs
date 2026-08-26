@@ -8,7 +8,7 @@ using Retaguarda.DTO.Dtos;
 
 namespace Retaguarda.Servicos
 {
-    public class BairroServico : ServicoBase<Bairro, BairroDto>, IBairroServico
+    public class BairroServico : ServicoBase<EnderecoBairro, EnderecoBairroDto>, IBairroServico
     {
         private readonly IBairroRepositorio _repositorioConcrete;
 
@@ -17,9 +17,9 @@ namespace Retaguarda.Servicos
             _repositorioConcrete = repositorio;
         }
 
-        protected override BairroDto ToDto(Bairro e)
+        protected override EnderecoBairroDto ToDto(EnderecoBairro e)
         {
-            return new BairroDto
+            return new EnderecoBairroDto
             {
                 Id = e.Id,
                 Nome = e.Nome,
@@ -28,17 +28,18 @@ namespace Retaguarda.Servicos
             };
         }
 
-        protected override Bairro FromDto(BairroDto dto)
+        protected override EnderecoBairro FromDto(EnderecoBairroDto dto)
         {
-            return new Bairro
+            return new EnderecoBairro
             {
+                Id = dto.Id,
                 Nome = dto.Nome,
                 MunicipioId = dto.MunicipioId,
                 Ativo = dto.Ativo
             };
         }
 
-        protected override void UpdateEntityFromDto(Bairro entity, BairroDto dto)
+        protected override void UpdateEntityFromDto(EnderecoBairro entity, EnderecoBairroDto dto)
         {
             entity.Nome = dto.Nome;
             entity.MunicipioId = dto.MunicipioId;

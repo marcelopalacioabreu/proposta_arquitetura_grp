@@ -8,7 +8,7 @@ using Retaguarda.DTO.Dtos;
 
 namespace Retaguarda.Servicos
 {
-    public class UfServico : ServicoBase<Uf, UfDto>, IUfServico
+    public class UfServico : ServicoBase<EnderecoUF, EnderecoUFDto>, IUfServico
     {
         private readonly IUfRepositorio _repositorioConcrete;
 
@@ -17,9 +17,9 @@ namespace Retaguarda.Servicos
             _repositorioConcrete = repositorio;
         }
 
-        protected override UfDto ToDto(Uf e)
+        protected override EnderecoUFDto ToDto(EnderecoUF e)
         {
-            return new UfDto
+            return new EnderecoUFDto
             {
                 Id = e.Id,
                 Nome = e.Nome,
@@ -29,10 +29,11 @@ namespace Retaguarda.Servicos
             };
         }
 
-        protected override Uf FromDto(UfDto dto)
+        protected override EnderecoUF FromDto(EnderecoUFDto dto)
         {
-            return new Uf
+            return new EnderecoUF
             {
+                Id = dto.Id,
                 Nome = dto.Nome,
                 Sigla = dto.Sigla,
                 PaisId = dto.PaisId,
@@ -40,7 +41,7 @@ namespace Retaguarda.Servicos
             };
         }
 
-        protected override void UpdateEntityFromDto(Uf entity, UfDto dto)
+        protected override void UpdateEntityFromDto(EnderecoUF entity, EnderecoUFDto dto)
         {
             entity.Nome = dto.Nome;
             entity.Sigla = dto.Sigla;

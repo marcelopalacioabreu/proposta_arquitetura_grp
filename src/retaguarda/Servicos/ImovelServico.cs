@@ -23,10 +23,6 @@ namespace Retaguarda.Servicos
             {
                 Id = e.Id,
                 Cadastro = e.Cadastro,
-                LogradouroId = e.LogradouroId,
-                CepId = e.CepId,
-                Numero = e.Numero,
-                Complemento = e.Complemento,
                 InscricaoImobiliaria = e.InscricaoImobiliaria,
                 TipoImovelId = e.TipoImovelId,
                 Latitude = e.Latitude,
@@ -41,10 +37,6 @@ namespace Retaguarda.Servicos
             return new Imovel
             {
                 Cadastro = dto.Cadastro,
-                LogradouroId = dto.LogradouroId,
-                CepId = dto.CepId,
-                Numero = dto.Numero,
-                Complemento = dto.Complemento,
                 InscricaoImobiliaria = dto.InscricaoImobiliaria,
                 TipoImovelId = dto.TipoImovelId,
                 Latitude = dto.Latitude,
@@ -57,10 +49,6 @@ namespace Retaguarda.Servicos
         protected override void UpdateEntityFromDto(Imovel entity, ImovelDto dto)
         {
             entity.Cadastro = dto.Cadastro;
-            entity.LogradouroId = dto.LogradouroId;
-            entity.CepId = dto.CepId;
-            entity.Numero = dto.Numero;
-            entity.Complemento = dto.Complemento;
             entity.InscricaoImobiliaria = dto.InscricaoImobiliaria;
             entity.TipoImovelId = dto.TipoImovelId;
             entity.Latitude = dto.Latitude;

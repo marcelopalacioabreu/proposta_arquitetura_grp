@@ -8,7 +8,7 @@ using Retaguarda.DTO.Dtos;
 
 namespace Retaguarda.Servicos
 {
-    public class PaisServico : ServicoBase<Pais, PaisDto>, IPaisServico
+    public class PaisServico : ServicoBase<EnderecoPais, EnderecoPaisDto>, IPaisServico
     {
         private readonly IPaisRepositorio _repositorioConcrete;
 
@@ -17,9 +17,9 @@ namespace Retaguarda.Servicos
             _repositorioConcrete = repositorio;
         }
 
-        protected override PaisDto ToDto(Pais e)
+        protected override EnderecoPaisDto ToDto(EnderecoPais e)
         {
-            return new PaisDto
+            return new EnderecoPaisDto
             {
                 Id = e.Id,
                 Nome = e.Nome,
@@ -28,17 +28,18 @@ namespace Retaguarda.Servicos
             };
         }
 
-        protected override Pais FromDto(PaisDto dto)
+        protected override EnderecoPais FromDto(EnderecoPaisDto dto)
         {
-            return new Pais
+            return new EnderecoPais
             {
+                Id = dto.Id,
                 Nome = dto.Nome,
                 Codigo = dto.Codigo,
                 Ativo = dto.Ativo
             };
         }
 
-        protected override void UpdateEntityFromDto(Pais entity, PaisDto dto)
+        protected override void UpdateEntityFromDto(EnderecoPais entity, EnderecoPaisDto dto)
         {
             entity.Nome = dto.Nome;
             entity.Codigo = dto.Codigo;

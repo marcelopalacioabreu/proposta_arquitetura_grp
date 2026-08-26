@@ -26,13 +26,13 @@ namespace Retaguarda.Persistencia.MYSQL
         public DbSet<PerfilPermissao> PerfilPermissoes { get; set; } = null!;
         public DbSet<Tipo> Tipos { get; set; } = null!;
         // Address related
-        public DbSet<Pais> Paises { get; set; } = null!;
-        public DbSet<Uf> Ufs { get; set; } = null!;
-        public DbSet<Municipio> Municipios { get; set; } = null!;
-        public DbSet<Bairro> Bairros { get; set; } = null!;
-        public DbSet<Logradouro> Logradouros { get; set; } = null!;
+        public DbSet<EnderecoPais> EnderecoPaises { get; set; } = null!;
+        public DbSet<EnderecoUF> EnderecoUFs { get; set; } = null!;
+        public DbSet<EnderecoMunicipio> EnderecoMunicipios { get; set; } = null!;
+        public DbSet<EnderecoBairro> EnderecoBairros { get; set; } = null!;
+        public DbSet<EnderecoLogradouro> EnderecoLogradouros { get; set; } = null!;
         public DbSet<Imovel> Imoveis { get; set; } = null!;
-        public DbSet<Cep> Ceps { get; set; } = null!;
+        public DbSet<EnderecoCEP> EnderecoCEPs { get; set; } = null!;
         public DbSet<Endereco> Enderecos { get; set; } = null!;
         // New catalog and relation entities
         public DbSet<NivelGoverno> NiveisGoverno { get; set; } = null!;
@@ -64,7 +64,6 @@ namespace Retaguarda.Persistencia.MYSQL
                 b.Property(x => x.Nome).IsRequired().HasMaxLength(200);
                 b.Property(x => x.Codigo).HasMaxLength(50);
                 b.Property(x => x.Sigla).HasMaxLength(30);
-                b.Property(x => x.HierarquiaCodigo).HasMaxLength(600);
             });
 
             modelBuilder.Entity<OrganizacaoSetor>(b =>
@@ -148,8 +147,6 @@ namespace Retaguarda.Persistencia.MYSQL
                 b.Property(x => x.Nome).IsRequired().HasMaxLength(200);
                 b.Property(x => x.Codigo).HasMaxLength(50);
                 b.Property(x => x.Sigla).HasMaxLength(30);
-                b.Property(x => x.HierarquiaCodigo).HasMaxLength(600);
-                b.Property(x => x.HierarquiaNome).HasMaxLength(1000);
                 b.Property(x => x.Nivel);
             });
 
@@ -162,14 +159,14 @@ namespace Retaguarda.Persistencia.MYSQL
             });
 
             // Address model
-            modelBuilder.Entity<Pais>(b =>
+            modelBuilder.Entity<EnderecoPais>(b =>
             {
                 b.ToTable("Paises");
                 b.HasKey(x => x.Id);
                 b.Property(x => x.Nome).IsRequired().HasMaxLength(200);
             });
 
-            modelBuilder.Entity<Uf>(b =>
+            modelBuilder.Entity<EnderecoUF>(b =>
             {
                 b.ToTable("Ufs");
                 b.HasKey(x => x.Id);
@@ -178,7 +175,7 @@ namespace Retaguarda.Persistencia.MYSQL
                 b.HasOne(x => x.Pais).WithMany().HasForeignKey(x => x.PaisId).OnDelete(DeleteBehavior.Cascade);
             });
 
-            modelBuilder.Entity<Municipio>(b =>
+            modelBuilder.Entity<EnderecoMunicipio>(b =>
             {
                 b.ToTable("Municipios");
                 b.HasKey(x => x.Id);
@@ -186,7 +183,7 @@ namespace Retaguarda.Persistencia.MYSQL
                 b.HasOne(x => x.Uf).WithMany().HasForeignKey(x => x.UfId).OnDelete(DeleteBehavior.Cascade);
             });
 
-            modelBuilder.Entity<Bairro>(b =>
+            modelBuilder.Entity<EnderecoBairro>(b =>
             {
                 b.ToTable("Bairros");
                 b.HasKey(x => x.Id);
@@ -194,7 +191,7 @@ namespace Retaguarda.Persistencia.MYSQL
                 b.HasOne(x => x.Municipio).WithMany().HasForeignKey(x => x.MunicipioId).OnDelete(DeleteBehavior.Cascade);
             });
 
-            modelBuilder.Entity<Logradouro>(b =>
+            modelBuilder.Entity<EnderecoLogradouro>(b =>
             {
                 b.ToTable("Logradouros");
                 b.HasKey(x => x.Id);
@@ -207,22 +204,16 @@ namespace Retaguarda.Persistencia.MYSQL
                 b.ToTable("Imoveis");
                 b.HasKey(x => x.Id);
                 b.Property(x => x.Cadastro).IsRequired().HasMaxLength(200);
-                b.Property(x => x.Numero).HasMaxLength(50);
-                b.Property(x => x.Complemento).HasMaxLength(500);
                 b.Property(x => x.InscricaoImobiliaria).HasMaxLength(200);
                 b.Property(x => x.Latitude);
                 b.Property(x => x.Longitude);
-                b.HasOne(x => x.Logradouro).WithMany().HasForeignKey(x => x.LogradouroId).OnDelete(DeleteBehavior.SetNull);
-                b.HasOne(x => x.Cep).WithMany().HasForeignKey(x => x.CepId).OnDelete(DeleteBehavior.SetNull);
             });
 
-            modelBuilder.Entity<Cep>(b =>
+            modelBuilder.Entity<EnderecoCEP>(b =>
             {
-                b.ToTable("Ceps");
+                b.ToTable("EnderecoCEPs");
                 b.HasKey(x => x.Id);
                 b.Property(x => x.Codigo).IsRequired().HasMaxLength(20);
-                // Imovel linkage is optional
-                b.HasOne(x => x.Imovel).WithMany().HasForeignKey(x => x.ImovelId).OnDelete(DeleteBehavior.SetNull);
             });
 
             // catalogs and relation tables
@@ -258,7 +249,6 @@ namespace Retaguarda.Persistencia.MYSQL
                 b.ToTable("Enderecos");
                 b.HasKey(x => x.Id);
                 b.Property(x => x.Complemento).HasMaxLength(500);
-                b.HasOne(x => x.Usuario).WithMany().HasForeignKey(x => x.UsuarioId).OnDelete(DeleteBehavior.Cascade);
                 b.HasOne(x => x.Cep).WithMany().HasForeignKey(x => x.CepId).OnDelete(DeleteBehavior.Cascade);
             });
 

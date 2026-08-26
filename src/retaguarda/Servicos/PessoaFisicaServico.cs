@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Retaguarda.Dominio.Entidades;
+using Retaguarda.Dominio.Entidades.Enumeracoes;
 using Retaguarda.Repositorios.Interfaces;
 using Retaguarda.Servicos.Base;
 using Retaguarda.Servicos.Interfaces;
@@ -26,8 +27,8 @@ namespace Retaguarda.Servicos
                 NomeSocial = e.NomeSocial,
                 Cpf = e.Cpf,
                 DataNascimento = e.DataNascimento,
-                Sexo = e.Sexo.HasValue ? (int)e.Sexo.Value : null,
-                EstadoCivil = e.EstadoCivil.HasValue ? (int)e.EstadoCivil.Value : null,
+                Sexo = e.Sexo != null ? e.Sexo.Chave : null,
+                EstadoCivil = e.EstadoCivil != null ? e.EstadoCivil.Chave : null,
                 NomeMae = e.NomeMae,
                 NomePai = e.NomePai,
                 Pcd = e.Pcd,
@@ -44,8 +45,8 @@ namespace Retaguarda.Servicos
                 NomeSocial = dto.NomeSocial,
                 Cpf = dto.Cpf,
                 DataNascimento = dto.DataNascimento,
-                Sexo = dto.Sexo.HasValue ? (Sexo)dto.Sexo.Value : null,
-                EstadoCivil = dto.EstadoCivil.HasValue ? (EstadoCivil)dto.EstadoCivil.Value : null,
+                Sexo = !string.IsNullOrEmpty(dto.Sexo) ? Sexo.ObterPorChave(dto.Sexo) : null,
+                EstadoCivil = !string.IsNullOrEmpty(dto.EstadoCivil) ? EstadoCivil.ObterPorChave(dto.EstadoCivil) : null,
                 NomeMae = dto.NomeMae,
                 NomePai = dto.NomePai,
                 Pcd = dto.Pcd,
@@ -60,8 +61,8 @@ namespace Retaguarda.Servicos
             entity.NomeSocial = dto.NomeSocial;
             entity.Cpf = dto.Cpf;
             entity.DataNascimento = dto.DataNascimento;
-            entity.Sexo = dto.Sexo.HasValue ? (Sexo)dto.Sexo.Value : null;
-            entity.EstadoCivil = dto.EstadoCivil.HasValue ? (EstadoCivil)dto.EstadoCivil.Value : null;
+            entity.Sexo = !string.IsNullOrEmpty(dto.Sexo) ? Sexo.ObterPorChave(dto.Sexo) : null;
+            entity.EstadoCivil = !string.IsNullOrEmpty(dto.EstadoCivil) ? EstadoCivil.ObterPorChave(dto.EstadoCivil) : null;
             entity.NomeMae = dto.NomeMae;
             entity.NomePai = dto.NomePai;
             entity.Pcd = dto.Pcd;

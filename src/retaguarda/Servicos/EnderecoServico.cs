@@ -22,7 +22,6 @@ namespace Retaguarda.Servicos
             return new EnderecoDto
             {
                 Id = e.Id,
-                UsuarioId = e.UsuarioId,
                 CepId = e.CepId,
                 Complemento = e.Complemento,
                 Ativo = e.Ativo
@@ -33,7 +32,6 @@ namespace Retaguarda.Servicos
         {
             return new Endereco
             {
-                UsuarioId = dto.UsuarioId,
                 CepId = dto.CepId,
                 Complemento = dto.Complemento,
                 Ativo = dto.Ativo
@@ -42,7 +40,6 @@ namespace Retaguarda.Servicos
 
         protected override void UpdateEntityFromDto(Endereco entity, EnderecoDto dto)
         {
-            entity.UsuarioId = dto.UsuarioId;
             entity.CepId = dto.CepId;
             entity.Complemento = dto.Complemento;
             entity.Ativo = dto.Ativo;

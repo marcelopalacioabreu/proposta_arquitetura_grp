@@ -5,6 +5,7 @@ using Retaguarda.Servicos.Interfaces;
 using Retaguarda.DTO.Dtos;
 using Retaguarda.DTO.Parametros;
 using Retaguarda.Persistencia;
+using Retaguarda.Api.Utils;
 
 namespace Retaguarda.Api.Controllers
 {
@@ -43,19 +44,13 @@ namespace Retaguarda.Api.Controllers
         [Authorize(Policy = "enderecos.ceps.visualizar")]
         public IActionResult GetByCodigo(string codigo)
         {
-            var c = _db.Ceps
-                .Include(x => x.Imovel)                
-                    .ThenInclude(i => i.Logradouro)
-                        .ThenInclude(l => l.Bairro)
-                            .ThenInclude(b => b.Municipio)
-                                .ThenInclude(m => m.Uf)
-                                    .ThenInclude(u => u.Pais)
-                .FirstOrDefault(x => x.Codigo == codigo);
+            var c = _servico.ListarAsync(new PesquisaParametrosDto { Filtros = FiltrosHelper.MontarFiltros("Codigo", "eq", codigo, null, null) }).Result;
+            
+            if (c.Total ==0) return NotFoundError("CEP não encontrado");
 
-            if (c == null) return NotFoundError("CEP não encontrado");
-
-            var imovel = c.Imovel!;
-            var logradouro = imovel?.Logradouro!;
+            var cep = c.Items.FirstOrDefault();
+            
+            var logradouro = cep?.Logradouro!;
             var bairro = logradouro?.Bairro!;
             var municipio = bairro?.Municipio!;
             var uf = municipio?.Uf!;
@@ -63,33 +58,28 @@ namespace Retaguarda.Api.Controllers
 
             var result = new
             {
-                c.Id,
-                c.Codigo,
-                Imovel = imovel == null ? null : new
+                cep.Id,
+                cep.Codigo,
+                Logradouro = logradouro == null ? null : new
                 {
-                    imovel.Id,
-                    imovel.Cadastro,
-                    Logradouro = logradouro == null ? null : new
+                    logradouro.Id,
+                    logradouro.Tipo,
+                    logradouro.Nome,
+                    Bairro = bairro == null ? null : new
                     {
-                        logradouro.Id,
-                        logradouro.Tipo,
-                        logradouro.Nome,
-                        Bairro = bairro == null ? null : new
+                        bairro.Id,
+                        bairro.Nome,
+                        Municipio = municipio == null ? null : new
                         {
-                            bairro.Id,
-                            bairro.Nome,
-                            Municipio = municipio == null ? null : new
+                            municipio.Id,
+                            municipio.Nome,
+                            municipio.CodigoIbge,
+                            Uf = uf == null ? null : new
                             {
-                                municipio.Id,
-                                municipio.Nome,
-                                municipio.CodigoIbge,
-                                Uf = uf == null ? null : new
-                                {
-                                    uf.Id,
-                                    uf.Nome,
-                                    uf.Sigla,
-                                    Pais = pais == null ? null : new { pais.Id, pais.Nome }
-                                }
+                                uf.Id,
+                                uf.Nome,
+                                uf.Sigla,
+                                Pais = pais == null ? null : new { pais.Id, pais.Nome }
                             }
                         }
                     }

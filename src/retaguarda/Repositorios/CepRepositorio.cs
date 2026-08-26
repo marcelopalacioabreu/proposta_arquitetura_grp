@@ -7,7 +7,7 @@ using Retaguarda.Repositorios.Base;
 
 namespace Retaguarda.Repositorios
 {
-    public class CepRepositorio : RepositorioBase<Cep>, ICepRepositorio
+    public class CepRepositorio : RepositorioBase<EnderecoCEP>, ICepRepositorio
     {
         public CepRepositorio(IApplicationDbContext db) : base(db)
         {

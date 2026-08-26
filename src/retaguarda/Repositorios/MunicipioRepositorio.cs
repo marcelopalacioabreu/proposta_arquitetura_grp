@@ -7,7 +7,7 @@ using Retaguarda.Repositorios.Base;
 
 namespace Retaguarda.Repositorios
 {
-    public class MunicipioRepositorio : RepositorioBase<Municipio>, IMunicipioRepositorio
+    public class MunicipioRepositorio : RepositorioBase<EnderecoMunicipio>, IMunicipioRepositorio
     {
         public MunicipioRepositorio(IApplicationDbContext db) : base(db)
         {

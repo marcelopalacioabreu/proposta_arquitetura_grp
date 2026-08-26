@@ -9,8 +9,8 @@ namespace Retaguarda.DTO.Dtos
         public string? NomeSocial { get; set; }
         public string? Cpf { get; set; }
         public DateTime? DataNascimento { get; set; }
-        public int? Sexo { get; set; }
-        public int? EstadoCivil { get; set; }
+        public string? Sexo { get; set; }
+        public string? EstadoCivil { get; set; }
         public string? NomeMae { get; set; }
         public string? NomePai { get; set; }
         public bool Pcd { get; set; }

@@ -8,7 +8,7 @@ using Retaguarda.DTO.Dtos;
 
 namespace Retaguarda.Servicos
 {
-    public class LogradouroServico : ServicoBase<Logradouro, LogradouroDto>, ILogradouroServico
+    public class LogradouroServico : ServicoBase<EnderecoLogradouro, EnderecoLogradouroDto>, ILogradouroServico
     {
         private readonly ILogradouroRepositorio _repositorioConcrete;
 
@@ -17,9 +17,9 @@ namespace Retaguarda.Servicos
             _repositorioConcrete = repositorio;
         }
 
-        protected override LogradouroDto ToDto(Logradouro e)
+        protected override EnderecoLogradouroDto ToDto(EnderecoLogradouro e)
         {
-            return new LogradouroDto
+            return new EnderecoLogradouroDto
             {
                 Id = e.Id,
                 Nome = e.Nome,
@@ -29,10 +29,11 @@ namespace Retaguarda.Servicos
             };
         }
 
-        protected override Logradouro FromDto(LogradouroDto dto)
+        protected override EnderecoLogradouro FromDto(EnderecoLogradouroDto dto)
         {
-            return new Logradouro
+            return new EnderecoLogradouro
             {
+                Id = dto.Id,
                 Nome = dto.Nome,
                 Tipo = dto.Tipo,
                 BairroId = dto.BairroId,
@@ -40,7 +41,7 @@ namespace Retaguarda.Servicos
             };
         }
 
-        protected override void UpdateEntityFromDto(Logradouro entity, LogradouroDto dto)
+        protected override void UpdateEntityFromDto(EnderecoLogradouro entity, EnderecoLogradouroDto dto)
         {
             entity.Nome = dto.Nome;
             entity.Tipo = dto.Tipo;

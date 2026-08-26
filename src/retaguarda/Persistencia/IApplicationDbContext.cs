@@ -20,13 +20,13 @@ namespace Retaguarda.Persistencia
         DbSet<PerfilPermissao> PerfilPermissoes { get; set; }
         DbSet<Tipo> Tipos { get; set; }
 
-        DbSet<Pais> Paises { get; set; }
-        DbSet<Uf> Ufs { get; set; }
-        DbSet<Municipio> Municipios { get; set; }
-        DbSet<Bairro> Bairros { get; set; }
-        DbSet<Logradouro> Logradouros { get; set; }
+        DbSet<EnderecoPais> EnderecoPaises { get; set; }
+        DbSet<EnderecoUF> EnderecoUFs { get; set; }
+        DbSet<EnderecoMunicipio> EnderecoMunicipios { get; set; }
+        DbSet<EnderecoBairro> EnderecoBairros { get; set; }
+        DbSet<EnderecoLogradouro> EnderecoLogradouros { get; set; }
         DbSet<Imovel> Imoveis { get; set; }
-        DbSet<Cep> Ceps { get; set; }
+        DbSet<EnderecoCEP> EnderecoCEPs { get; set; }
         DbSet<Endereco> Enderecos { get; set; }
 
         DbSet<NivelGoverno> NiveisGoverno { get; set; }

@@ -37,7 +37,7 @@ namespace Retaguarda.Api.Controllers
 
         [HttpPost]
         [Authorize(Policy = "enderecos.municipios.editar")]
-        public IActionResult Create([FromBody] MunicipioDto dto)
+        public IActionResult Create([FromBody] EnderecoMunicipioDto dto)
         {
             if (!ModelState.IsValid) return BadRequestModelState();
             var o = _servico.CriarAsync(dto).Result;
@@ -54,7 +54,7 @@ namespace Retaguarda.Api.Controllers
 
         [HttpPut("{id}")]
         [Authorize(Policy = "enderecos.municipios.editar")]
-        public IActionResult Update(long id, [FromBody] MunicipioDto dto)
+        public IActionResult Update(long id, [FromBody] EnderecoMunicipioDto dto)
         {
             if (!ModelState.IsValid) return BadRequestModelState();
             var existing = _servico.ObterPorIdAsync(id).Result;

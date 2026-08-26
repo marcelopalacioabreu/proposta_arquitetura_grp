@@ -7,7 +7,7 @@ using Retaguarda.Repositorios.Base;
 
 namespace Retaguarda.Repositorios
 {
-    public class LogradouroRepositorio : RepositorioBase<Logradouro>, ILogradouroRepositorio
+    public class LogradouroRepositorio : RepositorioBase<EnderecoLogradouro>, ILogradouroRepositorio
     {
         public LogradouroRepositorio(IApplicationDbContext db) : base(db)
         {

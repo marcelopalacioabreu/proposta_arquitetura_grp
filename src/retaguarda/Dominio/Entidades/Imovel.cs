@@ -5,14 +5,7 @@ namespace Retaguarda.Dominio.Entidades
     public class Imovel : MultilocatarioEntidade
     {
         public string Cadastro { get; set; } = string.Empty; // cadastro imobiliario
-        public long? LogradouroId { get; set; }
-        public Logradouro? Logradouro { get; set; }
-
-        // additional fields
-        public long? CepId { get; set; }
-        public Cep? Cep { get; set; }
-        public string Numero { get; set; } = string.Empty;
-        public string Complemento { get; set; } = string.Empty;
+        public Endereco? Endereco { get; set; }        
         public string InscricaoImobiliaria { get; set; } = string.Empty;
         public long? TipoImovelId { get; set; }
         public double? Latitude { get; set; }

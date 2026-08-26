@@ -26,7 +26,6 @@ namespace Retaguarda.Servicos
                 Nome = e.Nome,
                 Contexto = e.Contexto,
                 Descricao = e.Descricao,
-                Ordem = e.Ordem,
                 Ativo = e.Ativo
             };
         }
@@ -39,7 +38,6 @@ namespace Retaguarda.Servicos
                 Nome = dto.Nome,
                 Contexto = dto.Contexto,
                 Descricao = dto.Descricao,
-                Ordem = dto.Ordem,
                 Ativo = dto.Ativo
             };
         }
@@ -50,7 +48,6 @@ namespace Retaguarda.Servicos
             entity.Nome = dto.Nome;
             entity.Contexto = dto.Contexto;
             entity.Descricao = dto.Descricao;
-            entity.Ordem = dto.Ordem;
             entity.Ativo = dto.Ativo;
         }
     }
