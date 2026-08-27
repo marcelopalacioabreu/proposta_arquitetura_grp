@@ -10,6 +10,7 @@ import TelaCadastro from './componentes/Cadastros/TelaCadastro'
 import InicioPainel from './paginas/painel/InicioPainel'
 import PainelPlanejadorFluxo from './paginas/painel/PainelPlanejadorFluxo'
 import 'bootstrap/dist/css/bootstrap.min.css'
+import './custom.bootstrap.css'
 import './styles.css'
 import './servicos/api'
 
