@@ -9,10 +9,10 @@ import TelaPesquisa from './componentes/Cadastros/TelaPesquisa'
 import TelaCadastro from './componentes/Cadastros/TelaCadastro'
 import InicioPainel from './paginas/painel/InicioPainel'
 import PainelPlanejadorFluxo from './paginas/painel/PainelPlanejadorFluxo'
+import './servicos/api'
 import 'bootstrap/dist/css/bootstrap.min.css'
 import './custom.bootstrap.css'
 import './styles.css'
-import './servicos/api'
 
 function App(){
   return (

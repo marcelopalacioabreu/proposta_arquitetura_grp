@@ -86,7 +86,7 @@ export default function Menu(){
 
   function renderCompactIcon(name, active){
     if (!name) return <i className="bi bi-square" />
-    const defaultColor = active ? '#fff' : '#495057'
+    const defaultColor = active ? '#fff' : 'var(--bs-body-color)'
     switch(name){
       case 'building':
         return (

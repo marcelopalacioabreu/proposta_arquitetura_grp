@@ -56,20 +56,20 @@ export default function BarraNavegacao({ brand = 'Painel' }){
 
   return (
     <>
-      <nav className="navbar navbar-expand-md navbar-light bg-white border-bottom">
+      <nav className="navbar navbar-expand-md navbar-light bg-white border-bottom bg-admin">
         <div className="container-fluid">
           {/* Home icon placed absolutely to avoid invading sidebar width */}
           <a className="navbar-brand d-flex align-items-center" href="/painel">{brand}</a>
-          <a className="btn btn-outline-secondary btn-sm home-left d-flex align-items-center" href="/" title="Home">
+          <a className="btn btn-outline-light btn-sm home-left d-flex align-items-center" href="/" title="Home">
             <i className="bi bi-house" style={{fontSize:'1.1rem'}} />
           </a>
           <div className="ms-auto d-flex align-items-center">
             <div className="me-3 d-none d-md-block text-end">
-              <div className="small text-muted">{user ? `Olá, ${user.nome || user.username}` : ''}</div>
-              <div className="small text-primary">{contextoDisplay}</div>
+              <div className="small text-light">{user ? `Olá, ${user.nome || user.username}` : ''}</div>
+              <div className="small text-light">{contextoDisplay}</div>
             </div>
             <div className="position-relative" ref={userMenuRef}>
-              <button className="btn btn-outline-secondary btn-sm d-flex align-items-center" onClick={()=> setUserMenuOpen(s=>!s)}>
+              <button className="btn btn-outline-light btn-sm d-flex align-items-center" onClick={()=> setUserMenuOpen(s=>!s)}>
                 <i className="bi bi-person-circle" style={{fontSize:'1.2rem'}} />
                 <i className="bi bi-caret-down-fill ms-2 d-none d-md-inline" />
               </button>
