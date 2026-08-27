@@ -272,8 +272,8 @@ namespace Retaguarda.Persistencia.POSTGRESQL
                     b.ToTable("Contatos"); 
                     b.HasKey(x=>x.Id); 
                     b.Property(x=>x.Nome).HasMaxLength(200); 
-                    b.Property(x=>x.ContatoValor).HasMaxLength(500); 
-                    b.Property(x=>x.Tipo).IsRequired();
+                    b.Property(x=>x.ContatoValor).HasMaxLength(500);
+                    b.HasOne(x => x.Tipo).WithMany().HasForeignKey(x => x.TipoId).OnDelete(DeleteBehavior.Cascade);
                     }
             );
             modelBuilder.Entity<Documento>(
@@ -284,8 +284,8 @@ namespace Retaguarda.Persistencia.POSTGRESQL
                     b.Property(x=>x.Digito).HasMaxLength(20); 
                     b.Property(x=>x.OrgaoEmissor).HasMaxLength(100); 
                     b.Property(x=>x.UfEmissor).HasMaxLength(8); 
-                    b.Property(x=>x.Observacao).HasMaxLength(1000); 
-                    b.Property(x=>x.Tipo).IsRequired();
+                    b.Property(x=>x.Observacao).HasMaxLength(1000);
+                    b.HasOne(x => x.Tipo).WithMany().HasForeignKey(x => x.TipoId).OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity<OrganizacaoEndereco>(

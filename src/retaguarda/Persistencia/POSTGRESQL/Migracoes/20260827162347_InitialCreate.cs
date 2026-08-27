@@ -13,118 +13,6 @@ namespace Retaguarda.Persistencia.POSTGRESQL.Migracoes
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "ContatoRelacionamentos",
-                columns: table => new
-                {
-                    Id = table.Column<long>(type: "bigint", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    ContatoId = table.Column<long>(type: "bigint", nullable: false),
-                    OrganizacaoId = table.Column<long>(type: "bigint", nullable: true),
-                    OrganizacaoUnidadeId = table.Column<long>(type: "bigint", nullable: true),
-                    OrganizacaoSetorId = table.Column<long>(type: "bigint", nullable: true),
-                    PessoaId = table.Column<long>(type: "bigint", nullable: true),
-                    IdentificadorUnico = table.Column<Guid>(type: "uuid", nullable: false),
-                    IdentificadorUnicoAmigavel = table.Column<string>(type: "text", nullable: false),
-                    DataInsercao = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    DataAlteracao = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    SetorId = table.Column<long>(type: "bigint", nullable: true),
-                    Ativo = table.Column<bool>(type: "boolean", nullable: false),
-                    UsuarioInsercaoId = table.Column<long>(type: "bigint", nullable: true),
-                    UsuarioAlteracaoId = table.Column<long>(type: "bigint", nullable: true),
-                    Versao = table.Column<long>(type: "bigint", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_ContatoRelacionamentos", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Contatos",
-                columns: table => new
-                {
-                    Id = table.Column<long>(type: "bigint", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    TipoContatoId = table.Column<long>(type: "bigint", nullable: true),
-                    Nome = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: false),
-                    ContatoValor = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: false),
-                    IdentificadorUnico = table.Column<Guid>(type: "uuid", nullable: false),
-                    IdentificadorUnicoAmigavel = table.Column<string>(type: "text", nullable: false),
-                    DataInsercao = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    DataAlteracao = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    OrganizacaoId = table.Column<long>(type: "bigint", nullable: true),
-                    OrganizacaoUnidadeId = table.Column<long>(type: "bigint", nullable: true),
-                    SetorId = table.Column<long>(type: "bigint", nullable: true),
-                    Ativo = table.Column<bool>(type: "boolean", nullable: false),
-                    UsuarioInsercaoId = table.Column<long>(type: "bigint", nullable: true),
-                    UsuarioAlteracaoId = table.Column<long>(type: "bigint", nullable: true),
-                    Versao = table.Column<long>(type: "bigint", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Contatos", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "DocumentoRelacionamentos",
-                columns: table => new
-                {
-                    Id = table.Column<long>(type: "bigint", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    DocumentoId = table.Column<long>(type: "bigint", nullable: false),
-                    PessoaId = table.Column<long>(type: "bigint", nullable: true),
-                    OrganizacaoId = table.Column<long>(type: "bigint", nullable: true),
-                    OrganizacaoUnidadeId = table.Column<long>(type: "bigint", nullable: true),
-                    OrganizacaoSetorId = table.Column<long>(type: "bigint", nullable: true),
-                    IdentificadorUnico = table.Column<Guid>(type: "uuid", nullable: false),
-                    IdentificadorUnicoAmigavel = table.Column<string>(type: "text", nullable: false),
-                    DataInsercao = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    DataAlteracao = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    SetorId = table.Column<long>(type: "bigint", nullable: true),
-                    Ativo = table.Column<bool>(type: "boolean", nullable: false),
-                    UsuarioInsercaoId = table.Column<long>(type: "bigint", nullable: true),
-                    UsuarioAlteracaoId = table.Column<long>(type: "bigint", nullable: true),
-                    Versao = table.Column<long>(type: "bigint", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_DocumentoRelacionamentos", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Documentos",
-                columns: table => new
-                {
-                    Id = table.Column<long>(type: "bigint", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    DocumentoTipoId = table.Column<long>(type: "bigint", nullable: true),
-                    PessoaId = table.Column<long>(type: "bigint", nullable: true),
-                    Numero = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: false),
-                    Digito = table.Column<string>(type: "character varying(20)", maxLength: 20, nullable: false),
-                    OrgaoEmissor = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
-                    UfEmissor = table.Column<string>(type: "character varying(8)", maxLength: 8, nullable: false),
-                    DataEmissao = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    DataValidade = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    Principal = table.Column<bool>(type: "boolean", nullable: false),
-                    Validado = table.Column<bool>(type: "boolean", nullable: false),
-                    Observacao = table.Column<string>(type: "character varying(1000)", maxLength: 1000, nullable: false),
-                    IdentificadorUnico = table.Column<Guid>(type: "uuid", nullable: false),
-                    IdentificadorUnicoAmigavel = table.Column<string>(type: "text", nullable: false),
-                    DataInsercao = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    DataAlteracao = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    OrganizacaoId = table.Column<long>(type: "bigint", nullable: true),
-                    OrganizacaoUnidadeId = table.Column<long>(type: "bigint", nullable: true),
-                    SetorId = table.Column<long>(type: "bigint", nullable: true),
-                    Ativo = table.Column<bool>(type: "boolean", nullable: false),
-                    UsuarioInsercaoId = table.Column<long>(type: "bigint", nullable: true),
-                    UsuarioAlteracaoId = table.Column<long>(type: "bigint", nullable: true),
-                    Versao = table.Column<long>(type: "bigint", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Documentos", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "EnderecoPaises",
                 columns: table => new
                 {
@@ -147,31 +35,6 @@ namespace Retaguarda.Persistencia.POSTGRESQL.Migracoes
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_EnderecoPaises", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "NiveisGoverno",
-                columns: table => new
-                {
-                    Id = table.Column<long>(type: "bigint", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Codigo = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
-                    Nome = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: false),
-                    IdentificadorUnico = table.Column<Guid>(type: "uuid", nullable: false),
-                    IdentificadorUnicoAmigavel = table.Column<string>(type: "text", nullable: false),
-                    DataInsercao = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    DataAlteracao = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    OrganizacaoId = table.Column<long>(type: "bigint", nullable: true),
-                    OrganizacaoUnidadeId = table.Column<long>(type: "bigint", nullable: true),
-                    SetorId = table.Column<long>(type: "bigint", nullable: true),
-                    Ativo = table.Column<bool>(type: "boolean", nullable: false),
-                    UsuarioInsercaoId = table.Column<long>(type: "bigint", nullable: true),
-                    UsuarioAlteracaoId = table.Column<long>(type: "bigint", nullable: true),
-                    Versao = table.Column<long>(type: "bigint", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_NiveisGoverno", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -226,50 +89,6 @@ namespace Retaguarda.Persistencia.POSTGRESQL.Migracoes
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Perfis", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Pessoas",
-                columns: table => new
-                {
-                    Id = table.Column<long>(type: "bigint", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    TipoPessoa = table.Column<string>(type: "text", nullable: false),
-                    Discriminator = table.Column<int>(type: "integer", nullable: false),
-                    Nome = table.Column<string>(type: "character varying(300)", maxLength: 300, nullable: true),
-                    NomeSocial = table.Column<string>(type: "character varying(300)", maxLength: 300, nullable: true),
-                    Cpf = table.Column<string>(type: "character varying(14)", maxLength: 14, nullable: true),
-                    DataNascimento = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    Sexo = table.Column<string>(type: "text", nullable: true),
-                    EstadoCivil = table.Column<string>(type: "text", nullable: true),
-                    NomeMae = table.Column<string>(type: "character varying(300)", maxLength: 300, nullable: true),
-                    NomePai = table.Column<string>(type: "character varying(300)", maxLength: 300, nullable: true),
-                    Pcd = table.Column<bool>(type: "boolean", nullable: true),
-                    DataObito = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    RazaoSocial = table.Column<string>(type: "character varying(300)", maxLength: 300, nullable: true),
-                    NomeFantasia = table.Column<string>(type: "character varying(300)", maxLength: 300, nullable: true),
-                    DataFundacao = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    DataExtincao = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    Cnpj = table.Column<string>(type: "character varying(14)", maxLength: 14, nullable: true),
-                    Anotacoes = table.Column<string>(type: "character varying(2000)", maxLength: 2000, nullable: true),
-                    InscricaoEstadual = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true),
-                    InscricaoMunicipal = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true),
-                    SituacaoId = table.Column<long>(type: "bigint", nullable: true),
-                    IdentificadorUnico = table.Column<Guid>(type: "uuid", nullable: false),
-                    IdentificadorUnicoAmigavel = table.Column<string>(type: "text", nullable: false),
-                    DataInsercao = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    DataAlteracao = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    OrganizacaoId = table.Column<long>(type: "bigint", nullable: true),
-                    OrganizacaoUnidadeId = table.Column<long>(type: "bigint", nullable: true),
-                    SetorId = table.Column<long>(type: "bigint", nullable: true),
-                    Ativo = table.Column<bool>(type: "boolean", nullable: false),
-                    UsuarioInsercaoId = table.Column<long>(type: "bigint", nullable: true),
-                    UsuarioAlteracaoId = table.Column<long>(type: "bigint", nullable: true),
-                    Versao = table.Column<long>(type: "bigint", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Pessoas", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -390,6 +209,163 @@ namespace Retaguarda.Persistencia.POSTGRESQL.Migracoes
                 });
 
             migrationBuilder.CreateTable(
+                name: "Pessoas",
+                columns: table => new
+                {
+                    Id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    TipoPessoa = table.Column<string>(type: "text", nullable: false),
+                    Discriminator = table.Column<int>(type: "integer", nullable: false),
+                    Nome = table.Column<string>(type: "character varying(300)", maxLength: 300, nullable: true),
+                    NomeSocial = table.Column<string>(type: "character varying(300)", maxLength: 300, nullable: true),
+                    Cpf = table.Column<string>(type: "character varying(14)", maxLength: 14, nullable: true),
+                    DataNascimento = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    Sexo = table.Column<string>(type: "text", nullable: true),
+                    EstadoCivil = table.Column<string>(type: "text", nullable: true),
+                    NomeMae = table.Column<string>(type: "character varying(300)", maxLength: 300, nullable: true),
+                    NomePai = table.Column<string>(type: "character varying(300)", maxLength: 300, nullable: true),
+                    Pcd = table.Column<bool>(type: "boolean", nullable: true),
+                    DataObito = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    RazaoSocial = table.Column<string>(type: "character varying(300)", maxLength: 300, nullable: true),
+                    NomeFantasia = table.Column<string>(type: "character varying(300)", maxLength: 300, nullable: true),
+                    DataFundacao = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    DataExtincao = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    Cnpj = table.Column<string>(type: "character varying(14)", maxLength: 14, nullable: true),
+                    Anotacoes = table.Column<string>(type: "character varying(2000)", maxLength: 2000, nullable: true),
+                    InscricaoEstadual = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true),
+                    InscricaoMunicipal = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true),
+                    SituacaoId = table.Column<long>(type: "bigint", nullable: true),
+                    IdentificadorUnico = table.Column<Guid>(type: "uuid", nullable: false),
+                    IdentificadorUnicoAmigavel = table.Column<string>(type: "text", nullable: false),
+                    DataInsercao = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    DataAlteracao = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    OrganizacaoId = table.Column<long>(type: "bigint", nullable: true),
+                    OrganizacaoUnidadeId = table.Column<long>(type: "bigint", nullable: true),
+                    SetorId = table.Column<long>(type: "bigint", nullable: true),
+                    Ativo = table.Column<bool>(type: "boolean", nullable: false),
+                    UsuarioInsercaoId = table.Column<long>(type: "bigint", nullable: true),
+                    UsuarioAlteracaoId = table.Column<long>(type: "bigint", nullable: true),
+                    Versao = table.Column<long>(type: "bigint", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Pessoas", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Pessoas_Situacoes_SituacaoId",
+                        column: x => x.SituacaoId,
+                        principalTable: "Situacoes",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Contatos",
+                columns: table => new
+                {
+                    Id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    TipoContatoId = table.Column<long>(type: "bigint", nullable: true),
+                    Nome = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: false),
+                    ContatoValor = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: false),
+                    TipoId = table.Column<long>(type: "bigint", nullable: true),
+                    IdentificadorUnico = table.Column<Guid>(type: "uuid", nullable: false),
+                    IdentificadorUnicoAmigavel = table.Column<string>(type: "text", nullable: false),
+                    DataInsercao = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    DataAlteracao = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    OrganizacaoId = table.Column<long>(type: "bigint", nullable: true),
+                    OrganizacaoUnidadeId = table.Column<long>(type: "bigint", nullable: true),
+                    SetorId = table.Column<long>(type: "bigint", nullable: true),
+                    Ativo = table.Column<bool>(type: "boolean", nullable: false),
+                    UsuarioInsercaoId = table.Column<long>(type: "bigint", nullable: true),
+                    UsuarioAlteracaoId = table.Column<long>(type: "bigint", nullable: true),
+                    Versao = table.Column<long>(type: "bigint", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Contatos", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Contatos_Tipos_TipoId",
+                        column: x => x.TipoId,
+                        principalTable: "Tipos",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Documentos",
+                columns: table => new
+                {
+                    Id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    DocumentoTipoId = table.Column<long>(type: "bigint", nullable: true),
+                    PessoaId = table.Column<long>(type: "bigint", nullable: true),
+                    Numero = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: false),
+                    Digito = table.Column<string>(type: "character varying(20)", maxLength: 20, nullable: false),
+                    OrgaoEmissor = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
+                    UfEmissor = table.Column<string>(type: "character varying(8)", maxLength: 8, nullable: false),
+                    DataEmissao = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    DataValidade = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    Principal = table.Column<bool>(type: "boolean", nullable: false),
+                    Validado = table.Column<bool>(type: "boolean", nullable: false),
+                    Observacao = table.Column<string>(type: "character varying(1000)", maxLength: 1000, nullable: false),
+                    TipoId = table.Column<long>(type: "bigint", nullable: true),
+                    IdentificadorUnico = table.Column<Guid>(type: "uuid", nullable: false),
+                    IdentificadorUnicoAmigavel = table.Column<string>(type: "text", nullable: false),
+                    DataInsercao = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    DataAlteracao = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    OrganizacaoId = table.Column<long>(type: "bigint", nullable: true),
+                    OrganizacaoUnidadeId = table.Column<long>(type: "bigint", nullable: true),
+                    SetorId = table.Column<long>(type: "bigint", nullable: true),
+                    Ativo = table.Column<bool>(type: "boolean", nullable: false),
+                    UsuarioInsercaoId = table.Column<long>(type: "bigint", nullable: true),
+                    UsuarioAlteracaoId = table.Column<long>(type: "bigint", nullable: true),
+                    Versao = table.Column<long>(type: "bigint", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Documentos", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Documentos_Tipos_TipoId",
+                        column: x => x.TipoId,
+                        principalTable: "Tipos",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "EnderecoMunicipios",
+                columns: table => new
+                {
+                    Id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Nome = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: false),
+                    CodigoIbge = table.Column<string>(type: "text", nullable: false),
+                    UfId = table.Column<long>(type: "bigint", nullable: false),
+                    CepId = table.Column<long>(type: "bigint", nullable: true),
+                    IdentificadorUnico = table.Column<Guid>(type: "uuid", nullable: false),
+                    IdentificadorUnicoAmigavel = table.Column<string>(type: "text", nullable: false),
+                    DataInsercao = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    DataAlteracao = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    OrganizacaoId = table.Column<long>(type: "bigint", nullable: true),
+                    OrganizacaoUnidadeId = table.Column<long>(type: "bigint", nullable: true),
+                    SetorId = table.Column<long>(type: "bigint", nullable: true),
+                    Ativo = table.Column<bool>(type: "boolean", nullable: false),
+                    UsuarioInsercaoId = table.Column<long>(type: "bigint", nullable: true),
+                    UsuarioAlteracaoId = table.Column<long>(type: "bigint", nullable: true),
+                    Versao = table.Column<long>(type: "bigint", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_EnderecoMunicipios", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_EnderecoMunicipios_EnderecoUFs_UfId",
+                        column: x => x.UfId,
+                        principalTable: "EnderecoUFs",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Organizacoes",
                 columns: table => new
                 {
@@ -423,6 +399,12 @@ namespace Retaguarda.Persistencia.POSTGRESQL.Migracoes
                         name: "FK_Organizacoes_Pessoas_PessoaId",
                         column: x => x.PessoaId,
                         principalTable: "Pessoas",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Organizacoes_Situacoes_SituacaoId",
+                        column: x => x.SituacaoId,
+                        principalTable: "Situacoes",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -464,15 +446,87 @@ namespace Retaguarda.Persistencia.POSTGRESQL.Migracoes
                 });
 
             migrationBuilder.CreateTable(
-                name: "EnderecoMunicipios",
+                name: "ContatoRelacionamentos",
+                columns: table => new
+                {
+                    Id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    ContatoId = table.Column<long>(type: "bigint", nullable: false),
+                    OrganizacaoId = table.Column<long>(type: "bigint", nullable: true),
+                    OrganizacaoUnidadeId = table.Column<long>(type: "bigint", nullable: true),
+                    OrganizacaoSetorId = table.Column<long>(type: "bigint", nullable: true),
+                    PessoaId = table.Column<long>(type: "bigint", nullable: true),
+                    IdentificadorUnico = table.Column<Guid>(type: "uuid", nullable: false),
+                    IdentificadorUnicoAmigavel = table.Column<string>(type: "text", nullable: false),
+                    DataInsercao = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    DataAlteracao = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    SetorId = table.Column<long>(type: "bigint", nullable: true),
+                    Ativo = table.Column<bool>(type: "boolean", nullable: false),
+                    UsuarioInsercaoId = table.Column<long>(type: "bigint", nullable: true),
+                    UsuarioAlteracaoId = table.Column<long>(type: "bigint", nullable: true),
+                    Versao = table.Column<long>(type: "bigint", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ContatoRelacionamentos", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_ContatoRelacionamentos_Contatos_ContatoId",
+                        column: x => x.ContatoId,
+                        principalTable: "Contatos",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_ContatoRelacionamentos_Pessoas_PessoaId",
+                        column: x => x.PessoaId,
+                        principalTable: "Pessoas",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "DocumentoRelacionamentos",
+                columns: table => new
+                {
+                    Id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    DocumentoId = table.Column<long>(type: "bigint", nullable: false),
+                    PessoaId = table.Column<long>(type: "bigint", nullable: true),
+                    OrganizacaoId = table.Column<long>(type: "bigint", nullable: true),
+                    OrganizacaoUnidadeId = table.Column<long>(type: "bigint", nullable: true),
+                    OrganizacaoSetorId = table.Column<long>(type: "bigint", nullable: true),
+                    IdentificadorUnico = table.Column<Guid>(type: "uuid", nullable: false),
+                    IdentificadorUnicoAmigavel = table.Column<string>(type: "text", nullable: false),
+                    DataInsercao = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    DataAlteracao = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    SetorId = table.Column<long>(type: "bigint", nullable: true),
+                    Ativo = table.Column<bool>(type: "boolean", nullable: false),
+                    UsuarioInsercaoId = table.Column<long>(type: "bigint", nullable: true),
+                    UsuarioAlteracaoId = table.Column<long>(type: "bigint", nullable: true),
+                    Versao = table.Column<long>(type: "bigint", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_DocumentoRelacionamentos", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_DocumentoRelacionamentos_Documentos_DocumentoId",
+                        column: x => x.DocumentoId,
+                        principalTable: "Documentos",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_DocumentoRelacionamentos_Pessoas_PessoaId",
+                        column: x => x.PessoaId,
+                        principalTable: "Pessoas",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "EnderecoBairros",
                 columns: table => new
                 {
                     Id = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     Nome = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: false),
-                    CodigoIbge = table.Column<string>(type: "text", nullable: false),
-                    UfId = table.Column<long>(type: "bigint", nullable: false),
-                    CepId = table.Column<long>(type: "bigint", nullable: true),
+                    MunicipioId = table.Column<long>(type: "bigint", nullable: false),
                     IdentificadorUnico = table.Column<Guid>(type: "uuid", nullable: false),
                     IdentificadorUnicoAmigavel = table.Column<string>(type: "text", nullable: false),
                     DataInsercao = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
@@ -487,11 +541,11 @@ namespace Retaguarda.Persistencia.POSTGRESQL.Migracoes
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_EnderecoMunicipios", x => x.Id);
+                    table.PrimaryKey("PK_EnderecoBairros", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_EnderecoMunicipios_EnderecoUFs_UfId",
-                        column: x => x.UfId,
-                        principalTable: "EnderecoUFs",
+                        name: "FK_EnderecoBairros_EnderecoMunicipios_MunicipioId",
+                        column: x => x.MunicipioId,
+                        principalTable: "EnderecoMunicipios",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -537,6 +591,12 @@ namespace Retaguarda.Persistencia.POSTGRESQL.Migracoes
                         principalTable: "Pessoas",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_OrganizacaoUnidades_Situacoes_SituacaoId",
+                        column: x => x.SituacaoId,
+                        principalTable: "Situacoes",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -577,13 +637,14 @@ namespace Retaguarda.Persistencia.POSTGRESQL.Migracoes
                 });
 
             migrationBuilder.CreateTable(
-                name: "EnderecoBairros",
+                name: "EnderecoLogradouros",
                 columns: table => new
                 {
                     Id = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Nome = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: false),
-                    MunicipioId = table.Column<long>(type: "bigint", nullable: false),
+                    Nome = table.Column<string>(type: "character varying(300)", maxLength: 300, nullable: false),
+                    Tipo = table.Column<string>(type: "text", nullable: false),
+                    BairroId = table.Column<long>(type: "bigint", nullable: false),
                     IdentificadorUnico = table.Column<Guid>(type: "uuid", nullable: false),
                     IdentificadorUnicoAmigavel = table.Column<string>(type: "text", nullable: false),
                     DataInsercao = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
@@ -598,11 +659,11 @@ namespace Retaguarda.Persistencia.POSTGRESQL.Migracoes
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_EnderecoBairros", x => x.Id);
+                    table.PrimaryKey("PK_EnderecoLogradouros", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_EnderecoBairros_EnderecoMunicipios_MunicipioId",
-                        column: x => x.MunicipioId,
-                        principalTable: "EnderecoMunicipios",
+                        name: "FK_EnderecoLogradouros_EnderecoBairros_BairroId",
+                        column: x => x.BairroId,
+                        principalTable: "EnderecoBairros",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -670,14 +731,13 @@ namespace Retaguarda.Persistencia.POSTGRESQL.Migracoes
                 });
 
             migrationBuilder.CreateTable(
-                name: "EnderecoLogradouros",
+                name: "EnderecoCEPs",
                 columns: table => new
                 {
                     Id = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Nome = table.Column<string>(type: "character varying(300)", maxLength: 300, nullable: false),
-                    Tipo = table.Column<string>(type: "text", nullable: false),
-                    BairroId = table.Column<long>(type: "bigint", nullable: false),
+                    Codigo = table.Column<string>(type: "character varying(20)", maxLength: 20, nullable: false),
+                    LogradouroId = table.Column<long>(type: "bigint", nullable: false),
                     IdentificadorUnico = table.Column<Guid>(type: "uuid", nullable: false),
                     IdentificadorUnicoAmigavel = table.Column<string>(type: "text", nullable: false),
                     DataInsercao = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
@@ -692,11 +752,11 @@ namespace Retaguarda.Persistencia.POSTGRESQL.Migracoes
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_EnderecoLogradouros", x => x.Id);
+                    table.PrimaryKey("PK_EnderecoCEPs", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_EnderecoLogradouros_EnderecoBairros_BairroId",
-                        column: x => x.BairroId,
-                        principalTable: "EnderecoBairros",
+                        name: "FK_EnderecoCEPs_EnderecoLogradouros_LogradouroId",
+                        column: x => x.LogradouroId,
+                        principalTable: "EnderecoLogradouros",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -735,37 +795,6 @@ namespace Retaguarda.Persistencia.POSTGRESQL.Migracoes
                         name: "FK_SetorUsuarios_Usuarios_UsuarioId",
                         column: x => x.UsuarioId,
                         principalTable: "Usuarios",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "EnderecoCEPs",
-                columns: table => new
-                {
-                    Id = table.Column<long>(type: "bigint", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Codigo = table.Column<string>(type: "character varying(20)", maxLength: 20, nullable: false),
-                    LogradouroId = table.Column<long>(type: "bigint", nullable: false),
-                    IdentificadorUnico = table.Column<Guid>(type: "uuid", nullable: false),
-                    IdentificadorUnicoAmigavel = table.Column<string>(type: "text", nullable: false),
-                    DataInsercao = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    DataAlteracao = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    OrganizacaoId = table.Column<long>(type: "bigint", nullable: true),
-                    OrganizacaoUnidadeId = table.Column<long>(type: "bigint", nullable: true),
-                    SetorId = table.Column<long>(type: "bigint", nullable: true),
-                    Ativo = table.Column<bool>(type: "boolean", nullable: false),
-                    UsuarioInsercaoId = table.Column<long>(type: "bigint", nullable: true),
-                    UsuarioAlteracaoId = table.Column<long>(type: "bigint", nullable: true),
-                    Versao = table.Column<long>(type: "bigint", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_EnderecoCEPs", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_EnderecoCEPs_EnderecoLogradouros_LogradouroId",
-                        column: x => x.LogradouroId,
-                        principalTable: "EnderecoLogradouros",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -1021,6 +1050,36 @@ namespace Retaguarda.Persistencia.POSTGRESQL.Migracoes
                 });
 
             migrationBuilder.CreateIndex(
+                name: "IX_ContatoRelacionamentos_ContatoId",
+                table: "ContatoRelacionamentos",
+                column: "ContatoId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ContatoRelacionamentos_PessoaId",
+                table: "ContatoRelacionamentos",
+                column: "PessoaId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Contatos_TipoId",
+                table: "Contatos",
+                column: "TipoId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_DocumentoRelacionamentos_DocumentoId",
+                table: "DocumentoRelacionamentos",
+                column: "DocumentoId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_DocumentoRelacionamentos_PessoaId",
+                table: "DocumentoRelacionamentos",
+                column: "PessoaId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Documentos_TipoId",
+                table: "Documentos",
+                column: "TipoId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_EnderecoBairros_MunicipioId",
                 table: "EnderecoBairros",
                 column: "MunicipioId");
@@ -1126,6 +1185,11 @@ namespace Retaguarda.Persistencia.POSTGRESQL.Migracoes
                 column: "PessoaId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_OrganizacaoUnidades_SituacaoId",
+                table: "OrganizacaoUnidades",
+                column: "SituacaoId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_OrganizacaoUnidadeSetores_OrganizacaoUnidadeId",
                 table: "OrganizacaoUnidadeSetores",
                 column: "OrganizacaoUnidadeId");
@@ -1134,6 +1198,11 @@ namespace Retaguarda.Persistencia.POSTGRESQL.Migracoes
                 name: "IX_Organizacoes_PessoaId",
                 table: "Organizacoes",
                 column: "PessoaId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Organizacoes_SituacaoId",
+                table: "Organizacoes",
+                column: "SituacaoId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_PerfilPermissoes_PerfilId_Chave",
@@ -1160,6 +1229,11 @@ namespace Retaguarda.Persistencia.POSTGRESQL.Migracoes
                 name: "IX_PessoaEnderecos_PessoaId",
                 table: "PessoaEnderecos",
                 column: "PessoaId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Pessoas_SituacaoId",
+                table: "Pessoas",
+                column: "SituacaoId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_SetorUsuarios_SetorId",
@@ -1206,19 +1280,10 @@ namespace Retaguarda.Persistencia.POSTGRESQL.Migracoes
                 name: "ContatoRelacionamentos");
 
             migrationBuilder.DropTable(
-                name: "Contatos");
-
-            migrationBuilder.DropTable(
                 name: "DocumentoRelacionamentos");
 
             migrationBuilder.DropTable(
-                name: "Documentos");
-
-            migrationBuilder.DropTable(
                 name: "Imoveis");
-
-            migrationBuilder.DropTable(
-                name: "NiveisGoverno");
 
             migrationBuilder.DropTable(
                 name: "OrganizacaoEnderecos");
@@ -1248,10 +1313,10 @@ namespace Retaguarda.Persistencia.POSTGRESQL.Migracoes
                 name: "SetorUsuarios");
 
             migrationBuilder.DropTable(
-                name: "Situacoes");
+                name: "Contatos");
 
             migrationBuilder.DropTable(
-                name: "Tipos");
+                name: "Documentos");
 
             migrationBuilder.DropTable(
                 name: "Perfis");
@@ -1264,6 +1329,9 @@ namespace Retaguarda.Persistencia.POSTGRESQL.Migracoes
 
             migrationBuilder.DropTable(
                 name: "Usuarios");
+
+            migrationBuilder.DropTable(
+                name: "Tipos");
 
             migrationBuilder.DropTable(
                 name: "EnderecoCEPs");
@@ -1285,6 +1353,9 @@ namespace Retaguarda.Persistencia.POSTGRESQL.Migracoes
 
             migrationBuilder.DropTable(
                 name: "EnderecoMunicipios");
+
+            migrationBuilder.DropTable(
+                name: "Situacoes");
 
             migrationBuilder.DropTable(
                 name: "EnderecoUFs");
