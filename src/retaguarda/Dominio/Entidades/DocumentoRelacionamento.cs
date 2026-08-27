@@ -9,5 +9,6 @@ namespace Retaguarda.Dominio.Entidades
         public long? OrganizacaoId { get; set; }
         public long? OrganizacaoUnidadeId { get; set; }
         public long? OrganizacaoSetorId { get; set; }
+        public Documento Documento { get; set; }
     }
 }

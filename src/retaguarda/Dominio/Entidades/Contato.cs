@@ -7,5 +7,6 @@ namespace Retaguarda.Dominio.Entidades
         public long? TipoContatoId { get; set; }
         public string Nome { get; set; } = string.Empty;
         public string ContatoValor { get; set; } = string.Empty;
+        public Tipo Tipo { get; set; }
     }
 }

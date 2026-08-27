@@ -16,5 +16,6 @@ namespace Retaguarda.Dominio.Entidades
         public bool Principal { get; set; }
         public bool Validado { get; set; }
         public string Observacao { get; set; } = string.Empty;
+        public Tipo Tipo { get; set; }
     }
 }

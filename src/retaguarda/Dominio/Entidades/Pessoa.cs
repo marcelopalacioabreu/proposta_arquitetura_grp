@@ -9,5 +9,7 @@ namespace Retaguarda.Dominio.Entidades
     {
         public PessoaTipo TipoPessoa { get; set; } = PessoaTipo.Fisica;
         public List<PessoaEndereco> Enderecos { get; set; } = new List<PessoaEndereco>();
+        public List<ContatoRelacionamento> Contatos { get; set; } = new List<ContatoRelacionamento>();
+        public List<DocumentoRelacionamento> Documentos { get; set; } = new List<DocumentoRelacionamento>();
     }
 }
