@@ -37,7 +37,6 @@ namespace Retaguarda.Persistencia.POSTGRESQL
         public DbSet<EnderecoCEP> EnderecoCEPs { get; set; } = null!;
         public DbSet<Endereco> Enderecos { get; set; } = null!;
         
-        public DbSet<NivelGoverno> NiveisGoverno { get; set; } = null!;
         public DbSet<Situacao> Situacoes { get; set; } = null!;
         public DbSet<Contato> Contatos { get; set; } = null!;
         public DbSet<Documento> Documentos { get; set; } = null!;
@@ -252,7 +251,6 @@ namespace Retaguarda.Persistencia.POSTGRESQL
             });
 
             // catalogs and relation tables
-            modelBuilder.Entity<NivelGoverno>(b => { b.ToTable("NiveisGoverno"); b.HasKey(x=>x.Id); b.Property(x=>x.Codigo).HasMaxLength(50); b.Property(x=>x.Nome).HasMaxLength(200); });
             modelBuilder.Entity<Situacao>(b => { b.ToTable("Situacoes"); b.HasKey(x=>x.Id); b.Property(x=>x.Codigo).IsRequired().HasMaxLength(50); b.Property(x=>x.Nome).IsRequired().HasMaxLength(200); b.Property(x=>x.Contexto).IsRequired().HasMaxLength(50); b.Property(x=>x.Descricao).HasMaxLength(2000); b.HasIndex(x => new { x.OrganizacaoId, x.Contexto, x.Ativo }).HasName("idx_Situacoes_Contexto_Ativo"); b.HasIndex(x => new { x.Codigo, x.Contexto, x.OrganizacaoId }).IsUnique().HasName("idx_Situacoes_Codigo_Contexto_Unico"); });
             modelBuilder.Entity<Tipo>(b => 
             { 

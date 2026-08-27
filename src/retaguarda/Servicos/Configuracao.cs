@@ -20,7 +20,6 @@ namespace Retaguarda.Servicos
             services.AddScoped<Interfaces.IBairroServico, BairroServico>();
             services.AddScoped<Interfaces.ITipoServico, TipoServico>();
             services.AddScoped<Interfaces.IPerfilServico, PerfilServico>();
-            services.AddScoped<Interfaces.INivelGovernoServico, NivelGovernoServico>();
             services.AddScoped<Interfaces.ISituacaoServico, SituacaoServico>();
             services.AddScoped<Interfaces.ICepServico, CepServico>();
             services.AddScoped<Interfaces.ILogradouroServico, LogradouroServico>();

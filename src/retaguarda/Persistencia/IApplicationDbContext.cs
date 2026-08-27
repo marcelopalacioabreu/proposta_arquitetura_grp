@@ -29,7 +29,6 @@ namespace Retaguarda.Persistencia
         DbSet<EnderecoCEP> EnderecoCEPs { get; set; }
         DbSet<Endereco> Enderecos { get; set; }
 
-        DbSet<NivelGoverno> NiveisGoverno { get; set; }
         DbSet<Situacao> Situacoes { get; set; }
         DbSet<Contato> Contatos { get; set; }
         DbSet<Documento> Documentos { get; set; }
