@@ -36,7 +36,6 @@ namespace Retaguarda.Persistencia.MYSQL
         public DbSet<Endereco> Enderecos { get; set; } = null!;
         // New catalog and relation entities
         public DbSet<NivelGoverno> NiveisGoverno { get; set; } = null!;
-        public DbSet<NaturezaJuridica> NaturezasJuridicas { get; set; } = null!;
         public DbSet<Situacao> Situacoes { get; set; } = null!;
         public DbSet<Contato> Contatos { get; set; } = null!;
         public DbSet<Documento> Documentos { get; set; } = null!;
@@ -48,7 +47,6 @@ namespace Retaguarda.Persistencia.MYSQL
         public DbSet<OrganizacaoUnidadeEndereco> OrganizacaoUnidadeEnderecos { get; set; } = null!;
         public DbSet<OrganizacaoSetorEndereco> OrganizacaoSetorEnderecos { get; set; } = null!;
         public DbSet<PessoaEndereco> PessoaEnderecos { get; set; } = null!;
-        public DbSet<UsuarioEndereco> UsuarioEnderecos { get; set; } = null!;
 
         public DbSet<ContatoRelacionamento> ContatoRelacionamentos { get; set; } = null!;
         public DbSet<DocumentoRelacionamento> DocumentoRelacionamentos { get; set; } = null!;
@@ -218,7 +216,6 @@ namespace Retaguarda.Persistencia.MYSQL
 
             // catalogs and relation tables
             modelBuilder.Entity<NivelGoverno>(b => { b.ToTable("NiveisGoverno"); b.HasKey(x=>x.Id); b.Property(x=>x.Codigo).HasMaxLength(50); b.Property(x=>x.Nome).HasMaxLength(200); });
-            modelBuilder.Entity<NaturezaJuridica>(b => { b.ToTable("NaturezasJuridicas"); b.HasKey(x=>x.Id); b.Property(x=>x.Codigo).HasMaxLength(50); b.Property(x=>x.Nome).HasMaxLength(200); });
             modelBuilder.Entity<Situacao>(b => { b.ToTable("Situacoes"); b.HasKey(x=>x.Id); b.Property(x=>x.Codigo).IsRequired().HasMaxLength(50); b.Property(x=>x.Nome).IsRequired().HasMaxLength(200); b.Property(x=>x.Contexto).IsRequired().HasMaxLength(50); b.Property(x=>x.Descricao).HasMaxLength(2000); b.HasIndex(x => new { x.OrganizacaoId, x.Contexto, x.Ativo }).HasName("idx_Situacoes_Contexto_Ativo"); b.HasIndex(x => new { x.Codigo, x.Contexto, x.OrganizacaoId }).IsUnique().HasName("idx_Situacoes_Codigo_Contexto_Unico"); });
             modelBuilder.Entity<Tipo>(b => 
             { 
@@ -239,7 +236,6 @@ namespace Retaguarda.Persistencia.MYSQL
             modelBuilder.Entity<OrganizacaoUnidadeEndereco>(b=>{ b.ToTable("OrganizacaoUnidadeEnderecos"); b.HasKey(x=>x.Id); b.Property(x=>x.EnderecoPrincipal).IsRequired(); });
             modelBuilder.Entity<OrganizacaoSetorEndereco>(b=>{ b.ToTable("OrganizacaoSetorEnderecos"); b.HasKey(x=>x.Id); b.Property(x=>x.EnderecoPrincipal).IsRequired(); });
             modelBuilder.Entity<PessoaEndereco>(b=>{ b.ToTable("PessoaEnderecos"); b.HasKey(x=>x.Id); b.Property(x=>x.EnderecoPrincipal).IsRequired(); });
-            modelBuilder.Entity<UsuarioEndereco>(b=>{ b.ToTable("UsuarioEnderecos"); b.HasKey(x=>x.Id); b.Property(x=>x.EnderecoPrincipal).IsRequired(); });
 
             modelBuilder.Entity<ContatoRelacionamento>(b=>{ b.ToTable("ContatoRelacionamentos"); b.HasKey(x=>x.Id); });
             modelBuilder.Entity<DocumentoRelacionamento>(b=>{ b.ToTable("DocumentoRelacionamentos"); b.HasKey(x=>x.Id); });

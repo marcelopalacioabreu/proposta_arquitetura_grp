@@ -8,6 +8,7 @@ namespace Retaguarda.Dominio.Entidades
         public string Nome { get; set; } = string.Empty;
         public long? ResponsavelSetorId { get; set; } /*Pessoa responsável pelo setor*/
         public OrganizacaoUnidade? OrganizacaoUnidade { get; set; }
+        public ICollection<OrganizacaoSetorEndereco>? OrganizacaoSetorEnderecos { get; set; }
 
     }
 }

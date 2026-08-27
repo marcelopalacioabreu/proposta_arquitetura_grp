@@ -30,7 +30,6 @@ namespace Retaguarda.Persistencia
         DbSet<Endereco> Enderecos { get; set; }
 
         DbSet<NivelGoverno> NiveisGoverno { get; set; }
-        DbSet<NaturezaJuridica> NaturezasJuridicas { get; set; }
         DbSet<Situacao> Situacoes { get; set; }
         DbSet<Contato> Contatos { get; set; }
         DbSet<Documento> Documentos { get; set; }
@@ -41,7 +40,6 @@ namespace Retaguarda.Persistencia
         DbSet<OrganizacaoUnidadeEndereco> OrganizacaoUnidadeEnderecos { get; set; }
         DbSet<OrganizacaoSetorEndereco> OrganizacaoSetorEnderecos { get; set; }
         DbSet<PessoaEndereco> PessoaEnderecos { get; set; }
-        DbSet<UsuarioEndereco> UsuarioEnderecos { get; set; }
 
         DbSet<ContatoRelacionamento> ContatoRelacionamentos { get; set; }
         DbSet<DocumentoRelacionamento> DocumentoRelacionamentos { get; set; }

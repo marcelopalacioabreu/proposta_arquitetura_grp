@@ -797,63 +797,6 @@ namespace Retaguarda.Persistencia.POSTGRESQL.Migracoes
                     b.ToTable("Imoveis", (string)null);
                 });
 
-            modelBuilder.Entity("Retaguarda.Dominio.Entidades.NaturezaJuridica", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
-
-                    b.Property<bool>("Ativo")
-                        .HasColumnType("boolean");
-
-                    b.Property<string>("Codigo")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)");
-
-                    b.Property<DateTime?>("DataAlteracao")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<DateTime>("DataInsercao")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<Guid>("IdentificadorUnico")
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("IdentificadorUnicoAmigavel")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("Nome")
-                        .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("character varying(200)");
-
-                    b.Property<long?>("OrganizacaoId")
-                        .HasColumnType("bigint");
-
-                    b.Property<long?>("OrganizacaoUnidadeId")
-                        .HasColumnType("bigint");
-
-                    b.Property<long?>("SetorId")
-                        .HasColumnType("bigint");
-
-                    b.Property<long?>("UsuarioAlteracaoId")
-                        .HasColumnType("bigint");
-
-                    b.Property<long?>("UsuarioInsercaoId")
-                        .HasColumnType("bigint");
-
-                    b.Property<long>("Versao")
-                        .HasColumnType("bigint");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("NaturezasJuridicas", (string)null);
-                });
-
             modelBuilder.Entity("Retaguarda.Dominio.Entidades.NivelGoverno", b =>
                 {
                     b.Property<long>("Id")
@@ -1046,6 +989,10 @@ namespace Retaguarda.Persistencia.POSTGRESQL.Migracoes
 
                     b.HasKey("Id");
 
+                    b.HasIndex("EnderecoId");
+
+                    b.HasIndex("OrganizacaoId");
+
                     b.ToTable("OrganizacaoEnderecos", (string)null);
                 });
 
@@ -1166,6 +1113,10 @@ namespace Retaguarda.Persistencia.POSTGRESQL.Migracoes
                         .HasColumnType("bigint");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("EnderecoId");
+
+                    b.HasIndex("OrganizacaoSetorId");
 
                     b.ToTable("OrganizacaoSetorEnderecos", (string)null);
                 });
@@ -1303,6 +1254,10 @@ namespace Retaguarda.Persistencia.POSTGRESQL.Migracoes
                         .HasColumnType("bigint");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("EnderecoId");
+
+                    b.HasIndex("OrganizacaoUnidadeId");
 
                     b.ToTable("OrganizacaoUnidadeEnderecos", (string)null);
                 });
@@ -2010,65 +1965,6 @@ namespace Retaguarda.Persistencia.POSTGRESQL.Migracoes
                     b.ToTable("Usuarios", (string)null);
                 });
 
-            modelBuilder.Entity("Retaguarda.Dominio.Entidades.UsuarioEndereco", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
-
-                    b.Property<bool>("Ativo")
-                        .HasColumnType("boolean");
-
-                    b.Property<DateTime?>("DataAlteracao")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<DateTime>("DataInsercao")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<long>("EnderecoId")
-                        .HasColumnType("bigint");
-
-                    b.Property<bool>("EnderecoPrincipal")
-                        .HasColumnType("boolean");
-
-                    b.Property<long?>("EnderecoTipoId")
-                        .HasColumnType("bigint");
-
-                    b.Property<Guid>("IdentificadorUnico")
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("IdentificadorUnicoAmigavel")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<long?>("OrganizacaoId")
-                        .HasColumnType("bigint");
-
-                    b.Property<long?>("OrganizacaoUnidadeId")
-                        .HasColumnType("bigint");
-
-                    b.Property<long?>("SetorId")
-                        .HasColumnType("bigint");
-
-                    b.Property<long?>("UsuarioAlteracaoId")
-                        .HasColumnType("bigint");
-
-                    b.Property<long>("UsuarioId")
-                        .HasColumnType("bigint");
-
-                    b.Property<long?>("UsuarioInsercaoId")
-                        .HasColumnType("bigint");
-
-                    b.Property<long>("Versao")
-                        .HasColumnType("bigint");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("UsuarioEnderecos", (string)null);
-                });
-
             modelBuilder.Entity("Retaguarda.Dominio.Entidades.PessoaFisica", b =>
                 {
                     b.HasBaseType("Retaguarda.Dominio.Entidades.Pessoa");
@@ -2283,6 +2179,23 @@ namespace Retaguarda.Persistencia.POSTGRESQL.Migracoes
                     b.Navigation("Pessoa");
                 });
 
+            modelBuilder.Entity("Retaguarda.Dominio.Entidades.OrganizacaoEndereco", b =>
+                {
+                    b.HasOne("Retaguarda.Dominio.Entidades.Endereco", "Endereco")
+                        .WithMany()
+                        .HasForeignKey("EnderecoId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Retaguarda.Dominio.Entidades.Organizacao", null)
+                        .WithMany("OrganizacaoEnderecos")
+                        .HasForeignKey("OrganizacaoId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Endereco");
+                });
+
             modelBuilder.Entity("Retaguarda.Dominio.Entidades.OrganizacaoSetor", b =>
                 {
                     b.HasOne("Retaguarda.Dominio.Entidades.OrganizacaoUnidade", "OrganizacaoUnidade")
@@ -2291,6 +2204,23 @@ namespace Retaguarda.Persistencia.POSTGRESQL.Migracoes
                         .OnDelete(DeleteBehavior.Cascade);
 
                     b.Navigation("OrganizacaoUnidade");
+                });
+
+            modelBuilder.Entity("Retaguarda.Dominio.Entidades.OrganizacaoSetorEndereco", b =>
+                {
+                    b.HasOne("Retaguarda.Dominio.Entidades.Endereco", "Endereco")
+                        .WithMany()
+                        .HasForeignKey("EnderecoId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Retaguarda.Dominio.Entidades.OrganizacaoSetor", null)
+                        .WithMany("OrganizacaoSetorEnderecos")
+                        .HasForeignKey("OrganizacaoSetorId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Endereco");
                 });
 
             modelBuilder.Entity("Retaguarda.Dominio.Entidades.OrganizacaoUnidade", b =>
@@ -2308,6 +2238,23 @@ namespace Retaguarda.Persistencia.POSTGRESQL.Migracoes
                     b.Navigation("Organizacao");
 
                     b.Navigation("Pessoa");
+                });
+
+            modelBuilder.Entity("Retaguarda.Dominio.Entidades.OrganizacaoUnidadeEndereco", b =>
+                {
+                    b.HasOne("Retaguarda.Dominio.Entidades.Endereco", "Endereco")
+                        .WithMany()
+                        .HasForeignKey("EnderecoId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Retaguarda.Dominio.Entidades.OrganizacaoUnidade", null)
+                        .WithMany("OrganizacaoUnidadeEnderecos")
+                        .HasForeignKey("OrganizacaoUnidadeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Endereco");
                 });
 
             modelBuilder.Entity("Retaguarda.Dominio.Entidades.OrganizacaoUnidadeSetor", b =>
@@ -2394,6 +2341,21 @@ namespace Retaguarda.Persistencia.POSTGRESQL.Migracoes
                         .OnDelete(DeleteBehavior.Cascade);
 
                     b.Navigation("Pessoa");
+                });
+
+            modelBuilder.Entity("Retaguarda.Dominio.Entidades.Organizacao", b =>
+                {
+                    b.Navigation("OrganizacaoEnderecos");
+                });
+
+            modelBuilder.Entity("Retaguarda.Dominio.Entidades.OrganizacaoSetor", b =>
+                {
+                    b.Navigation("OrganizacaoSetorEnderecos");
+                });
+
+            modelBuilder.Entity("Retaguarda.Dominio.Entidades.OrganizacaoUnidade", b =>
+                {
+                    b.Navigation("OrganizacaoUnidadeEnderecos");
                 });
 
             modelBuilder.Entity("Retaguarda.Dominio.Entidades.Perfil", b =>

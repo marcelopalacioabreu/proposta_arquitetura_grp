@@ -14,6 +14,7 @@ namespace Retaguarda.Dominio.Entidades
         public long? SituacaoId { get; set; }
         public Organizacao? Organizacao { get; set; }
         public Pessoa? Pessoa { get; set; }
+        public ICollection<OrganizacaoUnidadeEndereco>? OrganizacaoUnidadeEnderecos { get; set; }
 
     }
 }
