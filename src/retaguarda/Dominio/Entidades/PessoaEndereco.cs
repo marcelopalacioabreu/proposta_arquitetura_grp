@@ -8,5 +8,6 @@ namespace Retaguarda.Dominio.Entidades
         public long EnderecoId { get; set; }
         public long? EnderecoTipoId { get; set; }
         public bool EnderecoPrincipal { get; set; }
+        public Endereco? Endereco { get; set; }
     }
 }

@@ -11,5 +11,6 @@ namespace Retaguarda.Dominio.Entidades
         public long? UltimoAcessoOrganizacaoId { get; set; }
         public long? UltimoAcessoOrganizacaoUnidadeId { get; set; }
         public long? UltimoAcessoSetorId { get; set; }
+        public Pessoa? Pessoa { get; set; }
     }
 }

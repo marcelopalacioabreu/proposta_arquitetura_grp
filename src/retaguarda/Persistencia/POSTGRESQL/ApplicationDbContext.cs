@@ -66,6 +66,19 @@ namespace Retaguarda.Persistencia.POSTGRESQL
                 b.Property(x => x.Nome).IsRequired().HasMaxLength(200);
                 b.Property(x => x.Codigo).HasMaxLength(50);
                 b.Property(x => x.Sigla).HasMaxLength(30);
+                b.HasOne(x => x.Pessoa).WithMany().HasForeignKey(x => x.PessoaId).OnDelete(DeleteBehavior.Cascade);
+            });
+
+            modelBuilder.Entity<OrganizacaoUnidade>(b =>
+            {
+                b.ToTable("OrganizacaoUnidades");
+                b.HasKey(x => x.Id);
+                b.Property(x => x.Nome).IsRequired().HasMaxLength(200);
+                b.Property(x => x.Codigo).HasMaxLength(50);
+                b.Property(x => x.Sigla).HasMaxLength(30);
+                b.Property(x => x.Nivel);
+                b.HasOne(x => x.Organizacao).WithMany().HasForeignKey(x => x.OrganizacaoId).OnDelete(DeleteBehavior.Cascade);
+                b.HasOne(x => x.Pessoa).WithMany().HasForeignKey(x => x.PessoaId).OnDelete(DeleteBehavior.Cascade);
             });
 
             modelBuilder.Entity<OrganizacaoSetor>(b =>
@@ -74,6 +87,7 @@ namespace Retaguarda.Persistencia.POSTGRESQL
                 b.HasKey(x => x.Id);
                 b.Property(x => x.Nome).IsRequired().HasMaxLength(200);
                 b.Property(x => x.CodigoHierarquico).HasMaxLength(1000);
+                b.HasOne(x => x.OrganizacaoUnidade).WithMany().HasForeignKey(x => x.OrganizacaoUnidadeId).OnDelete(DeleteBehavior.Cascade);
             });
 
             modelBuilder.Entity<Usuario>(b =>
@@ -83,6 +97,7 @@ namespace Retaguarda.Persistencia.POSTGRESQL
                 b.Property(x => x.Nome).IsRequired().HasMaxLength(200);
                 b.Property(x => x.Email).HasMaxLength(200);
                 b.Property(x => x.SenhaHash).HasMaxLength(500);
+                b.HasOne(x => x.Pessoa).WithMany().HasForeignKey(x => x.PessoaId).OnDelete(DeleteBehavior.Cascade);
             });
 
             modelBuilder.Entity<Perfil>(b =>
@@ -167,16 +182,6 @@ namespace Retaguarda.Persistencia.POSTGRESQL
                 b.Property(x => x.Anotacoes).HasMaxLength(2000);
                 b.Property(x => x.InscricaoEstadual).HasMaxLength(50);
                 b.Property(x => x.InscricaoMunicipal).HasMaxLength(50);
-            });
-
-            modelBuilder.Entity<OrganizacaoUnidade>(b =>
-            {
-                b.ToTable("OrganizacaoUnidades");
-                b.HasKey(x => x.Id);
-                b.Property(x => x.Nome).IsRequired().HasMaxLength(200);
-                b.Property(x => x.Codigo).HasMaxLength(50);
-                b.Property(x => x.Sigla).HasMaxLength(30);
-                b.Property(x => x.Nivel);
             });
 
             modelBuilder.Entity<OrganizacaoUnidadeSetor>(b =>
@@ -267,7 +272,14 @@ namespace Retaguarda.Persistencia.POSTGRESQL
             modelBuilder.Entity<OrganizacaoEndereco>(b=>{ b.ToTable("OrganizacaoEnderecos"); b.HasKey(x=>x.Id); b.Property(x=>x.EnderecoPrincipal).IsRequired(); });
             modelBuilder.Entity<OrganizacaoUnidadeEndereco>(b=>{ b.ToTable("OrganizacaoUnidadeEnderecos"); b.HasKey(x=>x.Id); b.Property(x=>x.EnderecoPrincipal).IsRequired(); });
             modelBuilder.Entity<OrganizacaoSetorEndereco>(b=>{ b.ToTable("OrganizacaoSetorEnderecos"); b.HasKey(x=>x.Id); b.Property(x=>x.EnderecoPrincipal).IsRequired(); });
-            modelBuilder.Entity<PessoaEndereco>(b=>{ b.ToTable("PessoaEnderecos"); b.HasKey(x=>x.Id); b.Property(x=>x.EnderecoPrincipal).IsRequired(); });
+            modelBuilder.Entity<PessoaEndereco>(b=>
+            { 
+                b.ToTable("PessoaEnderecos"); 
+                b.HasKey(x=>x.Id); 
+                b.Property(x=>x.EnderecoPrincipal).IsRequired();
+                b.HasOne(x => x.Endereco).WithMany().HasForeignKey(x => x.EnderecoId).OnDelete(DeleteBehavior.Cascade);
+            }
+            );
             modelBuilder.Entity<UsuarioEndereco>(b=>{ b.ToTable("UsuarioEnderecos"); b.HasKey(x=>x.Id); b.Property(x=>x.EnderecoPrincipal).IsRequired(); });
 
             modelBuilder.Entity<ContatoRelacionamento>(b=>{ b.ToTable("ContatoRelacionamentos"); b.HasKey(x=>x.Id); });

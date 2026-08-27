@@ -7,5 +7,7 @@ namespace Retaguarda.Dominio.Entidades
         public string CodigoHierarquico { get; set; } = string.Empty;
         public string Nome { get; set; } = string.Empty;
         public long? ResponsavelSetorId { get; set; } /*Pessoa responsável pelo setor*/
+        public OrganizacaoUnidade? OrganizacaoUnidade { get; set; }
+
     }
 }

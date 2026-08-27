@@ -12,5 +12,8 @@ namespace Retaguarda.Dominio.Entidades
         public long? ResponsavelId { get; set; } /*Pessoa responsável pela unidade*/
         public long? PessoaId { get; set; }/* Pessoa jurídica da organização */
         public long? SituacaoId { get; set; }
+        public Organizacao? Organizacao { get; set; }
+        public Pessoa? Pessoa { get; set; }
+
     }
 }
