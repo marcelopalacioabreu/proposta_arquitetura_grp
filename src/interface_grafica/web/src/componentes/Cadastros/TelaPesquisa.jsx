@@ -342,12 +342,12 @@ export default function TelaPesquisa({ screenKey }){
             </div>
           ) : (
             <div className="col-md-4">
-              <label className="form-label d-block">Valor</label>
+              <label className="form-label">Valor</label>
               <input name="valor" value={formState.valor} onChange={e=> setFormState(s=> ({ ...s, valor: e.target.value }))} placeholder="Valor" className="form-control" />
             </div>
           )}
           <div className="col-md-2 d-flex align-items-end" id="campo-hidden-inativo">
-            <button className="btn btn-secondary btn-icon" title="Filtrar" aria-label="Filtrar"><i className="bi bi-funnel" /></button>
+            <button className="form-control btn btn-secondary btn-icon" title="Filtrar" aria-label="Filtrar"><i className="bi bi-funnel" /></button>
           </div>
         </form>
       </div>
