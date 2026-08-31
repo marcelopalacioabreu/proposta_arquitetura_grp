@@ -264,9 +264,38 @@ export default function TelaCadastro({ screenKey, closeModal }){
         <h3>{meta.titulo || 'Cadastro'}</h3>
         <form onSubmit={handleSubmit} className="row g-3">
         {/* hidden inputs first */}
-        {hiddenInputs.map((c, hi) => (
+        {
+          hiddenInputs.map((c, hi) => {
+            let valorFinal = '';
+
+            // 1. Verifica se a propriedade 'valor' existe e está preenchida
+            if (c.valor) {
+              valorFinal = c.valor;
+            } 
+            // 2. Verifica se existe no camposChaveValores
+            else if (camposChaveValores && camposChaveValores[c.campo]) {
+              valorFinal = camposChaveValores[c.campo];
+            } 
+            // 3. Busca do model ou retorna vazio
+            else {
+              valorFinal = getFieldValue(model, c.campo) || '';
+            }
+
+            return (
+              <input 
+                key={`hidden-${hi}`} 
+                type="hidden" 
+                name={c.campo} 
+                value={valorFinal} 
+              />
+            );
+          })
+        }
+        {/*
+        hiddenInputs.map((c, hi) => (
             <input key={`hidden-${hi}`} type="hidden" name={c.campo} value={(camposChaveValores && camposChaveValores[c.campo]) ? camposChaveValores[c.campo] : (getFieldValue(model,c.campo) || '')} />
-        ))}
+        ))
+        */}
 
         {meta.itens.map((it, idx) => {
           if (it.campos && Array.isArray(it.campos)){
