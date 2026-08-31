@@ -1,20 +1,20 @@
 {
   "usuarioCadastro": {
     "tipo": "TELA_CADASTRO",
-    "titulo": "Cadastro de Usuário",
+    "titulo": "Cadastro de usuário",
     "extremidade": "/api/usuarios",
     "itens": [
       { "campo": "nome", "label": "Nome", "tipo": "text", "col": 6 },
-      { "campo": "username", "label": "Usuário (login)", "tipo": "text", "col": 6 },
-      { "campo": "senhaHash", "label": "Senha (hash esperado)", "tipo": "password", "col": 6 },
+      { "campo": "username", "label": "Usuário", "tipo": "text", "col": 6 },
+      { "campo": "senhaHash", "label": "Senha", "tipo": "password", "col": 6 },
       { "campo": "email", "label": "E-mail", "tipo": "text", "col": 6 },
       {
-        "titulo": "Pessoa (aninhada)",
+        "titulo": "Dados pessoais",
         "columns": 12,
         "campos": [
-          { "campo": "pessoa.nome", "label": "Nome / Razão Social", "tipo": "text", "col": 8 },
-          { "campo": "pessoa.tipoPessoaChave", "label": "Tipo", "tipo": "select", "enumeracao": "pessoa.tipos", "col": 4 },
-          { "campo": "pessoa.documento", "label": "Documento", "tipo": "text", "col": 6 }
+          { "campo": "pessoa.nome", "label": "Nome", "tipo": "text", "col": 8 },
+          { "campo": "pessoa.documento", "label": "Documento", "tipo": "text", "col": 4 },
+          { "campo": "pessoa.tipoPessoaChave", "label": "Organização", "tipo": "hidden", "col": 12, "valor": "F" }
         ]
       },
       {
@@ -23,7 +23,7 @@
         "campos": [
           { "campo": "organizacaoId", "label": "Organização", "tipo": "select", "url": "/api/organizacoes", "col": 4 },
           { "campo": "organizacaoUnidadeId", "label": "Unidade", "tipo": "select", "url": "/api/organizacao_unidades", "col": 4 },
-          { "campo": "perfilIds", "label": "Perfis (múltiplo)", "tipo": "multiselect", "url": "/api/perfis", "col": 4 }
+          { "campo": "perfilIds", "label": "Perfis", "tipo": "multiselect", "url": "/api/perfis", "col": 4 }
         ]
       }
     ],
