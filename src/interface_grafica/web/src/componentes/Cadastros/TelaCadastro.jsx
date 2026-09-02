@@ -67,29 +67,43 @@ export default function TelaCadastro({ screenKey, closeModal }){
       return obj
   }
 
-  // Extrai valores usando meta.urlTela (preferido) ou mapeia camposChaveUrl para segmentos da URL
-  function obterValoresCamposChave(metaObj, pathname, params){
+  // Extrai valores usando meta.urlTela (preferido), parâmetros de rota, ou query string
+  function obterValoresCamposChave(metaObj, pathname, params, searchParams){
     const map = {}
     try{
       const chaves = metaObj?.camposChaveUrl
+      
       if (metaObj?.urlTela && typeof metaObj.urlTela === 'string'){
+        // Extrai placeholders da URL (ex: {organizacaoId}, {contexto})
         const keys = []
         const regexStr = metaObj.urlTela.replace(/\{(\w+)\}/g, (_, k) => { keys.push(k); return '([^/]*)' })
         const re = new RegExp('^' + regexStr + '$')
         const path = (pathname || '').split('?')[0].split('/').map(s=>s.trim()).filter(Boolean).join('/')
         const m = re.exec(path)
         if (m){ for (let i=0;i<keys.length;i++) map[keys[i]] = m[i+1] }
-        Object.keys(params || {}).forEach(k=>{ if (!map[k] && params[k]) map[k] = params[k] })
       } else if (Array.isArray(chaves) && chaves.length){
+        // Extrai dos últimos segmentos da URL
         const segments = (pathname || '').split('/').map(s=> s.trim()).filter(Boolean)
         const start = Math.max(0, segments.length - chaves.length)
         for (let i=0;i<chaves.length;i++){
           const idx = start + i
           if (idx >= 0 && idx < segments.length) map[chaves[i]] = segments[idx]
         }
-        Object.keys(params || {}).forEach(k=>{ if (!map[k] && params[k]) map[k] = params[k] })
       }
-    }catch(e){}
+      
+      // Complementa com parâmetros de rota
+      Object.keys(params || {}).forEach(k=>{ if (!map[k] && params[k]) map[k] = params[k] })
+      
+      // Complementa com query string (útil para contexto e outros parâmetros)
+      if (searchParams){
+        const queryParams = new URLSearchParams(searchParams)
+        queryParams.forEach((value, key) => {
+          if (!map[key]) map[key] = value
+        })
+      }
+    }catch(e){
+      console.error('Erro ao extrair valores de campos chave:', e)
+    }
     return map
   }
 
@@ -110,7 +124,7 @@ export default function TelaCadastro({ screenKey, closeModal }){
     }
   },[meta, params.id])
 
-  const camposChaveValores = meta ? obterValoresCamposChave(meta, location.pathname, params) : {}
+  const camposChaveValores = meta ? obterValoresCamposChave(meta, location.pathname, params, location.search) : {}
 
   function getFieldValue(modelObj, campo){
     if (!modelObj) return undefined
@@ -216,46 +230,96 @@ export default function TelaCadastro({ screenKey, closeModal }){
     }
   })
 
+  // Constrói a URL de retorno usando padraoURLInterface e substituindo placeholders
+  function construirURLRetorno(metaObj, valoresChave){
+    if (!metaObj?.padraoURLInterface) return '/painel/organizacoes'
+    
+    let url = metaObj.padraoURLInterface
+    
+    // Substitui {placeholder} pelos valores extraídos da URL
+    Object.entries(valoresChave).forEach(([chave, valor]) => {
+      url = url.replace(`{${chave}}`, valor)
+    })
+    
+    return url
+  }
+
+  // Obtém o endpoint correto para criar novo registro (alguns temos subrotas)
+  function obterEndpointCriacao(metaObj, valoresChave){
+    const endpoint = obterEndpointCadastro(metaObj)
+    if (!endpoint) return endpoint
+    
+    // Alguns endpoints têm subrotas específicas
+    if (endpoint === '/api/organizacao_unidades' && valoresChave.organizacaoId){
+      return `/api/organizacoes/${valoresChave.organizacaoId}/unidades`
+    }
+    if (endpoint === '/api/organizacao_unidade_setores' && valoresChave.organizacaoUnidadeId){
+      return `/api/organizacao_unidades/${valoresChave.organizacaoUnidadeId}/setores`
+    }
+    
+    return endpoint
+  }
+
   const handleSubmit = async (e) =>{
     e.preventDefault()
     setSubmitting(true)
     setErrors({})
-    const fd = new FormData(e.target)
-    const obj = construirObjetoFormulario(fd)
-    // ensure camposChaveUrl values from URL are included in payload when missing
-    if (meta && meta.camposChaveUrl && Array.isArray(meta.camposChaveUrl)){
-      for (const k of meta.camposChaveUrl){ if (!(k in obj) && camposChaveValores[k]) obj[k] = camposChaveValores[k] }
-    }
+    
     try{
+      // Constrói o objeto a partir do formulário
+      const fd = new FormData(e.target)
+      const obj = construirObjetoFormulario(fd)
+      
+      // Garante que valores de campos-chave da URL sejam incluídos no payload
+      if (meta?.camposChaveUrl && Array.isArray(meta.camposChaveUrl)){
+        meta.camposChaveUrl.forEach(campo => {
+          if (!(campo in obj) && camposChaveValores[campo]){
+            obj[campo] = camposChaveValores[campo]
+          }
+        })
+      }
+      
       const endpoint = obterEndpointCadastro(meta)
       if (!endpoint) throw new Error('Endpoint não definido no metadado da tela')
-
-      if (params.id === 'new'){
-        let createEndpoint = endpoint
-        try{
-          if (endpoint === '/api/organizacao_unidades' && camposChaveValores.organizacaoId){ createEndpoint = `/api/organizacoes/${camposChaveValores.organizacaoId}/unidades` }
-          if (endpoint === '/api/organizacao_unidade_setores' && camposChaveValores.organizacaoUnidadeId){ createEndpoint = `/api/organizacao_unidades/${camposChaveValores.organizacaoUnidadeId}/setores` }
-        }catch(e){}
-        console.debug('Submitting create payload', obj)
+      
+      // Executa operação (criar ou atualizar)
+      const isNovo = params.id === 'new'
+      if (isNovo){
+        const createEndpoint = obterEndpointCriacao(meta, camposChaveValores)
+        console.debug('Criando novo registro em:', createEndpoint, 'payload:', obj)
         await api.post(createEndpoint, obj, { block: true })
+      } else {
+        console.debug('Atualizando registro:', endpoint, params.id, 'payload:', obj)
+        await api.put(`${endpoint}/${params.id}`, obj, { block: true })
       }
-      else await api.put(`${endpoint}/${params.id}`, obj, { block: true })
-      if (typeof closeModal === 'function') closeModal()
-      else navigate('/painel/organizacoes')
+      
+      // Navega de volta ou fecha modal
+      if (typeof closeModal === 'function'){
+        closeModal()
+      } else {
+        const urlRetorno = construirURLRetorno(meta, camposChaveValores)
+        navigate(urlRetorno)
+      }
     }catch(err){
-      console.error('Save error', err)
-      if (err.response) console.error('Server response', err.response.data)
-      if (err.response && err.response.status === 400){
+      console.error('Erro ao salvar:', err)
+      if (err.response) console.error('Resposta do servidor:', err.response.data)
+      
+      // Trata erros de validação
+      if (err.response?.status === 400){
         const data = err.response.data
-        if (data && data.errors){
-          const map = {}
-          Object.keys(data.errors).forEach(k => { map[k] = data.errors[k].join(', ') })
-          setErrors(map)
+        if (data?.errors){
+          const errosMapeados = {}
+          Object.keys(data.errors).forEach(campo => {
+            errosMapeados[campo] = data.errors[campo].join(', ')
+          })
+          setErrors(errosMapeados)
         } else if (typeof data === 'object'){
           setErrors(data)
         }
       }
-    }finally{ setSubmitting(false) }
+    }finally{
+      setSubmitting(false)
+    }
   }
 
   return (

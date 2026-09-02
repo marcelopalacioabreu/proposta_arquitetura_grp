@@ -3,6 +3,7 @@
     "tipo": "TELA_CADASTRO",
     "titulo": "Cadastro de Unidade",
     "extremidade": "/api/organizacao_unidades",
+    "padraoURLInterface": "/painel/organizacoes/{organizacaoId}/unidades",
     "camposChaveUrl": ["organizacaoId"],
     "urlTela": "organizacoes/{organizacaoId}/unidades",
     "itens": [

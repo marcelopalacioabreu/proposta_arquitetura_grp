@@ -3,6 +3,7 @@
     "tipo": "TELA_CADASTRO",
     "titulo": "Cadastro de Organização",
     "extremidade": "/api/organizacoes",
+    "padraoURLInterface": "/painel/organizacoes",
     "itens": [
       {
         "titulo": "Identificação",

@@ -63,8 +63,12 @@ function App(){
         <Route path='catalogos/natureza-juridica/editar/:id' element={<TelaCadastro screenKey={'naturezaJuridicaCadastro'} />} />
         <Route path='catalogos/tipos' element={<TelaPesquisa screenKey={'tiposPesquisa'} />} />
         <Route path='catalogos/tipos/editar/:id' element={<TelaCadastro screenKey={'tiposCadastro'} />} />
+        <Route path='catalogos/tipos/:contexto' element={<TelaPesquisa screenKey={'tiposPesquisa'} />} />
+        <Route path='catalogos/tipos/:contexto/editar/:id' element={<TelaCadastro screenKey={'tiposCadastro'} />} />
         <Route path='catalogos/situacoes' element={<TelaPesquisa screenKey={'situacaoPesquisa'} />} />
         <Route path='catalogos/situacoes/editar/:id' element={<TelaCadastro screenKey={'situacaoCadastro'} />} />
+        <Route path='catalogos/situacoes/:contexto' element={<TelaPesquisa screenKey={'situacaoPesquisa'} />} />
+        <Route path='catalogos/situacoes/:contexto/editar/:id' element={<TelaCadastro screenKey={'situacaoCadastro'} />} />
         {/* Orquestração de Fluxo */}
         <Route path='orquestracao-fluxo/processos' element={<TelaPesquisa screenKey={'orquestracaoFluxoProcessoPesquisa'} />} />
         <Route path='orquestracao-fluxo/processos/editar/:id' element={<TelaCadastro screenKey={'orquestracaoFluxoProcessoCadastro'} />} />

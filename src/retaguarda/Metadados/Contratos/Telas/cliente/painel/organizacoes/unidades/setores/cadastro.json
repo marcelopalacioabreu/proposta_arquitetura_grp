@@ -3,6 +3,7 @@
     "tipo": "TELA_CADASTRO",
     "titulo": "Cadastro de Setor da Unidade",
     "extremidade": "/api/organizacao_unidade_setores",
+    "padraoURLInterface": "/painel/organizacoes/{organizacaoId}/unidades/{organizacaoUnidadeId}/setores",
     "camposChaveUrl": ["organizacaoId","organizacaoUnidadeId"],
     "urlTela": "organizacoes/{organizacaoId}/unidades/{organizacaoUnidadeId}/setores",
     "itens": [

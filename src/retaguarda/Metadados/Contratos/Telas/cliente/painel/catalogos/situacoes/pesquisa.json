@@ -2,14 +2,18 @@
   "situacaoPesquisa": {
     "titulo": "Pesquisa de Situações",
     "extremidade": "/api/situacoes",
+    "padraoURLInterface": "/painel/catalogos/situacoes/{contexto}",
+    "camposChaveUrl": ["contexto"],
+    "urlTela": "catalogos/situacoes/{contexto}",
     "acoesFormulario": [
-      { "tipo": "navegacao", "destino": "/painel/catalogos/situacoes/editar/new", "campo_id": "id", "icone": "bi-plus", "permissao": "catalogos.situacao.editar" }
+      { "tipo": "navegacao", "destino": "/painel/catalogos/situacoes/{contexto}/editar/new", "campo_id": "id", "icone": "bi-plus", "permissao": "catalogos.situacao.editar" }
     ],
     "filtro": [
       { "campo": "codigo", "descricao": "Código", "tipo": "string", "col": 3 },
       { "campo": "nome", "descricao": "Nome", "tipo": "string", "col": 6 },
       { "campo": "contexto", "descricao": "Contexto", "tipo": "select", "col": 3, "opcoes": [
-        { "valor": "IMOVEL", "descricao": "Imóvel" }
+        { "valor": "IMOVEL", "descricao": "Imóvel" },
+        { "valor": "ORGANIZACAO_SITUACAO", "descricao": "Organização - Situação" }
       ]}
     ],
     "tabela": {
@@ -19,7 +23,7 @@
         { "campo": "contexto", "titulo": "Contexto" }
       ],
       "acoes": [
-        { "tipo": "navegacao", "destino": "/painel/catalogos/situacoes/editar/{id}", "campo_id": "id", "icone": "pencil", "permissao": "catalogos.situacao.editar" },
+        { "tipo": "navegacao", "destino": "/painel/catalogos/situacoes/{contexto}/editar/{id}", "campo_id": "id", "icone": "pencil", "permissao": "catalogos.situacao.editar" },
         { "tipo": "confirmacao_delete_ajax", "destino": "/api/situacoes/{id}", "campo_id": "id", "icone": "trash", "permissao": "catalogos.situacao.excluir", "exibirQuandoAtivo": true }
       ],
       "pagination": { "pageSize": 10 }

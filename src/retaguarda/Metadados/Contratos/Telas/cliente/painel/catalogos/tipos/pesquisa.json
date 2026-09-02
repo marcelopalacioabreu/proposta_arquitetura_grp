@@ -2,8 +2,11 @@
   "tiposPesquisa": {
     "titulo": "Pesquisa de Tipos",
     "extremidade": "/api/tipos",
+    "padraoURLInterface": "/painel/catalogos/tipos/{contexto}",
+    "camposChaveUrl": ["contexto"],
+    "urlTela": "catalogos/tipos/{contexto}",
     "acoesFormulario": [
-      { "tipo": "navegacao", "destino": "/painel/catalogos/tipos/editar/new", "campo_id": "id", "icone": "bi-plus", "permissao": "catalogos.tipos.editar" }
+      { "tipo": "navegacao", "destino": "/painel/catalogos/tipos/{contexto}/editar/new", "campo_id": "id", "icone": "bi-plus", "permissao": "catalogos.tipos.editar" }
     ],
     "filtro": [
       { "campo": "codigo", "descricao": "Código", "tipo": "string", "col": 3 },
@@ -13,7 +16,8 @@
         { "valor": "CONTATO", "descricao": "Contato" },
         { "valor": "UNIDADE", "descricao": "Unidade" },
         { "valor": "IMOVEL", "descricao": "Imóvel" },
-        { "valor": "DOCUMENTO", "descricao": "Documento" }
+        { "valor": "DOCUMENTO", "descricao": "Documento" },
+        { "valor": "ORGANIZACAO_TIPO", "descricao": "Organização - Tipo" }
       ]}
     ],
     "tabela": {
@@ -23,7 +27,7 @@
         { "campo": "contexto", "titulo": "Contexto" }
       ],
       "acoes": [
-        { "tipo": "navegacao", "destino": "/painel/catalogos/tipos/editar/{id}", "campo_id": "id", "icone": "pencil", "permissao": "catalogos.tipos.editar" },
+        { "tipo": "navegacao", "destino": "/painel/catalogos/tipos/{contexto}/editar/{id}", "campo_id": "id", "icone": "pencil", "permissao": "catalogos.tipos.editar" },
         { "tipo": "confirmacao_delete_ajax", "destino": "/api/tipos/{id}", "campo_id": "id", "icone": "trash", "permissao": "catalogos.tipos.excluir", "exibirQuandoAtivo": true }
       ],
       "pagination": { "pageSize": 10 }
