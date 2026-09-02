@@ -43,9 +43,9 @@ export default function TelaCadastro({ screenKey, closeModal }){
               // checkbox present in formData -> 'on' or value; absent -> undefined
               obj[c.campo] = Boolean(obj[c.campo] === 'on' || obj[c.campo] === 'true' || obj[c.campo] === true)
             }
-            // Converter campos select para número
-            else if (c.tipo === 'select' && obj[c.campo]){
-              const val = String(obj[c.campo]).trim()
+            // Converter campos select para número ou null
+            else if (c.tipo === 'select'){
+              const val = String(obj[c.campo] || '').trim()
               if (val === '') {
                 obj[c.campo] = null
               } else {
@@ -63,6 +63,22 @@ export default function TelaCadastro({ screenKey, closeModal }){
 
       // also coerce any remaining 'on' strings to true to be safe
       Object.keys(obj).forEach(k => { if (obj[k] === 'on') obj[k] = true })
+
+      // Garantir que todos os campos select estejam presentes (mesmo que null se vazio)
+      try{
+        if (meta && Array.isArray(meta.itens)){
+          const ensureSelectFields = (c) => {
+            if (!c || !c.campo) return
+            if (c.tipo === 'select' && !(c.campo in obj)){
+              obj[c.campo] = null
+            }
+          }
+          meta.itens.forEach(it => {
+            if (it.campos && Array.isArray(it.campos)) it.campos.forEach(ensureSelectFields)
+            else ensureSelectFields(it)
+          })
+        }
+      }catch(e){ /* ignore */ }
 
       // Agregar dados dos subcadastros na submissão
       if (meta && Array.isArray(meta.subcadastros)){
