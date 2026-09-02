@@ -207,9 +207,14 @@ export default function SelectPesquisavel({
     }
   }
 
+  // Usar uma chave que força remontagem quando opções mudam
+  // Isso garante que defaultValue é sincronizado quando as opções chegam
+  const selectKey = `select-${opcoes.length}-${String(value || '')}`
+
   return (
     <div className="select-pesquisavel-wrapper">
       <select
+        key={selectKey}
         name={name}
         defaultValue={String(value || '')}
         onChange={handleChange}

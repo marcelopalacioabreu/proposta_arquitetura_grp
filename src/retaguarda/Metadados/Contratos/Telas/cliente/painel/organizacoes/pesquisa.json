@@ -9,16 +9,12 @@
     "filtro": [
       { "campo": "codigo", "descricao": "Código", "tipo": "string", "col": 3 },
       { "campo": "nome", "descricao": "Nome", "tipo": "string", "col": 3 },
-      { "campo": "descricao", "descricao": "Descrição", "tipo": "string", "col": 3 },
-      { "campo": "created_at", "descricao": "Criado em", "tipo": "date", "col": 3 },
-      { "campo": "ativo", "descricao": "Ativo", "tipo": "boolean", "col": 3 }
+      { "campo": "created_at", "descricao": "Criado em", "tipo": "date", "col": 3 }
     ],
     "tabela": {
       "colunas": [
         { "campo": "codigo", "titulo": "Código", "visivelTelaPequena": false },
-        { "campo": "nome", "titulo": "Nome", "visivelTelaPequena": true },
-        { "campo": "descricao", "titulo": "Descrição", "visivelTelaPequena": false },
-        { "campo": "created_at", "titulo": "Criado em", "visivelTelaPequena": false }
+        { "campo": "nome", "titulo": "Nome", "visivelTelaPequena": true }
       ],
       "campos": ["codigo", "nome", "descricao", "created_at"],
       "acoes": [
