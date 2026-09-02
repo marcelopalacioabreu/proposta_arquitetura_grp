@@ -377,6 +377,7 @@ namespace Retaguarda.Persistencia.POSTGRESQL.Migracoes
                     Nivel = table.Column<long>(type: "bigint", nullable: true),
                     ResponsavelId = table.Column<long>(type: "bigint", nullable: true),
                     PessoaId = table.Column<long>(type: "bigint", nullable: true),
+                    TipoId = table.Column<long>(type: "bigint", nullable: true),
                     SituacaoId = table.Column<long>(type: "bigint", nullable: true),
                     OrganizacaoPaiId = table.Column<long>(type: "bigint", nullable: true),
                     OrganizacaoRaizId = table.Column<long>(type: "bigint", nullable: true),
@@ -407,6 +408,12 @@ namespace Retaguarda.Persistencia.POSTGRESQL.Migracoes
                         principalTable: "Situacoes",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Organizacoes_Tipos_TipoId",
+                        column: x => x.TipoId,
+                        principalTable: "Tipos",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.SetNull);
                 });
 
             migrationBuilder.CreateTable(
@@ -1205,6 +1212,11 @@ namespace Retaguarda.Persistencia.POSTGRESQL.Migracoes
                 column: "SituacaoId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Organizacoes_TipoId",
+                table: "Organizacoes",
+                column: "TipoId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_PerfilPermissoes_PerfilId_Chave",
                 table: "PerfilPermissoes",
                 columns: new[] { "PerfilId", "Chave" },
@@ -1331,9 +1343,6 @@ namespace Retaguarda.Persistencia.POSTGRESQL.Migracoes
                 name: "Usuarios");
 
             migrationBuilder.DropTable(
-                name: "Tipos");
-
-            migrationBuilder.DropTable(
                 name: "EnderecoCEPs");
 
             migrationBuilder.DropTable(
@@ -1350,6 +1359,9 @@ namespace Retaguarda.Persistencia.POSTGRESQL.Migracoes
 
             migrationBuilder.DropTable(
                 name: "Pessoas");
+
+            migrationBuilder.DropTable(
+                name: "Tipos");
 
             migrationBuilder.DropTable(
                 name: "EnderecoMunicipios");

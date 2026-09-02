@@ -25,6 +25,12 @@ namespace Retaguarda.Servicos
                 Nome = e.Nome,
                 Codigo = e.Codigo,
                 Sigla = e.Sigla,
+                PessoaId = e.PessoaId,
+                TipoId = e.TipoId,
+                SituacaoId = e.SituacaoId,
+                OrganizacaoPaiId = e.OrganizacaoPaiId,
+                OrganizacaoRaizId = e.OrganizacaoRaizId,
+                Nivel = e.Nivel,
                 Ativo = e.Ativo
             };
         }
@@ -36,6 +42,12 @@ namespace Retaguarda.Servicos
                 Nome = dto.Nome,
                 Codigo = dto.Codigo,
                 Sigla = dto.Sigla,
+                PessoaId = dto.PessoaId,
+                TipoId = dto.TipoId,
+                SituacaoId = dto.SituacaoId,
+                OrganizacaoPaiId = dto.OrganizacaoPaiId,
+                OrganizacaoRaizId = dto.OrganizacaoRaizId,
+                Nivel = dto.Nivel,
                 Ativo = dto.Ativo
             };
         }
@@ -45,6 +57,12 @@ namespace Retaguarda.Servicos
             entity.Nome = dto.Nome;
             entity.Codigo = dto.Codigo;
             entity.Sigla = dto.Sigla;
+            entity.PessoaId = dto.PessoaId;
+            entity.TipoId = dto.TipoId;
+            entity.SituacaoId = dto.SituacaoId;
+            entity.OrganizacaoPaiId = dto.OrganizacaoPaiId;
+            entity.OrganizacaoRaizId = dto.OrganizacaoRaizId;
+            entity.Nivel = dto.Nivel;
             entity.Ativo = dto.Ativo;
         }
     }

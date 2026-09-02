@@ -8,9 +8,11 @@ namespace Retaguarda.Dominio.Entidades.Enumeracoes
     {
         // Constantes de contexto
         public const string IMOVEL = "IMOVEL";
+        public const string ORGANIZACAO = "ORGANIZACAO_SITUACAO";
 
         // Instâncias estáticas
         public static readonly SituacaoContexto Imovel = new(IMOVEL, "Imóvel");
+        public static readonly SituacaoContexto Organizacao = new(ORGANIZACAO, "Situação de Organização");
 
         // Propriedades
         public string Chave { get; }
@@ -30,6 +32,7 @@ namespace Retaguarda.Dominio.Entidades.Enumeracoes
             return chave switch
             {
                 IMOVEL => "Imóvel",
+                ORGANIZACAO => "Situação de Organização",
                 _ => chave
             };
         }
@@ -42,6 +45,7 @@ namespace Retaguarda.Dominio.Entidades.Enumeracoes
             return chave switch
             {
                 IMOVEL => Imovel,
+                ORGANIZACAO => Organizacao,
                 _ => throw new ArgumentException($"Contexto de situação inválido: {chave}")
             };
         }
@@ -52,7 +56,7 @@ namespace Retaguarda.Dominio.Entidades.Enumeracoes
         public static IEnumerable<SituacaoContexto> Todos =>
             new[]
             {
-                Imovel
+                Imovel, Organizacao
             };
 
         public override string ToString() => Descricao;

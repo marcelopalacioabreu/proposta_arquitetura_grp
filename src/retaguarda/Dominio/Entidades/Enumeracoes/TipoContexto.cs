@@ -24,6 +24,7 @@ namespace Retaguarda.Dominio.Entidades.Enumeracoes
         public const string UNIDADE = "UNIDADE";
         public const string IMOVEL = "IMOVEL";
         public const string DOCUMENTO = "DOCUMENTO";
+        public const string ORGANIZACAO = "ORGANIZACAO_TIPO";
 
         // Instâncias dos valores
         public static readonly TipoContexto Endereco = new(ENDERECO, "Tipo de Endereço");
@@ -31,13 +32,14 @@ namespace Retaguarda.Dominio.Entidades.Enumeracoes
         public static readonly TipoContexto Unidade = new(UNIDADE, "Tipo de Unidade");
         public static readonly TipoContexto Imovel = new(IMOVEL, "Tipo de Imóvel");
         public static readonly TipoContexto Documento = new(DOCUMENTO, "Tipo de Documento");
+        public static readonly TipoContexto Organizacao = new(ORGANIZACAO, "Tipo de Organização");
 
         /// <summary>
         /// Retorna todos os contextos disponíveis.
         /// </summary>
         public static IEnumerable<TipoContexto> Todos => new[]
         {
-            Endereco, Contato, Unidade, Imovel, Documento
+            Endereco, Contato, Unidade, Imovel, Documento, Organizacao
         };
 
         /// <summary>
@@ -52,6 +54,7 @@ namespace Retaguarda.Dominio.Entidades.Enumeracoes
                 UNIDADE => Unidade,
                 IMOVEL => Imovel,
                 DOCUMENTO => Documento,
+                ORGANIZACAO => Organizacao,
                 _ => Endereco // Valor padrão
             };
         }

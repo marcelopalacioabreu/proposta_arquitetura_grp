@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Retaguarda.Dominio.Entidades;
 using Retaguarda.Dominio.Entidades.Base;
+using Retaguarda.Dominio.Entidades.Enumeracoes;
 using System.Threading;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.AspNetCore.Http;
@@ -25,6 +26,8 @@ namespace Retaguarda.Persistencia.MYSQL
         public DbSet<PerfilUsuario> PerfilUsuarios { get; set; } = null!;
         public DbSet<PerfilPermissao> PerfilPermissoes { get; set; } = null!;
         public DbSet<Tipo> Tipos { get; set; } = null!;
+        public DbSet<SetorUsuario> SetorUsuarios { get; set; } = null!;
+        
         // Address related
         public DbSet<EnderecoPais> EnderecoPaises { get; set; } = null!;
         public DbSet<EnderecoUF> EnderecoUFs { get; set; } = null!;
@@ -60,6 +63,10 @@ namespace Retaguarda.Persistencia.MYSQL
                 b.Property(x => x.Nome).IsRequired().HasMaxLength(200);
                 b.Property(x => x.Codigo).HasMaxLength(50);
                 b.Property(x => x.Sigla).HasMaxLength(30);
+                b.HasOne(x => x.Pessoa).WithMany().HasForeignKey(x => x.PessoaId).OnDelete(DeleteBehavior.Cascade);
+                b.HasMany(x => x.OrganizacaoEnderecos).WithOne().HasForeignKey(x => x.OrganizacaoId).OnDelete(DeleteBehavior.Cascade);
+                b.HasOne(x => x.Tipo).WithMany().HasForeignKey(x => x.TipoId).OnDelete(DeleteBehavior.SetNull);
+                b.HasOne(x => x.Situacao).WithMany().HasForeignKey(x => x.SituacaoId).OnDelete(DeleteBehavior.Cascade);
             });
 
             modelBuilder.Entity<OrganizacaoSetor>(b =>
@@ -68,6 +75,8 @@ namespace Retaguarda.Persistencia.MYSQL
                 b.HasKey(x => x.Id);
                 b.Property(x => x.Nome).IsRequired().HasMaxLength(200);
                 b.Property(x => x.CodigoHierarquico).HasMaxLength(1000);
+                b.HasOne(x => x.OrganizacaoUnidade).WithMany().HasForeignKey(x => x.OrganizacaoUnidadeId).OnDelete(DeleteBehavior.Cascade);
+                b.HasMany(x => x.OrganizacaoSetorEnderecos).WithOne().HasForeignKey(x => x.OrganizacaoSetorId).OnDelete(DeleteBehavior.Cascade);
             });
 
             modelBuilder.Entity<Usuario>(b =>
@@ -104,11 +113,26 @@ namespace Retaguarda.Persistencia.MYSQL
                 b.HasOne(x => x.Perfil).WithMany().HasForeignKey(x => x.PerfilId).OnDelete(DeleteBehavior.Cascade);
             });
 
+            modelBuilder.Entity<SetorUsuario>(b =>
+            {
+                b.ToTable("SetorUsuarios");
+                b.HasKey(x => x.Id);
+                b.Property(x => x.HabilitarPermissoesNegativas).IsRequired();
+                b.Property(x => x.Padrao).IsRequired().HasDefaultValue(false);
+                b.HasOne(x => x.Usuario).WithMany().HasForeignKey(x => x.UsuarioId).OnDelete(DeleteBehavior.Cascade);
+                b.HasOne(x => x.Setor).WithMany().HasForeignKey(x => x.SetorId).OnDelete(DeleteBehavior.Cascade);
+            });
+
             modelBuilder.Entity<Pessoa>(b =>
             {
                 b.ToTable("Pessoas");
                 b.HasKey(x => x.Id);
-                b.Property(x => x.TipoPessoa).IsRequired();
+                b.Property(x => x.TipoPessoa)
+                .HasConversion(
+                    v => v.Chave,
+                    v => PessoaTipo.ObterPorChave(v)
+                )
+                .IsRequired();
                 b.HasDiscriminator<int>("Discriminator")
                     .HasValue<Pessoa>(0)
                     .HasValue<PessoaFisica>(1)
@@ -118,6 +142,18 @@ namespace Retaguarda.Persistencia.MYSQL
             modelBuilder.Entity<PessoaFisica>(b =>
             {
                 b.ToTable("Pessoas");
+                b.Property(x => x.Sexo)
+                .HasConversion(
+                    v => v.Chave,
+                    v => Sexo.ObterPorChave(v)
+                )
+                .IsRequired();
+                b.Property(x => x.EstadoCivil)
+                .HasConversion(
+                    v => v.Chave,
+                    v => EstadoCivil.ObterPorChave(v)
+                )
+                .IsRequired();
                 b.Property(x => x.Nome).IsRequired().HasMaxLength(300);
                 b.Property(x => x.NomeSocial).HasMaxLength(300);
                 b.Property(x => x.Cpf).HasMaxLength(14);
@@ -134,6 +170,7 @@ namespace Retaguarda.Persistencia.MYSQL
                 b.Property(x => x.Anotacoes).HasMaxLength(2000);
                 b.Property(x => x.InscricaoEstadual).HasMaxLength(50);
                 b.Property(x => x.InscricaoMunicipal).HasMaxLength(50);
+                b.HasOne(x => x.Situacao).WithMany().HasForeignKey(x => x.SituacaoId).OnDelete(DeleteBehavior.Cascade);
             });
 
             modelBuilder.Entity<OrganizacaoUnidade>(b =>
@@ -144,6 +181,10 @@ namespace Retaguarda.Persistencia.MYSQL
                 b.Property(x => x.Codigo).HasMaxLength(50);
                 b.Property(x => x.Sigla).HasMaxLength(30);
                 b.Property(x => x.Nivel);
+                b.HasOne(x => x.Organizacao).WithMany().HasForeignKey(x => x.OrganizacaoId).OnDelete(DeleteBehavior.Cascade);
+                b.HasOne(x => x.Pessoa).WithMany().HasForeignKey(x => x.PessoaId).OnDelete(DeleteBehavior.Cascade);
+                b.HasOne(x => x.Situacao).WithMany().HasForeignKey(x => x.SituacaoId).OnDelete(DeleteBehavior.Cascade);
+                b.HasMany(x => x.OrganizacaoUnidadeEnderecos).WithOne().HasForeignKey(x => x.OrganizacaoUnidadeId).OnDelete(DeleteBehavior.Cascade);
             });
 
             modelBuilder.Entity<OrganizacaoUnidadeSetor>(b =>
@@ -226,16 +267,75 @@ namespace Retaguarda.Persistencia.MYSQL
                 b.HasIndex(x => new { x.OrganizacaoId, x.Contexto, x.Ativo }).HasName("idx_Tipos_Contexto_Ativo");
                 b.HasIndex(x => new { x.Codigo, x.Contexto, x.OrganizacaoId }).IsUnique().HasName("idx_Tipos_Codigo_Contexto_Unico");
             });
-            modelBuilder.Entity<Contato>(b => { b.ToTable("Contatos"); b.HasKey(x=>x.Id); b.Property(x=>x.Nome).HasMaxLength(200); b.Property(x=>x.ContatoValor).HasMaxLength(500); });
-            modelBuilder.Entity<Documento>(b => { b.ToTable("Documentos"); b.HasKey(x=>x.Id); b.Property(x=>x.Numero).HasMaxLength(200); b.Property(x=>x.Digito).HasMaxLength(20); b.Property(x=>x.OrgaoEmissor).HasMaxLength(100); b.Property(x=>x.UfEmissor).HasMaxLength(8); b.Property(x=>x.Observacao).HasMaxLength(1000); });
+            modelBuilder.Entity<Contato>(
+                b => { 
+                    b.ToTable("Contatos"); 
+                    b.HasKey(x=>x.Id); 
+                    b.Property(x=>x.Nome).HasMaxLength(200); 
+                    b.Property(x=>x.ContatoValor).HasMaxLength(500);
+                    b.HasOne(x => x.Tipo).WithMany().HasForeignKey(x => x.TipoId).OnDelete(DeleteBehavior.Cascade);
+                    }
+            );
+            modelBuilder.Entity<Documento>(
+                b => { 
+                    b.ToTable("Documentos"); 
+                    b.HasKey(x=>x.Id); 
+                    b.Property(x=>x.Numero).HasMaxLength(200); 
+                    b.Property(x=>x.Digito).HasMaxLength(20); 
+                    b.Property(x=>x.OrgaoEmissor).HasMaxLength(100); 
+                    b.Property(x=>x.UfEmissor).HasMaxLength(8); 
+                    b.Property(x=>x.Observacao).HasMaxLength(1000);
+                    b.HasOne(x => x.Tipo).WithMany().HasForeignKey(x => x.TipoId).OnDelete(DeleteBehavior.Cascade);
+                });
 
-            modelBuilder.Entity<OrganizacaoEndereco>(b=>{ b.ToTable("OrganizacaoEnderecos"); b.HasKey(x=>x.Id); b.Property(x=>x.EnderecoPrincipal).IsRequired(); });
-            modelBuilder.Entity<OrganizacaoUnidadeEndereco>(b=>{ b.ToTable("OrganizacaoUnidadeEnderecos"); b.HasKey(x=>x.Id); b.Property(x=>x.EnderecoPrincipal).IsRequired(); });
-            modelBuilder.Entity<OrganizacaoSetorEndereco>(b=>{ b.ToTable("OrganizacaoSetorEnderecos"); b.HasKey(x=>x.Id); b.Property(x=>x.EnderecoPrincipal).IsRequired(); });
-            modelBuilder.Entity<PessoaEndereco>(b=>{ b.ToTable("PessoaEnderecos"); b.HasKey(x=>x.Id); b.Property(x=>x.EnderecoPrincipal).IsRequired(); });
+            modelBuilder.Entity<OrganizacaoEndereco>(
+                b=>{ 
+                    b.ToTable("OrganizacaoEnderecos"); 
+                    b.HasKey(x=>x.Id); 
+                    b.Property(x=>x.EnderecoPrincipal).IsRequired(); 
+                    b.HasOne(x => x.Endereco).WithMany().HasForeignKey(x => x.EnderecoId).OnDelete(DeleteBehavior.Cascade);
+                }
+                );
+            modelBuilder.Entity<OrganizacaoUnidadeEndereco>(
+                b=>{ 
+                    b.ToTable("OrganizacaoUnidadeEnderecos"); 
+                    b.HasKey(x=>x.Id); 
+                    b.Property(x=>x.EnderecoPrincipal).IsRequired(); 
+                    b.HasOne(x => x.Endereco).WithMany().HasForeignKey(x => x.EnderecoId).OnDelete(DeleteBehavior.Cascade);
+                }
+                );
+            modelBuilder.Entity<OrganizacaoSetorEndereco>(
+                b=>{ 
+                    b.ToTable("OrganizacaoSetorEnderecos"); 
+                    b.HasKey(x=>x.Id); 
+                    b.Property(x=>x.EnderecoPrincipal).IsRequired(); 
+                    b.HasOne(x => x.Endereco).WithMany().HasForeignKey(x => x.EnderecoId).OnDelete(DeleteBehavior.Cascade);
+                }
+                );
 
-            modelBuilder.Entity<ContatoRelacionamento>(b=>{ b.ToTable("ContatoRelacionamentos"); b.HasKey(x=>x.Id); });
-            modelBuilder.Entity<DocumentoRelacionamento>(b=>{ b.ToTable("DocumentoRelacionamentos"); b.HasKey(x=>x.Id); });
+            modelBuilder.Entity<PessoaEndereco>(b=>
+            { 
+                b.ToTable("PessoaEnderecos"); 
+                b.HasKey(x=>x.Id); 
+                b.Property(x=>x.EnderecoPrincipal).IsRequired();
+                b.HasOne(x => x.Endereco).WithMany().HasForeignKey(x => x.EnderecoId).OnDelete(DeleteBehavior.Cascade);
+            }
+            );
+
+            modelBuilder.Entity<ContatoRelacionamento>(
+                b=>{ 
+                    b.ToTable("ContatoRelacionamentos"); 
+                    b.HasKey(x=>x.Id); 
+                    b.HasOne(x => x.Contato).WithMany().HasForeignKey(x => x.ContatoId).OnDelete(DeleteBehavior.Cascade);
+                    }
+                );
+            modelBuilder.Entity<DocumentoRelacionamento>(
+                b=>{ 
+                    b.ToTable("DocumentoRelacionamentos"); 
+                    b.HasKey(x=>x.Id); 
+                    b.HasOne(x => x.Documento).WithMany().HasForeignKey(x => x.DocumentoId).OnDelete(DeleteBehavior.Cascade);
+                }
+                );
 
             modelBuilder.Entity<Endereco>(b =>
             {

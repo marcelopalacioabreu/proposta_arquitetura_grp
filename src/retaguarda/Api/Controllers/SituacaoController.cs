@@ -1,3 +1,4 @@
+using System.Linq;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Retaguarda.Servicos.Interfaces;
@@ -18,11 +19,19 @@ namespace Retaguarda.Api.Controllers
         }
 
         [HttpGet]
-        [Authorize(Policy = "catalogos.situacoes.visualizar")]
-        public IActionResult GetAll([FromQuery] PesquisaParametrosDto parametros, [FromQuery] int? page = null, [FromQuery] int? pageSize = null, [FromQuery] string? sortField = null, [FromQuery] string? sortDir = null, [FromQuery] string? campo = null, [FromQuery] string? operador = null, [FromQuery] string? valor = null, [FromQuery(Name = "valor_de")] string? valorDe = null, [FromQuery(Name = "valor_ate")] string? valorAte = null)
+        [AllowAnonymous]
+        public IActionResult GetAll([FromQuery] PesquisaParametrosDto parametros, [FromQuery] int? page = null, [FromQuery] int? pageSize = null, [FromQuery] string? sortField = null, [FromQuery] string? sortDir = null, [FromQuery] string? campo = null, [FromQuery] string? operador = null, [FromQuery] string? valor = null, [FromQuery(Name = "valor_de")] string? valorDe = null, [FromQuery(Name = "valor_ate")] string? valorAte = null, [FromQuery] string? contexto = null)
         {
             parametros = NormalizarPesquisaParametros(parametros, page, pageSize, sortField, sortDir, campo, operador, valor, valorDe, valorAte);
             var (items, total) = _servico.ListarAsync(parametros).Result;
+            
+            // Filtrar por contexto se fornecido
+            if (!string.IsNullOrWhiteSpace(contexto))
+            {
+                items = items.Where(x => x.Contexto == contexto).ToList();
+                total = items.Count;
+            }
+            
             return OkList(items, total, parametros.Pagina, parametros.TamanhoPagina);
         }
 

@@ -65,6 +65,7 @@ namespace Retaguarda.Persistencia.POSTGRESQL
                 b.Property(x => x.Sigla).HasMaxLength(30);
                 b.HasOne(x => x.Pessoa).WithMany().HasForeignKey(x => x.PessoaId).OnDelete(DeleteBehavior.Cascade);
                 b.HasMany(x => x.OrganizacaoEnderecos).WithOne().HasForeignKey(x => x.OrganizacaoId).OnDelete(DeleteBehavior.Cascade);
+                b.HasOne(x => x.Tipo).WithMany().HasForeignKey(x => x.TipoId).OnDelete(DeleteBehavior.SetNull);
                 b.HasOne(x => x.Situacao).WithMany().HasForeignKey(x => x.SituacaoId).OnDelete(DeleteBehavior.Cascade);
             });
 

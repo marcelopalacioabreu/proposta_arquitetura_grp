@@ -4,28 +4,13 @@
     "titulo": "Cadastro de Organização",
     "extremidade": "/api/organizacoes",
     "itens": [
-      { "campo": "codigo", "label": "Código", "tipo": "text", "col": 3 },
-      { "campo": "sigla", "label": "Sigla", "tipo": "text", "col": 3 },
-      { "campo": "cnpj", "label": "CNPJ", "tipo": "text", "col": 6 },
-
       {
         "titulo": "Identificação",
         "columns": 12,
         "campos": [
-          { "campo": "nome", "label": "Nome", "tipo": "text", "col": 6 },
-          { "campo": "razaoSocial", "label": "Razão Social", "tipo": "text", "col": 6 },
-          { "campo": "nomeFantasia", "label": "Nome Fantasia", "tipo": "text", "col": 6 }
-        ]
-      },
-
-      {
-        "titulo": "Dados Legais",
-        "columns": 12,
-        "campos": [
-          { "campo": "inscricaoEstadual", "label": "Inscrição Estadual", "tipo": "text", "col": 6 },
-          { "campo": "inscricaoMunicipal", "label": "Inscrição Municipal", "tipo": "text", "col": 6 },
-          { "campo": "dataFundacao", "label": "Data de Fundação", "tipo": "date", "col": 4 },
-          { "campo": "dataExtincao", "label": "Data de Extinção", "tipo": "date", "col": 4 }
+          { "campo": "codigo", "label": "Código", "tipo": "text", "col": 4 },
+          { "campo": "sigla", "label": "Sigla", "tipo": "text", "col": 4 },
+          { "campo": "nome", "label": "Nome", "tipo": "text", "col": 12 }
         ]
       },
 
@@ -33,10 +18,8 @@
         "titulo": "Classificação",
         "columns": 12,
         "campos": [
-          { "campo": "tipoOrganizacaoId", "label": "Tipo de Organização", "tipo": "select", "url": "/api/tiposunidade", "col": 4 },
-          { "campo": "nivelGovernoId", "label": "Nível de Governo", "tipo": "select", "url": "/api/niveisgoverno", "col": 4 },
-          { "campo": "naturezaJuridicaId", "label": "Natureza Jurídica", "tipo": "select", "url": "/api/naturezasjuridicas", "col": 4 },
-          { "campo": "situacaoId", "label": "Situação", "tipo": "select", "url": "/api/situacoes", "col": 4 }
+          { "campo": "tipoId", "label": "Tipo de Organização", "tipo": "select", "url": "/api/tipos?contexto=ORGANIZACAO_TIPO", "col": 6 },
+          { "campo": "situacaoId", "label": "Situação", "tipo": "select", "url": "/api/situacoes?contexto=ORGANIZACAO_SITUACAO", "col": 6 }
         ]
       },
 
@@ -45,17 +28,7 @@
         "columns": 12,
         "campos": [
           { "campo": "organizacaoPaiId", "label": "Organização Pai", "tipo": "select", "url": "/api/organizacoes", "col": 6 },
-          { "campo": "organizacaoRaizId", "label": "Organização Raiz", "tipo": "select", "url": "/api/organizacoes", "col": 6 },
-          { "campo": "hierarquiaCodigo", "label": "Código de Hierarquia", "tipo": "text", "col": 12 },
-          { "campo": "nivel", "label": "Nível", "tipo": "number", "col": 3 }
-        ]
-      },
-
-      {
-        "titulo": "Detalhes",
-        "columns": 12,
-        "campos": [
-          { "campo": "descricao", "label": "Descrição", "tipo": "text", "col": 12 }
+          { "campo": "organizacaoRaizId", "label": "Organização Raiz", "tipo": "select", "url": "/api/organizacoes", "col": 6 }
         ]
       }
     ]

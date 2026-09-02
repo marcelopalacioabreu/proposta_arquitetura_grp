@@ -881,6 +881,9 @@ namespace Retaguarda.Persistencia.POSTGRESQL.Migracoes
                     b.Property<long?>("SituacaoId")
                         .HasColumnType("bigint");
 
+                    b.Property<long?>("TipoId")
+                        .HasColumnType("bigint");
+
                     b.Property<long?>("UsuarioAlteracaoId")
                         .HasColumnType("bigint");
 
@@ -895,6 +898,8 @@ namespace Retaguarda.Persistencia.POSTGRESQL.Migracoes
                     b.HasIndex("PessoaId");
 
                     b.HasIndex("SituacaoId");
+
+                    b.HasIndex("TipoId");
 
                     b.ToTable("Organizacoes", (string)null);
                 });
@@ -2198,9 +2203,16 @@ namespace Retaguarda.Persistencia.POSTGRESQL.Migracoes
                         .HasForeignKey("SituacaoId")
                         .OnDelete(DeleteBehavior.Cascade);
 
+                    b.HasOne("Retaguarda.Dominio.Entidades.Tipo", "Tipo")
+                        .WithMany()
+                        .HasForeignKey("TipoId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
                     b.Navigation("Pessoa");
 
                     b.Navigation("Situacao");
+
+                    b.Navigation("Tipo");
                 });
 
             modelBuilder.Entity("Retaguarda.Dominio.Entidades.OrganizacaoEndereco", b =>

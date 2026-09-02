@@ -10,10 +10,12 @@ namespace Retaguarda.Dominio.Entidades
         public long? Nivel { get; set; }
         public long? ResponsavelId { get; set; } /*Pessoa responsável pela organização*/
         public long? PessoaId { get; set; }/* Pessoa jurídica da organização */
-        public long? SituacaoId { get; set; }
+        public long? TipoId { get; set; } /* Tipo de Organização */
+        public long? SituacaoId { get; set; } /* Situação da Organização */
         public long? OrganizacaoPaiId { get; set; }
         public long? OrganizacaoRaizId { get; set; }
         public Pessoa? Pessoa { get; set; }
+        public Tipo? Tipo { get; set; }
         public Situacao? Situacao { get; set; }
         public ICollection<OrganizacaoEndereco>? OrganizacaoEnderecos { get; set; }
     }
