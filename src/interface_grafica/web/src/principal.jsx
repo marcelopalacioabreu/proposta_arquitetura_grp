@@ -56,6 +56,9 @@ function App(){
         <Route path='enderecos/paises/editar/:id' element={<TelaCadastro screenKey={'paisCadastro'} />} />
         <Route path='enderecos/ufs' element={<TelaPesquisa screenKey={'ufPesquisa'} />} />
         <Route path='enderecos/ufs/editar/:id' element={<TelaCadastro screenKey={'ufCadastro'} />} />
+        {/* Catálogos de Endereço */}
+        <Route path='catalogos/enderecos/tipos' element={<TelaPesquisa screenKey={'enderecoTiposPesquisa'} />} />
+        <Route path='catalogos/enderecos/tipos/editar/:id' element={<TelaCadastro screenKey={'enderecoTiposCadastro'} />} />
         {/* Catálogos Genéricos */}
         <Route path='catalogos/nivel-governo' element={<TelaPesquisa screenKey={'nivelGovernoPesquisa'} />} />
         <Route path='catalogos/nivel-governo/editar/:id' element={<TelaCadastro screenKey={'nivelGovernoCadastro'} />} />

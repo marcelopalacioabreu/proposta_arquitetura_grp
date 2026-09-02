@@ -72,6 +72,16 @@
           ], 
           "conflitosCom": [""], 
           "mostrarNoMenu": true 
+        },
+        { 
+          "chave": "catalogos.enderecos.tipos", "texto": "Tipos de Endereço", "icone": "tags", "url": "/painel/catalogos/enderecos/tipos", 
+          "permissoes": [ 
+          { "id": "catalogos.enderecos.tipos.visualizar", "texto": "Visualizar" },
+          { "id": "catalogos.enderecos.tipos.editar", "texto": "Criar/Editar" },
+          { "id": "catalogos.enderecos.tipos.excluir", "texto": "Excluir" } 
+          ], 
+          "conflitosCom": [""], 
+          "mostrarNoMenu": true 
         }
       ]
     },

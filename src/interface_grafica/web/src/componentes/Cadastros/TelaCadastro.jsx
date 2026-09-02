@@ -307,13 +307,21 @@ export default function TelaCadastro({ screenKey, closeModal }){
       // Trata erros de validação
       if (err.response?.status === 400){
         const data = err.response.data
-        if (data?.errors){
+        
+        // Se for um envelope com mensagem, exibe como erro geral
+        if (data?.mensagem){
+          setErrors({ _geral: data.mensagem })
+        } 
+        // Se tiver campo 'errors' com validações por campo
+        else if (data?.errors){
           const errosMapeados = {}
           Object.keys(data.errors).forEach(campo => {
             errosMapeados[campo] = data.errors[campo].join(', ')
           })
           setErrors(errosMapeados)
-        } else if (typeof data === 'object'){
+        } 
+        // Se for um objeto simples, trata como está
+        else if (typeof data === 'object'){
           setErrors(data)
         }
       }
@@ -326,6 +334,13 @@ export default function TelaCadastro({ screenKey, closeModal }){
     <div className="page-wrapper">
       <div className="page-card w-100">
         <h3>{meta.titulo || 'Cadastro'}</h3>
+        {/* Exibe erro geral se houver */}
+        {errors._geral && (
+          <div className="alert alert-danger alert-dismissible fade show" role="alert">
+            {errors._geral}
+            <button type="button" className="btn-close" onClick={() => setErrors(e => ({ ...e, _geral: undefined }))}></button>
+          </div>
+        )}
         <form onSubmit={handleSubmit} className="row g-3">
         {/* hidden inputs first */}
         {

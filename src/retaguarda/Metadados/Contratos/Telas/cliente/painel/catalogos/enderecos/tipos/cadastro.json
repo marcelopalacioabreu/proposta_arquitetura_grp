@@ -1,15 +1,15 @@
 {
-  "tiposCadastro": {
+  "enderecoTiposCadastro": {
     "tipo": "TELA_CADASTRO",
-    "titulo": "Tipo",
+    "titulo": "Tipo de Endereço",
     "extremidade": "/api/tipos",
-    "padraoURLInterface": "/painel/catalogos/organizacoes/tipos",
+    "padraoURLInterface": "/painel/catalogos/enderecos/tipos",
     "camposChaveUrl": [],
-    "urlTela": "catalogos/organizacoes/tipos",
+    "urlTela": "catalogos/enderecos/tipos",
     "itens": [
       { "campo": "codigo", "label": "Código", "tipo": "text", "col": 4, "obrigatorio": true },
       { "campo": "nome", "label": "Nome", "tipo": "text", "col": 8, "obrigatorio": true },
-      { "campo": "contexto", "label": "Contexto", "tipo": "hidden", "col": 0, "obrigatorio": true, "valor": "ORGANIZACAO_TIPO" },
+      { "campo": "contexto", "label": "Contexto", "tipo": "hidden", "col": 0, "obrigatorio": true, "valor": "ENDERECO" },
       { "campo": "descricao", "label": "Descrição", "tipo": "textarea", "col": 12 }
     ]
   }

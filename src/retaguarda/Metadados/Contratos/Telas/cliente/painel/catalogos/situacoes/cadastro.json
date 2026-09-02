@@ -9,7 +9,7 @@
     "itens": [
       { "campo": "codigo", "label": "Código", "tipo": "text", "col": 4, "obrigatorio": true },
       { "campo": "nome", "label": "Nome", "tipo": "text", "col": 8, "obrigatorio": true },
-      { "campo": "contexto", "label": "Contexto", "tipo": "hidden", "col": 0, "obrigatorio": true },
+      { "campo": "contexto", "label": "Contexto", "tipo": "hidden", "col": 0, "obrigatorio": true, "valor": "ORGANIZACAO_SITUACAO" },
       { "campo": "descricao", "label": "Descrição", "tipo": "textarea", "col": 12 }
     ]
   }

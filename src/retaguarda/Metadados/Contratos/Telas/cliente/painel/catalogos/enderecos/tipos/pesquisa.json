@@ -1,0 +1,29 @@
+{
+  "enderecoTiposPesquisa": {
+    "titulo": "Pesquisa de Tipos de Endereço",
+    "extremidade": "/api/tipos",
+    "padraoURLInterface": "/painel/catalogos/enderecos/tipos",
+    "camposChaveUrl": [],
+    "urlTela": "catalogos/enderecos/tipos",
+    "acoesFormulario": [
+      { "tipo": "navegacao", "destino": "/painel/catalogos/enderecos/tipos/editar/new", "campo_id": "id", "icone": "bi-plus", "permissao": "catalogos.enderecos.tipos.editar" }
+    ],
+    "filtro": [
+      { "campo": "codigo", "descricao": "Código", "tipo": "string", "col": 3 },
+      { "campo": "nome", "descricao": "Nome", "tipo": "string", "col": 6 },
+      { "campo": "contexto", "descricao": "Contexto", "tipo": "hidden", "col": 0, "valor": "ENDERECO" }
+    ],
+    "tabela": {
+      "colunas": [
+        { "campo": "codigo", "titulo": "Código" },
+        { "campo": "nome", "titulo": "Nome" },
+        { "campo": "contexto", "titulo": "Contexto" }
+      ],
+      "acoes": [
+        { "tipo": "navegacao", "destino": "/painel/catalogos/enderecos/tipos/editar/{id}", "campo_id": "id", "icone": "pencil", "permissao": "catalogos.enderecos.tipos.editar" },
+        { "tipo": "confirmacao_delete_ajax", "destino": "/api/tipos/{id}", "campo_id": "id", "icone": "trash", "permissao": "catalogos.enderecos.tipos.excluir", "exibirQuandoAtivo": true }
+      ],
+      "pagination": { "pageSize": 10 }
+    }
+  }
+}
