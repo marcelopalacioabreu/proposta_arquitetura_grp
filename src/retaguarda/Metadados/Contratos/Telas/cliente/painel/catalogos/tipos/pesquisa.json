@@ -1,12 +1,12 @@
 {
   "tiposPesquisa": {
-    "titulo": "Pesquisa de Tipos",
+    "titulo": "Pesquisa de Tipos de Organização",
     "extremidade": "/api/tipos",
-    "padraoURLInterface": "/painel/catalogos/tipos/{contexto}",
-    "camposChaveUrl": ["contexto"],
-    "urlTela": "catalogos/tipos/{contexto}",
+    "padraoURLInterface": "/painel/catalogos/organizacoes/tipos",
+    "camposChaveUrl": [],
+    "urlTela": "catalogos/organizacoes/tipos",
     "acoesFormulario": [
-      { "tipo": "navegacao", "destino": "/painel/catalogos/tipos/{contexto}/editar/new", "campo_id": "id", "icone": "bi-plus", "permissao": "catalogos.tipos.editar" }
+      { "tipo": "navegacao", "destino": "/painel/catalogos/organizacoes/tipos/editar/new", "campo_id": "id", "icone": "bi-plus", "permissao": "catalogos.tipos.editar" }
     ],
     "filtro": [
       { "campo": "codigo", "descricao": "Código", "tipo": "string", "col": 3 },
@@ -27,7 +27,7 @@
         { "campo": "contexto", "titulo": "Contexto" }
       ],
       "acoes": [
-        { "tipo": "navegacao", "destino": "/painel/catalogos/tipos/{contexto}/editar/{id}", "campo_id": "id", "icone": "pencil", "permissao": "catalogos.tipos.editar" },
+        { "tipo": "navegacao", "destino": "/painel/catalogos/organizacoes/tipos/editar/{id}", "campo_id": "id", "icone": "pencil", "permissao": "catalogos.tipos.editar" },
         { "tipo": "confirmacao_delete_ajax", "destino": "/api/tipos/{id}", "campo_id": "id", "icone": "trash", "permissao": "catalogos.tipos.excluir", "exibirQuandoAtivo": true }
       ],
       "pagination": { "pageSize": 10 }

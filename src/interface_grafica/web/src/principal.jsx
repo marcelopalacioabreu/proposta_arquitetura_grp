@@ -56,19 +56,16 @@ function App(){
         <Route path='enderecos/paises/editar/:id' element={<TelaCadastro screenKey={'paisCadastro'} />} />
         <Route path='enderecos/ufs' element={<TelaPesquisa screenKey={'ufPesquisa'} />} />
         <Route path='enderecos/ufs/editar/:id' element={<TelaCadastro screenKey={'ufCadastro'} />} />
-        {/* Catálogos */}
+        {/* Catálogos Genéricos */}
         <Route path='catalogos/nivel-governo' element={<TelaPesquisa screenKey={'nivelGovernoPesquisa'} />} />
         <Route path='catalogos/nivel-governo/editar/:id' element={<TelaCadastro screenKey={'nivelGovernoCadastro'} />} />
         <Route path='catalogos/natureza-juridica' element={<TelaPesquisa screenKey={'naturezaJuridicaPesquisa'} />} />
         <Route path='catalogos/natureza-juridica/editar/:id' element={<TelaCadastro screenKey={'naturezaJuridicaCadastro'} />} />
-        <Route path='catalogos/tipos' element={<TelaPesquisa screenKey={'tiposPesquisa'} />} />
-        <Route path='catalogos/tipos/editar/:id' element={<TelaCadastro screenKey={'tiposCadastro'} />} />
-        <Route path='catalogos/tipos/:contexto' element={<TelaPesquisa screenKey={'tiposPesquisa'} />} />
-        <Route path='catalogos/tipos/:contexto/editar/:id' element={<TelaCadastro screenKey={'tiposCadastro'} />} />
-        <Route path='catalogos/situacoes' element={<TelaPesquisa screenKey={'situacaoPesquisa'} />} />
-        <Route path='catalogos/situacoes/editar/:id' element={<TelaCadastro screenKey={'situacaoCadastro'} />} />
-        <Route path='catalogos/situacoes/:contexto' element={<TelaPesquisa screenKey={'situacaoPesquisa'} />} />
-        <Route path='catalogos/situacoes/:contexto/editar/:id' element={<TelaCadastro screenKey={'situacaoCadastro'} />} />
+        {/* Catálogos de Organização */}
+        <Route path='catalogos/organizacoes/tipos' element={<TelaPesquisa screenKey={'tiposPesquisa'} />} />
+        <Route path='catalogos/organizacoes/tipos/editar/:id' element={<TelaCadastro screenKey={'tiposCadastro'} />} />
+        <Route path='catalogos/organizacoes/situacoes' element={<TelaPesquisa screenKey={'situacaoPesquisa'} />} />
+        <Route path='catalogos/organizacoes/situacoes/editar/:id' element={<TelaCadastro screenKey={'situacaoCadastro'} />} />
         {/* Orquestração de Fluxo */}
         <Route path='orquestracao-fluxo/processos' element={<TelaPesquisa screenKey={'orquestracaoFluxoProcessoPesquisa'} />} />
         <Route path='orquestracao-fluxo/processos/editar/:id' element={<TelaCadastro screenKey={'orquestracaoFluxoProcessoCadastro'} />} />

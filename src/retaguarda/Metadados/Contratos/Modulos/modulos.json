@@ -54,7 +54,7 @@
           "mostrarNoMenu": true 
         },
         { 
-          "chave": "catalogos.tipos", "texto": "Tipos", "icone": "tags", "url": "/painel/catalogos/tipos", 
+          "chave": "catalogos.tipos", "texto": "Tipos de Organização", "icone": "tags", "url": "/painel/catalogos/organizacoes/tipos", 
           "permissoes": [ 
           { "id": "catalogos.tipos.visualizar", "texto": "Visualizar" },
           { "id": "catalogos.tipos.editar", "texto": "Criar/Editar" },
@@ -64,7 +64,7 @@
           "mostrarNoMenu": true 
         },
         { 
-          "chave": "catalogos.situacoes", "texto": "Situações", "icone": "exclamation-triangle", "url": "/painel/catalogos/situacoes", 
+          "chave": "catalogos.situacoes", "texto": "Situações de Organização", "icone": "exclamation-triangle", "url": "/painel/catalogos/organizacoes/situacoes", 
           "permissoes": [ 
           { "id": "catalogos.situacoes.visualizar", "texto": "Visualizar" },
           { "id": "catalogos.situacoes.editar", "texto": "Criar/Editar" },

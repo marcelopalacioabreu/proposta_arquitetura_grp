@@ -3,9 +3,9 @@
     "tipo": "TELA_CADASTRO",
     "titulo": "Tipo",
     "extremidade": "/api/tipos",
-    "padraoURLInterface": "/painel/catalogos/tipos/{contexto}",
-    "camposChaveUrl": ["contexto"],
-    "urlTela": "catalogos/tipos/{contexto}",
+    "padraoURLInterface": "/painel/catalogos/organizacoes/tipos",
+    "camposChaveUrl": [],
+    "urlTela": "catalogos/organizacoes/tipos",
     "itens": [
       { "campo": "codigo", "label": "Código", "tipo": "text", "col": 4, "obrigatorio": true },
       { "campo": "nome", "label": "Nome", "tipo": "text", "col": 8, "obrigatorio": true },
