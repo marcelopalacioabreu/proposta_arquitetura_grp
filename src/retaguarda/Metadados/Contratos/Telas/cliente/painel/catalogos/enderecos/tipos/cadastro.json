@@ -1,7 +1,7 @@
 {
   "enderecoTiposCadastro": {
     "tipo": "TELA_CADASTRO",
-    "titulo": "Tipo de Endereço",
+    "titulo": "Tipo de endereço",
     "extremidade": "/api/tipos",
     "padraoURLInterface": "/painel/catalogos/enderecos/tipos",
     "camposChaveUrl": [],

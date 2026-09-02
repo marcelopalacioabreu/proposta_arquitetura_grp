@@ -1,7 +1,7 @@
 {
   "tiposCadastro": {
     "tipo": "TELA_CADASTRO",
-    "titulo": "Tipo",
+    "titulo": "Tipo de organização",
     "extremidade": "/api/tipos",
     "padraoURLInterface": "/painel/catalogos/organizacoes/tipos",
     "camposChaveUrl": [],

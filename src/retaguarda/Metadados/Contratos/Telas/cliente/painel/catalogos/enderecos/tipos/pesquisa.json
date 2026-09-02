@@ -1,23 +1,25 @@
 {
   "enderecoTiposPesquisa": {
-    "titulo": "Pesquisa de Tipos de Endereço",
+    "titulo": "Pesquisa de tipos de endereço",
     "extremidade": "/api/tipos",
     "padraoURLInterface": "/painel/catalogos/enderecos/tipos",
     "camposChaveUrl": [],
     "urlTela": "catalogos/enderecos/tipos",
+    "filtrosFixos": {
+      "contexto": "ENDERECO"
+    },
     "acoesFormulario": [
       { "tipo": "navegacao", "destino": "/painel/catalogos/enderecos/tipos/editar/new", "campo_id": "id", "icone": "bi-plus", "permissao": "catalogos.enderecos.tipos.editar" }
     ],
     "filtro": [
       { "campo": "codigo", "descricao": "Código", "tipo": "string", "col": 3 },
-      { "campo": "nome", "descricao": "Nome", "tipo": "string", "col": 6 },
-      { "campo": "contexto", "descricao": "Contexto", "tipo": "hidden", "col": 0, "valor": "ENDERECO" }
+      { "campo": "nome", "descricao": "Nome", "tipo": "string", "col": 6 }
     ],
     "tabela": {
       "colunas": [
         { "campo": "codigo", "titulo": "Código" },
         { "campo": "nome", "titulo": "Nome" },
-        { "campo": "contexto", "titulo": "Contexto" }
+        { "campo": "descricao", "titulo": "Descrição" }
       ],
       "acoes": [
         { "tipo": "navegacao", "destino": "/painel/catalogos/enderecos/tipos/editar/{id}", "campo_id": "id", "icone": "pencil", "permissao": "catalogos.enderecos.tipos.editar" },

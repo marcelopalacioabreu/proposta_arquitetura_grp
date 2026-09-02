@@ -1,26 +1,25 @@
 {
   "situacaoPesquisa": {
-    "titulo": "Pesquisa de Situações de Organização",
+    "titulo": "Pesquisa de situações de organização",
     "extremidade": "/api/situacoes",
     "padraoURLInterface": "/painel/catalogos/organizacoes/situacoes",
     "camposChaveUrl": [],
     "urlTela": "catalogos/organizacoes/situacoes",
+    "filtrosFixos": {
+      "contexto": "ORGANIZACAO_SITUACAO"
+    },
     "acoesFormulario": [
       { "tipo": "navegacao", "destino": "/painel/catalogos/organizacoes/situacoes/editar/new", "campo_id": "id", "icone": "bi-plus", "permissao": "catalogos.situacao.editar" }
     ],
     "filtro": [
       { "campo": "codigo", "descricao": "Código", "tipo": "string", "col": 3 },
-      { "campo": "nome", "descricao": "Nome", "tipo": "string", "col": 6 },
-      { "campo": "contexto", "descricao": "Contexto", "tipo": "select", "col": 3, "opcoes": [
-        { "valor": "IMOVEL", "descricao": "Imóvel" },
-        { "valor": "ORGANIZACAO_SITUACAO", "descricao": "Organização - Situação" }
-      ]}
+      { "campo": "nome", "descricao": "Nome", "tipo": "string", "col": 6 }
     ],
     "tabela": {
       "colunas": [
         { "campo": "codigo", "titulo": "Código" },
         { "campo": "nome", "titulo": "Nome" },
-        { "campo": "contexto", "titulo": "Contexto" }
+        { "campo": "descricao", "titulo": "Descrição" }
       ],
       "acoes": [
         { "tipo": "navegacao", "destino": "/painel/catalogos/organizacoes/situacoes/editar/{id}", "campo_id": "id", "icone": "pencil", "permissao": "catalogos.situacao.editar" },

@@ -160,6 +160,14 @@ export default function TelaPesquisa({ screenKey }){
     // construir parâmetros combinando querystring e path params
     const pathParams = params || {}
     const qp = construirParametros(query, pathParams, location.pathname, meta)
+    
+    // Aplicar filtros fixos (sempre aplicados)
+    if (meta?.filtrosFixos && typeof meta.filtrosFixos === 'object'){
+      Object.entries(meta.filtrosFixos).forEach(([chave, valor]) => {
+        qp[chave] = valor
+      })
+    }
+    
     // paginação e ordenação
     const page = query.get('page') || 1
     const pageSize = query.get('pageSize') || (meta.pagination?.pageSize || 10)

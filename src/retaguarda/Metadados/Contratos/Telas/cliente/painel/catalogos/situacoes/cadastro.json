@@ -1,7 +1,7 @@
 {
   "situacaoCadastro": {
     "tipo": "TELA_CADASTRO",
-    "titulo": "Situação",
+    "titulo": "Situação de organização",
     "extremidade": "/api/situacoes",
     "padraoURLInterface": "/painel/catalogos/organizacoes/situacoes",
     "camposChaveUrl": [],
