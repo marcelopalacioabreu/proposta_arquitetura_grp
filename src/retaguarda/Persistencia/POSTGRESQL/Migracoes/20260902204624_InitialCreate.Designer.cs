@@ -12,7 +12,7 @@ using Retaguarda.Persistencia.POSTGRESQL;
 namespace Retaguarda.Persistencia.POSTGRESQL.Migracoes
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20260902133049_InitialCreate")]
+    [Migration("20260902204624_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -1111,8 +1111,18 @@ namespace Retaguarda.Persistencia.POSTGRESQL.Migracoes
                     b.Property<DateTime?>("DataAlteracao")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<DateTime?>("DataExtincao")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime?>("DataFundacao")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<DateTime>("DataInsercao")
                         .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Descricao")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.Property<Guid>("IdentificadorUnico")
                         .HasColumnType("uuid");
@@ -1152,6 +1162,12 @@ namespace Retaguarda.Persistencia.POSTGRESQL.Migracoes
                     b.Property<long?>("SituacaoId")
                         .HasColumnType("bigint");
 
+                    b.Property<long?>("TipoId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long?>("TipoId1")
+                        .HasColumnType("bigint");
+
                     b.Property<long?>("UnidadePaiId")
                         .HasColumnType("bigint");
 
@@ -1171,6 +1187,8 @@ namespace Retaguarda.Persistencia.POSTGRESQL.Migracoes
                     b.HasIndex("PessoaId");
 
                     b.HasIndex("SituacaoId");
+
+                    b.HasIndex("TipoId1");
 
                     b.ToTable("OrganizacaoUnidades", (string)null);
                 });
@@ -2279,11 +2297,17 @@ namespace Retaguarda.Persistencia.POSTGRESQL.Migracoes
                         .HasForeignKey("SituacaoId")
                         .OnDelete(DeleteBehavior.Cascade);
 
+                    b.HasOne("Retaguarda.Dominio.Entidades.Tipo", "Tipo")
+                        .WithMany()
+                        .HasForeignKey("TipoId1");
+
                     b.Navigation("Organizacao");
 
                     b.Navigation("Pessoa");
 
                     b.Navigation("Situacao");
+
+                    b.Navigation("Tipo");
                 });
 
             modelBuilder.Entity("Retaguarda.Dominio.Entidades.OrganizacaoUnidadeEndereco", b =>

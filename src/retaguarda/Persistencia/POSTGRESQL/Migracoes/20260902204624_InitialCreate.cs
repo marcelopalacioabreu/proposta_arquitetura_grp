@@ -566,16 +566,21 @@ namespace Retaguarda.Persistencia.POSTGRESQL.Migracoes
                     Nome = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: false),
                     Codigo = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
                     Sigla = table.Column<string>(type: "character varying(30)", maxLength: 30, nullable: false),
+                    Descricao = table.Column<string>(type: "text", nullable: false),
+                    OrganizacaoId = table.Column<long>(type: "bigint", nullable: true),
                     UnidadePaiId = table.Column<long>(type: "bigint", nullable: true),
-                    Nivel = table.Column<long>(type: "bigint", nullable: true),
+                    TipoId = table.Column<long>(type: "bigint", nullable: true),
+                    SituacaoId = table.Column<long>(type: "bigint", nullable: true),
                     ResponsavelId = table.Column<long>(type: "bigint", nullable: true),
                     PessoaId = table.Column<long>(type: "bigint", nullable: true),
-                    SituacaoId = table.Column<long>(type: "bigint", nullable: true),
+                    Nivel = table.Column<long>(type: "bigint", nullable: true),
+                    DataFundacao = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    DataExtincao = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    TipoId1 = table.Column<long>(type: "bigint", nullable: true),
                     IdentificadorUnico = table.Column<Guid>(type: "uuid", nullable: false),
                     IdentificadorUnicoAmigavel = table.Column<string>(type: "text", nullable: false),
                     DataInsercao = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     DataAlteracao = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    OrganizacaoId = table.Column<long>(type: "bigint", nullable: true),
                     OrganizacaoUnidadeId = table.Column<long>(type: "bigint", nullable: true),
                     SetorId = table.Column<long>(type: "bigint", nullable: true),
                     Ativo = table.Column<bool>(type: "boolean", nullable: false),
@@ -604,6 +609,11 @@ namespace Retaguarda.Persistencia.POSTGRESQL.Migracoes
                         principalTable: "Situacoes",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_OrganizacaoUnidades_Tipos_TipoId1",
+                        column: x => x.TipoId1,
+                        principalTable: "Tipos",
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -1195,6 +1205,11 @@ namespace Retaguarda.Persistencia.POSTGRESQL.Migracoes
                 name: "IX_OrganizacaoUnidades_SituacaoId",
                 table: "OrganizacaoUnidades",
                 column: "SituacaoId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_OrganizacaoUnidades_TipoId1",
+                table: "OrganizacaoUnidades",
+                column: "TipoId1");
 
             migrationBuilder.CreateIndex(
                 name: "IX_OrganizacaoUnidadeSetores_OrganizacaoUnidadeId",

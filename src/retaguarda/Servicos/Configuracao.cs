@@ -10,7 +10,12 @@ namespace Retaguarda.Servicos
         /// </summary>
         public static IServiceCollection RegistrarServices(this IServiceCollection services, IConfiguration? configuration = null)
         {
-            services.AddScoped<Interfaces.IOrganizacaoServico, OrganizacaoServico>();
+            services.AddScoped<Interfaces.IOrganizacaoServico>(sp =>
+            {
+                var repositorio = sp.GetRequiredService<Repositorios.Interfaces.IOrganizacaoRepositorio>();
+                var pessoaRepositorio = sp.GetRequiredService<Repositorios.Interfaces.IPessoaRepositorio>();
+                return new OrganizacaoServico(repositorio, pessoaRepositorio);
+            });
             services.AddScoped<Interfaces.IUsuarioServico, UsuarioServico>();
             services.AddScoped<Interfaces.IPermissionService, PermissionService>();
             services.AddScoped<Interfaces.IOrquestracaoFluxoProcessoServico, OrquestracaoFluxoProcessoServico>();
@@ -36,7 +41,12 @@ namespace Retaguarda.Servicos
                 return new PessoaJuridicaServico(pessoaRepo);
             });
             services.AddScoped<Interfaces.IEnderecoServico, EnderecoServico>();
-            services.AddScoped<Interfaces.IOrganizacaoUnidadeServico, OrganizacaoUnidadeServico>();
+            services.AddScoped<Interfaces.IOrganizacaoUnidadeServico>(sp =>
+            {
+                var repositorio = sp.GetRequiredService<Repositorios.Interfaces.IOrganizacaoUnidadeRepositorio>();
+                var pessoaRepositorio = sp.GetRequiredService<Repositorios.Interfaces.IPessoaRepositorio>();
+                return new OrganizacaoUnidadeServico(repositorio, pessoaRepositorio);
+            });
             services.AddScoped<Interfaces.IOrganizacaoUnidadeSetorServico, OrganizacaoUnidadeSetorServico>();
             services.AddScoped<RequisicaoUsuario>();
             services.AddScoped<EscopoEmExecucao>();

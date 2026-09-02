@@ -7,17 +7,15 @@
     "camposChaveUrl": ["organizacaoId"],
     "urlTela": "organizacoes/{organizacaoId}/unidades",
     "itens": [
-      { "campo": "codigo", "label": "Código", "tipo": "text", "col": 3 },
-      { "campo": "sigla", "label": "Sigla", "tipo": "text", "col": 3 },
-      { "campo": "cnpj", "label": "CNPJ", "tipo": "text", "col": 6 },
-
       {
         "titulo": "Identificação",
         "columns": 12,
         "campos": [
-          { "campo": "nome", "label": "Nome da Unidade", "tipo": "text", "col": 6 },
+          { "campo": "codigo", "label": "Código", "tipo": "text", "col": 3 },
+          { "campo": "sigla", "label": "Sigla", "tipo": "text", "col": 3 },
+          { "campo": "nome", "label": "Nome da Unidade", "tipo": "text", "col": 6, "obrigatorio": true },
           { "campo": "organizacaoId", "label": "Organização", "tipo": "hidden", "col": 6 },
-          { "campo": "unidadePaiId", "label": "Unidade Pai", "tipo": "select", "url": "/api/organizacao_unidades", "col": 6 }
+          { "campo": "unidadePaiId", "label": "Unidade Pai", "tipo": "select", "url": "/api/organizacao_unidades", "col": 12 }
         ]
       },
 
@@ -25,31 +23,39 @@
         "titulo": "Classificação",
         "columns": 12,
         "campos": [
-          { "campo": "tipoUnidadeId", "label": "Tipo de Unidade", "tipo": "select", "url": "/api/tiposunidade", "col": 4 },
-          { "campo": "situacaoId", "label": "Situação", "tipo": "select", "url": "/api/situacoes", "col": 4 },
-          { "campo": "responsavelPessoaId", "label": "Responsável (Pessoa)", "tipo": "select", "url": "/api/pessoas", "col": 4 }
+          { "campo": "tipoId", "label": "Tipo de Unidade", "tipo": "select", "url": "/api/tipos?contexto=UNIDADE_TIPO", "col": 4, "obrigatorio": true },
+          { "campo": "situacaoId", "label": "Situação", "tipo": "select", "url": "/api/situacoes?contexto=UNIDADE_SITUACAO", "col": 4, "obrigatorio": true },
+          { "campo": "responsavelPessoaId", "label": "Responsável", "tipo": "select", "url": "/api/pessoas", "col": 4 }
         ]
       },
 
       {
-        "titulo": "Hierarquia e Validade",
+        "titulo": "Datas e Hierarquia",
         "columns": 12,
         "campos": [
-          { "campo": "dataFundacao", "label": "Data de Fundação", "tipo": "date", "col": 4 },
-          { "campo": "dataExtincao", "label": "Data de Extinção", "tipo": "date", "col": 4 },
-          { "campo": "validoDe", "label": "Válido De", "tipo": "date", "col": 4 },
-          { "campo": "validoAte", "label": "Válido Até", "tipo": "date", "col": 4 },
-          { "campo": "hierarquiaCodigo", "label": "Código de Hierarquia", "tipo": "text", "col": 12 },
-          { "campo": "hierarquiaNome", "label": "Nome de Hierarquia", "tipo": "text", "col": 12 },
-          { "campo": "nivel", "label": "Nível", "tipo": "number", "col": 3 }
+          { "campo": "dataFundacao", "label": "Data de Fundação", "tipo": "date", "col": 3 },
+          { "campo": "dataExtincao", "label": "Data de Extinção", "tipo": "date", "col": 3 },
+          { "campo": "validoDe", "label": "Válido De", "tipo": "date", "col": 3 },
+          { "campo": "validoAte", "label": "Válido Até", "tipo": "date", "col": 3 },
+          { "campo": "nivel", "label": "Nível", "tipo": "number", "col": 3 },
+          { "campo": "hierarquiaCodigo", "label": "Código de Hierarquia", "tipo": "text", "col": 3 },
+          { "campo": "hierarquiaNome", "label": "Nome de Hierarquia", "tipo": "text", "col": 6 },
+          { "campo": "descricao", "label": "Descrição", "tipo": "textarea", "col": 12 }
         ]
       },
 
       {
-        "titulo": "Detalhes",
+        "titulo": "Pessoa Jurídica",
         "columns": 12,
         "campos": [
-          { "campo": "descricao", "label": "Descrição", "tipo": "text", "col": 12 }
+          { "campo": "pessoaRazaoSocial", "label": "Razão Social", "tipo": "text", "col": 8, "obrigatorio": true },
+          { "campo": "pessoaNomeFantasia", "label": "Nome Fantasia", "tipo": "text", "col": 4 },
+          { "campo": "pessoaCnpj", "label": "CNPJ", "tipo": "text", "col": 3 },
+          { "campo": "pessoaInscricaoEstadual", "label": "Inscrição Estadual", "tipo": "text", "col": 3 },
+          { "campo": "pessoaInscricaoMunicipal", "label": "Inscrição Municipal", "tipo": "text", "col": 3 },
+          { "campo": "pessoaDataFundacao", "label": "Data de Fundação", "tipo": "date", "col": 3 },
+          { "campo": "pessoaDataExtincao", "label": "Data de Extinção", "tipo": "date", "col": 12 },
+          { "campo": "pessoaAnotacoes", "label": "Anotações", "tipo": "textarea", "col": 12 }
         ]
       }
     ]

@@ -18,7 +18,9 @@ namespace Retaguarda.Repositorios
         // Keep specific filtering behavior for Organizacao
         public override async Task<(List<Organizacao> Items, int Total)> ListarAsync(string? nomeFilter, int page, int pageSize, string? sortField, string? sortDir, System.Collections.Generic.IDictionary<string,string>? filtros = null, int? inativo = null)
         {
-            var q = _db.Organizacoes.AsQueryable();
+            var q = _db.Organizacoes
+                .Include(o => o.Pessoa)
+                .AsQueryable();
 
             // ativo / inativo handling (default: show ativos)
             if (inativo.HasValue && inativo.Value == 1)
@@ -82,6 +84,14 @@ namespace Retaguarda.Repositorios
             var total = await q.CountAsync();
             var items = await q.Skip((page - 1) * pageSize).Take(pageSize).ToListAsync();
             return (items, total);
+        }
+
+        public override async Task<Organizacao?> ObterPorIdAsync(long id)
+        {
+            var entity = await _db.Organizacoes
+                .Include(o => o.Pessoa)
+                .FirstOrDefaultAsync(o => o.Id == id);
+            return entity;
         }
     }
 }

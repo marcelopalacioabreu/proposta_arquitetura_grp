@@ -13,10 +13,14 @@ namespace Retaguarda.Servicos
     public class OrganizacaoServico : ServicoBase<Organizacao, OrganizacaoDto>, IOrganizacaoServico
     {
         private readonly IOrganizacaoRepositorio _repositorioConcrete;
+        private readonly IRepositorioBase<Pessoa> _pessoaRepositorio;
 
-        public OrganizacaoServico(IOrganizacaoRepositorio repositorio) : base(repositorio)
+        public OrganizacaoServico(
+            IOrganizacaoRepositorio repositorio,
+            IRepositorioBase<Pessoa> pessoaRepositorio) : base(repositorio)
         {
             _repositorioConcrete = repositorio;
+            _pessoaRepositorio = pessoaRepositorio;
         }
 
         /// <summary>
@@ -54,7 +58,7 @@ namespace Retaguarda.Servicos
 
         protected override OrganizacaoDto ToDto(Organizacao e)
         {
-            return new OrganizacaoDto
+            var dto = new OrganizacaoDto
             {
                 Id = e.Id,
                 Nome = e.Nome,
@@ -68,16 +72,30 @@ namespace Retaguarda.Servicos
                 Nivel = e.Nivel,
                 Ativo = e.Ativo
             };
+
+            // Map Pessoa Jurídica fields if exists
+            if (e.Pessoa is PessoaJuridica pessoaJuridica)
+            {
+                dto.PessoaRazaoSocial = pessoaJuridica.RazaoSocial;
+                dto.PessoaNomeFantasia = pessoaJuridica.NomeFantasia;
+                dto.PessoaDataFundacao = pessoaJuridica.DataFundacao;
+                dto.PessoaDataExtincao = pessoaJuridica.DataExtincao;
+                dto.PessoaCnpj = pessoaJuridica.Cnpj;
+                dto.PessoaAnotacoes = pessoaJuridica.Anotacoes;
+                dto.PessoaInscricaoEstadual = pessoaJuridica.InscricaoEstadual;
+                dto.PessoaInscricaoMunicipal = pessoaJuridica.InscricaoMunicipal;
+            }
+
+            return dto;
         }
 
         protected override Organizacao FromDto(OrganizacaoDto dto)
         {
-            return new Organizacao
+            var organizacao = new Organizacao
             {
                 Nome = dto.Nome,
                 Codigo = dto.Codigo,
                 Sigla = dto.Sigla,
-                PessoaId = dto.PessoaId,
                 TipoId = dto.TipoId,
                 SituacaoId = dto.SituacaoId,
                 OrganizacaoPaiId = dto.OrganizacaoPaiId,
@@ -85,6 +103,32 @@ namespace Retaguarda.Servicos
                 Nivel = dto.Nivel,
                 Ativo = dto.Ativo
             };
+
+            // Create or update Pessoa Jurídica if data is provided
+            if (!string.IsNullOrWhiteSpace(dto.PessoaRazaoSocial))
+            {
+                var pessoaJuridica = new PessoaJuridica
+                {
+                    RazaoSocial = dto.PessoaRazaoSocial,
+                    NomeFantasia = dto.PessoaNomeFantasia ?? string.Empty,
+                    DataFundacao = dto.PessoaDataFundacao,
+                    DataExtincao = dto.PessoaDataExtincao,
+                    Cnpj = dto.PessoaCnpj ?? string.Empty,
+                    Anotacoes = dto.PessoaAnotacoes ?? string.Empty,
+                    InscricaoEstadual = dto.PessoaInscricaoEstadual ?? string.Empty,
+                    InscricaoMunicipal = dto.PessoaInscricaoMunicipal ?? string.Empty,
+                    Ativo = true
+                };
+
+                organizacao.Pessoa = pessoaJuridica;
+            }
+            else if (dto.PessoaId.HasValue)
+            {
+                // If PessoaId is provided but no PessoaRazaoSocial, just reference existing person
+                organizacao.PessoaId = dto.PessoaId.Value;
+            }
+
+            return organizacao;
         }
 
         protected override void UpdateEntityFromDto(Organizacao entity, OrganizacaoDto dto)
@@ -92,13 +136,46 @@ namespace Retaguarda.Servicos
             entity.Nome = dto.Nome;
             entity.Codigo = dto.Codigo;
             entity.Sigla = dto.Sigla;
-            entity.PessoaId = dto.PessoaId;
             entity.TipoId = dto.TipoId;
             entity.SituacaoId = dto.SituacaoId;
             entity.OrganizacaoPaiId = dto.OrganizacaoPaiId;
             entity.OrganizacaoRaizId = dto.OrganizacaoRaizId;
             entity.Nivel = dto.Nivel;
             entity.Ativo = dto.Ativo;
+
+            // Update or create Pessoa Jurídica if data is provided
+            if (!string.IsNullOrWhiteSpace(dto.PessoaRazaoSocial))
+            {
+                if (entity.Pessoa is PessoaJuridica pessoaJuridica)
+                {
+                    // Update existing Pessoa Jurídica
+                    pessoaJuridica.RazaoSocial = dto.PessoaRazaoSocial;
+                    pessoaJuridica.NomeFantasia = dto.PessoaNomeFantasia ?? string.Empty;
+                    pessoaJuridica.DataFundacao = dto.PessoaDataFundacao;
+                    pessoaJuridica.DataExtincao = dto.PessoaDataExtincao;
+                    pessoaJuridica.Cnpj = dto.PessoaCnpj ?? string.Empty;
+                    pessoaJuridica.Anotacoes = dto.PessoaAnotacoes ?? string.Empty;
+                    pessoaJuridica.InscricaoEstadual = dto.PessoaInscricaoEstadual ?? string.Empty;
+                    pessoaJuridica.InscricaoMunicipal = dto.PessoaInscricaoMunicipal ?? string.Empty;
+                }
+                else
+                {
+                    // Create new Pessoa Jurídica if it doesn't exist
+                    var novaPessoa = new PessoaJuridica
+                    {
+                        RazaoSocial = dto.PessoaRazaoSocial,
+                        NomeFantasia = dto.PessoaNomeFantasia ?? string.Empty,
+                        DataFundacao = dto.PessoaDataFundacao,
+                        DataExtincao = dto.PessoaDataExtincao,
+                        Cnpj = dto.PessoaCnpj ?? string.Empty,
+                        Anotacoes = dto.PessoaAnotacoes ?? string.Empty,
+                        InscricaoEstadual = dto.PessoaInscricaoEstadual ?? string.Empty,
+                        InscricaoMunicipal = dto.PessoaInscricaoMunicipal ?? string.Empty,
+                        Ativo = true
+                    };
+                    entity.Pessoa = novaPessoa;
+                }
+            }
         }
     }
 }
