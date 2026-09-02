@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Retaguarda.Servicos.Interfaces;
 using Retaguarda.DTO.Dtos;
 using Retaguarda.DTO.Parametros;
+using Retaguarda.DTO.Exceptions;
 using Retaguarda.Api.Models;
 using Retaguarda.Api.Utils;
 
@@ -41,9 +42,15 @@ namespace Retaguarda.Api.Controllers
         [Authorize(Policy = "organizacoes.editar")]
         public IActionResult Create([FromBody] OrganizacaoDto dto)
         {
-            if (!ModelState.IsValid) return BadRequestModelState();
-            var o = _servico.CriarAsync(dto).Result;
-            return CreatedDataAtAction(nameof(Get), new { id = o.Id }, o, "Criado com sucesso");
+            try
+            {
+                var o = _servico.CriarAsync(dto).Result;
+                return CreatedDataAtAction(nameof(Get), new { id = o.Id }, o, "Criado com sucesso");
+            }
+            catch (ValidationException ve)
+            {
+                return BadRequest(EnvelopeResult.Error(ve.Mensagem ?? "Validação falhou", ve.Errors));
+            }
         }
 
         [HttpDelete("{id}")]

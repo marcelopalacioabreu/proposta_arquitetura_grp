@@ -10,8 +10,8 @@
         "columns": 12,
         "campos": [
           { "campo": "codigo", "label": "Código", "tipo": "text", "col": 4 },
-          { "campo": "sigla", "label": "Sigla", "tipo": "text", "col": 4 },
-          { "campo": "nome", "label": "Nome", "tipo": "text", "col": 12 }
+          { "campo": "sigla", "label": "Sigla", "tipo": "text", "col": 4, "obrigatorio": true },
+          { "campo": "nome", "label": "Nome", "tipo": "text", "col": 12, "obrigatorio": true }
         ]
       },
 
@@ -19,8 +19,8 @@
         "titulo": "Classificação",
         "columns": 12,
         "campos": [
-          { "campo": "tipoId", "label": "Tipo de Organização", "tipo": "select", "url": "/api/tipos?contexto=ORGANIZACAO_TIPO", "col": 6 },
-          { "campo": "situacaoId", "label": "Situação", "tipo": "select", "url": "/api/situacoes?contexto=ORGANIZACAO_SITUACAO", "col": 6 }
+          { "campo": "tipoId", "label": "Tipo de Organização", "tipo": "select", "url": "/api/tipos?contexto=ORGANIZACAO_TIPO", "col": 6, "obrigatorio": true },
+          { "campo": "situacaoId", "label": "Situação", "tipo": "select", "url": "/api/situacoes?contexto=ORGANIZACAO_SITUACAO", "col": 6, "obrigatorio": true }
         ]
       },
 

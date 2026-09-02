@@ -43,6 +43,16 @@ export default function TelaCadastro({ screenKey, closeModal }){
               // checkbox present in formData -> 'on' or value; absent -> undefined
               obj[c.campo] = Boolean(obj[c.campo] === 'on' || obj[c.campo] === 'true' || obj[c.campo] === true)
             }
+            // Converter campos select para número
+            else if (c.tipo === 'select' && obj[c.campo]){
+              const val = String(obj[c.campo]).trim()
+              if (val === '') {
+                obj[c.campo] = null
+              } else {
+                const num = parseInt(val, 10)
+                obj[c.campo] = isNaN(num) ? val : num
+              }
+            }
           }
           meta.itens.forEach(it => {
             if (it.campos && Array.isArray(it.campos)) it.campos.forEach(normalizeField)
@@ -163,7 +173,10 @@ export default function TelaCadastro({ screenKey, closeModal }){
       const erro = errors[c.campo]
       return (
         <div key={key} className={colunaClass}>
-          <label className="form-label">{c.label}</label>
+          <label className="form-label">
+            {c.label}
+            {c.obrigatorio && <span className="text-danger ms-1">*</span>}
+          </label>
           <PermissoesModulos name={c.campo} source={c.source} value={valor} error={erro} />
         </div>
       )
@@ -171,7 +184,10 @@ export default function TelaCadastro({ screenKey, closeModal }){
 
     return (
       <div key={key} className={colunaClass}>
-        <label className="form-label">{c.label}</label>
+        <label className="form-label">
+          {c.label}
+          {c.obrigatorio && <span className="text-danger ms-1">*</span>}
+        </label>
         {c.tipo === 'checkbox' ? (
           <div className="form-check">
               {/* Use a key tied to the resolved value so the input is remounted when model is loaded */}
@@ -308,11 +324,24 @@ export default function TelaCadastro({ screenKey, closeModal }){
       if (err.response?.status === 400){
         const data = err.response.data
         
+        // Se for um envelope com campo 'detalhes' (novo padrão)
+        if (data?.detalhes && typeof data.detalhes === 'object'){
+          const errosMapeados = {}
+          Object.keys(data.detalhes).forEach(campo => {
+            const msgs = data.detalhes[campo]
+            errosMapeados[campo] = Array.isArray(msgs) ? msgs.join(', ') : String(msgs)
+          })
+          setErrors(errosMapeados)
+          // Se houver mensagem geral, também exibe
+          if (data.mensagem){
+            errosMapeados._geral = data.mensagem
+          }
+        }
         // Se for um envelope com mensagem, exibe como erro geral
-        if (data?.mensagem){
+        else if (data?.mensagem){
           setErrors({ _geral: data.mensagem })
-        } 
-        // Se tiver campo 'errors' com validações por campo
+        }
+        // Se tiver campo 'errors' com validações por campo (compatibilidade)
         else if (data?.errors){
           const errosMapeados = {}
           Object.keys(data.errors).forEach(campo => {

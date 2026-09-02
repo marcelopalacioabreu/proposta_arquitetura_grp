@@ -188,12 +188,16 @@ export default function SelectPesquisavel({
   const extrairId = (item) => {
     if (!item) return ''
     
+    let id
     if (fieldConfig?.optionId) {
-      return item[fieldConfig.optionId]
+      id = item[fieldConfig.optionId]
+    } else {
+      // Para enumerações, chave é o ID; para outros, é id
+      id = item.chave || item.id || item.Id || item.value
     }
 
-    // Para enumerações, chave é o ID; para outros, é id
-    return item.chave || item.id || item.Id || item.value || ''
+    // Sempre retorna como string para consistência com o value do select
+    return id !== undefined && id !== null ? String(id) : ''
   }
 
   const handleChange = (e) => {
@@ -207,7 +211,7 @@ export default function SelectPesquisavel({
     <div className="select-pesquisavel-wrapper">
       <select
         name={name}
-        value={value || ''}
+        defaultValue={String(value || '')}
         onChange={handleChange}
         disabled={disabled || carregando}
         className={`form-select ${error ? 'is-invalid' : ''} ${carregando ? 'opacity-75' : ''}`}
@@ -215,7 +219,7 @@ export default function SelectPesquisavel({
       >
         <option value="">{placeholder}</option>
         {opcoes.map(item => (
-          <option key={extrairId(item)} value={extrairId(item)}>
+          <option key={extrairId(item)} value={String(extrairId(item))}>
             {extrairLabel(item)}
           </option>
         ))}
