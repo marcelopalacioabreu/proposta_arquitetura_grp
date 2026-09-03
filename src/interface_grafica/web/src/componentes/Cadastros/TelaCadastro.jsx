@@ -302,21 +302,6 @@ export default function TelaCadastro({ screenKey, closeModal }){
   }
 
   // Obtém o endpoint correto para criar novo registro (alguns temos subrotas)
-  function obterEndpointCriacao(metaObj, valoresChave){
-    const endpoint = obterEndpointCadastro(metaObj)
-    if (!endpoint) return endpoint
-    
-    // Alguns endpoints têm subrotas específicas
-    if (endpoint === '/api/organizacao_unidades' && valoresChave.organizacaoId){
-      return `/api/organizacoes/${valoresChave.organizacaoId}/unidades`
-    }
-    if (endpoint === '/api/organizacao_unidade_setores' && valoresChave.organizacaoUnidadeId){
-      return `/api/organizacao_unidades/${valoresChave.organizacaoUnidadeId}/setores`
-    }
-    
-    return endpoint
-  }
-
   const handleSubmit = async (e) =>{
     e.preventDefault()
     setSubmitting(true)
@@ -344,11 +329,9 @@ export default function TelaCadastro({ screenKey, closeModal }){
       if (!endpoint) throw new Error('Endpoint não definido no metadado da tela')
       
       // Executa operação (criar ou atualizar)
-      const isNovo = params.id === 'new'
-      if (isNovo){
-        const createEndpoint = obterEndpointCriacao(meta, camposChaveValores)
-        console.debug('Criando novo registro em:', createEndpoint, 'payload:', obj)
-        await api.post(createEndpoint, obj, { block: true })
+      if (params.id === 'new'){
+        console.debug('Criando novo registro em:', endpoint, 'payload:', obj)
+        await api.post(endpoint, obj, { block: true })
       } else {
         console.debug('Atualizando registro:', endpoint, params.id, 'payload:', obj)
         await api.put(`${endpoint}/${params.id}`, obj, { block: true })
