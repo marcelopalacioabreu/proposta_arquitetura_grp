@@ -1,0 +1,16 @@
+{
+  "unidadesSituacaoCadastro": {
+    "tipo": "TELA_CADASTRO",
+    "titulo": "Situação de unidade",
+    "extremidade": "/api/situacoes",
+    "padraoURLInterface": "/painel/catalogos/unidades/situacoes",
+    "camposChaveUrl": [],
+    "urlTela": "catalogos/unidades/situacoes",
+    "itens": [
+      { "campo": "codigo", "label": "Código", "tipo": "text", "col": 4, "obrigatorio": true },
+      { "campo": "nome", "label": "Nome", "tipo": "text", "col": 8, "obrigatorio": true },
+      { "campo": "contexto", "label": "Contexto", "tipo": "hidden", "col": 0, "obrigatorio": true, "valor": "UNIDADE_SITUACAO" },
+      { "campo": "descricao", "label": "Descrição", "tipo": "textarea", "col": 12 }
+    ]
+  }
+}

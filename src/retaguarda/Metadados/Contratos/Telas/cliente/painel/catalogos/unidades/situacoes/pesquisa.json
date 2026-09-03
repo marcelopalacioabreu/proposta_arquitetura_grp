@@ -1,0 +1,31 @@
+{
+  "unidadesSituacaoPesquisa": {
+    "titulo": "Pesquisa de situações de unidade",
+    "extremidade": "/api/situacoes",
+    "padraoURLInterface": "/painel/catalogos/unidades/situacoes",
+    "camposChaveUrl": [],
+    "urlTela": "catalogos/unidades/situacoes",
+    "filtrosFixos": {
+      "contexto": "UNIDADE_SITUACAO"
+    },
+    "acoesFormulario": [
+      { "tipo": "navegacao", "destino": "/painel/catalogos/unidades/situacoes/editar/new", "campo_id": "id", "icone": "bi-plus", "permissao": "catalogos.unidades.situacoes.editar" }
+    ],
+    "filtro": [
+      { "campo": "codigo", "descricao": "Código", "tipo": "string", "col": 3 },
+      { "campo": "nome", "descricao": "Nome", "tipo": "string", "col": 6 }
+    ],
+    "tabela": {
+      "colunas": [
+        { "campo": "codigo", "titulo": "Código" },
+        { "campo": "nome", "titulo": "Nome" },
+        { "campo": "descricao", "titulo": "Descrição" }
+      ],
+      "acoes": [
+        { "tipo": "navegacao", "destino": "/painel/catalogos/unidades/situacoes/editar/{id}", "campo_id": "id", "icone": "pencil", "permissao": "catalogos.unidades.situacoes.editar" },
+        { "tipo": "confirmacao_delete_ajax", "destino": "/api/situacoes/{id}", "campo_id": "id", "icone": "trash", "permissao": "catalogos.unidades.situacoes.excluir", "exibirQuandoAtivo": true }
+      ],
+      "pagination": { "pageSize": 10 }
+    }
+  }
+}

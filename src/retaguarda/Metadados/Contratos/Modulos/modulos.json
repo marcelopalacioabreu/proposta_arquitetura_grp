@@ -74,6 +74,26 @@
           "mostrarNoMenu": true 
         },
         { 
+          "chave": "catalogos.unidades.tipos", "texto": "Tipos de Unidade", "icone": "tags", "url": "/painel/catalogos/unidades/tipos", 
+          "permissoes": [ 
+          { "id": "catalogos.unidades.tipos.visualizar", "texto": "Visualizar" },
+          { "id": "catalogos.unidades.tipos.editar", "texto": "Criar/Editar" },
+          { "id": "catalogos.unidades.tipos.excluir", "texto": "Excluir" } 
+          ], 
+          "conflitosCom": [""], 
+          "mostrarNoMenu": true 
+        },
+        { 
+          "chave": "catalogos.unidades.situacoes", "texto": "Situações de Unidade", "icone": "exclamation-triangle", "url": "/painel/catalogos/unidades/situacoes", 
+          "permissoes": [ 
+          { "id": "catalogos.unidades.situacoes.visualizar", "texto": "Visualizar" },
+          { "id": "catalogos.unidades.situacoes.editar", "texto": "Criar/Editar" },
+          { "id": "catalogos.unidades.situacoes.excluir", "texto": "Excluir" } 
+          ], 
+          "conflitosCom": [""], 
+          "mostrarNoMenu": true 
+        },
+        { 
           "chave": "catalogos.enderecos.tipos", "texto": "Tipos de Endereço", "icone": "tags", "url": "/painel/catalogos/enderecos/tipos", 
           "permissoes": [ 
           { "id": "catalogos.enderecos.tipos.visualizar", "texto": "Visualizar" },
