@@ -6,6 +6,9 @@
     "padraoURLInterface": "/painel/organizacoes/{organizacaoId}/unidades",
     "camposChaveUrl": ["organizacaoId"],
     "urlTela": "organizacoes/{organizacaoId}/unidades",
+    "tiposCamposChave": {
+      "organizacaoId": "number"
+    },
     "itens": [
       {
         "titulo": "Identificação",

@@ -27,6 +27,16 @@ export default function TelaCadastro({ screenKey, closeModal }){
     return null
   }
 
+  // Coerce um valor conforme o tipo definido no metadado
+  function coercerValor(valor, tipo = 'string'){
+    if (!valor && valor !== 0) return valor
+    if (tipo === 'number'){
+      const num = parseInt(valor, 10)
+      return isNaN(num) ? valor : num
+    }
+    return valor
+  }
+
   function construirObjetoFormulario(formData){
     const obj = {}
     for (const [k,v] of formData.entries()){
@@ -317,11 +327,15 @@ export default function TelaCadastro({ screenKey, closeModal }){
       const fd = new FormData(e.target)
       const obj = construirObjetoFormulario(fd)
       
-      // Garante que valores de campos-chave da URL sejam incluídos no payload
+      // Aplica valores de campos-chave extraídos da URL
       if (meta?.camposChaveUrl && Array.isArray(meta.camposChaveUrl)){
         meta.camposChaveUrl.forEach(campo => {
-          if (!(campo in obj) && camposChaveValores[campo]){
-            obj[campo] = camposChaveValores[campo]
+          if (!(campo in obj)){
+            const valor = camposChaveValores[campo] ?? params[campo]
+            if (valor){
+              const tipo = meta.tiposCamposChave?.[campo] || 'string'
+              obj[campo] = coercerValor(valor, tipo)
+            }
           }
         })
       }
