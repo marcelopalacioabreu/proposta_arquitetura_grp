@@ -5,6 +5,7 @@ using Retaguarda.Dominio.Entidades;
 using Retaguarda.Repositorios.Interfaces;
 using Retaguarda.Servicos.Base;
 using Retaguarda.Servicos.Interfaces;
+using Retaguarda.Servicos.Utils;
 using Retaguarda.DTO.Dtos;
 using Retaguarda.DTO.Exceptions;
 
@@ -42,6 +43,27 @@ namespace Retaguarda.Servicos
 
             if (!dto.SituacaoId.HasValue || dto.SituacaoId <= 0)
                 erros["situacaoId"] = new[] { "Situação é obrigatória" };
+
+            // Validar Pessoa Jurídica se fornecida
+            if (!string.IsNullOrWhiteSpace(dto.PessoaRazaoSocial))
+            {
+                if (string.IsNullOrWhiteSpace(dto.PessoaRazaoSocial))
+                    erros["pessoaRazaoSocial"] = new[] { "Razão Social é obrigatória" };
+
+                // Validar CNPJ se fornecido
+                if (!string.IsNullOrWhiteSpace(dto.PessoaCnpj))
+                {
+                    if (!CnpjValidator.Validar(dto.PessoaCnpj))
+                        erros["pessoaCnpj"] = new[] { "CNPJ inválido. Aceitos formatos numéricos (14 dígitos) ou alphanumeric" };
+                }
+
+                // Validar datas de Pessoa Jurídica
+                if (dto.PessoaDataFundacao.HasValue && dto.PessoaDataExtincao.HasValue)
+                {
+                    if (dto.PessoaDataExtincao < dto.PessoaDataFundacao)
+                        erros["pessoaDataExtincao"] = new[] { "Data de extinção não pode ser anterior à data de fundação" };
+                }
+            }
 
             if (erros.Count > 0)
                 throw new ValidationException("Validação de organização falhou", erros);

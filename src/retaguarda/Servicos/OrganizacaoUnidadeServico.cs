@@ -1,10 +1,13 @@
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Retaguarda.Dominio.Entidades;
 using Retaguarda.Repositorios.Interfaces;
 using Retaguarda.Servicos.Base;
 using Retaguarda.Servicos.Interfaces;
+using Retaguarda.Servicos.Utils;
 using Retaguarda.DTO.Dtos;
+using Retaguarda.DTO.Exceptions;
 
 namespace Retaguarda.Servicos
 {
@@ -19,6 +22,59 @@ namespace Retaguarda.Servicos
         {
             _repositorioConcrete = repositorio;
             _pessoaRepositorio = pessoaRepositorio;
+        }
+
+        /// <summary>
+        /// Valida os dados de uma unidade organizacional
+        /// </summary>
+        private void ValidarUnidade(OrganizacaoUnidadeDto dto)
+        {
+            var erros = new Dictionary<string, string[]>();
+
+            if (string.IsNullOrWhiteSpace(dto.Nome))
+                erros["nome"] = new[] { "Nome é obrigatório" };
+
+            if (!dto.TipoId.HasValue || dto.TipoId <= 0)
+                erros["tipoId"] = new[] { "Tipo de unidade é obrigatório" };
+
+            if (!dto.SituacaoId.HasValue || dto.SituacaoId <= 0)
+                erros["situacaoId"] = new[] { "Situação é obrigatória" };
+
+            // Validar Pessoa Jurídica se fornecida
+            if (!string.IsNullOrWhiteSpace(dto.PessoaRazaoSocial))
+            {
+                if (string.IsNullOrWhiteSpace(dto.PessoaRazaoSocial))
+                    erros["pessoaRazaoSocial"] = new[] { "Razão Social é obrigatória" };
+
+                // Validar CNPJ se fornecido
+                if (!string.IsNullOrWhiteSpace(dto.PessoaCnpj))
+                {
+                    if (!CnpjValidator.Validar(dto.PessoaCnpj))
+                        erros["pessoaCnpj"] = new[] { "CNPJ inválido. Aceitos formatos numéricos (14 dígitos) ou alphanumeric" };
+                }
+
+                // Validar datas de Pessoa Jurídica
+                if (dto.PessoaDataFundacao.HasValue && dto.PessoaDataExtincao.HasValue)
+                {
+                    if (dto.PessoaDataExtincao < dto.PessoaDataFundacao)
+                        erros["pessoaDataExtincao"] = new[] { "Data de extinção não pode ser anterior à data de fundação" };
+                }
+            }
+
+            if (erros.Count > 0)
+                throw new ValidationException("Validação de unidade falhou", erros);
+        }
+
+        public override async Task<OrganizacaoUnidadeDto> CriarAsync(OrganizacaoUnidadeDto dto)
+        {
+            ValidarUnidade(dto);
+            return await base.CriarAsync(dto);
+        }
+
+        public override async Task UpdateAsync(long id, OrganizacaoUnidadeDto dto)
+        {
+            ValidarUnidade(dto);
+            await base.UpdateAsync(id, dto);
         }
 
         protected override OrganizacaoUnidadeDto ToDto(OrganizacaoUnidade e)
