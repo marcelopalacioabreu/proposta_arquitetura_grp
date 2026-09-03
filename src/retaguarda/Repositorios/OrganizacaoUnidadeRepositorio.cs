@@ -48,6 +48,25 @@ namespace Retaguarda.Repositorios
             // Aplicar filtro multilocatário
             q = AplicarFiltroMultilocatario(q);
 
+            // Aplicar filtros do dicionário (ex: organizacaoId, situacaoId, etc.)
+            if (filtros != null && filtros.Count > 0)
+            {
+                if (filtros.TryGetValue("organizacaoId", out var orgIdStr) && long.TryParse(orgIdStr, out var orgId))
+                {
+                    q = q.Where(e => e.OrganizacaoId == orgId);
+                }
+                
+                if (filtros.TryGetValue("tipoId", out var tipoIdStr) && long.TryParse(tipoIdStr, out var tipoId))
+                {
+                    q = q.Where(e => e.TipoId == tipoId);
+                }
+                
+                if (filtros.TryGetValue("situacaoId", out var sitIdStr) && long.TryParse(sitIdStr, out var sitId))
+                {
+                    q = q.Where(e => e.SituacaoId == sitId);
+                }
+            }
+
             // Try filter by `Ativo`
             var propAtivo = typeof(OrganizacaoUnidade).GetProperty("Ativo");
             if (inativo.HasValue && inativo.Value == 1)

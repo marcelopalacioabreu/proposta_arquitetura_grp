@@ -14,6 +14,7 @@ using Retaguarda.Servicos;
 using Retaguarda.Api.Filters;
 using Retaguarda.Api.Authorization;
 using Retaguarda.DTO.Converters;
+using Retaguarda.Api.Binders;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -142,6 +143,10 @@ builder.Services.AddControllers(options =>
 {
     // Registra um filtro de ação global que encapsula os resultados em EnvelopeResult
     options.Filters.Add<EnvelopeActionFilter>();
+    
+    // Registra custom model binder para PesquisaParametrosDto
+    // Extrai TODOS os query parameters e coloca no dicionário Filtros
+    options.ModelBinderProviders.Insert(0, new PesquisaParametrosDtoBinderProvider());
 }).AddJsonOptions(opts =>
 {
     // Evita erros quando o EF Core cria grafos de objetos com referências de volta
