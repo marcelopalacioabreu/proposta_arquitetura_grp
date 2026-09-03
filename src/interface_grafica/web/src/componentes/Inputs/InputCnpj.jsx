@@ -1,31 +1,35 @@
-import React from 'react'
+import React, { useEffect, useRef } from 'react'
 
 /**
  * InputCnpj - Componente para entrada de CNPJ
  * 
  * Características:
+ * - Funciona com FormData (input HTML puro, não controlado)
  * - Detecta automaticamente formato (numérico ou alphanumeric)
- * - Formata numérico: 14 dígitos → XX.XXX.XXX/XXXX-XX
+ * - Formata numérico: 14 dígitos → XX.XXX.XXX/XXXX-XX (apenas display)
  * - Formata alphanumeric: 12-16 caracteres → XXXXXXXXXXXXXXX (sem separadores)
- * - Valida enquanto digita
+ * - Envia sempre normalizado (sem formatação)
  * - Remove caracteres inválidos automaticamente
  */
 export default function InputCnpj({
   name,
   value = '',
-  onChange,
   disabled = false,
   required = false,
   error,
   placeholder = '00.000.000/0000-00 ou ABCD1234567890'
 }) {
+  const inputRef = useRef(null)
+  const formRef = useRef(null)
+
   /**
    * Formata CNPJ numérico (14 dígitos)
    * Formato: XX.XXX.XXX/XXXX-XX
    */
   const formatarCnpjNumerico = (valor) => {
     if (!valor) return ''
-    const numeros = valor.replace(/\D/g, '')
+    const numeros = valor.replace(/\D/g, '').slice(0, 14)
+    if (numeros.length === 0) return ''
     if (numeros.length <= 2) return numeros
     if (numeros.length <= 5) return `${numeros.slice(0, 2)}.${numeros.slice(2)}`
     if (numeros.length <= 8) return `${numeros.slice(0, 2)}.${numeros.slice(2, 5)}.${numeros.slice(5)}`
@@ -35,7 +39,7 @@ export default function InputCnpj({
 
   /**
    * Formata CNPJ alphanumeric (12-16 caracteres)
-   * Retorna em uppercase, sem separadores
+   * Apenas uppercase, sem separadores
    */
   const formatarCnpjAlphanumeric = (valor) => {
     if (!valor) return ''
@@ -43,14 +47,14 @@ export default function InputCnpj({
   }
 
   /**
-   * Detecta e formata o CNPJ conforme tipo
+   * Detecta e formata o CNPJ conforme tipo (apenas para exibição)
    */
-  const formatarCnpj = (valor) => {
+  const formatarParaExibicao = (valor) => {
     if (!valor) return ''
 
-    // Tenta detectar se é numérico
+    // Detecta se é numérico (contém principalmente dígitos)
     const apenasNumeros = valor.replace(/\D/g, '')
-    if (apenasNumeros.length > 0 && /^[0-9]+$/.test(valor.replace(/\D/g, ''))) {
+    if (apenasNumeros.length > 0) {
       return formatarCnpjNumerico(valor)
     }
 
@@ -61,47 +65,63 @@ export default function InputCnpj({
   /**
    * Retorna apenas números/letras (sem separadores) para envio ao servidor
    */
-  const getNormalizado = () => {
-    return value.replace(/\D/g, '').slice(0, 14) || value.toUpperCase().replace(/[^A-Z0-9]/g, '')
-  }
-
-  const handleChange = (e) => {
-    let inputValue = e.target.value
-
-    // Formata conforme digita
-    const formatted = formatarCnpj(inputValue)
-
-    if (onChange) {
-      onChange({
-        target: {
-          name,
-          value: getNormalizado(), // Envia sem formatação (apenas algarismos)
-          _formatted: formatted      // Valor formatado para exibição
-        }
-      })
+  const getNormalizado = (displayValue) => {
+    if (!displayValue) return ''
+    
+    // Se for numérico, remove tudo exceto números e pega 14 dígitos
+    const apenasNumeros = displayValue.replace(/\D/g, '')
+    if (apenasNumeros.length > 0 && apenasNumeros.length <= 14) {
+      return apenasNumeros
     }
+    if (apenasNumeros.length > 0) {
+      return apenasNumeros.slice(0, 14)
+    }
+    
+    // Senão, trata como alphanumeric
+    return displayValue.toUpperCase().replace(/[^A-Z0-9]/g, '')
   }
 
-  const handleBlur = (e) => {
-    // Ao perder foco, garante que o valor está normalizado
-    if (onChange) {
-      onChange({
-        target: {
-          name,
-          value: getNormalizado()
-        }
-      })
-    }
+  const handleInput = (e) => {
+    const displayValue = e.target.value
+    const formatted = formatarParaExibicao(displayValue)
+    
+    // Atualiza o display do input
+    e.target.value = formatted
   }
+
+  // Quando o formulário é submetido, converter para valor normalizado
+  useEffect(() => {
+    const input = inputRef.current
+    if (!input) return
+
+    const form = input.closest('form')
+    if (form) {
+      formRef.current = form
+      
+      // Interceptar o evento submit para normalizar o valor
+      const handleFormSubmit = () => {
+        const normalizado = getNormalizado(input.value)
+        input.value = normalizado
+      }
+
+      form.addEventListener('submit', handleFormSubmit)
+      return () => {
+        form.removeEventListener('submit', handleFormSubmit)
+      }
+    }
+  }, [])
+
+  // Inicializar o valor formatado
+  const initialFormatted = formatarParaExibicao(value)
 
   return (
     <div className="form-group">
       <input
+        ref={inputRef}
         type="text"
         name={name}
-        value={formatarCnpj(value)}
-        onChange={handleChange}
-        onBlur={handleBlur}
+        defaultValue={initialFormatted}
+        onInput={handleInput}
         disabled={disabled}
         required={required}
         placeholder={placeholder}
@@ -115,3 +135,4 @@ export default function InputCnpj({
     </div>
   )
 }
+

@@ -54,12 +54,22 @@ namespace Retaguarda.DTO.Converters
                 foreach (var format in DateTimeFormats)
                 {
                     if (DateTime.TryParseExact(stringValue, format, CultureInfo.InvariantCulture, DateTimeStyles.None, out var result))
+                    {
+                        // Garante que o DateTime seja UTC para PostgreSQL
+                        if (result.Kind == DateTimeKind.Unspecified)
+                            result = DateTime.SpecifyKind(result, DateTimeKind.Utc);
                         return result;
+                    }
                 }
 
                 // Tenta parse geral como fallback
                 if (DateTime.TryParse(stringValue, CultureInfo.InvariantCulture, DateTimeStyles.None, out var generalResult))
+                {
+                    // Garante UTC
+                    if (generalResult.Kind == DateTimeKind.Unspecified)
+                        generalResult = DateTime.SpecifyKind(generalResult, DateTimeKind.Utc);
                     return generalResult;
+                }
 
                 throw new JsonException($"Não foi possível converter '{stringValue}' para DateTime. Formatos aceitos: YYYY-MM-DD ou YYYY-MM-DDTHH:mm:ss ou DD/MM/YYYY");
             }

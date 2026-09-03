@@ -56,19 +56,9 @@ export default function TelaCadastro({ screenKey, closeModal }){
                 obj[c.campo] = isNaN(num) ? val : num
               }
             }
-            // Normalizar datas para formato ISO
-            else if (c.tipo === 'date' || c.tipo === 'datetime'){
-              const val = obj[c.campo]
-              if (val && typeof val === 'string'){
-                // Se já é ISO (contém T ou é YYYY-MM-DD), manter como está
-                if (val.includes('T') || /^\d{4}-\d{2}-\d{2}/.test(val)){
-                  // Já está em ISO, OK
-                } else {
-                  // Outras conversões aqui se necessário
-                }
-              }
-              // Se estiver vazio, deixar como string vazia ou null
-              if (!val) obj[c.campo] = null
+            // Normalizar datas para null se vazias
+            else if ((c.tipo === 'date' || c.tipo === 'datetime') && !obj[c.campo]){
+              obj[c.campo] = null
             }
           }
           meta.itens.forEach(it => {
@@ -239,11 +229,11 @@ export default function TelaCadastro({ screenKey, closeModal }){
             <SelectPesquisavel name={c.campo} value={valor} error={erro} fieldConfig={c} meta={meta} />
           )
         ) : c.tipo === 'date' ? (
-          <InputData name={c.campo} value={valor} onChange={(e) => setModel({...model, [e.target.name]: e.target.value})} disabled={false} required={c.obrigatorio} error={erro} />
+          <InputData name={c.campo} value={valor} disabled={false} required={c.obrigatorio} error={erro} />
         ) : c.tipo === 'datetime' ? (
-          <InputDataHora name={c.campo} value={valor} onChange={(e) => setModel({...model, [e.target.name]: e.target.value})} disabled={false} required={c.obrigatorio} error={erro} />
+          <InputDataHora name={c.campo} value={valor} disabled={false} required={c.obrigatorio} error={erro} />
         ) : c.tipo === 'cnpj' ? (
-          <InputCnpj name={c.campo} value={valor} onChange={(e) => setModel({...model, [e.target.name]: e.target.value})} disabled={false} required={c.obrigatorio} error={erro} />
+          <InputCnpj name={c.campo} value={valor} disabled={false} required={c.obrigatorio} error={erro} />
         ) : c.tipo === 'textarea' ? (
           <textarea name={c.campo} defaultValue={valor || ''} className={`form-control ${erro ? 'is-invalid' : ''}`} />
         ) : (

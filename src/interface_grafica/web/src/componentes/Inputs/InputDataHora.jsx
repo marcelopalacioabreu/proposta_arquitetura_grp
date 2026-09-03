@@ -4,15 +4,14 @@ import React from 'react'
  * InputDataHora - Componente para entrada de data e hora
  * 
  * Características:
- * - Tipo HTML5 datetime-local
+ * - Tipo HTML5 datetime-local (input puro, funciona com FormData)
  * - Formato ISO 8601 (YYYY-MM-DDTHH:mm)
  * - Suporta value como string ISO ou Date
- * - Converte para ISO antes de enviar
+ * - Sempre envia em formato ISO
  */
 export default function InputDataHora({
   name,
   value,
-  onChange,
   disabled = false,
   required = false,
   error,
@@ -37,25 +36,12 @@ export default function InputDataHora({
     return ''
   }
 
-  const handleChange = (e) => {
-    const isoDateTime = e.target.value // YYYY-MM-DDTHH:mm
-    if (onChange) {
-      onChange({
-        target: {
-          name,
-          value: isoDateTime // Passa em formato ISO
-        }
-      })
-    }
-  }
-
   return (
     <div className="form-group">
       <input
         type="datetime-local"
         name={name}
-        value={getIsoDateTime()}
-        onChange={handleChange}
+        defaultValue={getIsoDateTime()}
         disabled={disabled}
         required={required}
         className={`form-control ${error ? 'is-invalid' : ''}`}
