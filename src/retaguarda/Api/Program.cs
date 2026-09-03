@@ -13,6 +13,7 @@ using Retaguarda.Servicos.Interfaces;
 using Retaguarda.Servicos;
 using Retaguarda.Api.Filters;
 using Retaguarda.Api.Authorization;
+using Retaguarda.DTO.Converters;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -145,6 +146,12 @@ builder.Services.AddControllers(options =>
 {
     // Evita erros quando o EF Core cria grafos de objetos com referências de volta
     opts.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+    
+    // Registra conversores flexíveis para DateTime
+    // Aceita múltiplos formatos: ISO 8601, HTML5 datetime-local, formato brasileiro
+    opts.JsonSerializerOptions.Converters.Add(new FlexibleDateTimeConverter());
+    opts.JsonSerializerOptions.Converters.Add(new FlexibleNullableDateTimeConverter());
+    
     // Manter a profundidade máxima padrão (32) a menos que surjam necessidades explícitas
 });
 var app = builder.Build();

@@ -50,11 +50,11 @@
         "campos": [
           { "campo": "pessoaRazaoSocial", "label": "Razão Social", "tipo": "text", "col": 8, "obrigatorio": true },
           { "campo": "pessoaNomeFantasia", "label": "Nome Fantasia", "tipo": "text", "col": 4 },
-          { "campo": "pessoaCnpj", "label": "CNPJ", "tipo": "text", "col": 3 },
+          { "campo": "pessoaCnpj", "label": "CNPJ", "tipo": "cnpj", "col": 3 },
           { "campo": "pessoaInscricaoEstadual", "label": "Inscrição Estadual", "tipo": "text", "col": 3 },
           { "campo": "pessoaInscricaoMunicipal", "label": "Inscrição Municipal", "tipo": "text", "col": 3 },
           { "campo": "pessoaDataFundacao", "label": "Data de Fundação", "tipo": "date", "col": 3 },
-          { "campo": "pessoaDataExtincao", "label": "Data de Extinção", "tipo": "date", "col": 12 },
+          { "campo": "pessoaDataExtincao", "label": "Data de Extinção", "tipo": "date", "col": 3 },
           { "campo": "pessoaAnotacoes", "label": "Anotações", "tipo": "textarea", "col": 12 }
         ]
       }
