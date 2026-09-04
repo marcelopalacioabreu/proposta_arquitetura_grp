@@ -359,11 +359,8 @@ export default function TelaCadastro({ screenKey, closeModal }){
             const msgs = data.detalhes[campo]
             errosMapeados[campo] = Array.isArray(msgs) ? msgs.join(', ') : String(msgs)
           })
+          if (data.mensagem) errosMapeados._geral = data.mensagem
           setErrors(errosMapeados)
-          // Se houver mensagem geral, também exibe
-          if (data.mensagem){
-            errosMapeados._geral = data.mensagem
-          }
         }
         // Se for um envelope com mensagem, exibe como erro geral
         else if (data?.mensagem){
@@ -381,6 +378,10 @@ export default function TelaCadastro({ screenKey, closeModal }){
         else if (typeof data === 'object'){
           setErrors(data)
         }
+      } else {
+        // Para erros não tratados pelo interceptor (ex: sem resposta)
+        const msg = err.message || 'Erro ao salvar'
+        setErrors({ _geral: msg })
       }
     }finally{
       setSubmitting(false)

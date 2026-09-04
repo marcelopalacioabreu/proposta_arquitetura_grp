@@ -143,6 +143,8 @@ builder.Services.AddControllers(options =>
 {
     // Registra um filtro de ação global que encapsula os resultados em EnvelopeResult
     options.Filters.Add<EnvelopeActionFilter>();
+    // Converte ValidationException em 400 globalmente (inclusive quando embrulhada por Task.Result)
+    options.Filters.Add<ValidationExceptionFilter>();
     
     // Registra custom model binder para PesquisaParametrosDto
     // Extrai TODOS os query parameters e coloca no dicionário Filtros

@@ -38,7 +38,24 @@ api.interceptors.response.use(resp => {
   return resp
 }, err => {
   modalServico.desbloquearTela()
-  modalServico.modalAlerta('Erro inesperado na requisição')
+  const status = err.response?.status
+
+  // Sessão expirada – redireciona para login sem mostrar modal genérico
+  if (status === 401) {
+    if (!window.location.pathname.startsWith('/autenticacao')) {
+      window.location.href = '/autenticacao'
+    }
+    return Promise.reject(err)
+  }
+
+  // Erros de validação (400) – o componente é responsável por exibir as mensagens inline
+  if (status === 400) {
+    return Promise.reject(err)
+  }
+
+  // Outros erros (403, 500, rede, etc.) – exibe mensagem genérica ou do envelope
+  const mensagem = err.response?.data?.mensagem || 'Erro inesperado na requisição'
+  modalServico.modalAlerta(mensagem)
   return Promise.reject(err)
 })
 
