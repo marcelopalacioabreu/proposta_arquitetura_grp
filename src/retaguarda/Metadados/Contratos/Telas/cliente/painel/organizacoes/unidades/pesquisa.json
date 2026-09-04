@@ -4,33 +4,109 @@
     "titulo": "Unidades",
     "extremidade": "/api/organizacao_unidades",
     "acoesFormulario": [
-      { "tipo": "navegacao", "destino": "/painel/organizacoes/{organizacaoId}/unidades/editar/new", "campo_id": "id", "icone": "bi-plus", "permissao": "organizacoes.unidades.editar" }
+      {
+        "tipo": "navegacao",
+        "destino": "/painel/organizacoes/{organizacaoId}/unidades/editar/new",
+        "campo_id": "id",
+        "icone": "bi-plus",
+        "permissao": "organizacoes.unidades.editar"
+      }
     ],
-    "camposChaveUrl": ["organizacaoId"] ,
+    "camposChaveUrl": [
+      "organizacaoId"
+    ],
     "urlTela": "organizacoes/{organizacaoId}/unidades",
     "filtro": [
-      { "campo": "codigo", "descricao": "Código", "tipo": "string", "col": 3 },
-      { "campo": "nome", "descricao": "Nome", "tipo": "string", "col": 3 },
-      { "campo": "created_at", "descricao": "Criado em", "tipo": "date", "col": 3 },
-      { "campo": "updated_at", "descricao": "Atualizado em", "tipo": "date", "col": 3 }
+      {
+        "campo": "codigo",
+        "descricao": "Código",
+        "tipo": "string",
+        "col": 3
+      },
+      {
+        "campo": "nome",
+        "descricao": "Nome",
+        "tipo": "string",
+        "col": 3
+      },
+      {
+        "campo": "created_at",
+        "descricao": "Criado em",
+        "tipo": "date",
+        "col": 3
+      },
+      {
+        "campo": "updated_at",
+        "descricao": "Atualizado em",
+        "tipo": "date",
+        "col": 3
+      }
     ],
     "tabela": {
       "colunas": [
-        { "campo": "codigo", "titulo": "Código", "visivelTelaPequena": false },
-        { "campo": "nome", "titulo": "Nome", "visivelTelaPequena": true },
-        { "campo": "organizacaoId", "titulo": "Organização", "visivelTelaPequena": false },
-        { "campo": "created_at", "titulo": "Criado em", "visivelTelaPequena": false }
+        {
+          "campo": "codigo",
+          "titulo": "Código",
+          "visivelTelaPequena": false
+        },
+        {
+          "campo": "nome",
+          "titulo": "Nome",
+          "visivelTelaPequena": true
+        },
+        {
+          "campo": "organizacaoCodigo",
+          "titulo": "Organização",
+          "visivelTelaPequena": false
+        },
+        {
+          "campo": "dataInsercao",
+          "titulo": "Criado em",
+          "visivelTelaPequena": false
+        }
       ],
-      "campos": ["codigo", "nome", "organizacaoId", "created_at"],
+      "campos": [
+        "codigo",
+        "nome",
+        "organizacaoId",
+        "created_at"
+      ],
       "acoes": [
-        { "tipo": "navegacao", "destino": "/painel/organizacoes/{organizacaoId}/unidades/editar/{id}", "campo_id": "id", "icone": "pencil", "permissao": "organizacoes.unidades.editar" },
-        { "tipo": "navegacao", "destino": "/painel/organizacoes/{organizacaoId}/unidades/{id}/setores", "campo_id": "id", "icone": "diagram-3", "permissao": "organizacoes.unidades.setores.visualizar" },
-        { "tipo": "confirmacao_delete_ajax", "destino": "/api/organizacao_unidades/{id}", "campo_id": "id", "icone": "trash", "permissao": "organizacoes.unidades.excluir", "exibirQuandoAtivo": true },
-        { "tipo": "confirmacao_post_ajax", "destino": "/api/organizacao_unidades/{id}/restaurar", "campo_id": "id", "icone": "arrow-counterclockwise", "permissao": "organizacoes.unidades.editar", "exibirQuandoInativo": true, "mensagem": "Restaurar registro?" }
+        {
+          "tipo": "navegacao",
+          "destino": "/painel/organizacoes/{organizacaoId}/unidades/editar/{id}",
+          "campo_id": "id",
+          "icone": "pencil",
+          "permissao": "organizacoes.unidades.editar"
+        },
+        {
+          "tipo": "navegacao",
+          "destino": "/painel/organizacoes/{organizacaoId}/unidades/{id}/setores",
+          "campo_id": "id",
+          "icone": "diagram-3",
+          "permissao": "organizacoes.unidades.setores.visualizar"
+        },
+        {
+          "tipo": "confirmacao_delete_ajax",
+          "destino": "/api/organizacao_unidades/{id}",
+          "campo_id": "id",
+          "icone": "trash",
+          "permissao": "organizacoes.unidades.excluir",
+          "exibirQuandoAtivo": true
+        },
+        {
+          "tipo": "confirmacao_post_ajax",
+          "destino": "/api/organizacao_unidades/{id}/restaurar",
+          "campo_id": "id",
+          "icone": "arrow-counterclockwise",
+          "permissao": "organizacoes.unidades.editar",
+          "exibirQuandoInativo": true,
+          "mensagem": "Restaurar registro?"
+        }
       ]
     },
-    "pagination": { "pageSize": 10 }
+    "pagination": {
+      "pageSize": 10
+    }
   }
 }
-
-

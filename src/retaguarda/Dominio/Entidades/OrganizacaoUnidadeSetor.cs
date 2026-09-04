@@ -5,6 +5,7 @@ namespace Retaguarda.Dominio.Entidades
     public class OrganizacaoUnidadeSetor : MultilocatarioEntidade
     {
         public string Nome { get; set; } = string.Empty;
+        public string Codigo { get; set; } = string.Empty;
 
         public OrganizacaoUnidade? OrganizacaoUnidade { get; set; }
     }

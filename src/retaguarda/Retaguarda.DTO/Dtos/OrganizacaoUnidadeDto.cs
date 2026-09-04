@@ -11,6 +11,7 @@ namespace Retaguarda.DTO.Dtos
         public string Sigla { get; set; } = string.Empty;
         public string Descricao { get; set; } = string.Empty;
         public long? OrganizacaoId { get; set; }
+        public string? OrganizacaoCodigo { get; set; }
         public long? UnidadePaiId { get; set; }
         public long? TipoId { get; set; }
         public long? SituacaoId { get; set; }
@@ -23,6 +24,7 @@ namespace Retaguarda.DTO.Dtos
         public DateTime? DataExtincao { get; set; }
         public DateTime? ValidoDe { get; set; }
         public DateTime? ValidoAte { get; set; }
+        public DateTime? DataInsercao { get; set; }
         public bool Ativo { get; set; } = true;
 
         // Pessoa Jurídica fields (composed)

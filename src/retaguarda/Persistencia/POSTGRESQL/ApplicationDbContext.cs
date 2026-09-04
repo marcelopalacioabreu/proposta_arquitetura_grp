@@ -193,6 +193,7 @@ namespace Retaguarda.Persistencia.POSTGRESQL
                 b.ToTable("OrganizacaoUnidadeSetores");
                 b.HasKey(x => x.Id);
                 b.Property(x => x.Nome).IsRequired().HasMaxLength(200);
+                b.Property(x => x.Codigo).HasMaxLength(50);
                 b.HasOne(x => x.OrganizacaoUnidade).WithMany().HasForeignKey(x => x.OrganizacaoUnidadeId).OnDelete(DeleteBehavior.Cascade);
             });
 

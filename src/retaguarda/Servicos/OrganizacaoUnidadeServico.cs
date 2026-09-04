@@ -87,6 +87,7 @@ namespace Retaguarda.Servicos
                 Sigla = e.Sigla,
                 Descricao = e.Descricao,
                 OrganizacaoId = e.OrganizacaoId,
+                OrganizacaoCodigo = e.Organizacao?.Codigo,
                 UnidadePaiId = e.UnidadePaiId,
                 TipoId = e.TipoId,
                 SituacaoId = e.SituacaoId,
@@ -95,6 +96,7 @@ namespace Retaguarda.Servicos
                 Nivel = e.Nivel,
                 DataFundacao = e.DataFundacao,
                 DataExtincao = e.DataExtincao,
+                DataInsercao = e.DataInsercao,
                 Ativo = e.Ativo
             };
 

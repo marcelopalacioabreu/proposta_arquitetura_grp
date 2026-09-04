@@ -19,7 +19,9 @@ namespace Retaguarda.Repositorios
             string? nomeFilter, int page, int pageSize, string? sortField, string? sortDir,
             IDictionary<string, string>? filtros = null, int? inativo = null)
         {
-            var q = _dbSet.AsQueryable();
+            var q = _dbSet
+                .Include(x => x.OrganizacaoUnidade)
+                .AsQueryable();
             q = AplicarFiltroMultilocatario(q);
 
             if (filtros != null && filtros.TryGetValue("organizacaoUnidadeId", out var unidadeIdStr)

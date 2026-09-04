@@ -43,6 +43,7 @@ namespace Retaguarda.Repositorios
         {
             var q = _dbSet
                 .Include(x => x.Pessoa)
+                .Include(x => x.Organizacao)
                 .AsQueryable();
             
             // Aplicar filtro multilocatário

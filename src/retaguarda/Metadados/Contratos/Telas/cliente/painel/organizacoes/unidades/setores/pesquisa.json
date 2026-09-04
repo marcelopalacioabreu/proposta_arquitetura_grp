@@ -56,12 +56,12 @@
           "visivelTelaPequena": true
         },
         {
-          "campo": "organizacaoUnidadeId",
+          "campo": "organizacaoUnidadeCodigo",
           "titulo": "Unidade",
           "visivelTelaPequena": false
         },
         {
-          "campo": "created_at",
+          "campo": "dataInsercao",
           "titulo": "Criado em",
           "visivelTelaPequena": false
         }
