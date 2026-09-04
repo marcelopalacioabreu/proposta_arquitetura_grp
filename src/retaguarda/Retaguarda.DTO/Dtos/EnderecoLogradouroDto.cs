@@ -8,6 +8,6 @@ namespace Retaguarda.DTO.Dtos
         public long BairroId { get; set; }
         public bool Ativo { get; set; } = true;
 
-        public EnderecoBairroDto Bairro { get; set; } = null!;
+        public EnderecoBairroDto? Bairro { get; set; }
     }
 }

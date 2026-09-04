@@ -5,7 +5,7 @@
     "extremidade": "/api/ceps",
     "itens": [
       { "campo": "codigo", "label": "Código (CEP)", "tipo": "text", "col": 6 },
-      { "campo": "imovelId", "label": "Imóvel", "tipo": "select", "url": "/api/imoveis", "col": 6 }
+      { "campo": "logradouroId", "label": "Logradouro", "tipo": "select", "url": "/api/logradouros", "col": 6 }
     ]
   }
 }

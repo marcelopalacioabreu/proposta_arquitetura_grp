@@ -8,6 +8,6 @@ namespace Retaguarda.DTO.Dtos
         public long UfId { get; set; }
         public bool Ativo { get; set; } = true;
 
-        public EnderecoUFDto Uf { get; set; } = null!;
+        public EnderecoUFDto? Uf { get; set; }
     }
 }

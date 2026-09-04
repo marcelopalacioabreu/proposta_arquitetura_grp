@@ -7,6 +7,6 @@ namespace Retaguarda.DTO.Dtos
         public long MunicipioId { get; set; }
         public bool Ativo { get; set; } = true;
 
-        public EnderecoMunicipioDto Municipio { get; set; } = null!;
+        public EnderecoMunicipioDto? Municipio { get; set; }
     }
 }

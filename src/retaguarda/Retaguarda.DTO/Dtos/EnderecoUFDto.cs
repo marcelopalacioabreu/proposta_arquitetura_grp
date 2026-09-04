@@ -8,6 +8,6 @@ namespace Retaguarda.DTO.Dtos
         public long PaisId { get; set; }
         public bool Ativo { get; set; } = true;
 
-        public EnderecoPaisDto Pais { get; set; } = null!;
+        public EnderecoPaisDto? Pais { get; set; }
     }
 }
