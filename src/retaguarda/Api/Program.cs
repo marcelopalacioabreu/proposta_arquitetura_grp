@@ -158,8 +158,30 @@ builder.Services.AddControllers(options =>
     // Aceita múltiplos formatos: ISO 8601, HTML5 datetime-local, formato brasileiro
     opts.JsonSerializerOptions.Converters.Add(new FlexibleDateTimeConverter());
     opts.JsonSerializerOptions.Converters.Add(new FlexibleNullableDateTimeConverter());
+    // Aceita string numérica ou vazio/nulo para long? (compatibilidade com FormData do frontend)
+    opts.JsonSerializerOptions.Converters.Add(new FlexibleNullableLongConverter());
     
     // Manter a profundidade máxima padrão (32) a menos que surjam necessidades explícitas
+});
+
+// Substitui o formato ProblemDetails do framework pelo envelope padrão da aplicação
+builder.Services.Configure<Microsoft.AspNetCore.Mvc.ApiBehaviorOptions>(options =>
+{
+    options.InvalidModelStateResponseFactory = ctx =>
+    {
+        var erros = new System.Collections.Generic.Dictionary<string, string[]>();
+        foreach (var (key, entry) in ctx.ModelState)
+        {
+            var msgs = System.Linq.Enumerable.ToArray(
+                System.Linq.Enumerable.Select(entry.Errors, e =>
+                    !string.IsNullOrEmpty(e.ErrorMessage)
+                        ? e.ErrorMessage
+                        : "Valor inválido para este campo."));
+            if (msgs.Length > 0) erros[key] = msgs;
+        }
+        return new Microsoft.AspNetCore.Mvc.BadRequestObjectResult(
+            Retaguarda.Api.Models.EnvelopeResult.Error("Dados inválidos na requisição.", erros));
+    };
 });
 var app = builder.Build();
 
