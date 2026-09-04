@@ -26,6 +26,13 @@ export default function SubtabelaCadastro({
   const [novaLinha, setNovaLinha] = useState({})
   const [erros, setErros] = useState({})
 
+  // Quando o model carrega (async) o prop valor muda de [] para os dados do servidor
+  useEffect(() => {
+    if (Array.isArray(valor) && valor.length > 0) {
+      setLinhas(valor)
+    }
+  }, [valor])
+
   // Notificar componente pai quando dados são alterados
   useEffect(() => {
     if (onDadosAlterados) {

@@ -11,6 +11,7 @@ import usePermissoes from '../../servicos/usePermissoes'
 
 export default function TelaCadastro({ screenKey, closeModal }){
   const [meta, setMeta] = useState(null)
+  const [metaCarregado, setMetaCarregado] = useState(false)
   const [model, setModel] = useState({})
   const [errors, setErrors] = useState({})
   const [subcadastrosData, setSubcadastrosData] = useState({})
@@ -19,7 +20,7 @@ export default function TelaCadastro({ screenKey, closeModal }){
   const location = useLocation()
   const [submitting, setSubmitting] = useState(false)
   const subcadastrosRef = useRef({})
-  const { temPermissao } = usePermissoes()
+  const { temPermissao, loading: loadingPermissoes } = usePermissoes()
 
   function obterEndpointCadastro(metaObj){
     if (!metaObj) return null
@@ -153,7 +154,16 @@ export default function TelaCadastro({ screenKey, closeModal }){
   }
 
   // load meta
-  useEffect(()=>{ api.get('/meta/screens', { block: true }).then(r=> setMeta(r.data[screenKey])).catch(()=>{}) },[screenKey])
+  useEffect(()=>{
+    api.get('/meta/screens', { block: true })
+      .then(r=>{
+        const m = r.data?.[screenKey]
+        if (!m) console.warn('[TelaCadastro] screenKey não encontrado em /meta/screens:', screenKey)
+        setMeta(m ?? null)
+      })
+      .catch((e)=>{ console.error('[TelaCadastro] erro ao carregar meta:', e) })
+      .finally(()=> setMetaCarregado(true))
+  },[screenKey])
 
   // load model when editing
   useEffect(()=>{
@@ -197,7 +207,7 @@ export default function TelaCadastro({ screenKey, closeModal }){
     // do not render hidden fields here (they are emitted at the top of the form)
     if (c.tipo === 'hidden') return null
 
-    const semPermissao = c.permissao && !temPermissao(c.permissao)
+    const semPermissao = !loadingPermissoes && c.permissao && !temPermissao(c.permissao)
     const colunaClass = `col-12 col-md-${c.col || 12}${semPermissao ? ' sem_permissao' : ''}`
     const valor = getFieldValue(model, c.campo)
     const erro = errors[c.campo]
@@ -248,9 +258,9 @@ export default function TelaCadastro({ screenKey, closeModal }){
         ) : c.tipo === 'cnpj' ? (
           <InputCnpj name={c.campo} value={valor} disabled={false} required={c.obrigatorio} error={erro} />
         ) : c.tipo === 'textarea' ? (
-          <textarea name={c.campo} defaultValue={valor || ''} className={`form-control ${erro ? 'is-invalid' : ''}`} />
+          <textarea key={`${c.campo}_${valor}`} name={c.campo} defaultValue={valor || ''} className={`form-control ${erro ? 'is-invalid' : ''}`} />
         ) : (
-          <input name={c.campo} defaultValue={valor || ''} className={`form-control ${erro ? 'is-invalid' : ''}`} type={c.tipo || 'text'} />
+          <input key={`${c.campo}_${valor}`} name={c.campo} defaultValue={valor || ''} className={`form-control ${erro ? 'is-invalid' : ''}`} type={c.tipo || 'text'} />
         )}
       </div>
     )
@@ -259,7 +269,7 @@ export default function TelaCadastro({ screenKey, closeModal }){
   function renderSubcadastro(sub, key){
     if (!sub.nome) return null
 
-    const semPermissao = sub.permissao && !temPermissao(sub.permissao)
+    const semPermissao = !loadingPermissoes && sub.permissao && !temPermissao(sub.permissao)
     const valorCarregado = getFieldValue(model, sub.campoArmazenamento) || []
 
     return (
@@ -279,7 +289,15 @@ export default function TelaCadastro({ screenKey, closeModal }){
     )
   }
 
-  if (!meta || !Array.isArray(meta.itens)) return null
+  if (!metaCarregado) return null
+
+  if (!meta || !Array.isArray(meta.itens)) return (
+    <div className="page-wrapper">
+      <div className="page-card w-100">
+        <p className="text-muted">Configuração da tela não encontrada: <code>{screenKey}</code></p>
+      </div>
+    </div>
+  )
 
   // Collect hidden fields to render as bare inputs at the top of the form
   const hiddenInputs = []
@@ -440,7 +458,7 @@ export default function TelaCadastro({ screenKey, closeModal }){
 
         {meta.itens.map((it, idx) => {
           if (it.campos && Array.isArray(it.campos)){
-            const semPermissao = it.permissao && !temPermissao(it.permissao)
+    const semPermissao = !loadingPermissoes && it.permissao && !temPermissao(it.permissao)
             return (
               <fieldset key={idx} className={`border p-3 mb-3 w-100${semPermissao ? ' sem_permissao' : ''}`}>
                 {it.titulo && <legend className="float-none w-auto px-2">{it.titulo}</legend>}
