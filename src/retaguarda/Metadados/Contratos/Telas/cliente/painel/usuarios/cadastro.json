@@ -1,1 +1,89 @@
-{"usuarioCadastro":{"tipo":"TELA_CADASTRO","titulo":"Cadastro de Usu\u00e1rio","extremidade":"/api/usuarios","padraoURLInterface":"/painel/usuarios","itens":[{"campo":"nome","label":"Nome","tipo":"text","col":6,"obrigatorio":true},{"campo":"email","label":"E-mail","tipo":"text","col":6},{"campo":"senhaHash","label":"Senha (deixe em branco para manter)","tipo":"password","col":6},{"titulo":"Dados pessoais","campos":[{"campo":"pessoaNome","label":"Nome completo","tipo":"text","col":8},{"campo":"pessoaCpf","label":"CPF","tipo":"text","col":4},{"campo":"pessoaDataNascimento","label":"Data de nascimento","tipo":"date","col":4}]}],"subcadastros":[{"nome":"perfis","titulo":"Perfis do usu\u00e1rio","campoArmazenamento":"perfis","colunas":[{"campo":"perfilId","label":"Perfil","tipo":"select","endpoint":"/api/perfis","col":12}],"maxLinhas":null},{"nome":"atuacoes","titulo":"Setores de atua\u00e7\u00e3o","campoArmazenamento":"atuacoes","colunas":[{"campo":"setorId","label":"Setor","tipo":"select","endpoint":"/api/setores","col":12}],"selecao":{"campo":"padrao","label":"Padr\u00e3o","singleSelecao":true},"maxLinhas":null}]}}
+{
+  "usuarioCadastro": {
+    "tipo": "TELA_CADASTRO",
+    "titulo": "Cadastro de Usuário",
+    "extremidade": "/api/usuarios",
+    "padraoURLInterface": "/painel/usuarios",
+    "itens": [
+      {
+        "campo": "nome",
+        "label": "Nome",
+        "tipo": "text",
+        "col": 6,
+        "obrigatorio": true
+      },
+      {
+        "campo": "email",
+        "label": "E-mail",
+        "tipo": "text",
+        "col": 6
+      },
+      {
+        "campo": "senhaHash",
+        "label": "Senha (deixe em branco para manter)",
+        "tipo": "password",
+        "col": 6
+      },
+      {
+        "titulo": "Dados pessoais",
+        "campos": [
+          {
+            "campo": "pessoaNome",
+            "label": "Nome completo",
+            "tipo": "text",
+            "col": 8
+          },
+          {
+            "campo": "pessoaCpf",
+            "label": "CPF",
+            "tipo": "text",
+            "col": 4
+          },
+          {
+            "campo": "pessoaDataNascimento",
+            "label": "Data de nascimento",
+            "tipo": "date",
+            "col": 4
+          }
+        ]
+      }
+    ],
+    "subcadastros": [
+      {
+        "nome": "perfis",
+        "titulo": "Perfis do usuário",
+        "campoArmazenamento": "perfis",
+        "colunas": [
+          {
+            "campo": "perfilId",
+            "label": "Perfil",
+            "tipo": "select",
+            "endpoint": "/api/perfis",
+            "col": 12
+          }
+        ],
+        "maxLinhas": null
+      },
+      {
+        "nome": "atuacoes",
+        "titulo": "Setores de atuação",
+        "campoArmazenamento": "atuacoes",
+        "colunas": [
+          {
+            "campo": "setorId",
+            "label": "Setor",
+            "tipo": "select",
+            "endpoint": "/api/setores",
+            "col": 12
+          }
+        ],
+        "selecao": {
+          "campo": "padrao",
+          "label": "Padrão",
+          "singleSelecao": true
+        },
+        "maxLinhas": null
+      }
+    ]
+  }
+}
