@@ -18,6 +18,7 @@ namespace Retaguarda.Persistencia
         DbSet<Perfil> Perfis { get; set; }
         DbSet<PerfilUsuario> PerfilUsuarios { get; set; }
         DbSet<PerfilPermissao> PerfilPermissoes { get; set; }
+        DbSet<SetorUsuario> SetorUsuarios { get; set; }
         DbSet<Tipo> Tipos { get; set; }
 
         DbSet<EnderecoPais> EnderecoPaises { get; set; }

@@ -7,6 +7,7 @@ import SubtabelaCadastro from './SubtabelaCadastro'
 import InputData from '../Inputs/InputData'
 import InputDataHora from '../Inputs/InputDataHora'
 import InputCnpj from '../Inputs/InputCnpj'
+import usePermissoes from '../../servicos/usePermissoes'
 
 export default function TelaCadastro({ screenKey, closeModal }){
   const [meta, setMeta] = useState(null)
@@ -18,6 +19,7 @@ export default function TelaCadastro({ screenKey, closeModal }){
   const location = useLocation()
   const [submitting, setSubmitting] = useState(false)
   const subcadastrosRef = useRef({})
+  const { temPermissao } = usePermissoes()
 
   function obterEndpointCadastro(metaObj){
     if (!metaObj) return null
@@ -195,7 +197,8 @@ export default function TelaCadastro({ screenKey, closeModal }){
     // do not render hidden fields here (they are emitted at the top of the form)
     if (c.tipo === 'hidden') return null
 
-    const colunaClass = `col-12 col-md-${c.col || 12}`
+    const semPermissao = c.permissao && !temPermissao(c.permissao)
+    const colunaClass = `col-12 col-md-${c.col || 12}${semPermissao ? ' sem_permissao' : ''}`
     const valor = getFieldValue(model, c.campo)
     const erro = errors[c.campo]
     // determine if this campo is driven by URL
@@ -255,11 +258,12 @@ export default function TelaCadastro({ screenKey, closeModal }){
 
   function renderSubcadastro(sub, key){
     if (!sub.nome) return null
-    
+
+    const semPermissao = sub.permissao && !temPermissao(sub.permissao)
     const valorCarregado = getFieldValue(model, sub.campoArmazenamento) || []
-    
+
     return (
-      <div key={key} className="col-12">
+      <div key={key} className={`col-12${semPermissao ? ' sem_permissao' : ''}`}>
         <SubtabelaCadastro
           nome={sub.nome}
           titulo={sub.titulo}
@@ -436,8 +440,9 @@ export default function TelaCadastro({ screenKey, closeModal }){
 
         {meta.itens.map((it, idx) => {
           if (it.campos && Array.isArray(it.campos)){
+            const semPermissao = it.permissao && !temPermissao(it.permissao)
             return (
-              <fieldset key={idx} className="border p-3 mb-3 w-100">
+              <fieldset key={idx} className={`border p-3 mb-3 w-100${semPermissao ? ' sem_permissao' : ''}`}>
                 {it.titulo && <legend className="float-none w-auto px-2">{it.titulo}</legend>}
                 <div className="row g-3">
                   {it.campos.map((c, ci) => renderCampo(c, `group-${idx}-${ci}`))}
