@@ -1,83 +1,28 @@
 using Microsoft.AspNetCore.Mvc;
 using Retaguarda.Dominio.Entidades.Enumeracoes;
+using System.Linq;
 
 namespace Retaguarda.Api.Controllers
 {
-    /// <summary>
-    /// Controller para servir enumerações do sistema via API
-    /// </summary>
     [ApiController]
     [Route("api/enumeracoes")]
     public class EnumeracoesController : BaseController
     {
-        /// <summary>
-        /// Obtém uma enumeração pelo nome
-        /// GET /api/enumeracoes/pessoa.tipos
-        /// </summary>
-        [HttpGet("{nome}")]
-        public IActionResult GetEnumeracao(string nome)
+        [HttpGet("{tipo}")]
+        public IActionResult Get(string tipo)
         {
-            var items = nome switch
+            var items = tipo.ToLowerInvariant() switch
             {
-                "pessoa.tipos" => ObterPessoaTipos(),
-                "pessoa.situacao" => ObterPessoaSituacao(),
+                "pessoa.tipos" or "pessoa_tipo" =>
+                    PessoaTipo.Todos.Select(x => new { id = x.Chave, nome = x.Descricao }).ToList<object>(),
+                "sexo" =>
+                    Sexo.Todos.Select(x => new { id = x.Chave, nome = x.Descricao }).ToList<object>(),
+                "estado_civil" =>
+                    EstadoCivil.Todos.Select(x => new { id = x.Chave, nome = x.Descricao }).ToList<object>(),
                 _ => null
             };
-
-            if (items == null)
-                return NotFoundError($"Enumeração '{nome}' não encontrada");
-
-            // Retornar no formato esperado: { items: [...] }
-            return OkData(new { items = items });
-        }
-
-        /// <summary>
-        /// Obtém todos os tipos de pessoa (Física, Jurídica)
-        /// </summary>
-        private object[] ObterPessoaTipos()
-        {
-            return new object[]
-            {
-                new
-                {
-                    id = PessoaTipo.FISICA,
-                    chave = PessoaTipo.FISICA,
-                    descricao = "Física",
-                    nome = "Física"
-                },
-                new
-                {
-                    id = PessoaTipo.JURIDICA,
-                    chave = PessoaTipo.JURIDICA,
-                    descricao = "Jurídica",
-                    nome = "Jurídica"
-                }
-            };
-        }
-
-        /// <summary>
-        /// Obtém todos os status de pessoa (Ativa, Inativa)
-        /// </summary>
-        private object[] ObterPessoaSituacao()
-        {
-            return new object[]
-            {
-                new
-                {
-                    id = "A",
-                    chave = "A",
-                    descricao = "Ativa",
-                    nome = "Ativa"
-                },
-                new
-                {
-                    id = "I",
-                    chave = "I",
-                    descricao = "Inativa",
-                    nome = "Inativa"
-                }
-            };
+            if (items == null) return NotFoundError($"Enumeração não encontrada: {tipo}");
+            return OkList(items, items.Count, 1, items.Count);
         }
     }
 }
-

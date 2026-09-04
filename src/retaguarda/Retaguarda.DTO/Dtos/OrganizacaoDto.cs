@@ -27,5 +27,8 @@ namespace Retaguarda.DTO.Dtos
         public string? PessoaAnotacoes { get; set; }
         public string? PessoaInscricaoEstadual { get; set; }
         public string? PessoaInscricaoMunicipal { get; set; }
+
+        // Endereços
+        public EnderecoSubcadastroDto[]? Enderecos { get; set; }
     }
 }

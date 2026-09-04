@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Mvc;
 using Retaguarda.Servicos.Interfaces;
 using Retaguarda.DTO.Dtos;
 using Retaguarda.DTO.Parametros;
+using Retaguarda.Persistencia;
+using Retaguarda.Api.Utils;
 
 namespace Retaguarda.Api.Controllers
 {
@@ -11,10 +13,12 @@ namespace Retaguarda.Api.Controllers
     public class OrganizacaoUnidadeController : BaseController
     {
         private readonly IOrganizacaoUnidadeServico _servico;
+        private readonly IApplicationDbContext _db;
 
-        public OrganizacaoUnidadeController(IOrganizacaoUnidadeServico servico)
+        public OrganizacaoUnidadeController(IOrganizacaoUnidadeServico servico, IApplicationDbContext db)
         {
             _servico = servico;
+            _db = db;
         }
 
         [HttpGet]
@@ -32,6 +36,7 @@ namespace Retaguarda.Api.Controllers
         {
             var e = _servico.ObterPorIdAsync(id).Result;
             if (e == null) return NotFoundError("Registro não encontrado");
+            e.Enderecos = EnderecoHelper.CarregarEnderecosUnidade(_db, id);
             return OkData(e);
         }
 
@@ -39,8 +44,8 @@ namespace Retaguarda.Api.Controllers
         [Authorize(Policy = "organizacoes.editar")]
         public IActionResult Create([FromBody] OrganizacaoUnidadeDto dto)
         {
-            if (!ModelState.IsValid) return BadRequestModelState();
             var o = _servico.CriarAsync(dto).Result;
+            if (dto.Enderecos?.Length > 0) EnderecoHelper.SalvarEnderecosUnidade(_db, o.Id, dto.Enderecos);
             return CreatedDataAtAction(nameof(Get), new { id = o.Id }, o, "Criado com sucesso");
         }
 
@@ -48,10 +53,10 @@ namespace Retaguarda.Api.Controllers
         [Authorize(Policy = "organizacoes.editar")]
         public IActionResult Update(long id, [FromBody] OrganizacaoUnidadeDto dto)
         {
-            if (!ModelState.IsValid) return BadRequestModelState();
             var existing = _servico.ObterPorIdAsync(id).Result;
             if (existing == null) return NotFoundError("Registro não encontrado");
             _servico.UpdateAsync(id, dto).GetAwaiter().GetResult();
+            if (dto.Enderecos != null) EnderecoHelper.SalvarEnderecosUnidade(_db, id, dto.Enderecos);
             return OkMessage("Atualizado");
         }
 

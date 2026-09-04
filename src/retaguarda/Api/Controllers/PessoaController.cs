@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Mvc;
 using Retaguarda.Servicos.Interfaces;
 using Retaguarda.DTO.Dtos;
 using Retaguarda.DTO.Parametros;
+using Retaguarda.Persistencia;
+using Retaguarda.Api.Utils;
 
 namespace Retaguarda.Api.Controllers
 {
@@ -11,10 +13,12 @@ namespace Retaguarda.Api.Controllers
     public class PessoaController : BaseController
     {
         private readonly IPessoaServico _servico;
+        private readonly IApplicationDbContext _db;
 
-        public PessoaController(IPessoaServico servico)
+        public PessoaController(IPessoaServico servico, IApplicationDbContext db)
         {
             _servico = servico;
+            _db = db;
         }
 
         [HttpGet]
@@ -32,6 +36,7 @@ namespace Retaguarda.Api.Controllers
         {
             var e = _servico.ObterPorIdAsync(id).Result;
             if (e == null) return NotFoundError("Registro não encontrado");
+            e.Enderecos = EnderecoHelper.CarregarEnderecosPessoa(_db, id);
             return OkData(e);
         }
 
@@ -39,9 +44,20 @@ namespace Retaguarda.Api.Controllers
         [Authorize(Policy = "pessoas.editar")]
         public IActionResult Create([FromBody] PessoaDto dto)
         {
-            if (!ModelState.IsValid) return BadRequestModelState();
             var o = _servico.CriarAsync(dto).Result;
+            if (dto.Enderecos?.Length > 0) EnderecoHelper.SalvarEnderecosPessoa(_db, o.Id, dto.Enderecos);
             return CreatedDataAtAction(nameof(Get), new { id = o.Id }, o, "Criado com sucesso");
+        }
+
+        [HttpPut("{id}")]
+        [Authorize(Policy = "pessoas.editar")]
+        public IActionResult Update(long id, [FromBody] PessoaDto dto)
+        {
+            var existing = _servico.ObterPorIdAsync(id).Result;
+            if (existing == null) return NotFoundError("Registro não encontrado");
+            _servico.UpdateAsync(id, dto).GetAwaiter().GetResult();
+            if (dto.Enderecos != null) EnderecoHelper.SalvarEnderecosPessoa(_db, id, dto.Enderecos);
+            return OkMessage("Atualizado");
         }
 
         [HttpDelete("{id}")]
@@ -52,15 +68,14 @@ namespace Retaguarda.Api.Controllers
             return OkMessage("Excluído");
         }
 
-        [HttpPut("{id}")]
+        [HttpPost("{id}/restaurar")]
         [Authorize(Policy = "pessoas.editar")]
-        public IActionResult Update(long id, [FromBody] PessoaDto dto)
+        public IActionResult Restaurar(long id)
         {
-            if (!ModelState.IsValid) return BadRequestModelState();
             var existing = _servico.ObterPorIdAsync(id).Result;
             if (existing == null) return NotFoundError("Registro não encontrado");
-            _servico.UpdateAsync(id, dto).GetAwaiter().GetResult();
-            return OkMessage("Atualizado");
+            _servico.RestaurarAsync(id).GetAwaiter().GetResult();
+            return OkMessage("Restaurado");
         }
     }
 }
