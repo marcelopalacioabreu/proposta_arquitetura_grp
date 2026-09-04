@@ -34,26 +34,6 @@
       "grupo": "Definições",
       "itens": [
         { 
-          "chave": "catalogos.nivelGoverno.nivelgov", "texto": "Nível de Governo", "icone": "diagram-3", "url": "/painel/catalogos/nivel-governo", 
-          "permissoes": [ 
-          { "id": "catalogos.nivelGoverno.visualizar", "texto": "Visualizar" },
-          { "id": "catalogos.nivelGoverno.editar", "texto": "Criar/Editar" },
-          { "id": "catalogos.nivelGoverno.excluir", "texto": "Excluir" } 
-          ], 
-          "conflitosCom": [""], 
-          "mostrarNoMenu": true 
-        },
-        { 
-          "chave": "catalogos.natureza_juridica", "texto": "Natureza Jurídica", "icone": "briefcase", "url": "/painel/catalogos/natureza-juridica", 
-          "permissoes": [ 
-          { "id": "catalogos.natureza_juridica.visualizar", "texto": "Visualizar" },
-          { "id": "catalogos.natureza_juridica.editar", "texto": "Criar/Editar" },
-          { "id": "catalogos.natureza_juridica.excluir", "texto": "Excluir" } 
-          ], 
-          "conflitosCom": [""], 
-          "mostrarNoMenu": true 
-        },
-        { 
           "chave": "catalogos.tipos", "texto": "Tipos de Organização", "icone": "tags", "url": "/painel/catalogos/organizacoes/tipos", 
           "permissoes": [ 
           { "id": "catalogos.tipos.visualizar", "texto": "Visualizar" },
