@@ -23,6 +23,7 @@ namespace Retaguarda.Servicos
             {
                 Id = e.Id,
                 Nome = e.Nome,
+                OrganizacaoUnidadeId = e.OrganizacaoUnidadeId,
                 Ativo = e.Ativo
             };
         }
@@ -32,6 +33,7 @@ namespace Retaguarda.Servicos
             return new OrganizacaoUnidadeSetor
             {
                 Nome = dto.Nome,
+                OrganizacaoUnidadeId = dto.OrganizacaoUnidadeId,
                 Ativo = dto.Ativo
             };
         }
@@ -39,6 +41,7 @@ namespace Retaguarda.Servicos
         protected override void UpdateEntityFromDto(OrganizacaoUnidadeSetor entity, OrganizacaoUnidadeSetorDto dto)
         {
             entity.Nome = dto.Nome;
+            if (dto.OrganizacaoUnidadeId.HasValue) entity.OrganizacaoUnidadeId = dto.OrganizacaoUnidadeId;
             entity.Ativo = dto.Ativo;
         }
     }
