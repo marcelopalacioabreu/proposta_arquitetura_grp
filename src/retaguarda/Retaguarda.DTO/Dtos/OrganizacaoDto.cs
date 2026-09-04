@@ -15,6 +15,7 @@ namespace Retaguarda.DTO.Dtos
         public long? OrganizacaoPaiId { get; set; }
         public long? OrganizacaoRaizId { get; set; }
         public long? Nivel { get; set; }
+        public DateTime? DataInsercao { get; set; }
         public bool Ativo { get; set; } = true;
 
         // Pessoa Jurídica fields (composed)

@@ -92,6 +92,7 @@ namespace Retaguarda.Servicos
                 OrganizacaoPaiId = e.OrganizacaoPaiId,
                 OrganizacaoRaizId = e.OrganizacaoRaizId,
                 Nivel = e.Nivel,
+                DataInsercao = e.DataInsercao,
                 Ativo = e.Ativo
             };
 

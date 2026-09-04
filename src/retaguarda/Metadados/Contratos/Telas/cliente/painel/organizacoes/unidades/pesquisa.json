@@ -30,7 +30,7 @@
         "col": 3
       },
       {
-        "campo": "created_at",
+        "campo": "dataInsercao",
         "descricao": "Criado em",
         "tipo": "date",
         "col": 3
@@ -69,7 +69,7 @@
         "codigo",
         "nome",
         "organizacaoId",
-        "created_at"
+        "dataInsercao"
       ],
       "acoes": [
         {
