@@ -230,10 +230,10 @@ export default function SubtabelaCadastro({
                   })}
                 </div>
               ))}
-              <div className="col-12 col-md-2">
+              <div className="col-auto ms-auto">
                 <button
                   type="button"
-                  className="btn btn-sm btn-success w-100"
+                  className="btn btn-sm btn-success"
                   onClick={adicionarLinha}
                 >
                   <i className="bi bi-plus"></i> Adicionar

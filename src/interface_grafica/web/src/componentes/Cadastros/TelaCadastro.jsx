@@ -486,7 +486,11 @@ export default function TelaCadastro({ screenKey, closeModal }){
         */}
 
         {Object.keys(errors).length > 0 && <div className="col-12"><div className="alert alert-danger">Corrija os erros no formulário.</div></div>}
-        <div className="col-12">
+        <div className="col-12 d-flex justify-content-end gap-2">
+          <button type="button" className="btn btn-outline-secondary" onClick={() => {
+            if (typeof closeModal === 'function') closeModal()
+            else navigate(construirURLRetorno(meta, camposChaveValores))
+          }}>Cancelar</button>
           <button className="btn btn-primary" disabled={submitting}>{submitting ? 'Salvando...' : 'Salvar'}</button>
         </div>
         </form>
