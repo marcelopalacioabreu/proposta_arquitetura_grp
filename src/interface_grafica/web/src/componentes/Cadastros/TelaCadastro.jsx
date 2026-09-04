@@ -282,7 +282,6 @@ export default function TelaCadastro({ screenKey, closeModal }){
           meta={meta}
           onDadosAlterados={(dados) => {
             subcadastrosRef.current[sub.nome] = dados
-            setSubcadastrosData({...subcadastrosData, [sub.nome]: dados})
           }}
         />
       </div>

@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from 'react'
+import React, { useEffect, useState, useCallback, useRef } from 'react'
 import api from '../../servicos/api'
 import SelectPesquisavel from './SelectPesquisavel'
 
@@ -33,12 +33,14 @@ export default function SubtabelaCadastro({
     }
   }, [valor])
 
-  // Notificar componente pai quando dados são alterados
+  // Mantém ref atualizada para evitar loop infinito (onDadosAlterados é recriado a cada render do pai)
+  const onDadosAlteradosRef = useRef(onDadosAlterados)
+  useEffect(() => { onDadosAlteradosRef.current = onDadosAlterados })
+
+  // Notificar componente pai APENAS quando linhas muda
   useEffect(() => {
-    if (onDadosAlterados) {
-      onDadosAlterados(linhas)
-    }
-  }, [linhas, onDadosAlterados])
+    onDadosAlteradosRef.current?.(linhas)
+  }, [linhas])
 
   const adicionarLinha = () => {
     const errosValidacao = validarLinha(novaLinha)

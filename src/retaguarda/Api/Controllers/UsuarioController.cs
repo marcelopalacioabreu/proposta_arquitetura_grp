@@ -47,7 +47,14 @@ namespace Retaguarda.Api.Controllers
                 .Select(x => new { id = x.Id, setorId = x.SetorId, padrao = x.Padrao, habilitarPermissoesNegativas = x.HabilitarPermissoesNegativas })
                 .ToList<object>();
 
-            return OkData(new { u.Id, u.Nome, u.Email, perfis, atuacoes });
+            string? pessoaNome = null; string? pessoaCpf = null; DateTime? pessoaDataNascimento = null;
+            if (u.PessoaId.HasValue)
+            {
+                var pf = _db.PessoasFisicas.Find(u.PessoaId.Value);
+                if (pf != null) { pessoaNome = pf.Nome; pessoaCpf = pf.Cpf; pessoaDataNascimento = pf.DataNascimento; }
+            }
+
+            return OkData(new { u.Id, u.Nome, u.Email, pessoaNome, pessoaCpf, pessoaDataNascimento, perfis, atuacoes });
         }
 
         [HttpPost]
@@ -61,6 +68,7 @@ namespace Retaguarda.Api.Controllers
             _db.Usuarios.Add(u);
             _db.SaveChanges();
 
+            SalvarPessoa(u, dto);
             SalvarPerfis(u.Id, dto);
             SalvarAtuacoes(u.Id, dto);
             _db.SaveChanges();
@@ -78,6 +86,8 @@ namespace Retaguarda.Api.Controllers
             if (!string.IsNullOrWhiteSpace(dto.Nome)) u.Nome = dto.Nome;
             if (dto.Email != null) u.Email = dto.Email;
             if (!string.IsNullOrWhiteSpace(dto.SenhaHash)) u.SenhaHash = dto.SenhaHash;
+
+            SalvarPessoa(u, dto);
 
             if (dto.Perfis != null || dto.PerfilIds != null)
             {
@@ -117,10 +127,24 @@ namespace Retaguarda.Api.Controllers
             return OkMessage("Restaurado");
         }
 
+        private void SalvarPessoa(Usuario u, UsuarioDto dto)
+        {
+            if (string.IsNullOrWhiteSpace(dto.PessoaNome)) return;
+            if (u.PessoaId.HasValue)
+            {
+                var pf = _db.PessoasFisicas.Find(u.PessoaId.Value);
+                if (pf != null) { pf.Nome = dto.PessoaNome; pf.Cpf = dto.PessoaCpf ?? pf.Cpf; pf.DataNascimento = dto.PessoaDataNascimento ?? pf.DataNascimento; return; }
+            }
+            var nova = new PessoaFisica { Nome = dto.PessoaNome, Cpf = dto.PessoaCpf ?? string.Empty, DataNascimento = dto.PessoaDataNascimento, TipoPessoa = Retaguarda.Dominio.Entidades.Enumeracoes.PessoaTipo.Fisica };
+            _db.PessoasFisicas.Add(nova);
+            _db.SaveChanges();
+            u.PessoaId = nova.Id;
+        }
+
         private void SalvarPerfis(long usuarioId, UsuarioDto dto)
         {
             // Aceita perfis via subcadastro (Perfis) ou array legado (PerfilIds)
-            var ids = dto.Perfis?.Where(p => p.PerfilId > 0).Select(p => p.PerfilId.Value)
+            var ids = dto.Perfis?.Where(p => p.PerfilId > 0).Select(p => p.PerfilId!.Value)
                       ?? dto.PerfilIds ?? System.Linq.Enumerable.Empty<long>();
             foreach (var pid in ids.Distinct())
                 _db.PerfilUsuarios.Add(new PerfilUsuario { UsuarioId = usuarioId, PerfilId = pid });
@@ -144,6 +168,10 @@ namespace Retaguarda.Api.Controllers
             public string? Nome { get; set; }
             public string? SenhaHash { get; set; }
             public string? Email { get; set; }
+            // Dados da Pessoa Física vinculada
+            public string? PessoaNome { get; set; }
+            public string? PessoaCpf { get; set; }
+            public DateTime? PessoaDataNascimento { get; set; }
             public PerfilContextoDto[]? Perfis { get; set; }
             public AtuacaoDto[]? Atuacoes { get; set; }
             // Compat com envios legados
