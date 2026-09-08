@@ -130,7 +130,7 @@ export default function InputCnpj({
       />
       {error && <div className="invalid-feedback d-block">{error}</div>}
       <small className="form-text text-muted">
-        Aceita: 14 dígitos (XX.XXX.XXX/XXXX-XX) ou 12-16 caracteres alfanuméricos
+        XX.XXX.XXX/XXXX-XX ou 12-16 caracteres alfanuméricos
       </small>
     </div>
   )
