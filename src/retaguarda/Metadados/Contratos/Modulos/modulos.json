@@ -236,7 +236,7 @@
             { "id": "enderecos.imoveis.excluir", "texto": "Excluir" }
           ],
           "conflitosCom": [""],
-          "mostrarNoMenu": true
+          "mostrarNoMenu": false
         }
       ]
     }
