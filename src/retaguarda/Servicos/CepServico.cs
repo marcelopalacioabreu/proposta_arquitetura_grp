@@ -17,13 +17,31 @@ namespace Retaguarda.Servicos
             _repositorioConcrete = repositorio;
         }
 
+        /// <summary>
+        /// Obtém um CEP pelo código com todos os relacionamentos carregados
+        /// </summary>
+        public async Task<CepDto?> ObterPorCodigoComLogradouroAsync(string codigo)
+        {
+            var entity = await _repositorioConcrete.ObterPorCodigoComLogradouroAsync(codigo);
+            return entity != null ? ToDto(entity) : null;
+        }
+
         protected override CepDto ToDto(EnderecoCEP e)
         {
             return new CepDto
             {
                 Id = e.Id,
                 Codigo = e.Codigo,
-                Ativo = e.Ativo
+                LogradouroId = e.LogradouroId,
+                Ativo = e.Ativo,
+                Logradouro = e.Logradouro != null ? new EnderecoLogradouroDto
+                {
+                    Id = e.Logradouro.Id,
+                    Nome = e.Logradouro.Nome,
+                    Tipo = e.Logradouro.Tipo,
+                    BairroId = e.Logradouro.BairroId,
+                    Ativo = e.Logradouro.Ativo
+                } : null
             };
         }
 
@@ -33,6 +51,7 @@ namespace Retaguarda.Servicos
             {
                 Id = dto.Id,
                 Codigo = dto.Codigo,
+                LogradouroId = dto.LogradouroId,
                 Ativo = dto.Ativo
             };
         }
@@ -40,6 +59,7 @@ namespace Retaguarda.Servicos
         protected override void UpdateEntityFromDto(EnderecoCEP entity, CepDto dto)
         {
             entity.Codigo = dto.Codigo;
+            entity.LogradouroId = dto.LogradouroId;
             entity.Ativo = dto.Ativo;
         }
     }

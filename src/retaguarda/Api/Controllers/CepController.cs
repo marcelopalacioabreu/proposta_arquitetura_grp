@@ -44,17 +44,15 @@ namespace Retaguarda.Api.Controllers
         [Authorize(Policy = "enderecos.ceps.visualizar")]
         public IActionResult GetByCodigo(string codigo)
         {
-            var c = _servico.ListarAsync(new PesquisaParametrosDto { Filtros = FiltrosHelper.MontarFiltros("Codigo", "eq", codigo, null, null) }).Result;
+            var cep = _servico.ObterPorCodigoComLogradouroAsync(codigo).Result;
             
-            if (c.Total ==0) return NotFoundError("CEP não encontrado");
+            if (cep == null) return NotFoundError("CEP não encontrado");
 
-            var cep = c.Items.FirstOrDefault();
-            
-            var logradouro = cep?.Logradouro!;
-            var bairro = logradouro?.Bairro!;
-            var municipio = bairro?.Municipio!;
-            var uf = municipio?.Uf!;
-            var pais = uf?.Pais!;
+            var logradouro = cep.Logradouro;
+            var bairro = logradouro?.Bairro;
+            var municipio = bairro?.Municipio;
+            var uf = municipio?.Uf;
+            var pais = uf?.Pais;
 
             var result = new
             {

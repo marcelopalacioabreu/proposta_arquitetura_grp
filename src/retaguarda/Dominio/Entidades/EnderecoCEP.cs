@@ -5,6 +5,7 @@ namespace Retaguarda.Dominio.Entidades
     public class EnderecoCEP : MultilocatarioEntidade
     {
         public string Codigo { get; set; } = string.Empty;
+        public long LogradouroId { get; set; }
         public EnderecoLogradouro Logradouro { get; set; } = null!;
     }
 }

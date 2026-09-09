@@ -166,7 +166,7 @@
             { "id": "enderecos.excluir", "texto": "Excluir" }
           ],
           "conflitosCom": [""],
-          "mostrarNoMenu": true
+          "mostrarNoMenu": false
         },
         {
           "chave": "enderecos.ceps", "texto": "CEPs", "icone": "envelope", "url": "/painel/enderecos/ceps",
