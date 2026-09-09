@@ -205,7 +205,7 @@
                                                                                 {
                                                                                     "campo":  "cepId",
                                                                                     "label":  "CEP",
-                                                                                    "tipo":  "select",
+                                                                                    "tipo":  "autocomplete",
                                                                                     "endpoint":  "/api/ceps",
                                                                                     "col":  4
                                                                                 },

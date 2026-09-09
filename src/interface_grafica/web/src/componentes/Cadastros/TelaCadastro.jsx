@@ -3,6 +3,7 @@ import api from '../../servicos/api'
 import { useParams, useNavigate, useLocation } from 'react-router-dom'
 import PermissoesModulos from './PermissoesModulos'
 import SelectPesquisavel from './SelectPesquisavel'
+import InputAutocomplete from './InputAutocomplete'
 import SubtabelaCadastro from './SubtabelaCadastro'
 import InputData from '../Inputs/InputData'
 import InputDataHora from '../Inputs/InputDataHora'
@@ -251,6 +252,13 @@ export default function TelaCadastro({ screenKey, closeModal }){
           ) : (
             <SelectPesquisavel name={c.campo} value={valor} error={erro} fieldConfig={c} meta={meta} />
           )
+        ) : c.tipo === 'autocomplete' ? (
+          <InputAutocomplete name={c.campo} value={valor} error={erro} fieldConfig={c} meta={meta} 
+            onChange={(novoValor) => {
+              const event = { target: { name: c.campo, value: novoValor } }
+              handleInputChange(event)
+            }}
+          />
         ) : c.tipo === 'date' ? (
           <InputData name={c.campo} value={valor} disabled={false} required={c.obrigatorio} error={erro} />
         ) : c.tipo === 'datetime' ? (

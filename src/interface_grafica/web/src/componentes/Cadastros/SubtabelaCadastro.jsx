@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useCallback, useRef } from 'react'
 import api from '../../servicos/api'
 import SelectPesquisavel from './SelectPesquisavel'
+import InputAutocomplete from './InputAutocomplete'
 
 /**
  * Componente genérico de subtabela para subcadastros associados
@@ -113,6 +114,18 @@ export default function SubtabelaCadastro({
             meta={meta}
             error={erro}
             onChange={onChange}
+          />
+        )
+      case 'autocomplete':
+        return (
+          <InputAutocomplete
+            name={col.campo}
+            value={valor || ''}
+            fieldConfig={col}
+            meta={meta}
+            error={erro}
+            onChange={onChange}
+            placeholder={col.placeholder || "Digite para buscar..."}
           />
         )
       case 'date':
