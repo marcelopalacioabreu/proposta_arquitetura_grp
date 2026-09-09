@@ -139,7 +139,7 @@
                                                                              "campo":  "tipoId",
                                                                              "label":  "Tipo",
                                                                              "tipo":  "select",
-                                                                             "endpoint":  "/api/tipos?contexto=ENDERECO_TIPO",
+                                                                             "endpoint":  "/api/tipos?contexto=ENDERECO",
                                                                              "col":  3
                                                                          },
                                                                          {

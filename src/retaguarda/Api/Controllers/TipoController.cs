@@ -1,4 +1,3 @@
-using System.Linq;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Retaguarda.Persistencia;
@@ -21,16 +20,20 @@ namespace Retaguarda.Api.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> GetAll([FromQuery] string? q, [FromQuery] string? contexto, [FromQuery] int page = 1, [FromQuery] int pageSize = 10)
         {
-            var (items, total) = await _servico.ListarAsync(q, page, pageSize, null, null);
+            (List<TipoDto> items, int total) result;
             
-            // Filtrar por contexto se fornecido
+            // Se contexto for fornecido, usar o método de filtro específico
             if (!string.IsNullOrWhiteSpace(contexto))
             {
-                items = items.Where(x => x.Contexto == contexto).ToList();
-                total = items.Count;
+                result = await _servico.ListarPorContextoAsync(q, contexto, page, pageSize, null, null);
+            }
+            else
+            {
+                // Caso contrário, usar o ListarAsync padrão
+                result = await _servico.ListarAsync(q, page, pageSize, null, null);
             }
 
-            return OkList(items, total, page, pageSize);
+            return OkList(result.items, result.total, page, pageSize);
         }
 
         [HttpGet("{id}")]

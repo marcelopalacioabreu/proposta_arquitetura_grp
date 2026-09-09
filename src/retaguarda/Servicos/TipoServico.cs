@@ -17,6 +17,22 @@ namespace Retaguarda.Servicos
             _repositorioConcrete = repositorio;
         }
 
+        public async Task<(List<TipoDto> Items, int Total)> ListarPorContextoAsync(
+            string? filtroNome, 
+            string? contexto,
+            int page = 1, 
+            int pageSize = 10, 
+            string? sortField = null, 
+            string? sortDir = null, 
+            Dictionary<string, object>? filtros = null, 
+            bool inativo = false)
+        {
+            var (items, total) = await _repositorioConcrete.ListarPorContextoAsync(
+                filtroNome, contexto, page, pageSize, sortField, sortDir, filtros, inativo);
+            
+            return (items.Select(ToDto).ToList(), total);
+        }
+
         protected override TipoDto ToDto(Tipo e)
         {
             return new TipoDto
