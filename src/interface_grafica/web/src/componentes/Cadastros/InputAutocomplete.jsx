@@ -85,11 +85,33 @@ export default function InputAutocomplete({
   // Carregar opção selecionada no mount
   useEffect(() => {
     if (value) {
-      // Se temos um valor, precisamos carregar o label dela
-      // Por enquanto, apenas mostramos o ID
-      setInputValue(value)
+      // Se temos um valor numérico, carregar o label do item
+      const numValue = Number(value)
+      if (!isNaN(numValue) && numValue > 0) {
+        const endpoint = obterEndpoint()
+        if (endpoint) {
+          // Requisitar os dados completos do item usando o ID
+          api.get(`${endpoint}/${numValue}`, { block: false })
+            .then(r => {
+              const item = r.data?.dados || r.data?.data || r.data
+              if (item) {
+                const label = extrairLabel(item)
+                setInputValue(label)
+                setDisplayLabel(label)
+              }
+            })
+            .catch(err => {
+              console.error(`Erro ao carregar item ${numValue}:`, err)
+              // Em caso de erro, apenas mostra o ID
+              setInputValue(String(value))
+            })
+        }
+      } else {
+        // Se não é número, apenas mostra como está
+        setInputValue(value)
+      }
     }
-  }, [value])
+  }, [value, obterEndpoint])
 
   // Buscar opções enquanto digita
   const buscarOpcoes = useCallback((searchTerm) => {
