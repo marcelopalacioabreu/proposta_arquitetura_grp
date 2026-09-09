@@ -9,5 +9,10 @@ namespace Retaguarda.DTO.Dtos
 
         // Propriedade de navegação para leitura (carregada sob demanda)
         public EnderecoLogradouroDto? Logradouro { get; set; }
+        
+        /// <summary>
+        /// Campo flatteado para exibição do nome do logradouro na tela de pesquisa
+        /// </summary>
+        public string? LogradouroNome { get; set; }
     }
 }

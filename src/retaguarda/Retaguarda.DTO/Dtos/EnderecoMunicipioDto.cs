@@ -9,5 +9,10 @@ namespace Retaguarda.DTO.Dtos
         public bool Ativo { get; set; } = true;
 
         public EnderecoUFDto? Uf { get; set; }
+        
+        /// <summary>
+        /// Campo flatteado para exibição da sigla da UF na tela de pesquisa
+        /// </summary>
+        public string? UfSigla { get; set; }
     }
 }

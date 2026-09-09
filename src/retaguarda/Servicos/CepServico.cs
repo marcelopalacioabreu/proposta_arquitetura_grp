@@ -1,10 +1,12 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using System.Linq;
 using Retaguarda.Dominio.Entidades;
 using Retaguarda.Repositorios.Interfaces;
 using Retaguarda.Servicos.Base;
 using Retaguarda.Servicos.Interfaces;
 using Retaguarda.DTO.Dtos;
+using Retaguarda.DTO.Parametros;
 
 namespace Retaguarda.Servicos
 {
@@ -15,6 +17,28 @@ namespace Retaguarda.Servicos
         public CepServico(ICepRepositorio repositorio) : base(repositorio)
         {
             _repositorioConcrete = repositorio;
+        }
+
+        /// <summary>
+        /// Override para carregar com Logradouro na listagem
+        /// </summary>
+        public override async Task<(List<CepDto> Items, int Total)> ListarAsync(string? nomeFilter, int page, int pageSize, string? sortField, string? sortDir, IDictionary<string, string>? filtros = null, int? inativo = null)
+        {
+            var (items, total) = await _repositorioConcrete.ListarComLogradouroAsync(nomeFilter, page, pageSize, sortField, sortDir, filtros, inativo);
+            var dtos = items.Select(ToDto).ToList();
+            return (dtos, total);
+        }
+
+        public override async Task<(List<CepDto> Items, int Total)> ListarAsync(PesquisaParametrosDto parametros)
+        {
+            var nome = parametros?.Nome;
+            var page = parametros?.Pagina ?? 1;
+            var pageSize = parametros?.TamanhoPagina ?? 10;
+            var sortField = parametros?.SortField;
+            var sortDir = parametros?.SortDir;
+            var filtros = parametros?.Filtros;
+            var inativo = parametros?.Inativo;
+            return await ListarAsync(nome, page, pageSize, sortField, sortDir, filtros, inativo);
         }
 
         /// <summary>
@@ -41,7 +65,8 @@ namespace Retaguarda.Servicos
                     Tipo = e.Logradouro.Tipo,
                     BairroId = e.Logradouro.BairroId,
                     Ativo = e.Logradouro.Ativo
-                } : null
+                } : null,
+                LogradouroNome = e.Logradouro?.Nome
             };
         }
 

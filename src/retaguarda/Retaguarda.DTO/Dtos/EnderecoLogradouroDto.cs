@@ -9,5 +9,10 @@ namespace Retaguarda.DTO.Dtos
         public bool Ativo { get; set; } = true;
 
         public EnderecoBairroDto? Bairro { get; set; }
+        
+        /// <summary>
+        /// Campo flatteado para exibição do nome do bairro na tela de pesquisa
+        /// </summary>
+        public string? BairroNome { get; set; }
     }
 }
