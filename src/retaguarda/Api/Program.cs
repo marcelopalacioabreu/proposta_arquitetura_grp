@@ -42,6 +42,16 @@ Retaguarda.Persistencia.Configuracao.RegistrarServices(builder.Services, builder
 Retaguarda.Repositorios.Configuracao.RegistrarServices(builder.Services, builder.Configuration);
 Retaguarda.Servicos.Configuracao.RegistrarServices(builder.Services, builder.Configuration);
 
+// Serviços de Recuperação de Senha e Email
+builder.Services.AddScoped<Retaguarda.Api.Services.Interfaces.IEmailServico, Retaguarda.Api.Services.EmailServico>();
+builder.Services.AddScoped<Retaguarda.Api.Services.Interfaces.IRecuperacaoSenhaServico, Retaguarda.Api.Services.RecuperacaoSenhaServico>();
+builder.Services.AddScoped<Retaguarda.Repositorios.IRecuperacaoSenhaRepositorio>(sp =>
+{
+    var dbContext = sp.GetRequiredService<Retaguarda.Persistencia.IApplicationDbContext>();
+    var httpContextAccessor = sp.GetRequiredService<IHttpContextAccessor>();
+    return new Retaguarda.Repositorios.RecuperacaoSenhaRepositorio(dbContext, httpContextAccessor);
+});
+
 // JWT
 var jwtKey = builder.Configuration["Jwt:Key"] ?? "change_this_secret_for_prod";
 var jwtIssuer = builder.Configuration["Jwt:Issuer"] ?? "Retaguarda";

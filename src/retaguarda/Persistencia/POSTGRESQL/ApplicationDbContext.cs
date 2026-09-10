@@ -52,6 +52,8 @@ namespace Retaguarda.Persistencia.POSTGRESQL
         public DbSet<ContatoRelacionamento> ContatoRelacionamentos { get; set; } = null!;
         public DbSet<DocumentoRelacionamento> DocumentoRelacionamentos { get; set; } = null!;
 
+        public DbSet<RecuperacaoSenha> RecuperacoesSenha { get; set; } = null!;
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -79,6 +81,7 @@ namespace Retaguarda.Persistencia.POSTGRESQL
                 b.Property(x => x.Nivel);
                 b.HasOne(x => x.Organizacao).WithMany().HasForeignKey(x => x.OrganizacaoId).OnDelete(DeleteBehavior.Cascade);
                 b.HasOne(x => x.Pessoa).WithMany().HasForeignKey(x => x.PessoaId).OnDelete(DeleteBehavior.Cascade);
+                b.HasOne(x => x.Tipo).WithMany().HasForeignKey(x => x.TipoId).OnDelete(DeleteBehavior.SetNull);
                 b.HasOne(x => x.Situacao).WithMany().HasForeignKey(x => x.SituacaoId).OnDelete(DeleteBehavior.Cascade);
                 b.HasMany(x => x.OrganizacaoUnidadeEnderecos).WithOne().HasForeignKey(x => x.OrganizacaoUnidadeId).OnDelete(DeleteBehavior.Cascade);
             });
@@ -357,6 +360,26 @@ namespace Retaguarda.Persistencia.POSTGRESQL
                 b.Property(x => x.WorkflowVersion);
                 b.Property(x => x.WorkflowJson).HasColumnType("text");
                 b.Property(x => x.WorkflowNome).HasMaxLength(500);
+            });
+
+            modelBuilder.Entity<RecuperacaoSenha>(b =>
+            {
+                b.ToTable("RecuperacoesSenha");
+                b.HasKey(x => x.Id);
+                b.Property(x => x.UsuarioId).IsRequired();
+                b.Property(x => x.Token).IsRequired().HasMaxLength(500);
+                b.Property(x => x.DataExpiracao).IsRequired();
+                b.Property(x => x.Utilizado).IsRequired().HasDefaultValue(false);
+                b.Property(x => x.DataUtilizacao);
+                b.Property(x => x.IpSolicitacao).HasMaxLength(50);
+                b.Property(x => x.UserAgent).HasMaxLength(500);
+                b.HasOne(x => x.Usuario)
+                    .WithMany()
+                    .HasForeignKey(x => x.UsuarioId)
+                    .OnDelete(DeleteBehavior.Cascade);
+                // Índice para buscar tokens válidos rapidamente
+                b.HasIndex(x => new { x.UsuarioId, x.Utilizado, x.DataExpiracao })
+                    .HasName("idx_RecuperacoesSenha_Validas");
             });
         }
 

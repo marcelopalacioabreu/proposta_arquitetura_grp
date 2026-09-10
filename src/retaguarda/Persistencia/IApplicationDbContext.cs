@@ -44,6 +44,8 @@ namespace Retaguarda.Persistencia
         DbSet<ContatoRelacionamento> ContatoRelacionamentos { get; set; }
         DbSet<DocumentoRelacionamento> DocumentoRelacionamentos { get; set; }
 
+        DbSet<RecuperacaoSenha> RecuperacoesSenha { get; set; }
+
         int SaveChanges();
         Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
     }

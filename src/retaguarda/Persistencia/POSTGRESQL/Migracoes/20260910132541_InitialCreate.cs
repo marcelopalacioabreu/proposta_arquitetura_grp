@@ -576,7 +576,6 @@ namespace Retaguarda.Persistencia.POSTGRESQL.Migracoes
                     Nivel = table.Column<long>(type: "bigint", nullable: true),
                     DataFundacao = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     DataExtincao = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    TipoId1 = table.Column<long>(type: "bigint", nullable: true),
                     IdentificadorUnico = table.Column<Guid>(type: "uuid", nullable: false),
                     IdentificadorUnicoAmigavel = table.Column<string>(type: "text", nullable: false),
                     DataInsercao = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
@@ -610,10 +609,11 @@ namespace Retaguarda.Persistencia.POSTGRESQL.Migracoes
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_OrganizacaoUnidades_Tipos_TipoId1",
-                        column: x => x.TipoId1,
+                        name: "FK_OrganizacaoUnidades_Tipos_TipoId",
+                        column: x => x.TipoId,
                         principalTable: "Tipos",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.SetNull);
                 });
 
             migrationBuilder.CreateTable(
@@ -647,6 +647,42 @@ namespace Retaguarda.Persistencia.POSTGRESQL.Migracoes
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_PerfilUsuarios_Usuarios_UsuarioId",
+                        column: x => x.UsuarioId,
+                        principalTable: "Usuarios",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "RecuperacoesSenha",
+                columns: table => new
+                {
+                    Id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    UsuarioId = table.Column<long>(type: "bigint", nullable: false),
+                    Token = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: false),
+                    DataExpiracao = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    Utilizado = table.Column<bool>(type: "boolean", nullable: false, defaultValue: false),
+                    DataUtilizacao = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    IpSolicitacao = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: true),
+                    UserAgent = table.Column<string>(type: "character varying(500)", maxLength: 500, nullable: true),
+                    IdentificadorUnico = table.Column<Guid>(type: "uuid", nullable: false),
+                    IdentificadorUnicoAmigavel = table.Column<string>(type: "text", nullable: false),
+                    DataInsercao = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    DataAlteracao = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    OrganizacaoId = table.Column<long>(type: "bigint", nullable: true),
+                    OrganizacaoUnidadeId = table.Column<long>(type: "bigint", nullable: true),
+                    SetorId = table.Column<long>(type: "bigint", nullable: true),
+                    Ativo = table.Column<bool>(type: "boolean", nullable: false),
+                    UsuarioInsercaoId = table.Column<long>(type: "bigint", nullable: true),
+                    UsuarioAlteracaoId = table.Column<long>(type: "bigint", nullable: true),
+                    Versao = table.Column<long>(type: "bigint", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_RecuperacoesSenha", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_RecuperacoesSenha_Usuarios_UsuarioId",
                         column: x => x.UsuarioId,
                         principalTable: "Usuarios",
                         principalColumn: "Id",
@@ -724,6 +760,7 @@ namespace Retaguarda.Persistencia.POSTGRESQL.Migracoes
                     Id = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     Nome = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: false),
+                    Codigo = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
                     IdentificadorUnico = table.Column<Guid>(type: "uuid", nullable: false),
                     IdentificadorUnicoAmigavel = table.Column<string>(type: "text", nullable: false),
                     DataInsercao = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
@@ -1207,9 +1244,9 @@ namespace Retaguarda.Persistencia.POSTGRESQL.Migracoes
                 column: "SituacaoId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_OrganizacaoUnidades_TipoId1",
+                name: "IX_OrganizacaoUnidades_TipoId",
                 table: "OrganizacaoUnidades",
-                column: "TipoId1");
+                column: "TipoId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_OrganizacaoUnidadeSetores_OrganizacaoUnidadeId",
@@ -1261,6 +1298,11 @@ namespace Retaguarda.Persistencia.POSTGRESQL.Migracoes
                 name: "IX_Pessoas_SituacaoId",
                 table: "Pessoas",
                 column: "SituacaoId");
+
+            migrationBuilder.CreateIndex(
+                name: "idx_RecuperacoesSenha_Validas",
+                table: "RecuperacoesSenha",
+                columns: new[] { "UsuarioId", "Utilizado", "DataExpiracao" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_SetorUsuarios_SetorId",
@@ -1335,6 +1377,9 @@ namespace Retaguarda.Persistencia.POSTGRESQL.Migracoes
 
             migrationBuilder.DropTable(
                 name: "PessoaEnderecos");
+
+            migrationBuilder.DropTable(
+                name: "RecuperacoesSenha");
 
             migrationBuilder.DropTable(
                 name: "SetorUsuarios");

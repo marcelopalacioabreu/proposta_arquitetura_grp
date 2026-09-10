@@ -12,8 +12,8 @@ using Retaguarda.Persistencia.POSTGRESQL;
 namespace Retaguarda.Persistencia.POSTGRESQL.Migracoes
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20260904181850_AdicionarCodigoSetorUnidade")]
-    partial class AdicionarCodigoSetorUnidade
+    [Migration("20260910132541_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -1165,9 +1165,6 @@ namespace Retaguarda.Persistencia.POSTGRESQL.Migracoes
                     b.Property<long?>("TipoId")
                         .HasColumnType("bigint");
 
-                    b.Property<long?>("TipoId1")
-                        .HasColumnType("bigint");
-
                     b.Property<long?>("UnidadePaiId")
                         .HasColumnType("bigint");
 
@@ -1188,7 +1185,7 @@ namespace Retaguarda.Persistencia.POSTGRESQL.Migracoes
 
                     b.HasIndex("SituacaoId");
 
-                    b.HasIndex("TipoId1");
+                    b.HasIndex("TipoId");
 
                     b.ToTable("OrganizacaoUnidades", (string)null);
                 });
@@ -1674,6 +1671,83 @@ namespace Retaguarda.Persistencia.POSTGRESQL.Migracoes
                     b.HasIndex("PessoaId");
 
                     b.ToTable("PessoaEnderecos", (string)null);
+                });
+
+            modelBuilder.Entity("Retaguarda.Dominio.Entidades.RecuperacaoSenha", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
+                    b.Property<bool>("Ativo")
+                        .HasColumnType("boolean");
+
+                    b.Property<DateTime?>("DataAlteracao")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime>("DataExpiracao")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime>("DataInsercao")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime?>("DataUtilizacao")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("IdentificadorUnico")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("IdentificadorUnicoAmigavel")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("IpSolicitacao")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.Property<long?>("OrganizacaoId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long?>("OrganizacaoUnidadeId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long?>("SetorId")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("Token")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
+
+                    b.Property<string>("UserAgent")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
+
+                    b.Property<long?>("UsuarioAlteracaoId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long>("UsuarioId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long?>("UsuarioInsercaoId")
+                        .HasColumnType("bigint");
+
+                    b.Property<bool>("Utilizado")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(false);
+
+                    b.Property<long>("Versao")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UsuarioId", "Utilizado", "DataExpiracao")
+                        .HasDatabaseName("idx_RecuperacoesSenha_Validas");
+
+                    b.ToTable("RecuperacoesSenha", (string)null);
                 });
 
             modelBuilder.Entity("Retaguarda.Dominio.Entidades.SetorUsuario", b =>
@@ -2304,7 +2378,8 @@ namespace Retaguarda.Persistencia.POSTGRESQL.Migracoes
 
                     b.HasOne("Retaguarda.Dominio.Entidades.Tipo", "Tipo")
                         .WithMany()
-                        .HasForeignKey("TipoId1");
+                        .HasForeignKey("TipoId")
+                        .OnDelete(DeleteBehavior.SetNull);
 
                     b.Navigation("Organizacao");
 
@@ -2387,6 +2462,17 @@ namespace Retaguarda.Persistencia.POSTGRESQL.Migracoes
                         .IsRequired();
 
                     b.Navigation("Endereco");
+                });
+
+            modelBuilder.Entity("Retaguarda.Dominio.Entidades.RecuperacaoSenha", b =>
+                {
+                    b.HasOne("Retaguarda.Dominio.Entidades.Usuario", "Usuario")
+                        .WithMany()
+                        .HasForeignKey("UsuarioId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Usuario");
                 });
 
             modelBuilder.Entity("Retaguarda.Dominio.Entidades.SetorUsuario", b =>
