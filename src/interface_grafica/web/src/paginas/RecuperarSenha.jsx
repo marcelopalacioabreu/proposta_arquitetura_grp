@@ -33,11 +33,12 @@ export default function RecuperarSenha() {
 
     setLoading(true)
     try {
-      const res = await api.post('/api/recuperacao-senha/solicitar', { email })
-      modalServico.modalSucesso('E-mail de recuperação enviado com sucesso!')
+      // O interceptador já mostra a mensagem do envelope
+      // Apenas resetamos o formulário
+      await api.post('/api/recuperacao-senha/solicitar', { email })
       setEmail('')
     } catch (err) {
-      modalServico.modalAlerta(err.response?.data?.mensagem || 'Erro ao solicitar recuperação')
+      // Erro capturado pelo interceptador
     } finally {
       setLoading(false)
     }
@@ -52,10 +53,11 @@ export default function RecuperarSenha() {
 
     setLoading(true)
     try {
+      // Se chegou aqui, o token é válido
       await api.post('/api/recuperacao-senha/validar-token', { token })
       setEtapa(2)
     } catch (err) {
-      modalServico.modalAlerta('Token inválido ou expirado')
+      // Erro capturado pelo interceptador
     } finally {
       setLoading(false)
     }
@@ -81,15 +83,17 @@ export default function RecuperarSenha() {
 
     setLoading(true)
     try {
+      // O interceptador já mostra a mensagem de sucesso
       await api.post('/api/recuperacao-senha/redefinir', {
         token,
         novaSenha,
         confirmacaoSenha
       })
-      modalServico.modalSucesso('Senha redefinida com sucesso! Faça login com sua nova senha.')
-      setTimeout(() => nav('/'), 2000)
+      // Se chegou aqui, a senha foi redefinida com sucesso
+      // Redireciona para login após 2 segundos
+      setTimeout(() => nav('/autenticacao'), 2000)
     } catch (err) {
-      modalServico.modalAlerta(err.response?.data?.mensagem || 'Erro ao redefinir senha')
+      // Erro capturado pelo interceptador
     } finally {
       setLoading(false)
     }
