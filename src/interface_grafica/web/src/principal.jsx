@@ -3,6 +3,7 @@ import { createRoot } from 'react-dom/client'
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import Inicial from './paginas/Inicial'
 import Autenticacao from './paginas/Autenticacao'
+import RecuperarSenha from './paginas/RecuperarSenha'
 import CadastroUsuario from './paginas/CadastroUsuario'
 import LayoutPrivado from './componentes/Layout/LayoutPrivado'
 import TelaPesquisa from './componentes/Cadastros/TelaPesquisa'
@@ -19,6 +20,7 @@ function App(){
     <Routes>
       <Route path='/' element={<Inicial/>} />
       <Route path='/autenticacao' element={<Autenticacao/>} />
+      <Route path='/recuperar-senha' element={<RecuperarSenha/>} />
       <Route path='/cadastro' element={<CadastroUsuario/>} />
       <Route path='/painel/*' element={<LayoutPrivado/>}>
         <Route path='organizacoes' element={<TelaPesquisa screenKey={'organizacaoPesquisa'} />} />

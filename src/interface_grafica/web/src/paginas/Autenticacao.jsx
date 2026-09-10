@@ -34,6 +34,9 @@ export default function Autenticacao(){
             <div className="mb-3">
               <label className="form-label">Senha</label>
               <input className="form-control" type="password" value={pass} onChange={e=>setPass(e.target.value)} />
+              <div className="text-end mt-2">
+                <a href="/recuperar-senha" className="link-secondary text-decoration-none small">Esqueceu a senha?</a>
+              </div>
             </div>
             <div className="d-flex justify-content-end">
               <button className="btn btn-primary" type="submit">Entrar</button>
